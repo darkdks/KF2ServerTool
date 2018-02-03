@@ -133,6 +133,7 @@ type
     lbl8: TLabel;
     btn3: TButton;
     btn4: TButton;
+    lbl9: TLabel;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -190,6 +191,7 @@ type
     procedure btn2Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
     procedure btn4Click(Sender: TObject);
+    procedure lbl9Click(Sender: TObject);
   private
     function loadConfig: Boolean;
     function saveconfig: Boolean;
@@ -2098,6 +2100,11 @@ begin
     end;
 
   end;
+end;
+
+procedure TFormMain.lbl9Click(Sender: TObject);
+begin
+ShellExecute(0, 'open', PChar('https://github.com/darkdks/KF2ServerTool/releases'), nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TFormMain.lblDonateClick(Sender: TObject);

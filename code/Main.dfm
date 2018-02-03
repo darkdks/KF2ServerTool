@@ -1,7 +1,7 @@
 object FormMain: TFormMain
   Left = 0
   Top = 0
-  Caption = 'Killing Floor 2 Server Tool 1.1.3'
+  Caption = 'Killing Floor 2 Server Tool 1.1.4'
   ClientHeight = 519
   ClientWidth = 669
   Color = clGray
@@ -31,7 +31,7 @@ object FormMain: TFormMain
     Margins.Bottom = 2
     Align = alTop
     Alignment = taRightJustify
-    Caption = 'darkdks @ 2017'
+    Caption = 'darkdks @ 2018'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
     Font.Height = -11
@@ -185,7 +185,7 @@ object FormMain: TFormMain
       Width = 46
       Height = 29
       Cursor = crHandPoint
-      Margins.Left = 2
+      Margins.Left = 10
       Margins.Top = 2
       Margins.Right = 8
       Margins.Bottom = 2
@@ -199,6 +199,29 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = lblDonateClick
+      ExplicitHeight = 13
+    end
+    object lbl9: TLabel
+      AlignWithMargins = True
+      Left = 544
+      Top = 2
+      Width = 53
+      Height = 21
+      Cursor = crHandPoint
+      Margins.Left = 10
+      Margins.Top = 2
+      Margins.Right = 8
+      Margins.Bottom = 10
+      Align = alRight
+      Alignment = taRightJustify
+      Caption = 'Updates'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clTeal
+      Font.Height = -11
+      Font.Name = 'Verdana'
+      Font.Style = [fsBold, fsUnderline]
+      ParentFont = False
+      OnClick = lbl9Click
       ExplicitHeight = 13
     end
     object btnReinstall: TBitBtn
@@ -1378,7 +1401,7 @@ object FormMain: TFormMain
     Left = 544
     Top = 8
     Bitmap = {
-      494C010105002000E40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010105002000EC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000
