@@ -11,7 +11,7 @@ The app include some extra features too, as a server launcher, web admin configu
 I spent good weeks developing this tool to make it as simple as possible for the end user, so i hope you guys enjoy it.
 
 ### Download
-Go to release folder and download the latest version
+Go to release and download the latest version
 
 ### How to install / Use in an existing server
 
