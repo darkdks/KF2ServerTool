@@ -1,5 +1,5 @@
 # KF2ServerTool for Windows
-Easy way to add/remove/update maps in your dedicated server
+Easy way to add/remove/update maps in your Killing Floor 2 Dedicated Server
 
 ## What is that?
 This is a tool that I made to add, remove, and force update of maps and mods in your dedicated server without spending time and patience editing files, entries, cache and restarting the server many times.
