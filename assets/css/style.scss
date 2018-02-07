@@ -28,6 +28,8 @@ $section-headings-color: #fff;
   }
 }
 body {
-    background: radial-gradient(#000, #270000, #000000);
-    color: #b7b7b7;
+  
+  /*  background: radial-gradient(#000, #270000, #000000);*/
+  background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(45,1,6,1) 50%, rgba(0,0,0,1) 100%);
+  color: #b7b7b7;
 }
