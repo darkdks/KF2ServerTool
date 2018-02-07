@@ -2,13 +2,15 @@
 Easy way to add/remove/update maps in your Killing Floor 2 Dedicated Server
 
 ## What is that?
-This is a tool that I made to add, remove, and force update of maps and mods in your dedicated server without spending time and patience editing files, entries, cache and restarting the server many times.
+This is a tool to add, remove, and force update of maps and mods in your dedicated server without spending time and patience editing files, entries, cache and restarting the server many times.
 
 With this tool you will just browse workshop or paste an URL or ID of map and click in a button, and the application will do all for you (download the map, add the server subscription, add the map entry, the map in cycle of maps and the server redirect if needed. You can also force map or mod update that is outdated and reinstall an entire item.
 
-The app include some extra features too, as a server launcher, web admin configuration, workshop download manager configuration, webadmin inside application and some tools to clean cache and workshop files. 
+![Screenshot](imgs/img1.jpg)
 
-I spent good weeks developing this tool to make it as simple as possible for the end user, so i hope you guys enjoy it.
+The app include some extra features too, as a server launcher, web admin configuration, workshop download manager configuration, webadmin inside application and some tools to clean cache and workshop files. I spent good weeks developing this tool to make it as simple as possible for the end user.
+
+![Screenshot](imgs/img2.jpg)
 
 ### Download
 Go to release and download the latest version
