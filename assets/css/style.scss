@@ -4,7 +4,7 @@
 $header-heading-color: #fff;
 $header-bg-color: #000000; 
 $header-bg-color-secondary: #6f0000; 
-$section-headings-color: #000000;
+$section-headings-color: #fff;
 
 @import "{{ site.theme }}";
 
@@ -30,11 +30,4 @@ $section-headings-color: #000000;
 body {
     background: radial-gradient(#000, #270000, #000000);
     color: #b7b7b7;
-}
-
-content h5, .main-content h6 {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: normal;
-    color: #fff;
 }
