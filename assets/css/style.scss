@@ -12,6 +12,8 @@ $section-headings-color: #fff;
   color: $header-heading-color;
   text-align: center;
   background-color: $header-bg-color;
+  background-size: 100%;
+  background-position-y: -311px;
   background-image: url("https://github.com/darkdks/KF2ServerTool/blob/master/imgs/background_gitpage.jpg?raw=true");
 /*linear-gradient(120deg, $header-bg-color-secondary, $header-bg-color);*/
 
