@@ -175,7 +175,7 @@ object frmQueue: TfrmQueue
       Margins.Right = 2
       Margins.Bottom = 2
       Align = alRight
-      Caption = 'Proced'
+      Caption = 'Proceed'
       Glyph.Data = {
         F6060000424DF606000000000000360000002800000018000000180000000100
         180000000000C006000000000000000000000000000000000000FFFFFFFFFFFF

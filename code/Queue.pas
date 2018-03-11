@@ -299,7 +299,7 @@ begin
   end
   else
   begin
-    lgFindAItemWksp := 'Find a item in workshop';
+    lgFindAItemWksp := 'Find an item in workshop';
     lgSearchFor := 'Search for';
   end;
   if InputQuery(lgFindAItemWksp, lgSearchFor, textToFind) then

@@ -610,7 +610,7 @@ object FormMain: TFormMain
               Margins.Right = 2
               Margins.Bottom = 2
               Align = alTop
-              Caption = 'Game Lenght'
+              Caption = 'Game Length'
               Color = clBlack
               ParentColor = False
               ExplicitWidth = 82
@@ -909,7 +909,7 @@ object FormMain: TFormMain
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
-      Caption = 'Unknowed'
+      Caption = 'Unknown'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlack
       Font.Height = -15
