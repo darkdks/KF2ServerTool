@@ -12,7 +12,7 @@ The app includes some extra features too, like a server launcher, web admin conf
 <p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img2.jpg"/></p>
 
 ### Download
-Go to <a href="release">release</a> to download the latest version.
+Go to <a href="https://github.com/darkdks/KF2ServerTool/releases/latest">release</a> to download the latest version.
 
 ### How to install / Use in an existing server
 
