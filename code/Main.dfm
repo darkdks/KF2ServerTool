@@ -1,7 +1,7 @@
 object FormMain: TFormMain
   Left = 0
   Top = 0
-  Caption = 'Killing Floor 2 Server Tool 1.1.4'
+  Caption = 'Killing Floor 2 Server Tool 1.1.5'
   ClientHeight = 519
   ClientWidth = 669
   Color = clGray
@@ -328,7 +328,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsDebug
+    ActivePage = tsExtra
     Align = alClient
     TabOrder = 1
     OnChange = jvpgcntrl1Change
@@ -535,6 +535,7 @@ object FormMain: TFormMain
               DropDownCount = 20
               TabOrder = 0
               OnChange = cbbMapChange
+              OnExit = lostFocusSave
             end
           end
           object pnldifficulty: TPanel
@@ -580,6 +581,7 @@ object FormMain: TFormMain
               Color = clWhite
               TabOrder = 0
               OnChange = cbbDifficultyChange
+              OnExit = lostFocusSave
               Items.Strings = (
                 'Normal'
                 'Hard'
@@ -630,6 +632,7 @@ object FormMain: TFormMain
               Color = clWhite
               TabOrder = 0
               OnChange = cbbLengthChange
+              OnExit = lostFocusSave
               Items.Strings = (
                 'Short'
                 'Medium'
@@ -677,6 +680,7 @@ object FormMain: TFormMain
             Margins.Bottom = 2
             Align = alBottom
             TabOrder = 0
+            OnExit = lostFocusSave
           end
         end
         object pnl10: TPanel
@@ -730,6 +734,7 @@ object FormMain: TFormMain
             Color = clWhite
             TabOrder = 0
             OnChange = edtGmPassChange
+            OnExit = lostFocusSave
           end
           object cbbGameMode: TComboBox
             Left = 5
@@ -743,11 +748,11 @@ object FormMain: TFormMain
             Align = alCustom
             Style = csDropDownList
             Color = clWhite
-            ItemIndex = 0
             TabOrder = 1
-            Text = 'Survival'
             OnChange = cbbGameModeChange
+            OnExit = lostFocusSave
             Items.Strings = (
+              'Endless'
               'Survival'
               'VersusSurvival'
               'Weekly')
@@ -1087,8 +1092,8 @@ object FormMain: TFormMain
           Caption = 'Font Size:'
         end
         object lblFontColor: TLabel
-          Left = 26
-          Top = 56
+          Left = 318
+          Top = 26
           Width = 69
           Height = 17
           Margins.Left = 2
@@ -1099,7 +1104,7 @@ object FormMain: TFormMain
         end
         object lblLanguage: TLabel
           Left = 26
-          Top = 89
+          Top = 56
           Width = 65
           Height = 17
           Margins.Left = 2
@@ -1126,8 +1131,8 @@ object FormMain: TFormMain
           OnChange = trckbrFontSizeChange
         end
         object btnfontcolor: TJvColorButton
-          Left = 97
-          Top = 56
+          Left = 389
+          Top = 26
           Width = 59
           Height = 17
           Margins.Left = 2
@@ -1142,7 +1147,7 @@ object FormMain: TFormMain
         end
         object cbbLanguage: TJvComboBox
           Left = 96
-          Top = 86
+          Top = 53
           Width = 125
           Height = 25
           Style = csDropDownList
@@ -1151,6 +1156,16 @@ object FormMain: TFormMain
           Items.Strings = (
             'English'
             'Portuguese')
+        end
+        object chkOnlyFromConfigItems: TCheckBox
+          Left = 26
+          Top = 89
+          Width = 429
+          Height = 28
+          Align = alCustom
+          Caption = 'Only display items from the current configuration file'
+          TabOrder = 3
+          OnClick = chkOnlyFromConfigItemsClick
         end
       end
       object grpmaintenance: TGroupBox
@@ -1401,7 +1416,7 @@ object FormMain: TFormMain
     Left = 544
     Top = 8
     Bitmap = {
-      494C010105002000EC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010105002000F00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000

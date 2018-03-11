@@ -134,6 +134,7 @@ type
     btn3: TButton;
     btn4: TButton;
     lbl9: TLabel;
+    chkOnlyFromConfigItems: TCheckBox;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -192,6 +193,8 @@ type
     procedure btn3Click(Sender: TObject);
     procedure btn4Click(Sender: TObject);
     procedure lbl9Click(Sender: TObject);
+    procedure lostFocusSave(Sender: TObject);
+    procedure chkOnlyFromConfigItemsClick(Sender: TObject);
   private
     function loadConfig: Boolean;
     function saveconfig: Boolean;
@@ -218,6 +221,7 @@ type
       pathAcfSubFolder, pathWorkshopSubItem, customServerPath,
       pathServerEXE: string;
     useCustomServerPath, AutoConnectWeb, appMaximized: Boolean;
+    onlyFromConfigItems: Boolean;
     appLanguage: string;
     appWidth: Integer;
     appHeight: Integer;
@@ -405,22 +409,23 @@ var
   argCmd: string;
   lgAInstaceIsRun, lgBeforeSelect: string;
 begin
+  saveconfig;
+  if appLanguage = 'BR' then
+  begin
+    lgAInstaceIsRun := 'Um processo do servidor já está em execução' + #13#10 +
+      'Deseja fechar este antes';
+    lgBeforeSelect := 'Antes de iniciar o servidor selecione um mapa';
+  end
+  else
+  begin
+    lgAInstaceIsRun := 'An instace of server is already running.' + #13#10 +
+      'Do you wanna kill this process before?';
+    lgBeforeSelect := 'Select a map before start the server';
+  end;
+
   if ProcessExists(ExtractFileName(pathServerEXE)) then
   begin
 
-    if appLanguage = 'BR' then
-    begin
-      lgAInstaceIsRun :=
-        'Um processo do servidor já está em execução' + #13#10 +
-        'Deseja fechar este antes';
-      lgBeforeSelect := 'Antes de iniciar o servidor selecione um mapa';
-    end
-    else
-    begin
-      lgAInstaceIsRun := 'An instace of server is already running.' + #13#10 +
-        'Do you wanna kill this process before?';
-      lgBeforeSelect := 'Select a map before start the server';
-    end;
     case Application.MessageBox(PWideChar(lgAInstaceIsRun), 'Server',
       MB_YESNOCANCEL + MB_ICONINFORMATION) of
       IDCANCEL:
@@ -460,10 +465,12 @@ begin
       argCmd := argCmd + edtExtra.Text;
     case cbbGameMode.ItemIndex of
       0:
-        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Survival';
+        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Endless';
       1:
-        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_VersusSurvival';
+        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Survival';
       2:
+        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_VersusSurvival';
+      3:
         argCmd := argCmd + '?game=KFGameContent.KFGameInfo_WeeklySurvival';
     end;
 
@@ -485,22 +492,22 @@ end;
 
 procedure TFormMain.btn1Click(Sender: TObject);
 begin
-kfItems.AddWorkshopSubcribe(edtDebugID.Text);
+  kfItems.AddWorkshopSubcribe(edtDebugID.Text);
 end;
 
 procedure TFormMain.btn2Click(Sender: TObject);
 begin
-kfItems.DownloadWorkshopItem(edtDebugID.Text);
+  kfItems.DownloadWorkshopItem(edtDebugID.Text);
 end;
 
 procedure TFormMain.btn3Click(Sender: TObject);
 begin
-kfItems.AddMapCycle(edtDebugItemName.Text);
+  kfItems.addMapCycle(edtDebugItemName.Text);
 end;
 
 procedure TFormMain.btn4Click(Sender: TObject);
 begin
-kfItems.AddMapEntry(edtDebugItemName.Text);
+  kfItems.addMapENtry(edtDebugItemName.Text);
 end;
 
 procedure TFormMain.btnCheckForPreviewClick(Sender: TObject);
@@ -1046,6 +1053,12 @@ begin
   end;
 end;
 
+procedure TFormMain.chkOnlyFromConfigItemsClick(Sender: TObject);
+begin
+  onlyFromConfigItems := chkOnlyFromConfigItems.Checked;
+  LoadItensToLv('');
+end;
+
 procedure TFormMain.chkAutoConnectWebClick(Sender: TObject);
 begin
   AutoConnectWeb := chkAutoConnectWeb.Checked;
@@ -1080,6 +1093,11 @@ end;
 procedure TFormMain.edtGmPassChange(Sender: TObject);
 begin
   kfprofiles[defaultProfile].DefaultPass := edtGmPass.Text;
+end;
+
+procedure TFormMain.lostFocusSave(Sender: TObject);
+begin
+  saveconfig();
 end;
 
 procedure TFormMain.edtPortExit(Sender: TObject);
@@ -1131,6 +1149,13 @@ begin
     if (Filter = '') or (Pos(Filter, ItemNameF) > 0) or
       (Pos(Filter, ItemIDF) > 0) then
     begin
+      //Ignore cache files if the server is not subscribed
+      if (onlyFromConfigItems) and (kfItems.Items[i].ServerCache) and
+        (kfItems.Items[i].ServerSubscribe = false) then
+      begin
+        Continue;
+      end;
+
 
       if kfItems.Items[i].ItemType = KFMod then
       begin
@@ -1208,8 +1233,8 @@ begin
         end;
 
       end;
-    end;
 
+    end;
   end;
 
   if lvUnknowed.Items.Count > 0 then
@@ -1487,20 +1512,41 @@ var
   kfPathDialog: TkfPathDialog;
   pathDialogResult: Integer;
   ExeName: String;
+  i: Integer;
 begin
   ExeName := ExtractFileName(Application.ExeName);
-  configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
+  if ParamCount > 0 then
+  begin
+    for i := 0 to ParamCount do
+    begin
+      if LowerCase(ParamStr(i)) = '-config' then
+      begin
+        if ExtractFileExt(ParamStr(i + 1)) = '.ini' then
+        begin
+          configName := ParamStr(i + 1);
+          Break;
+        end
+        else
+          ShowMessage('Config is not valid');
+        Break;
+      end;
+    end;
+
+  end
+  else
+  begin
+    configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
+  end;
+
+
 
   // ShowMessage(configName);
-
-
-  {$IFDEF DEBUG}
+{$IFDEF DEBUG}
   ReportMemoryLeaksOnShutdown := True;
   tsDebug.TabVisible := True;
-  {$ELSE}
+{$ELSE}
   tsDebug.TabVisible := false;
-  {$ENDIF}
-
+{$ENDIF}
   jvpgcntrl1.ActivePageIndex := 0;
   jvpgcntrl1Change(Self);
   SetLength(kfprofiles, 0);
@@ -1563,6 +1609,7 @@ begin
   LoadItensToLv('');
   btnReinstall.Enabled := false;
   btnUpdate.Enabled := false;
+  chkOnlyFromConfigItems.Checked := onlyFromConfigItems;
   btnRemove.Enabled := false;
   if jvpgcntrl1.ActivePage = tsMaps then
 
@@ -2104,7 +2151,9 @@ end;
 
 procedure TFormMain.lbl9Click(Sender: TObject);
 begin
-ShellExecute(0, 'open', PChar('https://github.com/darkdks/KF2ServerTool/releases'), nil, nil, SW_SHOWNORMAL);
+  ShellExecute(0, 'open', Pchar(
+      'https://github.com/darkdks/KF2ServerTool/releases'), nil, nil,
+    SW_SHOWNORMAL);
 end;
 
 procedure TFormMain.lblDonateClick(Sender: TObject);
@@ -2173,9 +2222,10 @@ begin
           'steamapps\workshop\content\232090');
         pathServerEXE := ReadString('PATHS', 'ServerEXE',
           'Binaries\win64\kfserver.exe');
-
         regCount := ReadInteger('GERAL', 'ProfileCount', 1);
         defaultProfile := ReadInteger('GERAL', 'DefaultProfileID', 0);
+
+
         for i := 0 to regCount - 1 do
         begin
           SetLength(kfprofiles, Length(kfprofiles) + 1);
@@ -2195,6 +2245,8 @@ begin
         end;
 
         // App
+           onlyFromConfigItems := ReadBool('GENERAL', 'OnlyShowItemsFromConfig',
+          false);
         appLanguage := ReadString('GENERAL', 'Language', 'EG');
         appHeight := ReadInteger('GENERAL', 'WindowHeight', Self.Height);
         appWidth := ReadInteger('GENERAL', 'WindowWidth', Self.Width);
@@ -2243,6 +2295,7 @@ begin
         WriteInteger('GERAL', 'ProfileCount', Length(kfprofiles));
         WriteInteger('GERAL', 'DefaultProfileID', defaultProfile);
 
+
         for i := 0 to High(kfprofiles) do
         begin
           with kfprofiles[i] do
@@ -2257,7 +2310,7 @@ begin
             WriteString(section, 'ProfileName', ProfileName);
             WriteBool(section, 'AutoConnectWeb', AutoConnectWeb);
           end;
-
+          WriteBool('GENERAL', 'OnlyShowItemsFromConfig', onlyFromConfigItems);
           WriteString('GENERAL', 'Language', appLanguage);
           WriteInteger('GENERAL', 'WindowHeight', appHeight);
           WriteInteger('GENERAL', 'WindowWidth', appWidth);

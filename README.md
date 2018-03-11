@@ -24,6 +24,13 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/releases/latest">release
 - Extract all files in the same folder that the server will be installed
 - Open KF2ServerTool.exe and choose the option to install a new server in the same path of the tool folder
 
+### How to use with multiples servers configs
+(very useful if you run multiple instances of servers in the same folder and have several different files for each server.)
+
+- Use the param -config in the .exe to specify a different configuration file. (Example: KF2ServerTool.exe -config KFServerTool_sv2.ini) 
+- The application will create a new config file and you should edit it to specify the custom paths of your configs (PCServer-Game, PCServer-Engine, etc) files
+- Go to the section GENERAL in the config file and set the flag "OnlyShowItemsFromConfig" to true. This will filtrate maps and mods from another servers.
+
 ### Notes
 
 - You need start the server at least one time to generate server config files that the tool needs.
