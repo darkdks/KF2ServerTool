@@ -167,7 +167,7 @@ begin
   try
     try
       if files.Count > 0 then
-        Result := ExplorerFileOp(files, '', FO_DELETE, True, nil)
+        Result := ExplorerFileOp(files, '', FO_DELETE, True, 0)
       else
         Result := True;
     finally

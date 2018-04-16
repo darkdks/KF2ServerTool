@@ -4,19 +4,22 @@ program KF2ServerToolCMD;
 uses
   SysUtils,
   IniFiles,
-  Forms,
+  {$IFDEF WIN32}
+    Forms,
+  {$ELSE}
+   {$ENDIF}
   KFFile in 'KFFile.pas',
-  KFItemEntity in 'KFItemEntity.pas',
+  KFRedirect in 'KFRedirect.pas',
+  KFServerTool in 'KFServerTool.pas',
   KFWksp in 'KFWksp.pas',
-  UFuncoes in 'UFuncoes.pas',
-  MainCMD in 'MainCMD.pas';
+  MiscFunc in 'MiscFunc.pas';
 
 var
   useCustomServerPath: Boolean;
   customServerPath, pathKFGameIni, pathKFEngineIni, pathAcfSubFolder,
     pathAcfFile, Binaries, pathWorkshopCacheFolder, pathSteamAppCacheFolder,
     pathCmdTool, pathWorkshopSubItem, pathServerEXE: string;
-  kfItems: TKFItems;
+  serverTool: TKFServerTool;
   serverPath: string;
   configName: String = 'KFServerToolCMD.ini';
 
@@ -176,13 +179,13 @@ begin
     begin
       loadConfig;
       CheckServerPath;
-      kfItems := TKFItems.Create;
+      serverTool := TKFServerTool.Create;
       try
-        kfItems.SetKFApplicationPath(serverPath);
-        kfItems.SetkKFngineIniSubPath(pathKFEngineIni);
-        kfItems.SetKFGameIniSubPath(pathKFGameIni);
-        kfItems.SetKFServerPathEXE(pathServerEXE);
-        kfItems.appType := atGui;
+        serverTool.SetKFApplicationPath(serverPath);
+        serverTool.SetKFngineIniSubPath(pathKFEngineIni);
+        serverTool.SetKFGameIniSubPath(pathKFGameIni);
+        serverTool.SetKFServerPathEXE(pathServerEXE);
+        serverTool.appType := atGui;
 
         // ------------------------------------------------------------------- -AddMap
         if (LowerCase(ParamStr(1)) = '-addmap') then
@@ -196,7 +199,7 @@ begin
             raise Exception.Create('Addmap: Invalid ID');
           Writeln(' Starting...');
           Writeln(' Item ID: ' + itemID);
-          kfItems.NewItem(itemID, itemName, True, True, True, True, False);
+          serverTool.InstallWorkshopItem(itemID, itemName, True, True, True, True);
 
           Writeln(' Finished');
           Exit;
@@ -214,7 +217,7 @@ begin
 
           Writeln(' Starting...');
           Writeln(' Item ID: ' + itemID);
-          kfItems.NewItem(itemID, itemName, True, True, False, False, True);
+          serverTool.InstallWorkshopItem(itemID, itemName, True, True, False, False);
 
           Writeln(' Finished');
           Exit;
@@ -232,14 +235,13 @@ begin
 
           Writeln(' Starting...');
           Writeln(' Item ID: ' + itemID);
-          kfItems.LoadItems;
-          for i := 0 to High(kfItems.Items) do begin
-            if kfItems.Items[i].ID = itemID then begin
-              itemName := kfItems.Items[i].FileName;
+          serverTool.LoadItems;
+          for i := 0 to High(serverTool.Items) do begin
+            if serverTool.Items[i].ID = itemID then begin
+              itemName := serverTool.Items[i].FileName;
               Writeln(' Item Name: ' + itemName);
-              if kfItems.Items[i].IsMod then
-              kfItems.RemoveItem(itemName, itemID, False, False, True, True) else
-              kfItems.RemoveItem(itemName, itemID, True, True, True, True);
+
+              serverTool.RemoveItem(itemName, itemID, True, True, True, True, TKFSource.KFSteamWorkshop);
               Exit;
             end;
 
@@ -255,16 +257,16 @@ begin
 
           if ParamCount <> 1 then
             raise Exception.Create('addmod: Invalid arguments');
-          kfItems.LoadItems;
+          serverTool.LoadItems;
           Writeln(
             '----------------------------------------------------------------------------');
           Writeln(
             '   NAME                     /    ID     / SUBS. / M.ENTRY / M.CYCLE / CACHE');
           Writeln(
             '----------------------------------------------------------------------------');
-          for i := 0 to High(kfItems.Items) do
+          for i := 0 to High(serverTool.Items) do
           begin
-            with kfItems.Items[i] do
+            with serverTool.Items[i] do
             begin
               Writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID,
                   12) + TextForXchar(BoolToWord(ServerSubscribe),
@@ -284,15 +286,15 @@ begin
         if (LowerCase(ParamStr(1)) = '-listdetalied') then
         begin
 
-          kfItems.LoadItems;
+          serverTool.LoadItems;
 
-          for i := 0 to High(kfItems.Items) do
+          for i := 0 to High(serverTool.Items) do
           begin
 
-            with kfItems.Items[i] do
+            with serverTool.Items[i] do
             begin
-
-              if IsMod then
+            {
+              if servertool. IsMod then
               begin
                 Writeln('');
                 Writeln('Name:            ' + FileName);
@@ -301,7 +303,7 @@ begin
                 Writeln('In Server cache: ' + BoolToWord(ServerCache));
 
               end
-              else
+              else  }
               begin
                 Writeln('');
                 Writeln('Name:            ' + FileName);
@@ -321,7 +323,7 @@ begin
 
         Readln(serverPath);
       finally
-        kfItems.Free;
+        serverTool.Free;
       end;
 
     end;
