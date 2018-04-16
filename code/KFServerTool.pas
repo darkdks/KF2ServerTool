@@ -3,8 +3,8 @@ unit KFServerTool;
 interface
 
 uses
-  Windows, Classes, Dialogs, Forms, Controls,
-  SysUtils, KFFile, KFWksp, MiscFunc, IOUtils, ItemProgress, KFRedirect;
+  Classes, Controls,
+  SysUtils, KFFile, KFWksp, MiscFunc, IOUtils, KFRedirect;
 
 type
 
@@ -58,7 +58,6 @@ type
     KFServerPathEXE: string;
     GenerateLog: Boolean;
     appLanguage: TKFAppLanguage;
-    procedure CheckIfTheServerIsRunning;
     function GetIDIndex(ID: string): Integer;
     function GetModName(files: TStringList): string;
 
@@ -110,7 +109,10 @@ type
     procedure SetWebStatus(Status: Boolean);
     procedure SetKFngineIniSubPath(path: string);
     procedure SetKFAppLanguage(language: TKFAppLanguage);
+    function GetKFAppLanguage(): TKFAppLanguage;
+    procedure KillKFServer();
     procedure LogEvent(eventName: String; eventDescription: String);
+    function IsServerRunning: Boolean;
 
   const
     KFOfficialMaps: array [1 .. 21] of string = ('KF-BioticsLab.kfm',
@@ -203,7 +205,6 @@ var
   KFRedirect: TKFRedirect;
 begin
 
-  CheckIfTheServerIsRunning;
   result := False;
   AddedMapEntry := False;
   AddedMapCycle := False;
@@ -246,7 +247,6 @@ begin
         end;
 
         result := True;
-        Application.ProcessMessages;
 
       except
         on E: Exception do
@@ -430,7 +430,7 @@ var
   AddedMapCycle: Boolean;
   AddedWkspSub: Boolean;
 begin
-  CheckIfTheServerIsRunning;
+
   result := False;
   AddedMapEntry := False;
   AddedMapCycle := False;
@@ -483,7 +483,6 @@ begin
         end;
         LogEvent('Install workshop item', 'Finished job for item ' + ID);
         result := True;
-        Application.ProcessMessages;
 
       except
         on E: Exception do
@@ -632,8 +631,9 @@ begin
           files.Free;
         end;
       except
-        ShowMessage('Error loading folder: ' + directorys[I]
-            + ' of number ' + IntToStr(I) + '. Check this folder or delete.');
+        LogEvent('Error loading folder ',
+          directorys[I] + ' of number ' + IntToStr(I) +
+            '. Check this folder or delete.');
       end;
     end;
 
@@ -839,7 +839,7 @@ function TKFServerTool.ForceUpdate(itemID: String; IsMod: Boolean): Boolean;
 var
   wksp: TKFWorkshop;
 begin
-  CheckIfTheServerIsRunning;
+
   try
     wksp := TKFWorkshop.Create(kfApplicationPath);
     LogEvent('Force update',
@@ -884,47 +884,9 @@ begin
 
 end;
 
-procedure TKFServerTool.CheckIfTheServerIsRunning;
-var
-  warningText, serverRunning: string;
-  cmdOp: String;
+Function TKFServerTool.IsServerRunning(): Boolean;
 begin
-
-  warningText := 'You should close the server before make changes. ' + #13#10 +
-    'Do you wanna close it now?';
-  serverRunning := 'Server is running';
-
-  if ProcessExists(ExtractFileName(KFServerPathEXE)) then
-  begin
-
-    if appType = atCmd then
-    begin
-      Writeln(warningText);
-      Writeln(' YES/NO');
-      Readln(cmdOp);
-      if (LowerCase(cmdOp) = 'yes') or (LowerCase(cmdOp) = 'y') then
-        KillProcessByName(ExtractFileName(KFServerPathEXE));
-
-    end
-    else
-    begin
-
-      if appLanguage = KFL_PORTUGUESE then
-      begin
-        warningText :=
-          'Você precisa fechar o server antes de fazer alterações. ' + #13#10 +
-          'Fecha-lo agora??';
-        serverRunning := 'Server em execução';
-      end;
-
-      if Application.MessageBox(PWideChar(warningText),
-        PWideChar(serverRunning), MB_YESNO + MB_ICONWARNING) = IDYES then
-      begin
-        KillProcessByName(ExtractFileName(KFServerPathEXE));
-      end;
-
-    end;
-  end;
+  result := ProcessExists(ExtractFileName(KFServerPathEXE));
 end;
 
 function TKFServerTool.RemoveItem(itemName: string; itemID: string;
@@ -938,7 +900,6 @@ var
   egIniLoaded, gmIniLoaded: Boolean;
 
 begin
-  CheckIfTheServerIsRunning;
   result := False;
   LogEvent('Remove item', 'Item name ' + itemName + ' item id ' + itemID);
   case ItemSource of
@@ -1101,6 +1062,11 @@ begin
 
 end;
 
+procedure TKFServerTool.KillKFServer;
+begin
+  KillProcessByName(ExtractFileName(KFServerPathEXE));
+end;
+
 function TKFServerTool.InstallWorkshopManager(): Boolean;
 var
   egIni: TKFEngineIni;
@@ -1147,6 +1113,11 @@ end;
 procedure TKFServerTool.SetKFApplicationPath(path: string);
 begin
   kfApplicationPath := path;
+end;
+
+function TKFServerTool.GetKFAppLanguage: TKFAppLanguage;
+begin
+  result := appLanguage;
 end;
 
 function TKFServerTool.GetKFApplicationPath(): String;

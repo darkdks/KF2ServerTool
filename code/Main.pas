@@ -247,6 +247,7 @@ type
     procedure RedirectDownloadFinished();
     procedure alignControlAtoControlB(elementA, elementB: TControl);
     procedure checkAutoWebLoginRequirements;
+    procedure CheckIfTheServerIsRuning;
 
   var
     ActiveLV: TListView;
@@ -331,6 +332,7 @@ begin
 
         frmAdd := TFormAdd.Create(Self);
         try
+         CheckIfTheServerIsRuning;
           if isMod then
           begin
             frmAdd.SetAddType(TKFItemType.WorkshopItem);
@@ -348,6 +350,7 @@ begin
               progressForm.NextPBValue('Installing item ' + itemID);
               progressForm.Show;
               progressForm.tmrUndeterminedPB.Enabled := True;
+
               if serverTool.InstallWorkshopItem(frmAdd.edtID.Text,
                 frmAdd.ItemName, frmAdd.addWkspRedirect, frmAdd.downloadNow,
                 frmAdd.addMapCycle, frmAdd.addMapENtry) = false then
@@ -434,6 +437,7 @@ begin
         if mdResult = mrOk then
         begin
           progressForm := TformPB.Create(Self);
+           CheckIfTheServerIsRuning;
           try
             progressForm.NextPBValue('Installing item ' + itemID);
             progressForm.Show;
@@ -851,6 +855,7 @@ begin
       progressForm.SetPBMax(slItemsCount);
       progressForm.btncancel.Visible := True;
       progressForm.Show;
+       CheckIfTheServerIsRuning;
       try
         for i := 0 to High(selectedItems) do
         begin
@@ -1132,7 +1137,7 @@ begin
                 (IntToStr(i + 1) + '/' + IntToStr(slItems)
                   + ' Updating item ' + itemID);
             progressForm.Show;
-
+             CheckIfTheServerIsRuning;
             serverTool.ForceUpdate(itemID, false);
 
           end;
@@ -1399,22 +1404,54 @@ end;
 
 procedure TFormMain.Explorerlocalfolder1Click(Sender: TObject);
 var
-  itemsId: String;
   i: Integer;
   slItems: TLvSelectedItems;
+  itemPath: String;
 begin
-  itemsId := '';
   slItems := GetLVSelectedItems(ActiveLV);
 
   for i := 0 to High(slItems) do
   begin
-
-    itemsId := itemsId + slItems[i].SubItems[0] + ' ';
-
+    case slItems[i].GroupID  of
+    0:itemPath := serverTool.GetKFApplicationPath + TKFWorkshop.CServeCacheFolder + slItems[i].SubItems[0];
+    1: itemPath := serverTool.GetKFApplicationPath + serverTool.CLocalMapsSubFolder ;
+    2:itemPath := serverTool.GetKFApplicationPath + serverTool.CLocalMapsSubFolder ;
+    end;
+      ShellExecute(Application.Handle, 'open', 'explorer.exe',
+    PChar(itemPath), nil, SW_NORMAL);
   end;
 
 end;
 
+procedure TFormMain.CheckIfTheServerIsRuning();
+var
+  warningText, serverRunning: string;
+  cmdOp: String;
+begin
+
+  warningText := 'You should close the server before make changes. ' + #13#10 +
+    'Do you wanna close it now?';
+  serverRunning := 'Server is running';
+
+  if serverTool.IsServerRunning then
+  begin
+
+      if serverTool.GetKFAppLanguage = KFServerTool.KFL_PORTUGUESE then
+      begin
+        warningText :=
+          'Você precisa fechar o server antes de fazer alterações. ' + #13#10 +
+          'Fecha-lo agora??';
+        serverRunning := 'Server em execução';
+      end;
+
+      if Application.MessageBox(PWideChar(warningText),
+        PWideChar(serverRunning), MB_YESNO + MB_ICONWARNING) = IDYES then
+      begin
+       serverTool.KillKFServer();
+      end;
+
+  end;
+end;
 procedure TFormMain.Export1Click(Sender: TObject);
 var
   i: Integer;
@@ -2243,7 +2280,7 @@ begin
     ItemsCount := bkpFile.Count;
     frmReinstall := TFormAdd.Create(Self);
     try
-
+       CheckIfTheServerIsRuning;
       for i := 0 to bkpFile.Count - 1 do
       begin
         try
@@ -2288,6 +2325,7 @@ begin
 
               if (modalResult = mrOk) or (modalResult = mrAll) then
               begin
+
                 if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
                   frmReinstall.downloadNow, frmReinstall.addMapCycle,
@@ -2314,6 +2352,7 @@ begin
               modalResult := frmReinstall.ShowModal;
               if (modalResult = mrOk) then
               begin
+
                 if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
                   frmReinstall.downloadNow, frmReinstall.addMapCycle,
@@ -2407,6 +2446,7 @@ begin
         frmProgress.btncancel.Visible := True;
         frmProgress.Show;
         try
+          CheckIfTheServerIsRuning;
           serverTool.NewRedirectItem(DownURL, FileName, (DownURL <> ''),
             frmAdd.addMapCycle, frmAdd.addMapENtry, dlManager);
         finally
@@ -2630,10 +2670,12 @@ begin
 
       if messagedlg(lgText1, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
       begin
+
         progressForm := TformPB.Create(Self);
         progressForm.Show;
         progressForm.SetPBMax(slCount);
         try
+         CheckIfTheServerIsRuning;
           for i := 0 to High(slItems) do
           begin
 
@@ -2735,6 +2777,7 @@ begin
         progressForm.Show;
 
         try
+         CheckIfTheServerIsRuning;
           for i := 0 to High(slItems) do
           begin
 
@@ -2805,6 +2848,7 @@ begin
         progressForm.Show;
         progressForm.SetPBMax(slCount);
         try
+         CheckIfTheServerIsRuning;
           for i := 0 to High(slItems) do
           begin
 
@@ -2877,6 +2921,7 @@ begin
         progressForm.SetPBMax(slCount);
         progressForm.Show;
         try
+         CheckIfTheServerIsRuning;
           for i := 0 to High(slItems) do
           begin
             ItemName := slItems[i].Caption;
@@ -2949,6 +2994,7 @@ begin
         progressForm.Show;
         progressForm.SetPBMax(slCount);
         try
+         CheckIfTheServerIsRuning;
           for i := 0 to High(slItems) do
           begin
             progressForm.NextPBValue('Removing subcribe for item ' + itemID);

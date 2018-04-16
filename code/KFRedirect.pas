@@ -3,7 +3,7 @@ unit KFRedirect;
 interface
 
 uses
-  Windows, Classes, Forms, ShellAPI,
+   Classes,  ShellAPI,
   SysUtils, MiscFunc, MSHTML, ComObj, ActiveX, IDHttp, Variants,
   ComCtrls, StdCtrls, IdComponent, Dialogs;
 
@@ -167,7 +167,7 @@ begin
   try
     try
       if files.Count > 0 then
-        Result := ExplorerFileOp(files, '', FO_DELETE, True, Application.Handle)
+        Result := ExplorerFileOp(files, '', FO_DELETE, True, nil)
       else
         Result := True;
     finally
@@ -226,13 +226,13 @@ begin
     try
       IDoc.designMode := 'on';
       while IDoc.readyState <> 'complete' do
-        Application.ProcessMessages;
+
       v := VarArrayCreate([0, 0], VarVariant);
       v[0] := sHTMLFile;
       IDoc.write(PSafeArray(System.TVarData(v).VArray));
       IDoc.designMode := 'off';
       while IDoc.readyState <> 'complete' do
-        Application.ProcessMessages;
+
       Result.Text := IDoc.body.innerText;
     finally
       IDoc := nil;

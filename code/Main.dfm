@@ -229,6 +229,7 @@ object FormMain: TFormMain
       Top = 2
       Width = 129
       Height = 25
+      Hint = 'Reinstall an item, helpfull fix broken item or add some entrys'
       Margins.Left = 2
       Margins.Top = 4
       Margins.Right = 2
@@ -272,6 +273,8 @@ object FormMain: TFormMain
         000000000000000000000000000000000000908E8CFF8F8D8BFF908E8CFF0000
         00000000000000000000000000000000000000000000FFFFFF00}
       ParentDoubleBuffered = False
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 0
       OnClick = btnReinstallClick
     end
@@ -280,6 +283,9 @@ object FormMain: TFormMain
       Top = 2
       Width = 130
       Height = 25
+      Hint = 
+        'Update an item, just download and update the file, without touch' +
+        'ing the server settings (map cycle, map entry, subscribe)'
       Margins.Left = 2
       Margins.Top = 4
       Margins.Right = 2
@@ -315,6 +321,8 @@ object FormMain: TFormMain
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFCFCFBEBEAE8FFFFFFFFFFFFFFFFFFFFFFFF}
       ParentDoubleBuffered = False
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 1
       OnClick = btnUpdateClick
     end
@@ -328,7 +336,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tswebadmin
+    ActivePage = tsMaps
     Align = alClient
     TabOrder = 1
     OnChange = jvpgcntrl1Change
@@ -341,6 +349,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Server'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpStartServer: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -373,7 +385,7 @@ object FormMain: TFormMain
             Left = 6
             Top = 2
             Width = 41
-            Height = 69
+            Height = 17
             Margins.Left = 6
             Margins.Top = 2
             Margins.Right = 2
@@ -382,18 +394,20 @@ object FormMain: TFormMain
             Caption = 'Profile:'
             Color = clBlack
             ParentColor = False
-            ExplicitHeight = 17
           end
           object btnNewProfile: TButton
             Left = 49
             Top = 31
             Width = 61
             Height = 25
+            Hint = 'Create a new server profile'
             Margins.Left = 2
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
             Caption = 'New'
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 0
             OnClick = btnNewProfileClick
           end
@@ -402,11 +416,14 @@ object FormMain: TFormMain
             Top = 31
             Width = 74
             Height = 25
+            Hint = 'Rename current profile'
             Margins.Left = 2
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
             Caption = 'Rename'
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 1
             OnClick = btnRenameProfileClick
           end
@@ -415,11 +432,14 @@ object FormMain: TFormMain
             Top = 31
             Width = 69
             Height = 25
+            Hint = 'Delete current profile'
             Margins.Left = 2
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
             Caption = 'Delete'
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 2
             OnClick = btnDeleteProfileClick
           end
@@ -429,6 +449,7 @@ object FormMain: TFormMain
             Top = 2
             Width = 403
             Height = 25
+            Hint = 'Choose a profile with different options'
             Margins.Left = 2
             Margins.Top = 2
             Margins.Right = 162
@@ -492,7 +513,14 @@ object FormMain: TFormMain
             Top = 32
             Width = 196
             Height = 17
+            Hint = 
+              'Activating this option will make the webadmin open inside the to' +
+              'ol itself '#13#10'as soon as the server goes online. '#13#10'Note that for t' +
+              'his option to work correctly you must enable WebAdmin in options' +
+              ' tab.'
             Caption = 'Auto connect to web admin'
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 1
             OnClick = chkAutoConnectWebClick
           end
@@ -525,7 +553,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 6
               Top = 2
-              Width = 250
+              Width = 25
               Height = 17
               Margins.Left = 6
               Margins.Top = 2
@@ -535,7 +563,6 @@ object FormMain: TFormMain
               Caption = 'Map'
               Color = clBlack
               ParentColor = False
-              ExplicitWidth = 25
             end
             object cbbMap: TComboBox
               AlignWithMargins = True
@@ -675,7 +702,7 @@ object FormMain: TFormMain
             AlignWithMargins = True
             Left = 6
             Top = 2
-            Width = 608
+            Width = 131
             Height = 17
             Margins.Left = 6
             Margins.Top = 2
@@ -685,7 +712,6 @@ object FormMain: TFormMain
             Caption = 'Additional parameters'
             Color = clBlack
             ParentColor = False
-            ExplicitWidth = 131
           end
           object edtExtra: TEdit
             AlignWithMargins = True
@@ -924,6 +950,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Mods'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvMods: TListView
         Left = 0
         Top = 0
@@ -973,6 +1003,10 @@ object FormMain: TFormMain
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvUnknowed: TListView
         Left = 0
         Top = 0
@@ -1017,6 +1051,7 @@ object FormMain: TFormMain
         GridLines = True
         IconOptions.Arrangement = iaLeft
         LargeImages = il1
+        MultiSelect = True
         ReadOnly = True
         RowSelect = True
         PopupMenu = pmLV
@@ -1035,6 +1070,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Options'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1127,7 +1166,13 @@ object FormMain: TFormMain
             Top = 7
             Width = 89
             Height = 25
+            Hint = 
+              'This will enable redirect clients to download items from Worksho' +
+              'p. You must enable this option if you install maps and mods from' +
+              ' steam workshop.'
             Style = csDropDownList
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 2
             OnChange = cbWorkshopDMStatusChange
             Items.Strings = (
@@ -1147,8 +1192,15 @@ object FormMain: TFormMain
             Top = 129
             Width = 429
             Height = 28
+            Hint = 
+              'Enabling this option will cause WebAdmin to automatically log in' +
+              ' using the Admin'#39's username and the specified password. '#13#10'This o' +
+              'ption only takes effect if the * Auto connect to webadmin * is e' +
+              'nabled on the server profile tab.'
             Align = alCustom
-            Caption = 'Auto web admin  login using Admin pass'
+            Caption = 'Auto web admin login using Admin pass'
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 4
             OnClick = chkAutoLoginAdminClick
           end
@@ -1201,7 +1253,12 @@ object FormMain: TFormMain
             Top = 7
             Width = 88
             Height = 25
+            Hint = 
+              'Enable this option to setup a custom URL for redirect clients to' +
+              ' download items from the specified Redirect URL '
             Style = csDropDownList
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 1
             OnCloseUp = cbbRedirectEnabledCloseUp
             Items.Strings = (
@@ -1308,8 +1365,15 @@ object FormMain: TFormMain
           Top = 89
           Width = 429
           Height = 28
+          Hint = 
+            'Enable this option so that only items in PCServer-KFGame and PCS' +
+            'erver-KFEngine '#13#10'are shown in the maps and mods tab.'#13#10'This is us' +
+            'eful when you have multiple servers with multiple settings in th' +
+            'e same folder. '
           Align = alCustom
           Caption = 'Only display items from the current configuration file'
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 3
           OnClick = chkOnlyFromConfigItemsClick
         end
@@ -1357,7 +1421,12 @@ object FormMain: TFormMain
           Top = 46
           Width = 190
           Height = 25
+          Hint = 
+            'This will update the server to Current Version [no beta or previ' +
+            'ew version]'
           Caption = 'Current version'
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 0
           OnClick = btnCheckForUpdateClick
         end
@@ -1366,7 +1435,10 @@ object FormMain: TFormMain
           Top = 47
           Width = 179
           Height = 25
+          Hint = 'This will clean all downloaded items cache (KFGame/cache)'
           Caption = 'Clean download cache'
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 1
           OnClick = btnCleanDownloadCacheClick
         end
@@ -1375,7 +1447,10 @@ object FormMain: TFormMain
           Top = 77
           Width = 190
           Height = 25
+          Hint = 'This will update the server to Beta Preview version'
           Caption = 'Beta/Preview'
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 2
           OnClick = btnCheckForPreviewClick
         end
@@ -1384,7 +1459,13 @@ object FormMain: TFormMain
           Top = 78
           Width = 179
           Height = 25
+          Hint = 
+            'This will clean workshop data (Binaries\Win64\steamapps\workshop' +
+            '\content\232090)'#13#10'This is helpfull to force update in all maps a' +
+            'nd repair auto some broken items.'
           Caption = 'Clean workshop data '
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 3
           OnClick = btnCleanWorkshopDataClick
         end
@@ -1393,6 +1474,10 @@ object FormMain: TFormMain
     object tswebadmin: TTabSheet
       Caption = 'WebAdmin'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object wb1: TWebBrowser
         Left = 0
         Top = 0
@@ -1414,11 +1499,15 @@ object FormMain: TFormMain
     object tsNotes: TTabSheet
       Caption = 'Notes'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbl1: TLabel
         AlignWithMargins = True
         Left = 8
         Top = 8
-        Width = 646
+        Width = 52
         Height = 17
         Margins.Left = 8
         Margins.Top = 8
@@ -1426,13 +1515,12 @@ object FormMain: TFormMain
         Margins.Bottom = 0
         Align = alTop
         Caption = 'Notepad'
-        ExplicitWidth = 52
       end
       object lblAllChangesWillbe: TLabel
         AlignWithMargins = True
-        Left = 3
+        Left = 410
         Top = 462
-        Width = 644
+        Width = 237
         Height = 14
         Margins.Right = 9
         Align = alBottom
@@ -1445,8 +1533,6 @@ object FormMain: TFormMain
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitLeft = 410
-        ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
         AlignWithMargins = True
@@ -1467,6 +1553,10 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbl4: TLabel
         Left = 22
         Top = 27
@@ -1573,7 +1663,7 @@ object FormMain: TFormMain
     Left = 544
     Top = 8
     Bitmap = {
-      494C0101060020007C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106002000880110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000
@@ -1935,6 +2025,9 @@ object FormMain: TFormMain
     Top = 8
     object AddWorkshopMap: TMenuItem
       Caption = 'From Workshop Browser'
+      Hint = 
+        'Will open a workshop webbrowser that you can search a map or mod' +
+        ' to add'
       OnClick = AddWorkshopClick
     end
     object AddWorkshopIDorURL: TMenuItem
