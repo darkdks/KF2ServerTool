@@ -1,0 +1,4 @@
+theme: jekyll-theme-cayman
+title: [KF2ServerTool]
+description: [Easy way to add/remove/update maps in your Killing Floor 2 Dedicated Server]
+show_downloads: ["true"]
