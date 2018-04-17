@@ -2,30 +2,27 @@ program KF2ServerTool;
 
 uses
   Forms,
-  Main in 'Main.pas' {FormMain},
-  AddItem in 'AddItem.pas' {FormAdd},
-  Workshop in 'Workshop.pas' {FormWorkshop},
-  KFFile in 'KFFile.pas',
-  KFRedirect in 'KFRedirect.pas',
-  MiscFunc in 'MiscFunc.pas',
-  KFServerTool in 'KFServerTool.pas',
-  ItemProgress in 'ItemProgress.pas' {formPB},
-  frmDnt in 'frmDnt.pas' {frmDonate},
-  PathDialog in 'PathDialog.pas' {kfPathDialog},
-  Queue in 'Queue.pas' {frmQueue},
-  uRedirectItemsDialog in 'uRedirectItemsDialog.pas' {frmRedirectItemsDialog};
+  Main in 'interface\Main.pas' {FormMain},
+  AddItem in 'interface\AddItem.pas' {FormAdd},
+  Workshop in 'interface\Workshop.pas' {FormWorkshop},
+  KFFile in 'units\KFFile.pas',
+  KFRedirect in 'units\KFRedirect.pas',
+  MiscFunc in 'units\MiscFunc.pas',
+  KFServerTool in 'units\KFServerTool.pas',
+  ItemProgress in 'interface\ItemProgress.pas' {formPB},
+  frmDnt in 'interface\frmDnt.pas' {frmDonate},
+  PathDialog in 'interface\PathDialog.pas' {kfPathDialog},
+  Queue in 'interface\Queue.pas' {frmQueue},
+  uRedirectItemsDialog in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog},
+  KFWksp in 'units\KFWksp.pas';
 
 {$R *.res}
- {$R 'Manifest.res'}
+{$R 'Manifest.res' 'Manifest.rc'}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.Title := 'KF2 Server Tool';
   Application.CreateForm(TFormMain, FormMain);
-  Application.CreateForm(TfrmDonate, frmDonate);
-  Application.CreateForm(TkfPathDialog, kfPathDialog);
-  Application.CreateForm(TfrmQueue, frmQueue);
-  Application.CreateForm(TfrmRedirectItemsDialog, frmRedirectItemsDialog);
   Application.Run;
 end.

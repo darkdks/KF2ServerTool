@@ -4,15 +4,14 @@ program KF2ServerToolCMD;
 uses
   SysUtils,
   IniFiles,
-  {$IFDEF WIN32}
-    Forms,
-  {$ELSE}
-   {$ENDIF}
-  KFFile in 'KFFile.pas',
-  KFRedirect in 'KFRedirect.pas',
-  KFServerTool in 'KFServerTool.pas',
-  KFWksp in 'KFWksp.pas',
-  MiscFunc in 'MiscFunc.pas';
+{$IFDEF LINUX64}
+  LinuxUtils in 'units\LinuxUtils.pas',
+{$ENDIF }
+  KFFile in 'units\KFFile.pas',
+  KFRedirect in 'units\KFRedirect.pas',
+  KFServerTool in 'units\KFServerTool.pas',
+  KFWksp in 'units\KFWksp.pas',
+  MiscFunc in 'units\MiscFunc.pas';
 
 var
   useCustomServerPath: Boolean;
@@ -22,6 +21,7 @@ var
   serverTool: TKFServerTool;
   serverPath: string;
   configName: String = 'KFServerToolCMD.ini';
+  ApplicationPath: string;
 
 function loadConfig: Boolean;
 var
@@ -31,7 +31,7 @@ var
 begin
   Result := False;
 
-  iniPath := ExtractFilePath(Application.ExeName) + configName;
+  iniPath := ExtractFilePath(ApplicationPath) + configName;
   IniConfig := TIniFile.Create(iniPath);
   // Create if there's no config file
 
@@ -105,22 +105,22 @@ begin
     begin
 
       raise Exception.Create('Killing Floor 2 server not found.' + #13#10 +
-          'Check if the app is in server folder or the ' + configName +
-          ' is configured correctly.');
+        'Check if the app is in server folder or the ' + configName +
+        ' is configured correctly.');
     end;
   end
   else
   begin
 
-    if FileExists(ExtractFilePath(Application.ExeName) + pathServerEXE) then
+    if FileExists(ExtractFilePath(ApplicationPath) + pathServerEXE) then
     begin
-      serverPath := ExtractFilePath(Application.ExeName);
+      serverPath := ExtractFilePath(ApplicationPath);
     end
     else
     begin
       raise Exception.Create('Killing Floor 2 server not found.' + #13#10 +
-          'Check if the app is in server folder or the ' + configName +
-          ' is configured correctly.');
+        'Check if the app is in server folder or the ' + configName +
+        ' is configured correctly.');
     end;
   end;
 
@@ -131,7 +131,7 @@ var
   itemID, itemName: string;
 
 begin
-
+  ApplicationPath := ParamStr(0);
   try
     if (ParamCount <= 0) or (LowerCase(ParamStr(0)) = '-help') then
     begin
@@ -161,16 +161,11 @@ begin
       Writeln('    rme=<MapFileName> : Remove specified Map Entry');
       Writeln('    amc=<MapFileName> : Add specified Map In Map Cycle');
       Writeln('    rmc=<MapFileName> : Remove specified Map In Map Cycle');
-      Writeln(
-        '    adl=<WorkshopID>  : Download specified Workshop map or item to cache');
-      Writeln(
-        '    rdl=<WorkshopID>  : Remove specified Workshop map or item to cache'
-        );
+      Writeln('    adl=<WorkshopID>  : Download specified Workshop map or item to cache');
+      Writeln('    rdl=<WorkshopID>  : Remove specified Workshop map or item to cache');
       Writeln('');
-      Writeln(
-        '    Example: KF2ServerToolCMD -custom ame=KF-MyMap amc=KF-MyMap aws=1234567891');
-      Writeln(
-        '   (This will add just the map entry, the map in server cycle and workshop subscription.)');
+      Writeln('    Example: KF2ServerToolCMD -custom ame=KF-MyMap amc=KF-MyMap aws=1234567891');
+      Writeln('   (This will add just the map entry, the map in server cycle and workshop subscription.)');
       Writeln('');
       Writeln('-help : Show this message');
 
@@ -199,7 +194,8 @@ begin
             raise Exception.Create('Addmap: Invalid ID');
           Writeln(' Starting...');
           Writeln(' Item ID: ' + itemID);
-          serverTool.InstallWorkshopItem(itemID, itemName, True, True, True, True);
+          serverTool.InstallWorkshopItem(itemID, itemName, True, True,
+            True, True);
 
           Writeln(' Finished');
           Exit;
@@ -217,7 +213,8 @@ begin
 
           Writeln(' Starting...');
           Writeln(' Item ID: ' + itemID);
-          serverTool.InstallWorkshopItem(itemID, itemName, True, True, False, False);
+          serverTool.InstallWorkshopItem(itemID, itemName, True, True,
+            False, False);
 
           Writeln(' Finished');
           Exit;
@@ -236,17 +233,19 @@ begin
           Writeln(' Starting...');
           Writeln(' Item ID: ' + itemID);
           serverTool.LoadItems;
-          for i := 0 to High(serverTool.Items) do begin
-            if serverTool.Items[i].ID = itemID then begin
+          for i := 0 to High(serverTool.Items) do
+          begin
+            if serverTool.Items[i].ID = itemID then
+            begin
               itemName := serverTool.Items[i].FileName;
               Writeln(' Item Name: ' + itemName);
 
-              serverTool.RemoveItem(itemName, itemID, True, True, True, True, TKFSource.KFSteamWorkshop);
+              serverTool.RemoveItem(itemName, itemID, True, True, True, True,
+                TKFSource.KFSteamWorkshop);
               Exit;
             end;
 
           end;
-
 
           Writeln(' Finished');
           Exit;
@@ -258,27 +257,23 @@ begin
           if ParamCount <> 1 then
             raise Exception.Create('addmod: Invalid arguments');
           serverTool.LoadItems;
-          Writeln(
-            '----------------------------------------------------------------------------');
-          Writeln(
-            '   NAME                     /    ID     / SUBS. / M.ENTRY / M.CYCLE / CACHE');
-          Writeln(
-            '----------------------------------------------------------------------------');
+          Writeln('----------------------------------------------------------------------------');
+          Writeln('   NAME                     /    ID     / SUBS. / M.ENTRY / M.CYCLE / CACHE');
+          Writeln('----------------------------------------------------------------------------');
           for i := 0 to High(serverTool.Items) do
           begin
             with serverTool.Items[i] do
             begin
-              Writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID,
-                  12) + TextForXchar(BoolToWord(ServerSubscribe),
-                  8) + TextForXchar(BoolToWord(MapEntry), 8) + TextForXchar
-                  (BoolToWord(MapCycleEntry), 9) + TextForXchar
-                  (BoolToWord(ServerCache), 8));
+              Writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID, 12) +
+                TextForXchar(BoolToWord(ServerSubscribe), 8) +
+                TextForXchar(BoolToWord(MapEntry), 8) +
+                TextForXchar(BoolToWord(MapCycleEntry), 9) +
+                TextForXchar(BoolToWord(ServerCache), 8));
 
             end;
           end;
 
-          Writeln(
-            '----------------------------------------------------------------------------');
+          Writeln('----------------------------------------------------------------------------');
           Exit;
         end;
         // ------------------------------------------------------------------ -listdetalied
@@ -293,17 +288,18 @@ begin
 
             with serverTool.Items[i] do
             begin
-            {
-              if servertool. IsMod then
-              begin
+
+              {
+                if servertool. IsMod then
+                begin
                 Writeln('');
                 Writeln('Name:            ' + FileName);
                 Writeln('ID:              ' + ID);
                 Writeln('Subscribed:      ' + BoolToWord(ServerSubscribe));
                 Writeln('In Server cache: ' + BoolToWord(ServerCache));
 
-              end
-              else  }
+                end
+                else }
               begin
                 Writeln('');
                 Writeln('Name:            ' + FileName);
