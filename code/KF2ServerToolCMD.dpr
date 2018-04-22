@@ -15,9 +15,7 @@ uses
 
 var
   useCustomServerPath: Boolean;
-  customServerPath, pathKFGameIni, pathKFEngineIni, pathAcfSubFolder,
-    pathAcfFile, Binaries, pathWorkshopCacheFolder, pathSteamAppCacheFolder,
-    pathCmdTool, pathWorkshopSubItem, pathServerEXE: string;
+  customServerPath, pathKFGameIni, pathKFEngineIni, pathAcfSubFolder, pathCmdTool, pathServerEXE: string;
   serverTool: TKFServerTool;
   serverPath: string;
   configName: String = 'KFServerToolCMD.ini';
@@ -39,23 +37,26 @@ begin
   begin
     with IniConfig do
     begin
+      writeln('Ini file not found, writing default config file in: ' + iniPath);
+     {$IFDEF DEBUG}
+      WriteBool('PATHS', 'UseCustomServerPath', True);
+      WriteString('PATHS', 'CustomServerPath', '/home/darkdks/KF2Server');
+     {$ELSE}
       WriteBool('PATHS', 'UseCustomServerPath', False);
       WriteString('PATHS', 'CustomServerPath', 'CHANGE_ME_FOR_CUSTOM_PATH');
+     {$ENDIF}
+{$IFDEF LINUX64}
+      WriteString('PATHS', 'ServerEXE',
+        '/Binaries/Win64/KFGameSteamServer.bin.x86_64');
+      WriteString('PATHS', 'SteamCmdTool', 'steamcmd');
+      WriteString('PATHS', 'KFGameIni', 'KFGame/Config/LinuxServer-KFGame.ini');
+      WriteString('PATHS', 'KFEngineIni', 'KFGame/Config/LinuxServer-KFEngine.ini');
+{$ELSE}
       WriteString('PATHS', 'KFGameIni', 'KFGame\Config\PCServer-KFGame.ini');
-      WriteString('PATHS', 'KFEngineIni',
-        'KFGame\Config\PCServer-KFEngine.ini');
-      WriteString('PATHS', 'AcfSubFolder',
-        'Binaries\Win64\steamapps\workshop\');
-      WriteString('PATHS', ' AcfFile',
-        'Binaries\Win64\steamapps\workshop\content\232090');
-      WriteString('PATHS', 'WorkshopCacheFolder',
-        'Binaries\Win64\steamapps\workshop\content\232090');
-      WriteString('PATHS', 'SteamAppCacheFolder', 'Binaries\Win64');
-      WriteString('PATHS', 'SteamCmdTool', 'STEAMCMD\SteamCmd.exe');
-      WriteString('PATHS', 'WorkshopSubItems',
-        'steamapps\workshop\content\232090');
+      WriteString('PATHS', 'KFEngineIni', 'KFGame\Config\PCServer-KFEngine.ini');
       WriteString('PATHS', 'ServerEXE', 'Binaries\win64\kfserver.exe');
-
+      WriteString('PATHS', 'SteamCmdTool', 'STEAMCMD\SteamCmd.exe');
+{$ENDIF}
     end;
 
   end;
@@ -67,23 +68,26 @@ begin
       useCustomServerPath := ReadBool('PATHS', 'UseCustomServerPath', False);
       customServerPath := ReadString('PATHS', 'CustomServerPath',
         'CHANGE_ME_FOR_CUSTOM_PATH');
+{$IFDEF LINUX64}
+      pathCmdTool := ReadString('PATHS', 'SteamCmdTool', 'steamcmd');
+      pathServerEXE := ReadString('PATHS', 'ServerEXE',
+        '/Binaries/Win64/KFGameSteamServer.bin.x86_64');
       pathKFGameIni := ReadString('PATHS', 'KFGameIni',
-        'KFGame\Config\PCServer-KFGame.ini');
+        'KFGame/Config/LinuxServer-KFGame.ini');
       pathKFEngineIni := ReadString('PATHS', 'KFEngineIni',
-        'KFGame\Config\PCServer-KFEngine.ini');
-      pathAcfSubFolder := ReadString('PATHS', 'AcfSubFolder',
-        'Binaries\Win64\steamapps\workshop\');
-      pathAcfFile := ReadString('PATHS', ' AcfFile', 'appworkshop_232090.acf');
-      pathWorkshopCacheFolder := ReadString('PATHS', 'WorkshopCacheFolder',
-        'Binaries\Win64\steamapps\workshop\content\232090');
-      pathSteamAppCacheFolder := ReadString('PATHS', 'SteamAppCacheFolder',
-        'Binaries\Win64');
+        'KFGame/Config/LinuxServer-KFEngine.ini');
+{$ELSE}
+
       pathCmdTool := ReadString('PATHS', 'SteamCmdTool',
         'STEAMCMD\SteamCmd.exe');
-      pathWorkshopSubItem := ReadString('PATHS', 'WorkshopSubItems',
-        'steamapps\workshop\content\232090');
       pathServerEXE := ReadString('PATHS', 'ServerEXE',
         'Binaries\win64\kfserver.exe');
+      pathKFGameIni := ReadString('PATHS', 'KFGameIni',
+        'KFGame' + PathDelim + 'Config' + PathDelim + 'PCServer-KFGame.ini');
+      pathKFEngineIni := ReadString('PATHS', 'KFEngineIni',
+        'KFGame' + PathDelim + 'Config' + PathDelim +
+        'PCServer-KFEngine.ini');
+{$ENDIF}
     end;
     Result := True;
   finally
@@ -135,7 +139,10 @@ begin
   try
     if (ParamCount <= 0) or (LowerCase(ParamStr(0)) = '-help') then
     begin
-      Writeln('KF2ServerToolCMD 1.5');
+      Writeln('KF2ServerToolCMD 2.0 Alpha');
+{$IFDEF LINUX64}
+      Writeln('Linux Version');
+{$ENDIF }
       Writeln('  Usage:');
       Writeln('  KF2ServerToolCMD -option agurment=value');
       Writeln('  Example:');
@@ -180,7 +187,8 @@ begin
         serverTool.SetKFngineIniSubPath(pathKFEngineIni);
         serverTool.SetKFGameIniSubPath(pathKFGameIni);
         serverTool.SetKFServerPathEXE(pathServerEXE);
-        serverTool.appType := atGui;
+        serverTool.SetSteamCmdPath(pathCmdTool);
+      //  serverTool.GenerateLog := True;
 
         // ------------------------------------------------------------------- -AddMap
         if (LowerCase(ParamStr(1)) = '-addmap') then
@@ -317,13 +325,13 @@ begin
           Exit;
         end;
 
-        Readln(serverPath);
+        Writeln('KF2ServerTool fineshed. Wrong param?');
       finally
         serverTool.Free;
       end;
 
     end;
-
+    // Readln(serverPath);
     { TODO -oUser -cConsole Main : Insert code here }
   except
     on E: Exception do

@@ -3,11 +3,12 @@ unit MiscFunc;
 interface
 
 uses
-{$IFDEF WIN32}
+{$IFDEF MSWINDOWS}
   WinProcs,
   TlHelp32, ShellAPI,
   Forms,
 {$ELSE}
+  LinuxUtils,
 {$ENDIF}
   SysUtils, Classes,
   IOUtils, Types;
@@ -27,22 +28,19 @@ function CleanInt(Text: string): string;
 function GetAllFilesSubDirectory(path: string; filter: string): TStringList;
 function WorkshopURLtoID(URL: string): string;
 function TextForXchar(Text: String; numberOfChars: Integer): string;
-function ListDir(path: string): TStringList;
 function CreateNewFolderInto(path, FolderName: String): String;
 
-//Functions to work with linux compability
-procedure ExecuteFile(path: string; Arguments: String);
-function ExecuteFileAndWait(hWnd: Cardinal; filename: string; Parameters: string;
-  ShowWindows: Integer): Boolean;
-function ExplorerFileOp(Source: TStringList; Destination: String;
-  Operation: Cardinal; Silent: Boolean; Handle: THandle): Boolean;
+// Functions to work with linux compability
+function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
+  Parameters: string; ShowWindows: Integer): Boolean;
+function FileOperation(Source: TStringList; Destination: String;
+  Operation: Cardinal): Boolean;
 function ProcessExists(ProcessName: string): Boolean;
 Function KillProcessByName(ExeName: String): Boolean;
-
+function ListDir(path: string): TStringList;
 
 implementation
 
-// -------------------------- STRING FUNCTIONS ---------------------------------
 function GetAllFilesSubDirectory(path: string; filter: string): TStringList;
 var
   Files: TStringDynArray;
@@ -60,6 +58,45 @@ begin
     end;
   end;
 end;
+
+function ListDir(path: string): TStringList;
+{var
+  SR: TSearchRec;
+begin
+  Result := TStringList.Create;
+
+  if SysUtils.FindFirst(path + '*.*', faAnyFile, SR) = 0 then
+  begin
+    repeat
+
+      If ((SR.Attr and faDirectory) <> 0) and (SR.Name <> '.')and (SR.Name <> '..') then
+      begin
+        Result.Add(SR.Name);
+      end;
+
+    until FindNext(SR) <> 0;
+    SysUtils.FindClose(SR);
+  end;
+
+}
+var
+  Folders: TStringDynArray;
+  i: Integer;
+begin
+  Result := TStringList.Create;
+  if DirectoryExists(path) then
+  begin
+
+    Folders := TDirectory.GetDirectories(path);
+    for i := 0 to High(Folders) do
+    begin
+    Result.Add(ExtractFileName(Folders[i]));
+
+    end;
+  end;
+
+end;
+
 
 function WordToBool(Word: String): Boolean;
 begin
@@ -154,34 +191,15 @@ begin
   Result := '';
   for i := 0 to numberOfChars do
   begin
-    if i <= length(Text) then
+    if (i <= length(Text)) and (length(Text) > 0) then
       Result := Result + Text[i]
     else
       Result := Result + ' ';
   end;
 
 end;
-function ListDir(path: string): TStringList;
-var
-  SR: TSearchRec;
-begin
-  Result := TStringList.Create;
 
-  if SysUtils.FindFirst(path + '*.*', faAnyFile, SR) = 0 then
-  begin
-    repeat
 
-      If ((SR.Attr and faDirectory) <> 0) and (SR.Name <> '.') and
-        (SR.Name <> '..') then
-      begin
-        Result.Add(SR.Name);
-      end;
-
-    until FindNext(SR) <> 0;
-    SysUtils.FindClose(SR);
-  end;
-
-end;
 
 function CreateNewFolderInto(path, FolderName: String): String;
 
@@ -190,9 +208,9 @@ var
   FullPath: String;
 begin
   Result := '';
-  path := IncludeTrailingBackslash(path);
-  FolderName := ExcludeTrailingBackslash(FolderName);
-  FullPath := IncludeTrailingBackslash(path) + FolderName;
+  path := IncludeTrailingPathDelimiter(path);
+  FolderName := ExcludeTrailingPathDelimiter(FolderName);
+  FullPath := IncludeTrailingPathDelimiter(path) + FolderName;
 
   if DirectoryExists(FullPath) then
   begin
@@ -222,6 +240,7 @@ begin
   end;
 
 end;
+
 function CleanText(Text: string): string;
 var
   i: Integer;
@@ -259,48 +278,11 @@ end;
 
 // ------------------------- FILE EXECUTATION -----------------------------------
 
-procedure ExecuteFile(path: string; Arguments: String);
-{$IFDEF WIN32}
-Var
-  filename, FilePath: string;
-  WState: Integer;
-  WHandle: hWnd;
-begin
-
-  filename := ExtractFileName(path);
-  FilePath := ExtractFilePath(path);
-  WHandle := HWND_MESSAGE; // verify
-  WState := SW_SHOWMAXIMIZED;
-  if FileExists(path) then
-  begin
-    if Arguments <> '' then
-    begin
-      ShellExecute(WHandle, PChar('Open'), PChar(filename), nil,
-        PChar(FilePath), WState);
-    end
-    else
-    begin
-      ShellExecute(WHandle, PChar('Open'), PChar(filename), PChar(Arguments),
-        PChar(FilePath), WState);
-    end;
-  end
-  else
-  begin
-
-  end;
-
-end;
- {$ELSE}
-begin
-      raise Exception.Create('No implemented yet');
-end;
-{$ENDIF}
-
-
-function ExecuteFileAndWait(hWnd: Cardinal; filename: string; Parameters: string;
-  ShowWindows: Integer): Boolean;
-{$IFDEF WIN32}
-  var
+function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
+  Parameters: string; ShowWindows: Integer): Boolean;
+{$IFDEF MSWINDOWS}
+// Windows API
+var
   sei: TShellExecuteInfo;
   ExitCode: DWORD;
 begin
@@ -335,73 +317,172 @@ begin
 
   end;
 end;
- {$ELSE}
+
+{$ELSE}
+
+// Linux
+var
+  linuxUt: TLinuxUtils;
 begin
-  raise Exception.Create('No implemented yet');
-  Result := False;
+
+  linuxUt := TLinuxUtils.Create;
+  try
+
+{$IFDEF DEBUG}
+    writeln('DBG: ' + 'Linux execute file started');
+{$ENDIF}
+    linuxUt.RunCommandLine(filename + ' ' + Parameters, (
+      procedure(rStr: String)
+      begin
+{$IFDEF DEBUG}
+        writeln('DBG: ' + rStr)
+{$ENDIF}
+      end));
+  finally
+    FreeAndNil(linuxUt);
+  end;
+  Result := True;
+{$IFDEF DEBUG}
+  writeln('DBG: ' + 'Linux execute file finshed');
+{$ENDIF}
 end;
 {$ENDIF}
 
+function FileOperation(Source: TStringList; Destination: String;
+Operation: Cardinal): Boolean;
+var
+  i: Integer;
+begin
+  Result := False;
+  case Operation of
+    1: // FO_MOVE
+      begin
+        for i := 0 to Source.Count - 1 do
+        begin
 
-function ExplorerFileOp(Source: TStringList; Destination: String;
-  Operation: Cardinal; Silent: Boolean; Handle: THandle): Boolean;
- {$IFDEF WIN32}
+          if FileExists(Source[i]) then
+          begin
+            IOUtils.TFile.Move(Source[i], Destination);
+            Sleep(500);
+            Result := FileExists(Destination);
+          end
+          else
+          begin
+            if DirectoryExists(Source[i]) then
+            begin
+              IOUtils.TDirectory.Move(Source[i], Destination);
+              Sleep(500);
+              Result := DirectoryExists(Destination);
+            end;
+          end;
+        end;
+      end;
+    2: // FO_COPY:
+      begin
+        for i := 0 to Source.Count - 1 do
+        begin
+          if FileExists(Source[i]) then
+          begin
+            IOUtils.TFile.Copy(Source[i], Destination);
+            Sleep(500);
+            Result := FileExists(Destination);
+          end
+          else
+          begin
+            if DirectoryExists(Source[i]) then
+            begin
+              IOUtils.TDirectory.Copy(Source[i], Destination);
+              Sleep(500);
+              Result := DirectoryExists(Destination);
+            end;
+          end;
+        end;
+
+      end;
+    3: // FO_DELETE:
+      begin
+
+        for i := 0 to Source.Count - 1 do
+        begin
+          if FileExists(Source[i]) then
+          begin
+            Result := DeleteFile(Source[i]);
+          end
+          else
+          begin
+            if DirectoryExists(Source[i]) then
+            begin
+              TDirectory.Delete(Source[i], True);
+              Sleep(100);
+              Result := DirectoryExists(Source[i]) = False;
+            end;
+          end;
+        end;
+
+      end;
+    4: // FO_RENAME:
+      begin
+        for i := 0 to Source.Count - 1 do
+        begin
+          Result := RenameFile(Source[i], Destination);
+
+        end;
+      end
+  else
+    raise Exception.Create('No implemented operation');
+  end;
+
+end;
+{ function ExplorerFileOp(Source: TStringList; Destination: String;
+  Operation: UINT; Silent: Boolean; Handle: THandle): Boolean;
   var
   FileOP: TSHFileOpStruct;
   i: Integer;
   StrFrom, StrTo: string;
-begin
+  begin
   ZeroMemory(@FileOP, SizeOf(FileOP));
   StrTo := '';
   StrFrom := '';
   FileOP.Wnd := Handle;
   if Silent then
-    FileOP.fFlags := FOF_SILENT + FOF_NOCONFIRMATION;
+  FileOP.fFlags := FOF_SILENT + FOF_NOCONFIRMATION;
   for i := 0 to Source.Count - 1 do
-    StrFrom := StrFrom + Source[i] + #0;
+  StrFrom := StrFrom + Source[i] + #0;
   StrFrom := StrFrom + #0;
   StrTo := Destination;
 
   case Operation of
-    1: //FO_MOVE
-      begin
-        FileOP.wFunc := FO_MOVE;
-        FileOP.pFrom := PWideChar(StrFrom);
-        FileOP.pTo := PWideChar(StrTo);
-      end;
-    2://FO_COPY:
-      begin
-        FileOP.wFunc := FO_COPY;
-        FileOP.pFrom := PWideChar(StrFrom);
-        FileOP.pTo := PWideChar(StrTo);
-      end;
-    3://FO_DELETE:
-      begin
-        FileOP.wFunc := FO_DELETE;
-        FileOP.pFrom := PWideChar(StrFrom);
-      end;
-    4://FO_RENAME:
-      begin
-        FileOP.wFunc := FO_RENAME;
-        FileOP.pFrom := PWideChar(StrFrom);
-        FileOP.pTo := PWideChar(StrTo);
-      end;
+  FO_MOVE:
+  begin
+  FileOP.wFunc := FO_MOVE;
+  FileOP.pFrom := PWideChar(StrFrom);
+  FileOP.pTo := PWideChar(StrTo);
+  end;
+  FO_COPY:
+  begin
+  FileOP.wFunc := FO_COPY;
+  FileOP.pFrom := PWideChar(StrFrom);
+  FileOP.pTo := PWideChar(StrTo);
+  end;
+  FO_DELETE:
+  begin
+  FileOP.wFunc := FO_DELETE;
+  FileOP.pFrom := PWideChar(StrFrom);
+  end;
+  FO_RENAME:
+  begin
+  FileOP.wFunc := FO_RENAME;
+  FileOP.pFrom := PWideChar(StrFrom);
+  FileOP.pTo := PWideChar(StrTo);
+  end;
   end;
 
   Result := (0 = ShFileOperation(FileOP));
 
-end;
- {$ELSE}
-begin
-   raise Exception.Create('No implemented yet');
-    Result := False;
-end;
-{$ENDIF}
-
+  end; }
 
 function ProcessExists(ProcessName: string): Boolean;
-{$IFDEF WIN32}
-
+{$IFDEF MSWINDOWS}
 var
   ContinueLoop: Bool;
   FSnapshotHandle: THandle;
@@ -432,14 +513,31 @@ begin
 
 end;
 {$ELSE}
+
+var
+  processText: TStringList;
+  linuxUt: TLinuxUtils;
 begin
-   raise Exception.Create('No implemented yet');
-    Result := False;
+
+  processText := TStringList.Create;
+  linuxUt := TLinuxUtils.Create;
+  try
+    linuxUt.RunCommandLine('ps -aux | less', (
+      procedure(rStr: String)
+      begin
+        processText.Add(rStr);
+      end));
+
+  finally
+    FreeAndNil(linuxUt);
+  end;
+  Result := Pos(ProcessName, processText.Text) > 0;
 end;
+
 {$ENDIF}
 
 Function KillProcessByName(ExeName: String): Boolean;
-{$IFDEF WIN32}
+{$IFDEF MSWINDOWS}
 var
 
   ContinueLoop: Bool;
@@ -469,9 +567,11 @@ begin
 
 end;
 {$ELSE}
+
 begin
-   raise Exception.Create('No implemented yet');
-    Result := False;
+  ExecuteFileAndWait(0, 'pkill', ExeName, 0);
+  // options: killall /v exename ,kill $(pgrep irssi), kill `ps -ef | grep irssi | grep -v grep | awk ‘{print $2}’`
+  Result := True;
 end;
 {$ENDIF}
 

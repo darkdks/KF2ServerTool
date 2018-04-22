@@ -56,6 +56,7 @@ type
     kfEngineIniSubPath: string;
     kfApplicationPath: string;
     KFServerPathEXE: string;
+    SteamCmdPath: string;
     GenerateLog: Boolean;
     appLanguage: TKFAppLanguage;
     function GetIDIndex(ID: string): Integer;
@@ -79,6 +80,7 @@ type
     function GetCustomRedirect: string;
     function GetGameCycle(): TStringList;
     function GetKFApplicationPath(): string;
+    function GetSteamCmdPath(): String;
     function GetMapName(ID: string): string;
     function GetWebPort(): Integer;
     function GetWebPass(): string;
@@ -104,6 +106,7 @@ type
     procedure SetKFApplicationPath(path: string);
     procedure SetKFGameIniSubPath(path: string);
     procedure SetKFServerPathEXE(path: string);
+    procedure SetSteamCmdPath(path: String);
     procedure SetKFWebIniSubPath(path: string);
     procedure SetWebPort(Port: Integer);
     procedure SetWebStatus(Status: Boolean);
@@ -115,7 +118,7 @@ type
     function IsServerRunning: Boolean;
 
   const
-    KFOfficialMaps: array [1 .. 21] of string = ('KF-BioticsLab.kfm',
+    KF_OFFICIALMAPS: array [1 .. 21] of string = ('KF-BioticsLab.kfm',
       'KF-BlackForest.kfm', 'KF-BurningParis.kfm', 'KF-Catacombs.kfm',
       'KF-ContainmentStation.kfm', 'KF-DieSector.kfm',
       'KF-EvacuationPoint.kfm', 'KF-Farmhouse.kfm', 'KF-HostileGrounds.kfm',
@@ -124,7 +127,8 @@ type
       'KF-PowerCore_Holdout.kfm', 'KF-Prison.kfm', 'KF-TheDescent.kfm',
       'KF-TragicKingdom.kfm', 'KF-ZedLanding.kfm', 'KF-VolterManor.kfm');
 
-    CLocalMapsSubFolder = 'KFGame\BrewedPC\Maps\';
+    KF_LOCALMAPSSUBFOLDER = 'KFGame' + PathDelim + 'BrewedPC' + PathDelim + 'Maps' + PathDelim;
+    KF_SERVERCACHEFOLDER  = 'KFGame' + PathDelim + 'Cache'+ PathDelim;
   end;
 
 implementation
@@ -221,7 +225,7 @@ begin
           KFRedirect := TKFRedirect.Create;
           try
             ItemDownloaded := KFRedirect.downloadFile(downURL,
-              kfApplicationPath + CLocalMapsSubFolder +
+              kfApplicationPath + KF_LOCALMAPSSUBFOLDER +
                 itemName, dlManager);
             if not ItemDownloaded then
               raise Exception.Create
@@ -278,6 +282,7 @@ var
 begin
   result := False;
   wksp := TKFWorkshop.Create(kfApplicationPath);
+  wksp.steamCmdTool := SteamCmdPath;
   try
     wksp.RemoveAcfReference(ID, True);
     ItemDownloaded := wksp.DownloadWorkshopItem(ID);
@@ -328,6 +333,7 @@ var
 begin
   result := False;
   wksp := TKFWorkshop.Create(kfApplicationPath);
+  wksp.steamCmdTool := SteamCmdPath;
   try
     result := wksp.CreateBlankACFFile;
   finally
@@ -341,8 +347,9 @@ var
 begin
   result := '';
   wksp := TKFWorkshop.Create(kfApplicationPath);
+  wksp.steamCmdTool := SteamCmdPath;
   try
-    result := wksp.GetMapName(kfApplicationPath + wksp.CServeCacheFolder + ID,
+    result := wksp.GetMapName(kfApplicationPath + KF_SERVERCACHEFOLDER + ID,
       False);
   finally
     wksp.Free
@@ -358,8 +365,10 @@ begin
   try
     if gmIni.LoadFile(kfApplicationPath + kfGameIniSubPath) then
     begin
-      if gmIni.AddMapCycle(Name) then
+      if gmIni.AddMapCycle(Name) then begin
         gmIni.SaveFile(kfApplicationPath + kfGameIniSubPath);
+         Result := True;
+      end;
     end;
   finally
     gmIni.Free;
@@ -375,8 +384,10 @@ begin
   try
     if gmIni.LoadFile(kfApplicationPath + kfGameIniSubPath) then
     begin
-      if gmIni.AddMapEntry(name) then
+      if gmIni.AddMapEntry(name) then begin
         gmIni.SaveFile(kfApplicationPath + kfGameIniSubPath);
+        result := True;
+      end;
     end;
   finally
     gmIni.Free;
@@ -459,7 +470,7 @@ begin
           begin
             Name := GetMapName(ID);
             LogEvent('Install workshop item',
-              'Item ' + ID + ' downloaded' + 'with name ' + Name);
+              'Item ' + ID + ' downloaded with name ' + Name);
           end;
         end;
 
@@ -555,7 +566,7 @@ begin
 
   // Directoy
   result := False;
-  directorys := ListDir(kfApplicationPath + TKFWorkshop.CServeCacheFolder);
+  directorys :=  ListDir(kfApplicationPath + KF_SERVERCACHEFOLDER);
   egIni := TKFEngineIni.Create;
   gmIni := TKFGameIni.Create;
 
@@ -576,8 +587,8 @@ begin
     for I := 0 to directorys.Count - 1 do
     begin
       try
-        ItemFolder := kfApplicationPath + TKFWorkshop.CServeCacheFolder +
-          directorys[I] + '\';
+        ItemFolder := kfApplicationPath + KF_SERVERCACHEFOLDER +
+          directorys[I] + PathDelim;
         files := GetAllFilesSubDirectory(ItemFolder, '*.*');
 
         try
@@ -660,7 +671,7 @@ begin
 
     // Local and redirect maps
     try
-      ItemFolder := kfApplicationPath + CLocalMapsSubFolder;
+      ItemFolder := kfApplicationPath + KF_LOCALMAPSSUBFOLDER;
       files := GetAllFilesSubDirectory(ItemFolder, '*.*');
 
       try
@@ -717,6 +728,9 @@ var
   logFile: TStringList;
   logPath: String;
 begin
+  {$IFDEF DEBUG}
+  Writeln(eventName + ' ' + eventDescription);
+  {$ENDIF}
   if GenerateLog = False then
     Exit;
 
@@ -750,6 +764,11 @@ begin
       result := TPath.GetFileNameWithoutExtension(files[I]);
     end;
   end;
+end;
+
+function TKFServerTool.GetSteamCmdPath: String;
+begin
+Result := SteamCmdPath;
 end;
 
 function TKFServerTool.GetWebPass: string;
@@ -842,6 +861,7 @@ begin
 
   try
     wksp := TKFWorkshop.Create(kfApplicationPath);
+    wksp.steamCmdTool := SteamCmdPath;
     LogEvent('Force update',
       'Forcing update item for item id ' + itemID + ', is mod = ' + BoolToWord
         (IsMod));
@@ -983,7 +1003,7 @@ begin
       else
       begin
         wksp := TKFWorkshop.Create(kfApplicationPath);
-
+        wksp.steamCmdTool := SteamCmdPath;
         try
           LogEvent('Remove item', 'Removing ACF reference');
           wksp.RemoveAcfReference(itemID, True);
@@ -1014,7 +1034,7 @@ begin
         try
           LogEvent('Remove item', 'Deleting redirect file cache');
           redirect.removeFile(itemName + '.kfm',
-            kfApplicationPath + CLocalMapsSubFolder, True);
+            kfApplicationPath + KF_LOCALMAPSSUBFOLDER, True);
         finally
           redirect.Free;
         end;
@@ -1034,9 +1054,9 @@ var
   I: Integer;
 begin
   result := False;
-  for I := 1 to High(KFOfficialMaps) do
+  for I := 1 to High(KF_OFFICIALMAPS) do
   begin
-    if UpperCase(mapName) = UpperCase(KFOfficialMaps[I]) then
+    if UpperCase(mapName) = UpperCase(KF_OFFICIALMAPS[I]) then
     begin
       result := True;
       Break;
@@ -1215,6 +1235,11 @@ end;
 procedure TKFServerTool.SetKFWebIniSubPath(path: string);
 begin
   kfWebIniSubPath := path;
+end;
+
+procedure TKFServerTool.SetSteamCmdPath(path: String);
+begin
+SteamCmdPath := path;
 end;
 
 procedure TKFServerTool.GetKFServerPathEXE(path: string);

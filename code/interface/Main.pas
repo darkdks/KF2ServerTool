@@ -13,7 +13,7 @@ uses
   JvCombobox, JvEdit, IdBaseComponent,
   IdTCPConnection, IdTCPClient, IdComponent, ImgList, OleCtrls, JvExControls,
   JvColorBox, JvExStdCtrls, JvExComCtrls, IdHTTP, MSHTML, Variants, SHDocVw,
-  FileCtrl, ItemProgress, KFRedirect;
+  FileCtrl, ItemProgress, KFRedirect, System.ImageList;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -221,13 +221,14 @@ type
     procedure FromRedirect1Click(Sender: TObject);
     procedure btn6Click(Sender: TObject);
     procedure edtExtraEnter(Sender: TObject);
-    procedure wb1DocumentComplete(ASender: TObject; const pDisp: IDispatch;
-      var URL: OleVariant);
+
     procedure Export1Click(Sender: TObject);
     procedure FromList1Click(Sender: TObject);
     procedure Explorerlocalfolder1Click(Sender: TObject);
     procedure edtWebPassExit(Sender: TObject);
     procedure chkAutoLoginAdminClick(Sender: TObject);
+    procedure wb1DocumentComplete(ASender: TObject; const pDisp: IDispatch;
+      const URL: OleVariant);
 
   private
     function loadConfig: Boolean;
@@ -260,9 +261,8 @@ type
     { Private declarations }
   public
   var
-    pathKFGameIni, pathKFEngineIni, pathKFWebIni, pathAcfFile,
-      pathWorkshopCacheFolder, pathSteamAppCacheFolder, pathCmdTool,
-      pathAcfSubFolder, pathWorkshopSubItem, customServerPath,
+    pathKFGameIni, pathKFEngineIni, pathKFWebIni,
+       pathCmdTool, customServerPath,
       pathServerEXE: string;
     useCustomServerPath, AutoConnectWeb, appMaximized: Boolean;
     onlyFromConfigItems: Boolean;
@@ -674,7 +674,7 @@ begin
       else
         serverpath := ExtractFilePath(Application.ExeName);
       DeleteFolder.Add(serverpath + 'KFGame\Cache\');
-      ExplorerFileOp(DeleteFolder, '', FO_DELETE, True, Application.handle);
+      FileOperation(DeleteFolder, '', FO_DELETE);
     finally
       DeleteFolder.Free;
     end;
@@ -707,7 +707,7 @@ begin
         serverpath := ExtractFilePath(Application.ExeName);
       DeleteFolder.Add(serverpath +
           'Binaries\Win64\steamapps\workshop\content\232090');
-      ExplorerFileOp(DeleteFolder, '', FO_DELETE, True, Application.handle);
+      FileOperation(DeleteFolder, '', FO_DELETE);
       serverTool.CreateBlankACFFile;
     finally
       DeleteFolder.Free;
@@ -1412,9 +1412,9 @@ begin
   for i := 0 to High(slItems) do
   begin
     case slItems[i].GroupID  of
-    0:itemPath := serverTool.GetKFApplicationPath + TKFWorkshop.CServeCacheFolder + slItems[i].SubItems[0];
-    1: itemPath := serverTool.GetKFApplicationPath + serverTool.CLocalMapsSubFolder ;
-    2:itemPath := serverTool.GetKFApplicationPath + serverTool.CLocalMapsSubFolder ;
+    0:itemPath := serverTool.GetKFApplicationPath + TKFWorkshop.WKP_CACHEFOLDER + slItems[i].SubItems[0];
+    1: itemPath := serverTool.GetKFApplicationPath + serverTool.KF_LOCALMAPSSUBFOLDER ;
+    2:itemPath := serverTool.GetKFApplicationPath + serverTool.KF_LOCALMAPSSUBFOLDER ;
     end;
       ShellExecute(Application.Handle, 'open', 'explorer.exe',
     PChar(itemPath), nil, SW_NORMAL);
@@ -2112,6 +2112,7 @@ begin
   serverTool.SetKFGameIniSubPath(pathKFGameIni);
   serverTool.SetKFServerPathEXE(pathServerEXE);
   serverTool.SetKFWebIniSubPath(pathKFWebIni);
+  serverTool.SetSteamCmdPath(serverpath + pathCmdTool);
   serverTool.appType := atGui;
   LoadItensToLv('');
   LoadServerProfile();
@@ -3077,18 +3078,8 @@ begin
           'KFGame\Config\PCServer-KFGame.ini');
         pathKFEngineIni := ReadString('PATHS', 'KFEngineIni',
           'KFGame\Config\PCServer-KFEngine.ini');
-        pathAcfSubFolder := ReadString('PATHS', 'AcfSubFolder',
-          'Binaries\Win64\steamapps\workshop\');
-        pathAcfFile := ReadString('PATHS', ' AcfFile',
-          'appworkshop_232090.acf');
-        pathWorkshopCacheFolder := ReadString('PATHS', 'WorkshopCacheFolder',
-          'Binaries\Win64\steamapps\workshop\content\232090');
-        pathSteamAppCacheFolder := ReadString('PATHS', 'SteamAppCacheFolder',
-          'Binaries\Win64');
         pathCmdTool := ReadString('PATHS', 'SteamCmdTool',
           'STEAMCMD\SteamCmd.exe');
-        pathWorkshopSubItem := ReadString('PATHS', 'WorkshopSubItems',
-          'steamapps\workshop\content\232090');
         pathServerEXE := ReadString('PATHS', 'ServerEXE',
           'Binaries\win64\kfserver.exe');
         regCount := ReadInteger('GERAL', 'ProfileCount', 1);
@@ -3154,12 +3145,7 @@ begin
         WriteString('PATHS', 'KFWebIni', pathKFWebIni);
         WriteString('PATHS', 'KFGameIni', pathKFGameIni);
         WriteString('PATHS', 'KFEngineIni', pathKFEngineIni);
-        WriteString('PATHS', 'AcfSubFolder', pathAcfSubFolder);
-        WriteString('PATHS', ' AcfFile', pathAcfFile);
-        WriteString('PATHS', 'WorkshopCacheFolder', pathWorkshopCacheFolder);
-        WriteString('PATHS', 'SteamAppCacheFolder', pathSteamAppCacheFolder);
         WriteString('PATHS', 'SteamCmdTool', pathCmdTool);
-        WriteString('PATHS', 'WorkshopSubItems', pathWorkshopSubItem);
         WriteString('PATHS', 'ServerEXE', pathServerEXE);
         WriteInteger('GERAL', 'ProfileCount', Length(kfprofiles));
         WriteInteger('GERAL', 'DefaultProfileID', defaultProfile);
@@ -3362,6 +3348,19 @@ begin
 
 end;
 
+procedure TFormMain.wb1DocumentComplete(ASender: TObject;
+  const pDisp: IDispatch; const URL: OleVariant);
+begin
+  if autoLoginWebAdmin then
+  begin
+
+    if URL = 'http://127.0.0.1:' + edtPort.Text + '/ServerAdmin/' then
+      autoLoginWb;
+
+  end;
+
+end;
+
 procedure TFormMain.alignControlAtoControlB(elementA, elementB: TControl);
 begin
   try
@@ -3374,17 +3373,6 @@ begin
   end;
 end;
 
-procedure TFormMain.wb1DocumentComplete(ASender: TObject;
-  const pDisp: IDispatch; var URL: OleVariant);
-begin
-  if autoLoginWebAdmin then
-  begin
 
-    if URL = 'http://127.0.0.1:' + edtPort.Text + '/ServerAdmin/' then
-      autoLoginWb;
-
-  end;
-
-end;
 
 end.

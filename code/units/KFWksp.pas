@@ -3,7 +3,7 @@ unit KFWksp;
 interface
 
 uses
-   Classes,
+  Classes,
   SysUtils, MiscFunc, IOUtils;
 
 type
@@ -14,7 +14,7 @@ type
   private
   var
     svPath: string;
-
+    FsteamCmdTool: string;
   public
   var
 
@@ -29,27 +29,38 @@ type
     function GetMapName(MapFolder: string; withExt: Boolean): string;
     function GetItemType(itemFolder: string): TKFItemType;
     function CreateBlankACFFile: Boolean;
+    property steamCmdTool: string read FsteamCmdTool write FsteamCmdTool;
 
   const
-    CAcfFile = 'appworkshop_232090.acf';
-    CWorkshopCacheFolder = 'Binaries\Win64\steamapps\workshop\content\232090';
-    CSteamAppCacheFolder = 'Binaries\Win64';
-    CServeCacheFolder = 'KFGame\Cache\';
-    cMapPrefix = '.KFM';
-    cModPrefix1 = '.U';
-    cModPrefix2 = '.UPX';
-    cModPrefix3 = '.UC';
-    cStCmdTool = 'STEAMCMD\SteamCmd.exe';
-    cStCmdLogin = '+login anonymous ';
-    cStCmdInstallDir = ' +force_install_dir ';
-    cStCmdWkspItem = ' +workshop_download_item 232090 ';
-    cStCmdValidate = ' validate ';
-    cStCmdExit = ' +exit';
-    cAcfSubFolder = 'Binaries\Win64\steamapps\workshop\';
-    cWorkshopSubItem = 'steamapps\workshop\content\232090';
+    // KF2 File types prefix
+    KF_MAPPREFIX = '.KFM';
+    KF_MODPREFIX: array [1 .. 3] of string = ('.U', '.UPX', '.UC');
+
+    // Workshop files paths and names
+    WKP_ACFFILENAME = 'appworkshop_232090.acf';
+{$IFDEF LINUX64}
+    WKP_ACFFILEFOLDER = 'Binaries/Win64/steamapps/workshop/';
+    WKP_CACHEFOLDER = 'Binaries/Win64/steamapps/workshop/content/232090';
+    STEAMAPPCACHEFOLDER = 'Binaries/Win64';
+    SERVERCACHEFOLDER = 'KFGame/Cache/';
+    WORKSHOPSUBITEM = 'steamapps/workshop/content/232090';
+{$ELSE}
+    WKP_ACFFILEFOLDER = 'Binaries\Win64\steamapps\workshop\';
+    WKP_CACHEFOLDER = 'Binaries\Win64\steamapps\workshop\content\232090';
+    STEAMAPPCACHEFOLDER = 'Binaries\Win64';
+    SERVERCACHEFOLDER = 'KFGame\Cache\';
+    WORKSHOPSUBITEM = 'steamapps\workshop\content\232090';
+{$ENDIF}
+    // SteamCmdTool commands
+    ST_LOGIN = '+login anonymous ';
+    ST_INSTALLDIR = '+force_install_dir';
+    ST_WKPITEM = '+workshop_download_item 232090';
+    ST_VALIDADE = 'validate';
+    ST_EXIT = '+exit';
     FO_DELETE = 3;
     SW_HIDE = 2;
     FO_COPY = 2;
+
   end;
 
 implementation
@@ -68,9 +79,8 @@ var
 begin
   source := TStringList.Create;
   try
-    source.Add(svPath + CWorkshopCacheFolder + '\' + ID + '\');
-    Result := ExplorerFileOp(source, svPath + CServeCacheFolder, FO_COPY, True,
-      0);
+    source.Add(svPath + WKP_CACHEFOLDER + PathDelim + ID + PathDelim);
+    Result := FileOperation(source, svPath + SERVERCACHEFOLDER + ID, FO_COPY);
 
   finally
     source.Free;
@@ -78,8 +88,14 @@ begin
 end;
 
 constructor TKFWorkshop.Create(serverPath: string);
+
 begin
   svPath := serverPath;
+{$IFDEF LINUX64}
+  steamCmdTool := 'steamcmd';
+{$ELSE}
+  steamCmdTool := serverPath + 'STEAMCMD\steamcmd.exe';
+{$ENDIF}
 end;
 
 destructor TKFWorkshop.Destroy;
@@ -95,13 +111,13 @@ begin
   Result := False;
   wkspacf := TStringList.Create;
   try
-    if DirectoryExists(svPath + cAcfSubFolder) = False then
-      ForceDirectories(PWideChar(svPath + cAcfSubFolder));
-    wkspacf.SaveToFile(svPath + cAcfSubFolder + CAcfFile);
+    if DirectoryExists(svPath + WKP_ACFFILEFOLDER) = False then
+      ForceDirectories(PWideChar(svPath + WKP_ACFFILEFOLDER));
+    wkspacf.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
   finally
     wkspacf.Free;
   end;
-  if FileExists(svPath + cAcfSubFolder + CAcfFile) then
+  if FileExists(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME) then
     Result := True;
 
 end;
@@ -113,19 +129,18 @@ var
   ItemType: TKFItemType;
 begin
   ItemType := KFUnknowed;
-  if (svPath <> '') = False then
+  if (svPath = '') then
   begin
     raise Exception.Create('ERROR: No server path found');
     Exit;
   end;
 
-  paramStCmd := cStCmdLogin + cStCmdInstallDir +
-    StrEmAspas(svPath + CSteamAppCacheFolder) + cStCmdWkspItem + ID +
-    cStCmdExit;
-  if ExecuteFileAndWait(0, svPath + cStCmdTool, paramStCmd,
-    SW_HIDE) then
+  paramStCmd := ST_LOGIN + ' '+ ST_INSTALLDIR + ' ' +
+    StrEmAspas(svPath + STEAMAPPCACHEFOLDER) + ' ' + ST_WKPITEM + ' ' + ID + ' '+ ST_EXIT;
+
+  if ExecuteFileAndWait(0, steamCmdTool, paramStCmd, SW_HIDE) then
   begin
-    itemSteamAppFolder := svPath + CWorkshopCacheFolder + '\' + ID + '\';
+    itemSteamAppFolder := svPath + WKP_CACHEFOLDER + PathDelim + ID + PathDelim;
     ItemType := GetItemType(itemSteamAppFolder);
     if (ItemType = KFMap) or (ItemType = KFmod) then
     begin
@@ -152,7 +167,7 @@ begin
   Result := '';
   try
 
-    mapsFound := GetAllFilesSubDirectory(MapFolder, '*' + cMapPrefix);
+    mapsFound := GetAllFilesSubDirectory(MapFolder, '*' + KF_MAPPREFIX);
     try
       if mapsFound.Count > 0 then
       begin
@@ -187,8 +202,8 @@ begin
       begin
 
         ext := UpperCase(ExtractFileExt(ItemsFound[i]));
-        if (ext = cModPrefix1) or (ext = cModPrefix2) or (ext = cModPrefix3)
-        then
+        if (ext = KF_MODPREFIX[1]) or (ext = KF_MODPREFIX[2]) or
+          (ext = KF_MODPREFIX[3]) then
         begin
 
           Result := KFmod;
@@ -197,7 +212,7 @@ begin
         else
         begin
 
-          if ext = cMapPrefix then
+          if ext = KF_MAPPREFIX then
           begin
             Result := KFMap;
             Break;
@@ -226,9 +241,9 @@ begin
   Result := False;
   acfFile := TStringList.Create;
   try
-    if FileExists(svPath + cAcfSubFolder + CAcfFile) then
+    if FileExists(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME) then
     begin
-      acfFile.LoadFromFile(svPath + cAcfSubFolder + CAcfFile);
+      acfFile.LoadFromFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
       i := 0;
 
       while i <= acfFile.Count - 1 do
@@ -259,7 +274,7 @@ begin
         end;
       end;
 
-      acfFile.SaveToFile(svPath + cAcfSubFolder + CAcfFile);
+      acfFile.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
     end
     else
     begin
@@ -280,15 +295,15 @@ begin
 
     DeleteFolder := TStringList.Create;
     try
-      DeleteFolder.Add(svPath + CServeCacheFolder + ID);
-      Result := ExplorerFileOp(DeleteFolder, '', FO_DELETE, True,
-       0);
+      DeleteFolder.Add(svPath + SERVERCACHEFOLDER + ID);
+      Result := FileOperation(DeleteFolder, '', FO_DELETE);
     finally
       DeleteFolder.Free;
     end;
   except
 
   end;
+
 end;
 
 function TKFWorkshop.RemoveWorkshoItemCache(ID: string): Boolean;
@@ -300,10 +315,9 @@ begin
 
     DeleteFolder := TStringList.Create;
     try
-      DeleteFolder.Add(svPath + CSteamAppCacheFolder + '\' + cWorkshopSubItem +
-        '\' + ID);
-      Result := ExplorerFileOp(DeleteFolder, '', FO_DELETE, True,
-        0);
+      DeleteFolder.Add(svPath + STEAMAPPCACHEFOLDER + PathDelim +
+        WORKSHOPSUBITEM + PathDelim + ID);
+      Result := FileOperation(DeleteFolder, '', FO_DELETE);
     finally
       DeleteFolder.Free;
     end;

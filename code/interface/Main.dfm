@@ -236,7 +236,6 @@ object FormMain: TFormMain
       Margins.Bottom = 4
       Align = alCustom
       Caption = 'Reinstall item'
-      DoubleBuffered = True
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
         2000000000000004000000000000000000000000000000000000000000000000
@@ -272,7 +271,6 @@ object FormMain: TFormMain
         0000000000008C8A88ED8D8B89B00000000000000000FFFFFF00000000000000
         000000000000000000000000000000000000908E8CFF8F8D8BFF908E8CFF0000
         00000000000000000000000000000000000000000000FFFFFF00}
-      ParentDoubleBuffered = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
@@ -292,7 +290,6 @@ object FormMain: TFormMain
       Margins.Bottom = 4
       Align = alCustom
       Caption = 'Update item'
-      DoubleBuffered = True
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
         18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -320,7 +317,6 @@ object FormMain: TFormMain
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFE6E5E1E1E1DFDAD4D3FFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFCFCFBEBEAE8FFFFFFFFFFFFFFFFFFFFFFFF}
-      ParentDoubleBuffered = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
@@ -863,7 +859,6 @@ object FormMain: TFormMain
             HeaderAlign = taLeftJustify
             FooterAlign = taLeftJustify
             TitleImage = -1
-            ExtendedImage = -1
           end
           item
             Header = 'Official'
@@ -872,7 +867,6 @@ object FormMain: TFormMain
             HeaderAlign = taLeftJustify
             FooterAlign = taLeftJustify
             TitleImage = -1
-            ExtendedImage = -1
           end
           item
             Header = 'Redirect or local'
@@ -881,7 +875,6 @@ object FormMain: TFormMain
             HeaderAlign = taLeftJustify
             FooterAlign = taLeftJustify
             TitleImage = -1
-            ExtendedImage = -1
           end>
         IconOptions.Arrangement = iaLeft
         LargeImages = il1
@@ -1040,6 +1033,31 @@ object FormMain: TFormMain
             Width = 85
           end>
         GridLines = True
+        Groups = <
+          item
+            Header = 'Workshop'
+            GroupID = 0
+            State = [lgsNormal]
+            HeaderAlign = taLeftJustify
+            FooterAlign = taLeftJustify
+            TitleImage = -1
+          end
+          item
+            Header = 'Official'
+            GroupID = 1
+            State = [lgsNormal]
+            HeaderAlign = taLeftJustify
+            FooterAlign = taLeftJustify
+            TitleImage = -1
+          end
+          item
+            Header = 'Redirect or local'
+            GroupID = 2
+            State = [lgsNormal]
+            HeaderAlign = taLeftJustify
+            FooterAlign = taLeftJustify
+            TitleImage = -1
+          end>
         IconOptions.Arrangement = iaLeft
         LargeImages = il1
         MultiSelect = True
@@ -1134,6 +1152,7 @@ object FormMain: TFormMain
             Width = 89
             Height = 25
             TabOrder = 0
+            Text = ''
             OnExit = edtPortExit
           end
           object cbStatusWeb: TJvComboBox
@@ -1143,6 +1162,7 @@ object FormMain: TFormMain
             Height = 25
             Style = csDropDownList
             TabOrder = 1
+            Text = ''
             OnChange = cbStatusWebChange
             Items.Strings = (
               'Disabled'
@@ -1161,6 +1181,7 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 2
+            Text = ''
             OnChange = cbWorkshopDMStatusChange
             Items.Strings = (
               'Disabled'
@@ -1172,6 +1193,7 @@ object FormMain: TFormMain
             Width = 138
             Height = 25
             TabOrder = 3
+            Text = ''
             OnExit = edtWebPassExit
           end
           object chkAutoLoginAdmin: TCheckBox
@@ -1233,6 +1255,7 @@ object FormMain: TFormMain
             Align = alCustom
             Constraints.MaxWidth = 700
             TabOrder = 0
+            Text = ''
             OnExit = edtRedirectURLExit
           end
           object cbbRedirectEnabled: TJvComboBox
@@ -1247,6 +1270,7 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 1
+            Text = ''
             OnCloseUp = cbbRedirectEnabledCloseUp
             Items.Strings = (
               'Disabled'
@@ -1342,6 +1366,7 @@ object FormMain: TFormMain
           Height = 25
           Style = csDropDownList
           TabOrder = 2
+          Text = ''
           OnChange = cbbLanguageChange
           Items.Strings = (
             'English'
@@ -1641,7 +1666,7 @@ object FormMain: TFormMain
     Left = 544
     Top = 8
     Bitmap = {
-      494C010106002000900110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101060020009C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000

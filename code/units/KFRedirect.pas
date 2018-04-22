@@ -40,7 +40,6 @@ type
     FileDAbort: ^Boolean;
     constructor Create();
     destructor Destroy; override;
-  published
 
   end;
 
@@ -172,7 +171,7 @@ begin
   try
     try
       if files.Count > 0 then
-        Result := ExplorerFileOp(files, '', 3{FO_DELETE}, True, 0)
+        Result := FileOperation(files, '', 3{FO_DELETE})
       else
         Result := True;
     finally

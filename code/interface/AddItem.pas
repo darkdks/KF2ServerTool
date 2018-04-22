@@ -327,6 +327,29 @@ begin
         btnOk.Enabled := true;
       end;
 
+
+     UnknowedWorkshopItem:
+      begin
+        pnlWorkshopID.Visible := true;
+        pnlRedirectURL.Visible := false;
+        pnl3.Visible := false;
+        Self.Caption := 'Reinstall Unknowed item';
+        chkDownloadItem.Checked := true;
+        chkDownloadItem.Visible := true;
+
+        chkAddWorkshopRedirect.Checked := true;
+        chkAddWorkshopRedirect.Visible := true;
+
+        chkAddMapEntry.Checked := true;
+        chkAddMapEntry.Visible := true;
+
+        chkAddMapCycle.Checked := true;
+        chkAddMapCycle.Visible := true;
+        edtID.Enabled := false;
+
+        btnOk.Enabled := true;
+        Exit;
+      end;
     OfficialItem:
       begin
         pnlWorkshopID.Visible := false;
