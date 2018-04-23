@@ -385,6 +385,7 @@ begin
           if Length(itemID) < 6 then
             raise Exception.Create('Addmap: Invalid ID');
           addMap(itemID);
+          Exit;
         end;
         // ------------------------------------------------------------------ -AddMod
         if option = '-addmod' then
@@ -476,7 +477,7 @@ begin
           Exit;
         end;
 
-        writeln('KF2ServerTool fineshed. Wrong param?');
+        writeln('KF2ServerTool finished. Wrong param?');
       finally
         serverTool.Free;
       end;

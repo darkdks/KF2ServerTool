@@ -389,12 +389,12 @@ begin
   linuxUt := TLinuxUtils.Create;
   Result := TStringList.Create;
   try
-    linuxUt.RunCommandLine(filename + ' ' + Parameters, (
+    linuxUt.RunCommandLine(Acmd + ' ' + AParam, (
       procedure(rStr: String)
       begin
-       result.add(rStr);
+       //result.add(rStr);
        return(rStr);
-       if abortExe then abort;
+      // if abortExe then abort;
 
       end));
   finally

@@ -17,6 +17,16 @@
             <Overwrite>True</Overwrite>
             <Required>True</Required>
         </DeployFile>
+        <DeployFile Include="KF2ServerToolCMD" Condition="'$(Config)'=='Release'">
+            <RemoteDir>KF2ServerToolCMD\</RemoteDir>
+            <RemoteName>KF2ServerToolCMD</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='Android'"/>
 </Project>
