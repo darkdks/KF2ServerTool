@@ -53,7 +53,7 @@ type
       AWorkCountMax: Int64);
 
   var
-    svPath: string;
+
     downloadManager: TKFRedirectDownloadManager;
 
   public

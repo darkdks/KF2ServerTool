@@ -6,6 +6,7 @@ uses
 {$IFDEF MSWINDOWS}
   WinProcs,
   TlHelp32, ShellAPI,
+  JclSysUtils,
   Forms,
 {$ELSE}
   LinuxUtils,
@@ -15,6 +16,19 @@ uses
 
 type
   TWordTriple = Array [0 .. 2] of Word;
+{$IFDEF MSWINDOWS}
+
+  TExecuteCmdCallBack = class
+  public
+    procedure executeCallBack(const Text: string);
+
+  var
+    ProcCallBack: TProc<String>;
+    executeResult: TStringList;
+    constructor Create;
+    destructor Destroy; override;
+  end;
+{$ENDIF}
 
 function WordToBool(Word: String): Boolean;
 function FormatByteSize(const bytes: Int64): string;
@@ -38,6 +52,8 @@ function FileOperation(Source: TStringList; Destination: String;
 function ProcessExists(ProcessName: string): Boolean;
 Function KillProcessByName(ExeName: String): Boolean;
 function ListDir(path: string): TStringList;
+function ExecuteTerminalProcess(Acmd: String; AParam: string;
+  var abortExe: Boolean; Return: TProc<String>): TStringList;
 
 implementation
 
@@ -60,22 +76,22 @@ begin
 end;
 
 function ListDir(path: string): TStringList;
-{var
+{ var
   SR: TSearchRec;
-begin
+  begin
   Result := TStringList.Create;
 
   if SysUtils.FindFirst(path + '*.*', faAnyFile, SR) = 0 then
   begin
-    repeat
+  repeat
 
-      If ((SR.Attr and faDirectory) <> 0) and (SR.Name <> '.')and (SR.Name <> '..') then
-      begin
-        Result.Add(SR.Name);
-      end;
+  If ((SR.Attr and faDirectory) <> 0) and (SR.Name <> '.')and (SR.Name <> '..') then
+  begin
+  Result.Add(SR.Name);
+  end;
 
-    until FindNext(SR) <> 0;
-    SysUtils.FindClose(SR);
+  until FindNext(SR) <> 0;
+  SysUtils.FindClose(SR);
   end;
 
 }
@@ -90,13 +106,12 @@ begin
     Folders := TDirectory.GetDirectories(path);
     for i := 0 to High(Folders) do
     begin
-    Result.Add(ExtractFileName(Folders[i]));
+      Result.Add(ExtractFileName(Folders[i]));
 
     end;
   end;
 
 end;
-
 
 function WordToBool(Word: String): Boolean;
 begin
@@ -198,8 +213,6 @@ begin
   end;
 
 end;
-
-
 
 function CreateNewFolderInto(path, FolderName: String): String;
 
@@ -345,6 +358,71 @@ begin
 {$IFDEF DEBUG}
   writeln('DBG: ' + 'Linux execute file finshed');
 {$ENDIF}
+end;
+{$ENDIF}
+
+function ExecuteTerminalProcess(Acmd: String; AParam: string;
+var abortExe: Boolean; Return: TProc<String>): TStringList;
+{$IFDEF MSWINDOWS}
+var
+  outlineCallBack: TExecuteCmdCallBack;
+begin
+  Result := TStringList.Create;
+  outlineCallBack := TExecuteCmdCallBack.Create;
+  outlineCallBack.ProcCallBack := Return;
+  outlineCallBack.executeResult := Result;
+  try
+    JclSysUtils.Execute(Acmd + ' ' + AParam, outlineCallBack.executeCallBack,
+      False, @abortExe, ppNormal);
+
+  finally
+    FreeAndNil(outlineCallBack);
+  end;
+
+end;
+{$ELSE}
+// Linux
+var
+  linuxUt: TLinuxUtils;
+begin
+
+  linuxUt := TLinuxUtils.Create;
+  Result := TStringList.Create;
+  try
+    linuxUt.RunCommandLine(filename + ' ' + Parameters, (
+      procedure(rStr: String)
+      begin
+       result.add(rStr);
+       return(rStr);
+       if abortExe then abort;
+
+      end));
+  finally
+    FreeAndNil(linuxUt);
+  end;
+end;
+{$ENDIF}
+
+
+{$IFDEF MSWINDOWS}
+
+constructor TExecuteCmdCallBack.Create;
+begin
+
+end;
+
+destructor TExecuteCmdCallBack.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TExecuteCmdCallBack.executeCallBack(const Text: string);
+begin
+  if Assigned(ProcCallBack) then
+    ProcCallBack(Text);
+  if Assigned(executeResult) then
+    executeResult.Add(Text);
 end;
 {$ENDIF}
 
@@ -574,5 +652,6 @@ begin
   Result := True;
 end;
 {$ENDIF}
+{ TExecuteCmdCallBack }
 
 end.

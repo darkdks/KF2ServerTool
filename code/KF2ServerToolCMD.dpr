@@ -3,7 +3,7 @@ program KF2ServerToolCMD;
 
 uses
   SysUtils,
-  IniFiles,
+  IniFiles, StrUtils,
 {$IFDEF LINUX64}
   LinuxUtils in 'units\LinuxUtils.pas',
 {$ENDIF }
@@ -15,7 +15,8 @@ uses
 
 var
   useCustomServerPath: Boolean;
-  customServerPath, pathKFGameIni, pathKFEngineIni, pathAcfSubFolder, pathCmdTool, pathServerEXE: string;
+  customServerPath, pathKFGameIni, pathKFEngineIni,
+    pathCmdTool, pathServerEXE: string;
   serverTool: TKFServerTool;
   serverPath: string;
   configName: String = 'KFServerToolCMD.ini';
@@ -38,22 +39,24 @@ begin
     with IniConfig do
     begin
       writeln('Ini file not found, writing default config file in: ' + iniPath);
-     {$IFDEF DEBUG}
+{$IFDEF DEBUG}
       WriteBool('PATHS', 'UseCustomServerPath', True);
       WriteString('PATHS', 'CustomServerPath', '/home/darkdks/KF2Server');
-     {$ELSE}
+{$ELSE}
       WriteBool('PATHS', 'UseCustomServerPath', False);
       WriteString('PATHS', 'CustomServerPath', 'CHANGE_ME_FOR_CUSTOM_PATH');
-     {$ENDIF}
+{$ENDIF}
 {$IFDEF LINUX64}
       WriteString('PATHS', 'ServerEXE',
         '/Binaries/Win64/KFGameSteamServer.bin.x86_64');
       WriteString('PATHS', 'SteamCmdTool', 'steamcmd');
       WriteString('PATHS', 'KFGameIni', 'KFGame/Config/LinuxServer-KFGame.ini');
-      WriteString('PATHS', 'KFEngineIni', 'KFGame/Config/LinuxServer-KFEngine.ini');
+      WriteString('PATHS', 'KFEngineIni',
+        'KFGame/Config/LinuxServer-KFEngine.ini');
 {$ELSE}
       WriteString('PATHS', 'KFGameIni', 'KFGame\Config\PCServer-KFGame.ini');
-      WriteString('PATHS', 'KFEngineIni', 'KFGame\Config\PCServer-KFEngine.ini');
+      WriteString('PATHS', 'KFEngineIni',
+        'KFGame\Config\PCServer-KFEngine.ini');
       WriteString('PATHS', 'ServerEXE', 'Binaries\win64\kfserver.exe');
       WriteString('PATHS', 'SteamCmdTool', 'STEAMCMD\SteamCmd.exe');
 {$ENDIF}
@@ -77,7 +80,6 @@ begin
       pathKFEngineIni := ReadString('PATHS', 'KFEngineIni',
         'KFGame/Config/LinuxServer-KFEngine.ini');
 {$ELSE}
-
       pathCmdTool := ReadString('PATHS', 'SteamCmdTool',
         'STEAMCMD\SteamCmd.exe');
       pathServerEXE := ReadString('PATHS', 'ServerEXE',
@@ -85,8 +87,7 @@ begin
       pathKFGameIni := ReadString('PATHS', 'KFGameIni',
         'KFGame' + PathDelim + 'Config' + PathDelim + 'PCServer-KFGame.ini');
       pathKFEngineIni := ReadString('PATHS', 'KFEngineIni',
-        'KFGame' + PathDelim + 'Config' + PathDelim +
-        'PCServer-KFEngine.ini');
+        'KFGame' + PathDelim + 'Config' + PathDelim + 'PCServer-KFEngine.ini');
 {$ENDIF}
     end;
     Result := True;
@@ -130,52 +131,233 @@ begin
 
 end;
 
+procedure ShowHelp;
+begin
+  writeln('KF2ServerTool ' + TKFServerTool.SERVERTOOLVERSION);
+{$IFDEF LINUX64}
+  writeln('Console for Linux');
+{$ELSE}
+  writeln('Console for Windows');
+
+{$ENDIF }
+  writeln('  Usage:');
+  writeln('  KF2ServerToolCMD -option argument=value');
+  writeln('  Example:');
+  writeln('  KF2ServerToolCMD -addmap id=1234567891');
+  writeln('');
+  writeln('');
+  writeln('Options:');
+  writeln('-list : list all installed itens');
+  writeln('');
+  writeln('-listdetalied : list all itens installed in a detalied view');
+  writeln('');
+  writeln('-remove id=<WorkshopID>   : Fully remove item');
+  writeln('');
+  writeln('-addmap id=<WorkshopID>   : Download and add entrys to map');
+  writeln('');
+  writeln('-addmod id=<WorkshopID>   : Download and add entrys to mod');
+  writeln('');
+  writeln('-custom <Agurments>  : Does one o more specied steps');
+  writeln('    Custom agurments:');
+  writeln('    aws=<WorkshopID>  : Add specified Workshop Subcribe');
+  writeln('    rws=<WorkshopID>  : Remove specified Workshop Subcribe');
+  writeln('    ame=<MapFileName> : Add specified Map Entry');
+  writeln('    rme=<MapFileName> : Remove specified Map Entry');
+  writeln('    amc=<MapFileName> : Add specified Map In Map Cycle');
+  writeln('    rmc=<MapFileName> : Remove specified Map In Map Cycle');
+  writeln('    adl=<WorkshopID>  : Download specified Workshop map or item to cache');
+  writeln('    rdl=<WorkshopID>  : Remove specified Workshop map or item to cache');
+  writeln('');
+  writeln('    Example: KF2ServerToolCMD -custom ame=KF-MyMap amc=KF-MyMap aws=1234567891');
+  writeln('   (This will add just the map entry, the map in server cycle and workshop subscription.)');
+  writeln('');
+  writeln('-help : Show this message');
+
+end;
+
+procedure ShowItems();
 var
-  i: Integer;
-  itemID, itemName: string;
+  I: Integer;
+begin
+  if ParamCount <> 1 then
+    raise Exception.Create('addmod: Invalid arguments');
+  serverTool.LoadItems;
+  writeln('----------------------------------------------------------------------------');
+  writeln('   NAME                     /    ID     / SUBS. / M.ENTRY / M.CYCLE / CACHE');
+  writeln('----------------------------------------------------------------------------');
+  for I := 0 to High(serverTool.Items) do
+  begin
+    with serverTool.Items[I] do
+    begin
+      writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID, 12) +
+        TextForXchar(BoolToWord(ServerSubscribe), 8) +
+        TextForXchar(BoolToWord(MapEntry), 8) +
+        TextForXchar(BoolToWord(MapCycleEntry), 9) +
+        TextForXchar(BoolToWord(ServerCache), 8));
+
+    end;
+  end;
+
+  writeln('----------------------------------------------------------------------------');
+end;
+
+procedure ShowItemsDetalied();
+var
+  I: Integer;
+begin
+  serverTool.LoadItems;
+
+  for I := 0 to High(serverTool.Items) do
+  begin
+
+    with serverTool.Items[I] do
+    begin
+
+      if serverTool.Items[I].ItemType = KFmod then
+      begin
+        writeln('');
+        writeln('Name:            ' + FileName);
+        writeln('ID:              ' + ID);
+        writeln('Subscribed:      ' + BoolToWord(ServerSubscribe));
+        writeln('In Server cache: ' + BoolToWord(ServerCache));
+
+      end
+      else
+      begin
+        writeln('');
+        writeln('Name:            ' + FileName);
+        writeln('ID:              ' + ID);
+        writeln('Subscribed:      ' + BoolToWord(ServerSubscribe));
+        writeln('In Map Entry:    ' + BoolToWord(MapEntry));
+        writeln('In Map Cycle:    ' + BoolToWord(MapCycleEntry));
+        writeln('In Server cache: ' + BoolToWord(ServerCache));
+
+      end;
+
+    end;
+  end;
+end;
+
+procedure addmod(itemID: string);
+begin
+  writeln(' Adding mod...');
+  writeln(' Item ID: ' + itemID);
+  serverTool.InstallWorkshopItem(itemID, '', True, True, False, False);
+  writeln(' Finished');
+end;
+
+procedure addMap(itemID: String);
+begin
+  writeln(' Adding Map...');
+  writeln(' Item ID: ' + itemID);
+  serverTool.InstallWorkshopItem(itemID, '', True, True, True, True);
+  writeln(' Finished');
+end;
+
+procedure addWorkshopSubcribe(itemID: String);
+begin
+  writeln(' Adding Subcribe...');
+  writeln(' Item ID: ' + itemID);
+  serverTool.InstallWorkshopItem(itemID, '', True, False, False, False);
+  writeln(' Finished');
+end;
+
+procedure removeWorkshopSubcribe(itemID: String);
+begin
+  writeln(' Removing Subcribe...');
+  writeln(' Item ID: ' + itemID);
+  serverTool.RemoveItem('', itemID, False, False, True, False,
+    TKFSource.KFSteamWorkshop);
+  writeln(' Finished');
+end;
+
+procedure addMapEntry(ItemName: String);
+begin
+  writeln(' Adding map entry...');
+  writeln(' Item Name: ' + ItemName);
+  serverTool.InstallWorkshopItem('', ItemName, False, False, False, True);
+  writeln(' Finished');
+end;
+
+procedure removeMapEntry(ItemName: String);
+begin
+  writeln(' Removing map entry...');
+  writeln(' Item Name: ' + ItemName);
+  serverTool.RemoveItem(ItemName, '', False, True, False, False,
+    TKFSource.KFSteamWorkshop);
+  writeln(' Finished');
+end;
+
+procedure addMapCycle(ItemName: String);
+begin
+  writeln(' Adding map cycle...');
+  writeln(' Item Name: ' + ItemName);
+  serverTool.InstallWorkshopItem('', ItemName, False, False, True, False);
+  writeln(' Finished');
+end;
+
+procedure removeMapCycle(ItemName: String);
+begin
+  writeln(' Removing map cycle...');
+  writeln(' Item Name: ' + ItemName);
+  serverTool.RemoveItem(ItemName, '', False, False, True, False,
+    TKFSource.KFSteamWorkshop);
+  writeln(' Finished');
+end;
+
+procedure downloadItem(itemID: String);
+begin
+  writeln(' Downloading item...');
+  writeln(' Item ID: ' + itemID);
+  serverTool.InstallWorkshopItem(itemID, '', False, True, False, False);
+  writeln(' Finished');
+end;
+
+procedure removeDownloadedItem(itemID: String);
+begin
+  writeln(' Removing cache...');
+  writeln(' Item ID: ' + itemID);
+  serverTool.RemoveItem('', itemID, False, False, False, True,
+    TKFSource.KFSteamWorkshop);
+  writeln(' Finished');
+end;
+
+function RemoveItem(itemID: string): Boolean;
+var
+  ItemName: String;
+  I: Integer;
+begin
+  Result := false;
+  writeln(' Removing item...');
+  writeln(' Item ID: ' + itemID);
+  serverTool.LoadItems;
+  for I := 0 to High(serverTool.Items) do
+  begin
+    if serverTool.Items[I].ID = itemID then
+    begin
+      ItemName := serverTool.Items[I].FileName;
+      writeln(' Item Name: ' + ItemName);
+
+      Result := serverTool.RemoveItem(ItemName, itemID, True, True, True, True,
+        TKFSource.KFSteamWorkshop);
+      Exit;
+    end;
+
+  end;
+  writeln('Remove item Finished');
+end;
+
+var
+  I: Integer;
+  itemID: string;
+  option, argument, argType, argValue: string;
 
 begin
   ApplicationPath := ParamStr(0);
   try
     if (ParamCount <= 0) or (LowerCase(ParamStr(0)) = '-help') then
     begin
-      Writeln('KF2ServerToolCMD 2.0 Alpha');
-{$IFDEF LINUX64}
-      Writeln('Linux Version');
-{$ENDIF }
-      Writeln('  Usage:');
-      Writeln('  KF2ServerToolCMD -option agurment=value');
-      Writeln('  Example:');
-      Writeln('  KF2ServerToolCMD -addmap id=1234567891');
-      Writeln('');
-      Writeln('');
-      Writeln('Options:');
-      Writeln('-list : list all installed itens');
-      Writeln('');
-      Writeln('-listdetalied : list all itens installed in a detalied view');
-      Writeln('');
-      Writeln('-remove id=<WorkshopID>   : Fully remove item');
-      Writeln('');
-      Writeln('-addmap id=<WorkshopID>   : Download and add entrys to map');
-      Writeln('');
-      Writeln('-addmod id=<WorkshopID>   : Download and add entrys to mod');
-      Writeln('');
-      Writeln('-custom <Agurments>  : Does one o more specied steps');
-      Writeln('    Custom agurments:');
-      Writeln('    aws=<WorkshopID>  : Add specified Workshop Subcribe');
-      Writeln('    rws=<WorkshopID>  : Remove specified Workshop Subcribe');
-      Writeln('    ame=<MapFileName> : Add specified Map Entry');
-      Writeln('    rme=<MapFileName> : Remove specified Map Entry');
-      Writeln('    amc=<MapFileName> : Add specified Map In Map Cycle');
-      Writeln('    rmc=<MapFileName> : Remove specified Map In Map Cycle');
-      Writeln('    adl=<WorkshopID>  : Download specified Workshop map or item to cache');
-      Writeln('    rdl=<WorkshopID>  : Remove specified Workshop map or item to cache');
-      Writeln('');
-      Writeln('    Example: KF2ServerToolCMD -custom ame=KF-MyMap amc=KF-MyMap aws=1234567891');
-      Writeln('   (This will add just the map entry, the map in server cycle and workshop subscription.)');
-      Writeln('');
-      Writeln('-help : Show this message');
-
+      ShowHelp;
     end
     else
     begin
@@ -188,154 +370,121 @@ begin
         serverTool.SetKFGameIniSubPath(pathKFGameIni);
         serverTool.SetKFServerPathEXE(pathServerEXE);
         serverTool.SetSteamCmdPath(pathCmdTool);
-      //  serverTool.GenerateLog := True;
+        option := LowerCase(ParamStr(1));
+        if ParamCount > 1 then
+          argument := LowerCase(ParamStr(2));
 
         // ------------------------------------------------------------------- -AddMap
-        if (LowerCase(ParamStr(1)) = '-addmap') then
+        if option = '-addmap' then
         begin
 
           if ParamCount <> 2 then
             raise Exception.Create('Addmap: Invalid arguments');
 
-          itemID := CleanInt(ParamStr(2));
+          itemID := CleanInt(argument);
           if Length(itemID) < 6 then
             raise Exception.Create('Addmap: Invalid ID');
-          Writeln(' Starting...');
-          Writeln(' Item ID: ' + itemID);
-          serverTool.InstallWorkshopItem(itemID, itemName, True, True,
-            True, True);
-
-          Writeln(' Finished');
-          Exit;
+          addMap(itemID);
         end;
         // ------------------------------------------------------------------ -AddMod
-        if (LowerCase(ParamStr(1)) = '-addmod') then
+        if option = '-addmod' then
         begin
 
           if ParamCount <> 2 then
             raise Exception.Create('addmod: Invalid arguments');
-
-          itemID := CleanInt(ParamStr(2));
+          itemID := CleanInt(argument);
           if Length(itemID) < 6 then
             raise Exception.Create('addmod: Invalid ID');
-
-          Writeln(' Starting...');
-          Writeln(' Item ID: ' + itemID);
-          serverTool.InstallWorkshopItem(itemID, itemName, True, True,
-            False, False);
-
-          Writeln(' Finished');
+          addmod(itemID);
           Exit;
         end;
         // ------------------------------------------------------------------ -Remove
-        if (LowerCase(ParamStr(1)) = '-remove') then
+        if option = '-remove' then
         begin
-
           if ParamCount <> 2 then
             raise Exception.Create('remove: Invalid arguments');
-
-          itemID := CleanInt(ParamStr(2));
+          itemID := CleanInt(argument);
           if Length(itemID) < 6 then
             raise Exception.Create('remove: Invalid ID');
-
-          Writeln(' Starting...');
-          Writeln(' Item ID: ' + itemID);
-          serverTool.LoadItems;
-          for i := 0 to High(serverTool.Items) do
-          begin
-            if serverTool.Items[i].ID = itemID then
-            begin
-              itemName := serverTool.Items[i].FileName;
-              Writeln(' Item Name: ' + itemName);
-
-              serverTool.RemoveItem(itemName, itemID, True, True, True, True,
-                TKFSource.KFSteamWorkshop);
-              Exit;
-            end;
-
-          end;
-
-          Writeln(' Finished');
+          RemoveItem(itemID);
           Exit;
         end;
         // ------------------------------------------------------------------ -list
-        if (LowerCase(ParamStr(1)) = '-list') then
+        if option = '-list' then
         begin
-
-          if ParamCount <> 1 then
-            raise Exception.Create('addmod: Invalid arguments');
-          serverTool.LoadItems;
-          Writeln('----------------------------------------------------------------------------');
-          Writeln('   NAME                     /    ID     / SUBS. / M.ENTRY / M.CYCLE / CACHE');
-          Writeln('----------------------------------------------------------------------------');
-          for i := 0 to High(serverTool.Items) do
-          begin
-            with serverTool.Items[i] do
-            begin
-              Writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID, 12) +
-                TextForXchar(BoolToWord(ServerSubscribe), 8) +
-                TextForXchar(BoolToWord(MapEntry), 8) +
-                TextForXchar(BoolToWord(MapCycleEntry), 9) +
-                TextForXchar(BoolToWord(ServerCache), 8));
-
-            end;
-          end;
-
-          Writeln('----------------------------------------------------------------------------');
+          ShowItems;
           Exit;
         end;
         // ------------------------------------------------------------------ -listdetalied
-
-        if (LowerCase(ParamStr(1)) = '-listdetalied') then
+        if option = '-listdetalied' then
         begin
+          ShowItemsDetalied;
+          Exit;
+        end;
+        // ------------------------------------------------------------------ -custom
+        if option = '-custom' then
+        begin
+          if ParamCount < 2 then
+            raise Exception.Create('custom: Invalid arguments');
 
-          serverTool.LoadItems;
-
-          for i := 0 to High(serverTool.Items) do
+          for I := 2 to ParamCount do
           begin
+            argument := ParamStr(I);
+            argType := LowerCase(Copy(argument, 0, Pos('=', argument) - 1));
+            argValue := Copy(argument, Pos('=', argument) + 1,
+              Length(argument));
 
-            with serverTool.Items[i] do
-            begin
-
-              {
-                if servertool. IsMod then
+            case AnsiIndexStr(argType, ['aws', 'rws', 'ame', 'rme', 'amc',
+              'rmc', 'adl', 'rdl']) of
+              0: { aws }
                 begin
-                Writeln('');
-                Writeln('Name:            ' + FileName);
-                Writeln('ID:              ' + ID);
-                Writeln('Subscribed:      ' + BoolToWord(ServerSubscribe));
-                Writeln('In Server cache: ' + BoolToWord(ServerCache));
-
-                end
-                else }
-              begin
-                Writeln('');
-                Writeln('Name:            ' + FileName);
-                Writeln('ID:              ' + ID);
-                Writeln('Subscribed:      ' + BoolToWord(ServerSubscribe));
-                Writeln('In Map Entry:    ' + BoolToWord(MapEntry));
-                Writeln('In Map Cycle:    ' + BoolToWord(MapCycleEntry));
-                Writeln('In Server cache: ' + BoolToWord(ServerCache));
-
-              end;
-
+                  itemID := CleanInt(argValue);
+                  addWorkshopSubcribe(itemID)
+                end;
+              1: { rws }
+                begin
+                  itemID := CleanInt(argValue);
+                  removeWorkshopSubcribe(itemID);
+                end;
+              2: { ame }
+                begin
+                  addMapEntry(argValue);
+                end;
+              3: { rme }
+                begin
+                  removeMapEntry(argValue);
+                end;
+              4: { amc }
+                begin
+                  addMapCycle(argValue);
+                end;
+              5: { rmc }
+                removeMapCycle(argValue);
+              6: { adl }
+                begin
+                  itemID := CleanInt(argValue);
+                  downloadItem(itemID);
+                end;
+              7: { rdl }
+                begin
+                  itemID := CleanInt(argValue);
+                  removeDownloadedItem(itemID);
+                end;
             end;
           end;
 
           Exit;
         end;
 
-        Writeln('KF2ServerTool fineshed. Wrong param?');
+        writeln('KF2ServerTool fineshed. Wrong param?');
       finally
         serverTool.Free;
       end;
 
     end;
-    // Readln(serverPath);
-    { TODO -oUser -cConsole Main : Insert code here }
   except
     on E: Exception do
-      Writeln('Error: ' + E.Message);
+      writeln('Error: ' + E.Message);
   end;
 
 end.

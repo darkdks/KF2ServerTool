@@ -129,6 +129,7 @@ type
 
     KF_LOCALMAPSSUBFOLDER = 'KFGame' + PathDelim + 'BrewedPC' + PathDelim + 'Maps' + PathDelim;
     KF_SERVERCACHEFOLDER  = 'KFGame' + PathDelim + 'Cache'+ PathDelim;
+    SERVERTOOLVERSION = '1.2.0';
   end;
 
 implementation
@@ -729,7 +730,7 @@ var
   logPath: String;
 begin
   {$IFDEF DEBUG}
-  Writeln(eventName + ' ' + eventDescription);
+  Writeln(eventName + ': ' + eventDescription);
   {$ENDIF}
   if GenerateLog = False then
     Exit;

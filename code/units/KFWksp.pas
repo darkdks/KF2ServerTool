@@ -138,6 +138,13 @@ begin
   paramStCmd := ST_LOGIN + ' '+ ST_INSTALLDIR + ' ' +
     StrEmAspas(svPath + STEAMAPPCACHEFOLDER) + ' ' + ST_WKPITEM + ' ' + ID + ' '+ ST_EXIT;
 
+
+
+  {   ExecuteTerminalProcess(steamCmdTool, paramStCmd,aborEx, procedure (text: String)begin
+        Writeln('Debug: ' + text);
+     end);
+   }
+
   if ExecuteFileAndWait(0, steamCmdTool, paramStCmd, SW_HIDE) then
   begin
     itemSteamAppFolder := svPath + WKP_CACHEFOLDER + PathDelim + ID + PathDelim;

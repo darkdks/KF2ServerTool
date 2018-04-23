@@ -81,7 +81,8 @@ begin
     lvRedirectItems.SortType := stText;
     Result := lvRedirectItems.Items.Count > 0;
   finally
-    redirectItems.Free;
+    if Assigned(redirectItems) then
+    FreeAndNil(redirectItems);
  //   IDHTTP.Free;
   end;
   except

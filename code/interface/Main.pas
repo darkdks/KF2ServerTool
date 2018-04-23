@@ -13,7 +13,7 @@ uses
   JvCombobox, JvEdit, IdBaseComponent,
   IdTCPConnection, IdTCPClient, IdComponent, ImgList, OleCtrls, JvExControls,
   JvColorBox, JvExStdCtrls, JvExComCtrls, IdHTTP, MSHTML, Variants, SHDocVw,
-  FileCtrl, ItemProgress, KFRedirect, System.ImageList;
+   ItemProgress, KFRedirect, System.ImageList;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -2032,6 +2032,7 @@ var
   i: Integer;
 begin
   ExeName := ExtractFileName(Application.ExeName);
+  Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
   if ParamCount > 0 then
   begin
     for i := 0 to ParamCount do
