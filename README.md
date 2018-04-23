@@ -35,3 +35,7 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/releases/latest">release
 
 - You need start the server at least one time to generate server config files that the tool needs.
 - If you have never added the line for redirecting the clients to download from the workshop, check the "Server" tab and click on the text “Install” to install the Workshop Download Manager.
+
+## KF2ServerTool for Linux (No gui) is finally real
+Need more tests and improvements, but is already possible to add, remove maps and mods and list all the items of the server.
+The current compiled version is for Ubuntu 64, no tested in another linux distribution. The compiled version is avaliable in /code/, the executable is 'KF2ServerToolCMD'. Needs steamcmd installed in the working system.
