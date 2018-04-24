@@ -11,9 +11,10 @@ uses
   JvgImage,
   KFWksp, JvColorButton,
   JvCombobox, JvEdit, IdBaseComponent,
-  IdTCPConnection, IdTCPClient, IdComponent, ImgList, OleCtrls, JvExControls,
-  JvColorBox, JvExStdCtrls, JvExComCtrls, IdHTTP, MSHTML, Variants, SHDocVw,
-   ItemProgress, KFRedirect, System.ImageList;
+  IdTCPClient, ImgList, OleCtrls,
+  MSHTML, Variants, SHDocVw,
+   ItemProgress, KFRedirect, System.ImageList, JvExControls, JvColorBox,
+  JvExStdCtrls, JvExComCtrls;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -617,7 +618,7 @@ begin
     cmdToolFullPath := serverpath + pathCmdTool;
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 -beta preview +exit';
-    ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
+     ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
 
     Application.MessageBox('Finished', 'Server update',
       MB_OK + MB_ICONINFORMATION);

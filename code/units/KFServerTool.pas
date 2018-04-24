@@ -58,6 +58,7 @@ type
     KFServerPathEXE: string;
     SteamCmdPath: string;
     GenerateLog: Boolean;
+    FverboseMod: Boolean;
     appLanguage: TKFAppLanguage;
     function GetIDIndex(ID: string): Integer;
     function GetModName(files: TStringList): string;
@@ -116,6 +117,8 @@ type
     procedure KillKFServer();
     procedure LogEvent(eventName: String; eventDescription: String);
     function IsServerRunning: Boolean;
+    property verbose : Boolean  read FverboseMod write FverboseMod;
+
 
   const
     KF_OFFICIALMAPS: array [1 .. 21] of string = ('KF-BioticsLab.kfm',
@@ -286,7 +289,7 @@ begin
   wksp.steamCmdTool := SteamCmdPath;
   try
     wksp.RemoveAcfReference(ID, True);
-    ItemDownloaded := wksp.DownloadWorkshopItem(ID);
+    ItemDownloaded := wksp.DownloadWorkshopItem(ID, verbose);
     ItemInCache := wksp.CopyItemToCache(ID);
     result := ItemDownloaded and ItemInCache;
   finally
@@ -729,9 +732,9 @@ var
   logFile: TStringList;
   logPath: String;
 begin
-  {$IFDEF DEBUG}
+  if verbose then
   Writeln(eventName + ': ' + eventDescription);
-  {$ENDIF}
+
   if GenerateLog = False then
     Exit;
 
@@ -870,7 +873,7 @@ begin
       LogEvent('Force update', 'Removing old references...');
       wksp.RemoveAcfReference(itemID, True);
       LogEvent('Force update', 'Downloading Item...');
-      wksp.DownloadWorkshopItem(itemID);
+      wksp.DownloadWorkshopItem(itemID, verbose);
       LogEvent('Force update', 'Copying the files to server cache...');
       result := wksp.CopyItemToCache(itemID);
       LogEvent('Force update', 'Finished.');
@@ -1134,6 +1137,7 @@ end;
 procedure TKFServerTool.SetKFApplicationPath(path: string);
 begin
   kfApplicationPath := path;
+  LogEvent('KFApplicationPath', path);
 end;
 
 function TKFServerTool.GetKFAppLanguage: TKFAppLanguage;
@@ -1150,11 +1154,13 @@ procedure TKFServerTool.SetKFGameIniSubPath(path: string);
 begin
 
   kfGameIniSubPath := path;
+  LogEvent('KFGameIniSubPath', path);
 end;
 
 procedure TKFServerTool.SetKFngineIniSubPath(path: string);
 begin
   kfEngineIniSubPath := path;
+  LogEvent('KFEngineIniSubPath', path);
 end;
 
 procedure TKFServerTool.SetWebPass(pass: String);
@@ -1231,6 +1237,7 @@ end;
 procedure TKFServerTool.SetKFServerPathEXE(path: string);
 begin
   KFServerPathEXE := path;
+  LogEvent('SetKFServerPathEXE', path);
 end;
 
 procedure TKFServerTool.SetKFWebIniSubPath(path: string);
@@ -1241,6 +1248,7 @@ end;
 procedure TKFServerTool.SetSteamCmdPath(path: String);
 begin
 SteamCmdPath := path;
+  LogEvent('SteamCmdPath', path);
 end;
 
 procedure TKFServerTool.GetKFServerPathEXE(path: string);

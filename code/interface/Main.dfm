@@ -183,7 +183,7 @@ object FormMain: TFormMain
       Left = 610
       Top = 2
       Width = 46
-      Height = 29
+      Height = 13
       Cursor = crHandPoint
       Margins.Left = 10
       Margins.Top = 2
@@ -199,14 +199,13 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = lblDonateClick
-      ExplicitHeight = 13
     end
     object lbl9: TLabel
       AlignWithMargins = True
       Left = 539
       Top = 2
       Width = 53
-      Height = 21
+      Height = 13
       Cursor = crHandPoint
       Margins.Left = 10
       Margins.Top = 2
@@ -222,7 +221,6 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = lbl9Click
-      ExplicitHeight = 13
     end
     object btnReinstall: TBitBtn
       Left = 238
@@ -345,6 +343,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Server'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpStartServer: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -377,7 +379,7 @@ object FormMain: TFormMain
             Left = 6
             Top = 2
             Width = 41
-            Height = 69
+            Height = 17
             Margins.Left = 6
             Margins.Top = 2
             Margins.Right = 2
@@ -386,7 +388,6 @@ object FormMain: TFormMain
             Caption = 'Profile:'
             Color = clBlack
             ParentColor = False
-            ExplicitHeight = 17
           end
           object btnNewProfile: TButton
             Left = 49
@@ -546,7 +547,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 6
               Top = 2
-              Width = 250
+              Width = 25
               Height = 17
               Margins.Left = 6
               Margins.Top = 2
@@ -556,7 +557,6 @@ object FormMain: TFormMain
               Caption = 'Map'
               Color = clBlack
               ParentColor = False
-              ExplicitWidth = 25
             end
             object cbbMap: TComboBox
               AlignWithMargins = True
@@ -809,6 +809,10 @@ object FormMain: TFormMain
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Maps'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvMaps: TListView
         Left = 0
         Top = 28
@@ -907,7 +911,7 @@ object FormMain: TFormMain
           Left = 2
           Top = 6
           Width = 28
-          Height = 20
+          Height = 17
           Margins.Left = 2
           Margins.Top = 6
           Margins.Right = 2
@@ -915,7 +919,6 @@ object FormMain: TFormMain
           Align = alLeft
           Alignment = taRightJustify
           Caption = 'Filter'
-          ExplicitHeight = 17
         end
         object edtSearch: TEdit
           AlignWithMargins = True
@@ -1086,6 +1089,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Options'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1682,7 +1689,7 @@ object FormMain: TFormMain
     Left = 544
     Top = 8
     Bitmap = {
-      494C010106002000A40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106002000A80110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000

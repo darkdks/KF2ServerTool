@@ -43,9 +43,7 @@ function GetAllFilesSubDirectory(path: string; filter: string): TStringList;
 function WorkshopURLtoID(URL: string): string;
 function TextForXchar(Text: String; numberOfChars: Integer): string;
 function CreateNewFolderInto(path, FolderName: String): String;
-
-// Functions to work with linux compability
-function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
+ function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
   Parameters: string; ShowWindows: Integer): Boolean;
 function FileOperation(Source: TStringList; Destination: String;
   Operation: Cardinal): Boolean;
@@ -290,7 +288,6 @@ begin
 end;
 
 // ------------------------- FILE EXECUTATION -----------------------------------
-
 function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
   Parameters: string; ShowWindows: Integer): Boolean;
 {$IFDEF MSWINDOWS}
@@ -362,7 +359,7 @@ end;
 {$ENDIF}
 
 function ExecuteTerminalProcess(Acmd: String; AParam: string;
-var abortExe: Boolean; Return: TProc<String>): TStringList;
+  var abortExe: Boolean; Return: TProc<String>): TStringList;
 {$IFDEF MSWINDOWS}
 var
   outlineCallBack: TExecuteCmdCallBack;
@@ -381,29 +378,34 @@ begin
 
 end;
 {$ELSE}
+
 // Linux
 var
   linuxUt: TLinuxUtils;
+  cmdResult: TStringList;
 begin
 
   linuxUt := TLinuxUtils.Create;
   Result := TStringList.Create;
+  cmdResult := Result;
   try
     linuxUt.RunCommandLine(Acmd + ' ' + AParam, (
       procedure(rStr: String)
       begin
-       //result.add(rStr);
-       return(rStr);
-      // if abortExe then abort;
+        try
+          if Assigned(Return) then
+            Return(rStr);
+          cmdResult.Add(rStr);
 
+        except
+          writeln('Exception calling line return');
+        end;
       end));
   finally
     FreeAndNil(linuxUt);
   end;
 end;
 {$ENDIF}
-
-
 {$IFDEF MSWINDOWS}
 
 constructor TExecuteCmdCallBack.Create;
@@ -511,53 +513,8 @@ begin
   end;
 
 end;
-{ function ExplorerFileOp(Source: TStringList; Destination: String;
-  Operation: UINT; Silent: Boolean; Handle: THandle): Boolean;
-  var
-  FileOP: TSHFileOpStruct;
-  i: Integer;
-  StrFrom, StrTo: string;
-  begin
-  ZeroMemory(@FileOP, SizeOf(FileOP));
-  StrTo := '';
-  StrFrom := '';
-  FileOP.Wnd := Handle;
-  if Silent then
-  FileOP.fFlags := FOF_SILENT + FOF_NOCONFIRMATION;
-  for i := 0 to Source.Count - 1 do
-  StrFrom := StrFrom + Source[i] + #0;
-  StrFrom := StrFrom + #0;
-  StrTo := Destination;
 
-  case Operation of
-  FO_MOVE:
-  begin
-  FileOP.wFunc := FO_MOVE;
-  FileOP.pFrom := PWideChar(StrFrom);
-  FileOP.pTo := PWideChar(StrTo);
-  end;
-  FO_COPY:
-  begin
-  FileOP.wFunc := FO_COPY;
-  FileOP.pFrom := PWideChar(StrFrom);
-  FileOP.pTo := PWideChar(StrTo);
-  end;
-  FO_DELETE:
-  begin
-  FileOP.wFunc := FO_DELETE;
-  FileOP.pFrom := PWideChar(StrFrom);
-  end;
-  FO_RENAME:
-  begin
-  FileOP.wFunc := FO_RENAME;
-  FileOP.pFrom := PWideChar(StrFrom);
-  FileOP.pTo := PWideChar(StrTo);
-  end;
-  end;
 
-  Result := (0 = ShFileOperation(FileOP));
-
-  end; }
 
 function ProcessExists(ProcessName: string): Boolean;
 {$IFDEF MSWINDOWS}
@@ -646,10 +603,19 @@ begin
 end;
 {$ELSE}
 
+var
+  resultCmd: TStringList;
+  abortCmd: Boolean;
 begin
-  ExecuteFileAndWait(0, 'pkill', ExeName, 0);
+  abortCmd := False;
+  resultCmd := ExecuteTerminalProcess('pkill', ExeName, abortCmd, nil);
+  if Assigned(resultCmd) then
+  begin
+    FreeAndNil(resultCmd);
+    Result := True;
+  end;
   // options: killall /v exename ,kill $(pgrep irssi), kill `ps -ef | grep irssi | grep -v grep | awk ‘{print $2}’`
-  Result := True;
+
 end;
 {$ENDIF}
 { TExecuteCmdCallBack }

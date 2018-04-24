@@ -20,7 +20,7 @@ type
 
     constructor Create(serverPath: string);
     destructor Destroy; override;
-    function DownloadWorkshopItem(ID: string): Boolean;
+    function DownloadWorkshopItem(ID: string; VerboseCmd: Boolean): Boolean;
     function CopyItemToCache(ID: string): Boolean;
     function RemoveServeItemCache(ID: string): Boolean;
     function RemoveWorkshoItemCache(ID: string): Boolean;
@@ -122,11 +122,14 @@ begin
 
 end;
 
-function TKFWorkshop.DownloadWorkshopItem(ID: string): Boolean;
+function TKFWorkshop.DownloadWorkshopItem(ID: string;
+  VerboseCmd: Boolean): Boolean;
 var
   paramStCmd: string;
   itemSteamAppFolder: String;
   ItemType: TKFItemType;
+  exResult: TStringList;
+  aborEx: Boolean;
 begin
   ItemType := KFUnknowed;
   if (svPath = '') then
@@ -135,17 +138,22 @@ begin
     Exit;
   end;
 
-  paramStCmd := ST_LOGIN + ' '+ ST_INSTALLDIR + ' ' +
-    StrEmAspas(svPath + STEAMAPPCACHEFOLDER) + ' ' + ST_WKPITEM + ' ' + ID + ' '+ ST_EXIT;
-
-
-
-  {   ExecuteTerminalProcess(steamCmdTool, paramStCmd,aborEx, procedure (text: String)begin
+  paramStCmd := ST_LOGIN + ' ' + ST_INSTALLDIR + ' ' +
+    StrEmAspas(svPath + STEAMAPPCACHEFOLDER) + ' ' + ST_WKPITEM + ' ' + ID + ' '
+    + ST_EXIT;
+   if VerboseCmd then begin
+        Writeln('sv path: ' + svPath);
+        Writeln('steamcmd tool: ' + steamCmdTool);
+        Writeln('ParamStr: ' + paramStCmd);
+   end;
+  exResult := ExecuteTerminalProcess(steamCmdTool, paramStCmd, aborEx,
+    procedure(text: String)
+    begin
+      if VerboseCmd then
         Writeln('Debug: ' + text);
-     end);
-   }
+    end);
 
-  if ExecuteFileAndWait(0, steamCmdTool, paramStCmd, SW_HIDE) then
+  if Assigned(exResult) then
   begin
     itemSteamAppFolder := svPath + WKP_CACHEFOLDER + PathDelim + ID + PathDelim;
     ItemType := GetItemType(itemSteamAppFolder);
@@ -280,7 +288,6 @@ begin
           i := i + 1;
         end;
       end;
-
       acfFile.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
     end
     else

@@ -3,7 +3,7 @@ program KF2ServerToolCMD;
 
 uses
   SysUtils,
-  IniFiles, StrUtils,
+  IniFiles, StrUtils, classes,
 {$IFDEF LINUX64}
   LinuxUtils in 'units\LinuxUtils.pas',
 {$ENDIF }
@@ -15,8 +15,8 @@ uses
 
 var
   useCustomServerPath: Boolean;
-  customServerPath, pathKFGameIni, pathKFEngineIni,
-    pathCmdTool, pathServerEXE: string;
+  customServerPath, pathKFGameIni, pathKFEngineIni, pathCmdTool,
+    pathServerEXE: string;
   serverTool: TKFServerTool;
   serverPath: string;
   configName: String = 'KFServerToolCMD.ini';
@@ -42,14 +42,16 @@ begin
 {$IFDEF DEBUG}
       WriteBool('PATHS', 'UseCustomServerPath', True);
       WriteString('PATHS', 'CustomServerPath', '/home/darkdks/KF2Server');
+            WriteString('PATHS', 'SteamCmdTool', '/home/darkdks/KF2Server/steamcmd/steamcmd.sh');
 {$ELSE}
       WriteBool('PATHS', 'UseCustomServerPath', False);
       WriteString('PATHS', 'CustomServerPath', 'CHANGE_ME_FOR_CUSTOM_PATH');
+      WriteString('PATHS', 'SteamCmdTool', 'steamcmd');
 {$ENDIF}
 {$IFDEF LINUX64}
       WriteString('PATHS', 'ServerEXE',
         '/Binaries/Win64/KFGameSteamServer.bin.x86_64');
-      WriteString('PATHS', 'SteamCmdTool', 'steamcmd');
+
       WriteString('PATHS', 'KFGameIni', 'KFGame/Config/LinuxServer-KFGame.ini');
       WriteString('PATHS', 'KFEngineIni',
         'KFGame/Config/LinuxServer-KFEngine.ini');
@@ -179,8 +181,7 @@ procedure ShowItems();
 var
   I: Integer;
 begin
-  if ParamCount <> 1 then
-    raise Exception.Create('addmod: Invalid arguments');
+
   serverTool.LoadItems;
   writeln('----------------------------------------------------------------------------');
   writeln('   NAME                     /    ID     / SUBS. / M.ENTRY / M.CYCLE / CACHE');
@@ -327,7 +328,7 @@ var
   ItemName: String;
   I: Integer;
 begin
-  Result := false;
+  Result := False;
   writeln(' Removing item...');
   writeln(' Item ID: ' + itemID);
   serverTool.LoadItems;
@@ -351,11 +352,23 @@ var
   I: Integer;
   itemID: string;
   option, argument, argType, argValue: string;
+  params: TStringList;
+  enableVerbose: Boolean;
 
 begin
-  ApplicationPath := ParamStr(0);
+  ApplicationPath := IncludeTrailingPathDelimiter( GetCurrentDir) ;
+  params := TStringList.Create;
+  for I := 1 to ParamCount do // Discart tool path
+    if LowerCase(ParamStr(I)) = '-v' then
+      enableVerbose := True
+    else
+      params.Add(LowerCase(Trim(ParamStr(I)))); // clean and lowercase param
+
+    if enableVerbose then  Writeln('Verbose mod is set to Enabled');
+    
+      
   try
-    if (ParamCount <= 0) or (LowerCase(ParamStr(0)) = '-help') then
+    if (params.Count < 1) or (params.IndexOf('-help') > 0) then
     begin
       ShowHelp;
     end
@@ -365,20 +378,23 @@ begin
       CheckServerPath;
       serverTool := TKFServerTool.Create;
       try
+        serverTool.verbose := enableVerbose;
         serverTool.SetKFApplicationPath(serverPath);
         serverTool.SetKFngineIniSubPath(pathKFEngineIni);
         serverTool.SetKFGameIniSubPath(pathKFGameIni);
         serverTool.SetKFServerPathEXE(pathServerEXE);
         serverTool.SetSteamCmdPath(pathCmdTool);
-        option := LowerCase(ParamStr(1));
-        if ParamCount > 1 then
-          argument := LowerCase(ParamStr(2));
+
+
+        option := params[0];
+        if params.Count > 1 then
+          argument := params[1];
 
         // ------------------------------------------------------------------- -AddMap
         if option = '-addmap' then
         begin
 
-          if ParamCount <> 2 then
+          if params.Count <> 2 then
             raise Exception.Create('Addmap: Invalid arguments');
 
           itemID := CleanInt(argument);
@@ -391,7 +407,7 @@ begin
         if option = '-addmod' then
         begin
 
-          if ParamCount <> 2 then
+          if params.Count <> 2 then
             raise Exception.Create('addmod: Invalid arguments');
           itemID := CleanInt(argument);
           if Length(itemID) < 6 then
@@ -402,7 +418,7 @@ begin
         // ------------------------------------------------------------------ -Remove
         if option = '-remove' then
         begin
-          if ParamCount <> 2 then
+          if params.Count <> 2 then
             raise Exception.Create('remove: Invalid arguments');
           itemID := CleanInt(argument);
           if Length(itemID) < 6 then
@@ -413,24 +429,28 @@ begin
         // ------------------------------------------------------------------ -list
         if option = '-list' then
         begin
+          if params.Count <> 1 then
+            raise Exception.Create('addmod: Invalid arguments');
           ShowItems;
           Exit;
         end;
         // ------------------------------------------------------------------ -listdetalied
         if option = '-listdetalied' then
         begin
+          if params.Count <> 1 then
+            raise Exception.Create('addmod: Invalid arguments');
           ShowItemsDetalied;
           Exit;
         end;
         // ------------------------------------------------------------------ -custom
         if option = '-custom' then
         begin
-          if ParamCount < 2 then
+          if params.Count < 2 then
             raise Exception.Create('custom: Invalid arguments');
 
-          for I := 2 to ParamCount do
+          for I := 1 to params.Count - 1 do
           begin
-            argument := ParamStr(I);
+            argument := params[I];
             argType := LowerCase(Copy(argument, 0, Pos('=', argument) - 1));
             argValue := Copy(argument, Pos('=', argument) + 1,
               Length(argument));
