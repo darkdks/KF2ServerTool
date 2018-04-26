@@ -25,7 +25,7 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/releases/latest">release
 Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2ServerToolCMD.exe">code/KF2ServerToolCMD.exe</a> and download the file.
 
 ### CMD Version to Linux (KF2ServerToolCMD)
-Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2ServerToolCMD">code/KF2ServerToolCMD.exe</a> and download the file.
+Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2ServerToolCMD">code/KF2ServerToolCMD</a> and download the file.
 
 # Install KF2ServerTool for Windows
 
