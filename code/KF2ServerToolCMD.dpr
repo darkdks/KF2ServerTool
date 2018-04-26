@@ -26,7 +26,7 @@ var
   ApplicationPath: string;
 
 const
-  KF2CMDTOOLVERSION = '1.0.4';
+  KF2CMDTOOLVERSION = '1.0.5';
 
 function loadConfig: Boolean;
 var
@@ -781,14 +781,14 @@ begin
           Exit;
         end;
         // ------------------------------------------------------------------ -test
-        begin
-          debugTest(argument);
+      {  begin
+          //debugTest(argument);
           Exit;
         end;
-
+       }
         writeln('KF2ServerTool finished. Wrong param?');
       finally
-        Readln(option);
+       // Readln(option);
         serverTool.Free;
       end;
 
