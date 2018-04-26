@@ -43,6 +43,7 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2Serv
 
 - You need start the server at least one time to generate server config files that the tool needs.
 - If you have never added the line for redirecting the clients to download from the workshop, check the "Server" tab and click on the text “Install” to install the Workshop Download Manager.
+- If you have issues with the workshop browser inside the tool, like items displaying incorrectly, double click in the WorkshopBrowserFix.reg. 
 
 # Install KF2ServerToolCMD for Windows/linux
 
