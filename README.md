@@ -38,18 +38,19 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2Serv
 
 - Extract all files in the same folder that the server will be installed
 - Open KF2ServerTool.exe and choose the option to install a new server in the same path of the tool folder
+- After download all the server, close the tool and open the server one time to create the config files.
 
 ### Notes
 
 - You need start the server at least one time to generate server config files that the tool needs.
-- If you have never added the line for redirecting the clients to download from the workshop, check the "Server" tab and click on the text “Install” to install the Workshop Download Manager.
+- If you have never added the line for redirecting the clients to download from the workshop, check the "Options" tab and turn on the Workshop Download Manager.
 - If you have issues with the workshop browser inside the tool, like items displaying incorrectly, double click in the WorkshopBrowserFix.reg. 
 
 # Install KF2ServerToolCMD for Windows/linux
 
-- Just put the KF2ServerToolCMD inside the server folder and launch it from terminal, a new file called KF2ServerToolCMD.ini will be created. You can adit inside this file the paths of KFEngine and KFGame if you dont use the default.
-- install steamcmd if you have not
-- Configure the KF2ServerToolCMD.ini to specify the steamcmd path (for linux is the steamcmd.sh and for windows is the steamcmd.exe)
+- Just put the KF2ServerToolCMD inside the server folder and launch it from terminal with -list, a new file called KF2ServerToolCMD.ini will be created. You can adit inside this file the paths of KFEngine and KFGame if you dont use the default.
+- install steamcmd if you have not (see the install cmd section)
+- Configure the KF2ServerToolCMD.ini to specify it (for linux is the steamcmd.sh and for windows is the steamcmd.exe).
 - K2ServerToolCMD -help to see all avaliable commands
 
 # Install steamcmd
