@@ -21,7 +21,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS8.1]
+ - OS: [e.g. Windows 7, Windows 8.1]
  - Version of the tool [e.g. 1.2.2]
 
 **Additional context**
