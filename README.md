@@ -9,9 +9,10 @@ This is a tool to add, remove, and force updates of maps and mods in your dedica
 
 KF2ServerTool
 <p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img1.jpg"/></p>
-
+<p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img4.jpg"/></p>
 The app includes some extra features too, like a server launcher, web admin configuration, workshop download manager configuration, access to webadmin inside the application, and some tools to clean the cache and workshop files. I spent good weeks developing this tool to make it as simple as possible for the end user.
 <p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img2.jpg"/></p>
+<p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img5.jpg"/></p>
 <p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img4.jpg"/></p>
 
 KF2ServerToolCMD
