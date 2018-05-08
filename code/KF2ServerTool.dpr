@@ -14,7 +14,9 @@ uses
   PathDialog in 'interface\PathDialog.pas' {kfPathDialog},
   Queue in 'interface\Queue.pas' {frmQueue},
   uRedirectItemsDialog in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog},
-  KFWksp in 'units\KFWksp.pas';
+  KFWksp in 'units\KFWksp.pas',
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.res}
 {$R 'Manifest.res' 'Manifest.rc'}

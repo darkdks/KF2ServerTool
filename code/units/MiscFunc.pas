@@ -365,7 +365,13 @@ var
   outlineCallBack: TExecuteCmdCallBack;
 begin
   Result := TStringList.Create;
-  outlineCallBack := TExecuteCmdCallBack.Create;
+
+  if ExecuteFileAndWait(0,Acmd, AParam,0) then
+   Result.Add('True by ExecutefileAndWait') else
+   Result.Add('False by ExecutefileAndWait');
+{
+
+    outlineCallBack := TExecuteCmdCallBack.Create;
   outlineCallBack.ProcCallBack := Return;
   outlineCallBack.executeResult := Result;
   try
@@ -376,6 +382,7 @@ begin
     FreeAndNil(outlineCallBack);
   end;
 
+ }
 end;
 {$ELSE}
 

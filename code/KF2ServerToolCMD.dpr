@@ -26,7 +26,7 @@ var
   ApplicationPath: string;
 
 const
-  KF2CMDTOOLVERSION = '1.0.5';
+  KF2CMDTOOLVERSION = '1.0.7';
 
 function loadConfig: Boolean;
 var
@@ -192,7 +192,7 @@ begin
   writeln('');
   writeln('-ig  : Ignore if the server is running (Not recommended)');
   writeln('');
-  writeln('-update <WorkshopID>  : Update item from workshop)');
+  writeln('-update <WorkshopID>  : Update an item from workshop)');
   writeln('');
   writeln('-validate  : Redownload all subscribed workshop files');
   writeln('');
@@ -205,6 +205,7 @@ var
   I: Integer;
   sortedList: TStringList;
   aKFItem: TKFItem;
+  CategoryTitleAdded: Boolean;
 begin
 
   serverTool.LoadItems;
@@ -216,11 +217,8 @@ begin
   sortedList.Sort;
 
   try
-    writeln('----------------------------- WORKSHOP MAPS --------------------------------');
-    writeln('----------------------------------------------------------------------------');
-    writeln('   NAME                     /    ID     / SUBS. / M.ENTRY / M.CYCLE / CACHE');
-    writeln('----------------------------------------------------------------------------');
-
+    //Workshop maps
+    CategoryTitleAdded := False;
     for I := 0 to sortedList.Count - 1 do
     begin
 
@@ -231,6 +229,15 @@ begin
 
         if not((aKFItem.ServerSubscribe = False) and (ignoreCacheFolder)) then
         begin
+          if not CategoryTitleAdded then
+          begin
+            writeln('----------------------------- WORKSHOP MAPS --------------------------------');
+            writeln('----------------------------------------------------------------------------');
+            writeln('   NAME                     /    ID     / SUBS. / M.ENTRY / M.CYCLE / CACHE');
+            writeln('----------------------------------------------------------------------------');
+            CategoryTitleAdded := True;
+          end;
+
           with aKFItem do
           begin
             writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID, 12) +
@@ -243,11 +250,9 @@ begin
         end;
       end;
     end;
-    writeln('----------------------------- WORKSHOP MODS --------------------------------');
-    writeln('----------------------------------------------------------------------------');
-    writeln('   NAME                     /    ID     / SUBSCRIPTION         ITEM IN CACHE');
-    writeln('----------------------------------------------------------------------------');
 
+    //Workshop Mods
+    CategoryTitleAdded := False;
     for I := 0 to sortedList.Count - 1 do
     begin
       aKFItem := sortedList.Objects[I] as TKFItem;
@@ -257,6 +262,14 @@ begin
 
         if not((aKFItem.ServerSubscribe = False) and (ignoreCacheFolder)) then
         begin
+          if not CategoryTitleAdded then
+          begin
+            writeln('----------------------------- WORKSHOP MODS --------------------------------');
+            writeln('----------------------------------------------------------------------------');
+            writeln('   NAME                     /    ID     / SUBSCRIPTION         ITEM IN CACHE');
+            writeln('----------------------------------------------------------------------------');
+            CategoryTitleAdded := True;
+          end;
           with aKFItem do
           begin
             writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID, 12) +
@@ -267,15 +280,22 @@ begin
         end;
       end;
     end;
-    writeln('---------------------------- OFICIAL MAPS ----------------------------------');
-    writeln('----------------------------------------------------------------------------');
-    writeln('   NAME                                          / M.ENTRY / M.CYCLE / CACHE');
-    writeln('----------------------------------------------------------------------------');
+
+      //Official maps
+    CategoryTitleAdded := False;
     for I := 0 to sortedList.Count - 1 do
     begin
       aKFItem := sortedList.Objects[I] as TKFItem;
       if (aKFItem.SourceFrom = KFOfficial) then
       begin
+        if not CategoryTitleAdded then
+        begin
+          writeln('---------------------------- OFICIAL MAPS ----------------------------------');
+          writeln('----------------------------------------------------------------------------');
+          writeln('   NAME                                          / M.ENTRY / M.CYCLE / CACHE');
+          writeln('----------------------------------------------------------------------------');
+          CategoryTitleAdded := True;
+        end;
         with aKFItem do
         begin
           writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID, 12) +
@@ -286,18 +306,25 @@ begin
         end;
       end;
     end;
+
+    //Local or redirect maps
     if not ignoreCacheFolder then
     begin
-
-      writeln('------------------------ LOCAL OR REDIRECT MAPS ----------------------------');
-      writeln('----------------------------------------------------------------------------');
-      writeln('   NAME                                          / M.ENTRY / M.CYCLE / CACHE');
-      writeln('----------------------------------------------------------------------------');
+      CategoryTitleAdded := False;
       for I := 0 to High(serverTool.Items) do
       begin
         aKFItem := sortedList.Objects[I] as TKFItem;
         if (aKFItem.SourceFrom = KFRedirectOrLocal) then
         begin
+          if not CategoryTitleAdded then
+          begin
+            writeln('------------------------ LOCAL OR REDIRECT MAPS ----------------------------');
+            writeln('----------------------------------------------------------------------------');
+            writeln('   NAME                                          / M.ENTRY / M.CYCLE / CACHE');
+            writeln('----------------------------------------------------------------------------');
+            CategoryTitleAdded := True;
+          end;
+
           with aKFItem do
           begin
             writeln(TextForXchar(FileName, 26) + ' ' + TextForXchar(ID, 12) +
@@ -528,7 +555,7 @@ begin
     writeln('Is strongly recommended close the server before make changes. ');
     writeln('Do you wanna close it close it now?');
     writeln('yes/no');
-    //cmdAnswer := 'yes';
+    // cmdAnswer := 'yes';
     Readln(cmdAnswer);
 
     if WordToBool(cmdAnswer) then
@@ -781,14 +808,14 @@ begin
           Exit;
         end;
         // ------------------------------------------------------------------ -test
-      {  begin
+        { begin
           //debugTest(argument);
           Exit;
-        end;
-       }
+          end;
+        }
         writeln('KF2ServerTool finished. Wrong param?');
       finally
-       // Readln(option);
+        // Readln(option);
         serverTool.Free;
       end;
 

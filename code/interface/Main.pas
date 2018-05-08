@@ -14,7 +14,7 @@ uses
   IdTCPClient, ImgList, OleCtrls,
   MSHTML, Variants, SHDocVw,
   ItemProgress, KFRedirect, System.ImageList, JvExControls, JvColorBox,
-  JvExStdCtrls, JvExComCtrls;
+  JvExStdCtrls, JvExComCtrls, Vcl.Themes;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -41,10 +41,8 @@ type
     Forceupdate1: TMenuItem;
     Reinstall1: TMenuItem;
     N1: TMenuItem;
-    lbl2: TLabel;
+    lblCredits: TLabel;
     pnl1: TPanel;
-    btnRemove: TJvSpeedButton;
-    btnAddNew: TJvSpeedButton;
     lblDonate: TLabel;
     btnReinstall: TBitBtn;
     btnUpdate: TBitBtn;
@@ -92,11 +90,7 @@ type
     edtExtra: TEdit;
     edtGmPass: TEdit;
     lblGamePass: TLabel;
-    lblFontColor: TLabel;
-    btnfontcolor: TJvColorButton;
     btnStartServer: TButton;
-    lbl3: TLabel;
-    lbl5: TLabel;
     tsNotes: TTabSheet;
     lbl1: TLabel;
     mmoNotepad: TMemo;
@@ -156,6 +150,10 @@ type
     edtWebPass: TJvEdit;
     lblWebPass: TLabel;
     chkAutoLoginAdmin: TCheckBox;
+    lblTheme: TLabel;
+    cbbTheme: TJvComboBox;
+    btnAddNew: TBitBtn;
+    btnRemove: TBitBtn;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -190,7 +188,6 @@ type
     procedure edtExtraChange(Sender: TObject);
     procedure edtGmPassChange(Sender: TObject);
     procedure trckbrFontSizeChange(Sender: TObject);
-    procedure btnfontcolorChange(Sender: TObject);
     procedure btnCheckForUpdateClick(Sender: TObject);
     procedure cbb1Change(Sender: TObject);
     procedure cbWorkshopDMStatusChange(Sender: TObject);
@@ -220,7 +217,7 @@ type
     procedure edtRedirectURLExit(Sender: TObject);
     procedure cbbRedirectEnabledCloseUp(Sender: TObject);
     procedure FromRedirect1Click(Sender: TObject);
-    procedure btn6Click(Sender: TObject);
+    procedure btnAddNewClick(Sender: TObject);
     procedure edtExtraEnter(Sender: TObject);
 
     procedure Export1Click(Sender: TObject);
@@ -230,6 +227,8 @@ type
     procedure chkAutoLoginAdminClick(Sender: TObject);
     procedure wb1DocumentComplete(ASender: TObject; const pDisp: IDispatch;
       const URL: OleVariant);
+    procedure cbbThemeChange(Sender: TObject);
+    procedure btnRemoveClick(Sender: TObject);
 
   private
     function loadConfig: Boolean;
@@ -276,6 +275,7 @@ type
     { Public declarations }
     serverTool: TKFServerTool;
     kfprofiles: array of TKFServerProfile;
+    fdefaultStyleName: String;
   end;
 
 var
@@ -347,9 +347,9 @@ begin
             progressForm := TformPB.Create(Self);
             try
               progressForm.NextPBValue('Installing item ' + itemID);
-              progressForm.Show;
               progressForm.tmrUndeterminedPB.Enabled := True;
-
+              progressForm.Show;
+              Application.ProcessMessages;
               if serverTool.InstallWorkshopItem(frmAdd.edtID.Text,
                 frmAdd.ItemName, frmAdd.addWkspRedirect, frmAdd.downloadNow,
                 frmAdd.addMapCycle, frmAdd.addMapENtry) = false then
@@ -587,9 +587,14 @@ begin
 
 end;
 
-procedure TFormMain.btn6Click(Sender: TObject);
+procedure TFormMain.btnAddNewClick(Sender: TObject);
 begin
-  autoLoginWb;
+try
+ with (Sender as TBitBtn).ClientToScreen(point( 0,  (Sender as TBitBtn).Height)) do
+    pmAdd.Popup(X, Y);
+except
+
+end;
 end;
 
 procedure TFormMain.btnCheckForPreviewClick(Sender: TObject);
@@ -751,12 +756,6 @@ begin
   cmdToolArgs := '+login anonymous +force_install_dir ' + Path +
     ' +app_update 232130 +exit';
   ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
-end;
-
-procedure TFormMain.btnfontcolorChange(Sender: TObject);
-begin
-
-  Self.Font.Color := btnfontcolor.Color;
 end;
 
 procedure TFormMain.btnNewProfileClick(Sender: TObject);
@@ -995,6 +994,16 @@ begin
   end;
 end;
 
+procedure TFormMain.btnRemoveClick(Sender: TObject);
+begin
+try
+ with (Sender as TBitBtn).ClientToScreen(point( 0,  (Sender as TBitBtn).Height)) do
+    pmRemove.Popup(X, Y);
+except
+
+end;
+end;
+
 procedure TFormMain.btnRenameProfileClick(Sender: TObject);
 var
   renameItemTitle, renameItemText, newName, renameItemError,
@@ -1218,6 +1227,16 @@ begin
     edtRedirectURL.Enabled := True;
     lblRedirectURL.Enabled := True;
     edtRedirectURL.SetFocus;
+  end;
+end;
+
+procedure TFormMain.cbbThemeChange(Sender: TObject);
+begin
+  fdefaultStyleName := cbbTheme.Text;
+  if Assigned(TStyleManager.ActiveStyle) then
+  begin
+    TStyleManager.TrySetStyle(fdefaultStyleName);
+    // whatever was in the project settings.
   end;
 end;
 
@@ -1668,13 +1687,15 @@ end;
 procedure TFormMain.lvMapsCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 begin
-  with lvMaps.Canvas.Brush do
-  begin
-    if (Item.Index mod 2) = 0 then
-      Color := clInactiveBorder
-    else
-      Color := clWhite;
-  end;
+  if not(fdefaultStyleName <> 'Windows') then
+
+    with lvMaps.Canvas.Brush do
+    begin
+      if (Item.Index mod 2) = 0 then
+        Color := clInactiveBorder
+      else
+        Color := clWhite;
+    end;
 end;
 
 procedure TFormMain.lvCompare(Sender: TObject; Item1, Item2: TListItem;
@@ -2107,20 +2128,29 @@ begin
   // ---- Files load
 
   serverTool := TKFServerTool.Create;
+    try
   serverTool.SetKFApplicationPath(serverpath);
   serverTool.SetKFngineIniSubPath(pathKFEngineIni);
   serverTool.SetKFGameIniSubPath(pathKFGameIni);
   serverTool.SetKFServerPathEXE(pathServerEXE);
   serverTool.SetKFWebIniSubPath(pathKFWebIni);
+
   serverTool.SetSteamCmdPath(serverpath + pathCmdTool);
+  except
+  on E: Exception do
+  Application.MessageBox(PWideChar( E.Message), 'Error', MB_OK + MB_ICONSTOP);
+  end;
   serverTool.appType := atGui;
   LoadItensToLv('');
   LoadServerProfile();
   LoadUIConfig;
 
+
 end;
 
 procedure TFormMain.LoadUIConfig;
+var
+  i: Integer;
 var
 
   webPort: String;
@@ -2215,6 +2245,17 @@ begin
     cbbLanguage.ItemIndex := 1;
   chkAutoLoginAdmin.Checked := autoLoginWebAdmin;
   checkAutoWebLoginRequirements();
+
+  if Assigned(TStyleManager.ActiveStyle) then
+  begin
+    for i := 0 to High(TStyleManager.StyleNames) do
+      cbbTheme.Items.Add(TStyleManager.StyleNames[i]);
+  end;
+  cbbTheme.ItemIndex := cbbTheme.Items.IndexOf(fdefaultStyleName);
+  TStyleManager.TrySetStyle(fdefaultStyleName);
+  // whatever was in the project settings.
+   Application.HintHidePause := 15000; //15 Sec
+
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
@@ -2290,7 +2331,7 @@ begin
       for i := 0 to bkpFile.Count - 1 do
       begin
         try
-            Application.ProcessMessages;
+          Application.ProcessMessages;
           // For more than one item
           separatorPoint := Pos(separator, bkpFile[i]);
           itemID := Copy(bkpFile[i], 0, separatorPoint - 1);
@@ -2356,7 +2397,7 @@ begin
             end
             else
             begin
-            Application.ProcessMessages;
+              Application.ProcessMessages;
               // Just one item
               modalResult := frmReinstall.ShowModal;
               if (modalResult = mrOk) then
@@ -2380,7 +2421,7 @@ begin
                 LoadItensToLv('');
                 Exit;
               end;
-               Application.ProcessMessages;
+              Application.ProcessMessages;
             end;
           end;
 
@@ -2594,10 +2635,10 @@ begin
     else
     begin
       if appLanguage = 'BR' then
-        ShowMessage('O server não está sendo executado.')
+      Application.MessageBox('O Web server não está sendo executado', 'Server', MB_OK + MB_ICONINFORMATION)
       else
-        ShowMessage('Server is not running.');
-    end;
+      Application.MessageBox('Web server is not running', 'Server', MB_OK + MB_ICONINFORMATION)
+     end;
   end;
 
 end;
@@ -3109,6 +3150,7 @@ begin
         onlyFromConfigItems := ReadBool('GENERAL',
           'OnlyShowItemsFromConfig', false);
         appLanguage := ReadString('GENERAL', 'Language', 'EG');
+        fdefaultStyleName := ReadString('GENERAL', 'Theme', 'Windows');
         autoLoginWebAdmin := ReadBool('GENERAL', 'AutoWebAdminLogin', True);
         appHeight := ReadInteger('GENERAL', 'WindowHeight', Self.Height);
         appWidth := ReadInteger('GENERAL', 'WindowWidth', Self.Width);
@@ -3168,6 +3210,7 @@ begin
           end;
           WriteBool('GENERAL', 'OnlyShowItemsFromConfig', onlyFromConfigItems);
           WriteString('GENERAL', 'Language', appLanguage);
+          WriteString('GENERAL', 'Theme', fdefaultStyleName);
           WriteBool('GENERAL', 'AutoWebAdminLogin', autoLoginWebAdmin);
           WriteInteger('GENERAL', 'WindowHeight', appHeight);
           WriteInteger('GENERAL', 'WindowWidth', appWidth);
@@ -3307,7 +3350,7 @@ begin
   Mapentry1.Caption := 'Entrada';
   MapCycle1.Caption := 'Do ciclo';
   Subcribe1.Caption := 'Inscrição';
-  mniShowitempage1.Caption := 'Ir na página da workshop';
+  mniShowitempage1.Caption := 'Abrir página da workshop';
   mniCopyID1.Caption := 'Copiar ID';
   lblAddParam.Caption := 'Parâmetros adicionais';
   lblSearch.Caption := 'Filtro';
@@ -3329,8 +3372,31 @@ begin
   grpmaintenance.Caption := 'Manutenção';
   grpapplication.Caption := 'Aplicação';
   lblFontSize.Caption := 'Tamanho da fonte: ';
-  lblFontColor.Caption := 'Cor da fonte: ';
+  lblGameMode.Caption := 'Modo de jogo';
+  FromRedirect1.Caption := 'Do Redirect';
+  FromList1.Caption := 'De uma lista de backup';
   tsNotes.Caption := 'Notas';
+  Export1.Caption := 'Exportar';
+  RemoveMapEntry1.Caption := 'Entrada';
+  RemoveMapEntry1.Caption := 'Do cíclo';
+  lblTheme.Caption := 'Tema:';
+  Explorerlocalfolder1.Caption := 'Abrir a pasta do item';
+  lblWebPass.Caption := 'Senha do Web admin:';
+  chkAutoLoginAdmin.Caption :=
+    'Auto logar no web admin usando a senha especificada';
+  chkOnlyFromConfigItems.Caption :=
+    'Apenas monstrar itens que estão no arquivo configuração';
+
+  chkOnlyFromConfigItems.Hint :=
+    'Ative esta opção para ver apenas itens que estão no PCServer-KFGame e no PCServer-KFEngine.'
+    + #13 + 'A pasta cache e maps serão ignorados. Isso é útil quando você tem vários servidores'
+    + #13 + 'com várias configurações e não quer ver mapas de outro servidor na ferramenta.';
+
+   chkAutoLoginAdmin.Hint :=
+   'Habilitar esta opção fará com que o WebAdmin efetue login automaticamente usando o nome de usuário'
+   + #13 + ' do "Admin" e a senha especificada. Esta opção só entra em vigor se a conexão automática ao webadmin'
+   +  #13 + 'estiver ativada na aba server.';
+
   lblAllChangesWillbe.Caption :=
     'Todas alterações serão salvas automaticamente';
 end;
@@ -3342,11 +3408,11 @@ begin
   alignControlAtoControlB(cbbRedirectEnabled, lblCustomRedirect);
   alignControlAtoControlB(cbWorkshopDMStatus, lblWkspDownMan);
   alignControlAtoControlB(trckbrFontSize, lblFontSize);
-  alignControlAtoControlB(btnfontcolor, lblFontColor);
   alignControlAtoControlB(cbbLanguage, lblLanguage);
   alignControlAtoControlB(cbStatusWeb, lblDescWebAdmin);
   alignControlAtoControlB(edtPort, lblDescWebPort);
   alignControlAtoControlB(edtWebPass, lblWebPass);
+  alignControlAtoControlB(cbbTheme, lblTheme);
 
 end;
 

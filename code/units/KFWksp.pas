@@ -4,7 +4,14 @@ interface
 
 uses
   Classes,
-  SysUtils, MiscFunc, IOUtils;
+  SysUtils, MiscFunc, System.StrUtils,
+       {$IFDEF CONSOLE}
+      {$ELSE}
+      forms,
+      {$ENDIF}
+
+
+  IOUtils;
 
 type
   TKFItemType = (KFMap, KFmod, KFUnknowed);
@@ -34,7 +41,7 @@ type
   const
     // KF2 File types prefix
     KF_MAPPREFIX = '.KFM';
-    KF_MODPREFIX: array [1 .. 3] of string = ('.U', '.UPX', '.UC');
+    KF_MODPREFIX: array [1 .. 4] of string = ('.U', '.UPX', '.UC', '.UPK');
 
     // Workshop files paths and names
     WKP_ACFFILENAME = 'appworkshop_232090.acf';
@@ -151,6 +158,11 @@ begin
     begin
       if VerboseCmd then
         Writeln('Debug: ' + text);
+      {$IFDEF CONSOLE}
+      {$ELSE}
+      Application.processmessages;
+      {$ENDIF}
+
     end);
 
   if Assigned(exResult) then
@@ -217,8 +229,7 @@ begin
       begin
 
         ext := UpperCase(ExtractFileExt(ItemsFound[i]));
-        if (ext = KF_MODPREFIX[1]) or (ext = KF_MODPREFIX[2]) or
-          (ext = KF_MODPREFIX[3]) then
+       if MatchStr(ext, KF_MODPREFIX)  then
         begin
 
           Result := KFmod;

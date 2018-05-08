@@ -26,7 +26,8 @@ object FormWorkshop: TFormWorkshop
     Margins.Bottom = 2
     Align = alClient
     TabOrder = 0
-    OnNavigateComplete2 = wb1NavigateComplete2
+    OnBeforeNavigate2 = wb1BeforeNavigate2
+    OnDocumentComplete = wb1DocumentComplete
     ExplicitWidth = 938
     ExplicitHeight = 595
     ControlData = {
@@ -71,22 +72,25 @@ object FormWorkshop: TFormWorkshop
       ParentFont = False
     end
     object lblId: TLabel
-      Left = 636
-      Top = 7
-      Width = 18
-      Height = 17
+      AlignWithMargins = True
+      Left = 798
+      Top = 3
+      Width = 15
+      Height = 25
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
+      Align = alRight
       Caption = 'ID:'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -15
-      Font.Name = 'Arial'
+      Font.Color = clWindowText
+      Font.Height = -10
+      Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
       Visible = False
+      ExplicitHeight = 12
     end
     object btnForward: TButton
       AlignWithMargins = True
@@ -131,8 +135,16 @@ object FormWorkshop: TFormWorkshop
       Align = alRight
       Caption = 'Add'
       Enabled = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -10
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 2
       OnClick = btnAddClick
+      ExplicitLeft = 824
+      ExplicitTop = 4
     end
   end
 end

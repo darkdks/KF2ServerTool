@@ -4,7 +4,7 @@ interface
 
 uses
   Classes,
-  SysUtils, KFFile, KFWksp, MiscFunc, IOUtils, KFRedirect;
+  SysUtils, KFFile, KFWksp, MiscFunc, IOUtils, KFRedirect, System.StrUtils;
 
 type
 
@@ -132,7 +132,7 @@ type
     KF_LOCALMAPSSUBFOLDER = 'KFGame' + PathDelim + 'BrewedPC' + PathDelim +
       'Maps' + PathDelim;
     KF_SERVERCACHEFOLDER = 'KFGame' + PathDelim + 'Cache' + PathDelim;
-    SERVERTOOLVERSION = '1.2.0';
+    SERVERTOOLVERSION = '1.2.2';
   end;
 
 implementation
@@ -611,7 +611,8 @@ begin
                 FileType := KFMap;
                 Break;
               end;
-              if (fileExt = '.U') or (fileExt = '.UC') then
+
+              if MatchStr(fileExt, TKFWorkshop.KF_MODPREFIX) then
               begin
                 FileType := KFmod;
               end;
@@ -756,7 +757,8 @@ function TKFServerTool.GetModName(files: TStringList): string;
 var
   I: Integer;
 begin
-  for I := 0 to files.Count do
+
+  for I := 0 to files.Count - 1 do
   begin
     if LowerCase(ExtractFileExt(files[I])) = '.u' then
     begin
@@ -1151,15 +1153,39 @@ end;
 
 procedure TKFServerTool.SetKFGameIniSubPath(path: string);
 begin
-
+  if FileExists(kfApplicationPath + path) then
+  begin
   kfGameIniSubPath := path;
   LogEvent('KFGameIniSubPath', path);
+  end
+  else
+  begin
+    raise Exception.Create('Invalid KFGame path: ' + kfApplicationPath + path + #13 +
+      'Make sure you you configured the correct path correcly.'+
+      'If its a new server you need to start the server '+ #13 +
+      ' one to create the configs files time before use the tool.');
+    LogEvent('KFGameIniSubPath', 'Exception : ' + kfApplicationPath +path + ' not found');
+  end;
+
 end;
 
 procedure TKFServerTool.SetKFngineIniSubPath(path: string);
 begin
+if FileExists( kfApplicationPath + path) then
+  begin
   kfEngineIniSubPath := path;
   LogEvent('KFEngineIniSubPath', path);
+  end
+  else
+  begin
+    raise Exception.Create('Invalid KFEngine path: ' + kfApplicationPath + path + #13 +
+      'Make sure you you configured the correct path correcly.'+
+      'If its a new server you need to start the server '+ #13 +
+      ' one to create the configs files time before use the tool.');
+    LogEvent('KFEngineIniSubPath', 'Exception : ' + kfApplicationPath + path + ' not found');
+  end;
+
+
 end;
 
 procedure TKFServerTool.SetWebPass(pass: String);
@@ -1235,8 +1261,18 @@ end;
 
 procedure TKFServerTool.SetKFServerPathEXE(path: string);
 begin
+  if FileExists(kfApplicationPath + path) then
+  begin
   KFServerPathEXE := path;
   LogEvent('SetKFServerPathEXE', path);
+    end
+  else
+  begin
+    raise Exception.Create('Invalid server exe path: ' + kfApplicationPath + path + #13 +
+      'Make sure you installed the tool correctly in the server folder or' + #13 +
+      'Configured the path correcly.');
+    LogEvent('SetKFServerPathEXE', 'Exception : ' + kfApplicationPath +path + ' not found');
+  end;
 end;
 
 procedure TKFServerTool.SetKFWebIniSubPath(path: string);
@@ -1246,8 +1282,19 @@ end;
 
 procedure TKFServerTool.SetSteamCmdPath(path: String);
 begin
-  SteamCmdPath := path;
-  LogEvent('SteamCmdPath', path);
+  if FileExists(path) then
+  begin
+    SteamCmdPath := path;
+    LogEvent('SteamCmdPath', path);
+  end
+  else
+  begin
+    raise Exception.Create('Invalid steamcmd path: ' + path + #13 +
+      'Make sure you installed the tool correctly with steamcmd tool. ' + #13 +
+      'You are unable to download from steam without steamcmd tool.');
+    LogEvent('SteamCmdPath', 'Exception : ' + path + ' not found');
+  end;
+
 end;
 
 procedure TKFServerTool.GetKFServerPathEXE(path: string);

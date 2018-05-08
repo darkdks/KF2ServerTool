@@ -52,6 +52,7 @@ object formPB: TformPB
   end
   object tmrUndeterminedPB: TTimer
     Enabled = False
+    Interval = 300
     OnTimer = tmrUndeterminedPBTimer
     Left = 112
     Top = 32

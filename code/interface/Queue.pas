@@ -28,6 +28,7 @@ type
     procedure lvQueueChange(Sender: TObject; Item: TListItem;
       Change: TItemChange);
   private
+    procedure callBackAdd(itemID: String);
     { Private declarations }
   public
   var
@@ -150,31 +151,30 @@ begin
 
       for i := 0 to lvQueue.Items.Count - 1 do
       begin
-          // For more than one item
-          ItemName := '';
-          itemID := lvQueue.Items[i].Caption;
-          addWkspRedirect := UpperCase(lvQueue.Items[i].SubItems[0]) = 'TRUE';
-          addMapENtry := UpperCase(lvQueue.Items[i].SubItems[1]) = 'TRUE';
-          addMapCycle := UpperCase(lvQueue.Items[i].SubItems[2]) = 'TRUE';
-          downloadNow := UpperCase(lvQueue.Items[i].SubItems[3]) = 'TRUE';
+        // For more than one item
+        ItemName := '';
+        itemID := lvQueue.Items[i].Caption;
+        addWkspRedirect := UpperCase(lvQueue.Items[i].SubItems[0]) = 'TRUE';
+        addMapENtry := UpperCase(lvQueue.Items[i].SubItems[1]) = 'TRUE';
+        addMapCycle := UpperCase(lvQueue.Items[i].SubItems[2]) = 'TRUE';
+        downloadNow := UpperCase(lvQueue.Items[i].SubItems[3]) = 'TRUE';
 
-          lvQueue.Items[i].SubItems[4] := 'Working';
-          try
-            if FormMain.serverTool.InstallWorkshopItem(itemID, ItemName, addWkspRedirect,
-              downloadNow, addMapCycle, addMapENtry) then
-            begin
+        lvQueue.Items[i].SubItems[4] := 'Working';
+        try
+          if FormMain.serverTool.InstallWorkshopItem(itemID, ItemName,
+            addWkspRedirect, downloadNow, addMapCycle, addMapENtry) then
+          begin
 
-              lvQueue.Items[i].SubItems[4] := 'Sucess';
-            end
-            else
-            begin
-              lvQueue.Items[i].SubItems[4] := 'Falied';
-            end;
-          except
+            lvQueue.Items[i].SubItems[4] := 'Sucess';
+          end
+          else
+          begin
             lvQueue.Items[i].SubItems[4] := 'Falied';
-
           end;
+        except
+          lvQueue.Items[i].SubItems[4] := 'Falied';
 
+        end;
 
       end;
       ShowMessage('All items finished');
@@ -280,14 +280,13 @@ end;
 
 procedure TfrmQueue.MenuItem2Click(Sender: TObject);
 var
-  frmAdd: TFormAdd;
+
   frmWksp: TFormWorkshop;
   textToFind: string;
   itemID: string;
   isMod: Boolean;
   lgFindAItemWksp, lgSearchFor: string;
   mdResult: Integer;
-  Item: TListItem;
 
 begin
   mdResult := mrNone;
@@ -307,60 +306,78 @@ begin
     frmWksp := TFormWorkshop.Create(Self);
     try
       isMod := addType = WorkshopItem;
+      frmWksp.callBackAdd := callBackAdd;
       if isMod then
         itemID := frmWksp.BrowserItem(TWkspType.WorkshopMod, textToFind)
       else
         itemID := frmWksp.BrowserItem(TWkspType.WorkshopMap, textToFind);
 
-      if itemID <> '' then
-      begin
-
-        frmAdd := TFormAdd.Create(Self);
-        try
-          if isMod then
-          begin
-            frmAdd.SetAddType(TKFItemType.WorkshopItem);
-          end
-          else
-          begin
-            frmAdd.SetAddType(TKFItemType.WorkshopMap);
-          end;
-          frmAdd.edtID.Text := itemID;
-          mdResult := frmAdd.ShowModal;
-          if mdResult = mrOk then
-          begin
-            Item := lvQueue.Items.Add;
-            Item.Caption := frmAdd.itemID;
-            Item.SubItems.Add(BoolToWord(frmAdd.addWkspRedirect));
-            if isMod then
-            begin
-              Item.SubItems.Add(BoolToWord(False));
-              Item.SubItems.Add(BoolToWord(False));
-            end
-            else
-            begin
-              Item.SubItems.Add(BoolToWord(frmAdd.addMapENtry));
-              Item.SubItems.Add(BoolToWord(frmAdd.addMapCycle));
-            end;
-            Item.SubItems.Add(BoolToWord(frmAdd.downloadNow));
-
-            if FormMain.appLanguage = 'BR' then
-              Item.SubItems.Add('Pendente')
-            else
-              Item.SubItems.Add('Pending');
-
-          end;
-
-        finally
-          frmAdd.Free;
-        end;
-      end;
     finally
       frmWksp.Free;
 
     end;
 
   end;
+
+end;
+
+procedure TfrmQueue.callBackAdd(itemID: String);
+var
+  frmAdd: TFormAdd;
+  mdResult: Integer;
+  Item: TListItem;
+begin
+
+  if itemID <> '' then
+  begin
+    frmAdd := TFormAdd.Create(Self);
+    try
+      if addType = WorkshopItem then
+      begin
+        frmAdd.SetAddType(TKFItemType.WorkshopItem);
+      end
+      else
+      begin
+        frmAdd.SetAddType(TKFItemType.WorkshopMap);
+      end;
+      frmAdd.edtID.Text := itemID;
+      mdResult := frmAdd.ShowModal;
+      if mdResult = mrOk then
+      begin
+        Item := lvQueue.Items.Add;
+        Item.Caption := frmAdd.itemID;
+        Item.SubItems.Add(BoolToWord(frmAdd.addWkspRedirect));
+        if addType = WorkshopItem then
+        begin
+          Item.SubItems.Add(BoolToWord(False));
+          Item.SubItems.Add(BoolToWord(False));
+        end
+        else
+        begin
+          Item.SubItems.Add(BoolToWord(frmAdd.addMapENtry));
+          Item.SubItems.Add(BoolToWord(frmAdd.addMapCycle));
+        end;
+        Item.SubItems.Add(BoolToWord(frmAdd.downloadNow));
+
+        if FormMain.appLanguage = 'BR' then  begin
+          Item.SubItems.Add('Pendente');
+          Application.MessageBox( 'Sucesso, item adicionado a fila.', 'Sucesso',
+            MB_OK + MB_ICONINFORMATION);
+        end else begin
+          Item.SubItems.Add('Pending');
+          Application.MessageBox('Sucess, item added to queue.', 'Sucess' ,
+            MB_OK + MB_ICONINFORMATION);
+
+        end;
+
+
+      end;
+
+    finally
+      frmAdd.Free;
+    end;
+  end;
+
 end;
 
 end.

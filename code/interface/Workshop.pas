@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Variants, Classes, Controls, Forms, StdCtrls, ExtCtrls, OleCtrls,
-  SHDocVw;
+  SHDocVw, MSHTML, dialogs, System.StrUtils;
 
 type
   TWkspType = (WorkshopMap, WorkshopMod);
@@ -17,20 +17,26 @@ type
     btnAdd: TButton;
     lblTip: TLabel;
     lblId: TLabel;
-    procedure wb1NavigateComplete2(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
     procedure btnBackClick(Sender: TObject);
     procedure btnForwardClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     function BrowserItem(BrowserType: TWkspType; SearchText: string): string;
+    procedure wbReplaceSubcribe;
+    procedure wb1DocumentComplete(ASender: TObject; const pDisp: IDispatch;
+      const URL: OleVariant);
+    procedure wb1BeforeNavigate2(ASender: TObject; const pDisp: IDispatch;
+      const URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
+      var Cancel: WordBool);
   private
-
 
     { Private declarations }
   public
     procedure NavigateBW(URL: string);
-    var
-      ItemBrowserId, TempID: string;
+
+  var
+    ItemBrowserId, TempID: string;
+    callBackAdd : TProc<string>;
     { Public declarations }
   end;
 
@@ -54,7 +60,8 @@ begin
   btnForward.Enabled := True;
 end;
 
-function TFormWorkshop.BrowserItem(BrowserType: TWkspType; SearchText: string): string;
+function TFormWorkshop.BrowserItem(BrowserType: TWkspType;
+  SearchText: string): string;
 var
   SteamWkspURL: string;
 begin
@@ -71,14 +78,18 @@ begin
 
   end;
   Self.ShowModal;
-
-  Result := ItemBrowserId;
+   Result := ItemBrowserId;
 end;
 
 procedure TFormWorkshop.btnAddClick(Sender: TObject);
 begin
-  Self.Close;
   ItemBrowserId := TempID;
+
+  if Assigned(callBackAdd) then
+  callBackAdd(ItemBrowserId)
+   else
+ Self.Close;
+
 end;
 
 procedure TFormWorkshop.FormCreate(Sender: TObject);
@@ -89,7 +100,8 @@ begin
 
   if FormMain.appLanguage = 'BR' then
   begin
-    lblTip.Caption := 'Procure pelo item, entre em sua página da workshop e clique no botão Adicionar';
+    lblTip.Caption :=
+      'Procure pelo item, entre em sua página da workshop e clique no botão Adicionar';
     btnAdd.Caption := 'Adicionar';
   end;
 end;
@@ -107,38 +119,68 @@ function WBGetDocumentHTML(wb: TWebBrowser): string;
 var
   DOM: variant;
 begin
-  result := '';
+  Result := '';
   DOM := wb.Document;
   if wb.LocationURL <> '' then
   begin
-    result := DOM.Body.OuterHTML;
+    Result := DOM.Body.OuterHTML;
   end;
 end;
 
-procedure TFormWorkshop.wb1NavigateComplete2(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
+procedure TFormWorkshop.wb1BeforeNavigate2(ASender: TObject;
+  const pDisp: IDispatch; const URL, Flags, TargetFrameName, PostData,
+  Headers: OleVariant; var Cancel: WordBool);
 var
-  ItemID: string;
-  UrlTemp: string;
-  i: Integer;
+  URLTemp, itemID: String;
+  I: Integer;
 begin
-  if Pos('?id=', URL) > 0 then
+  if (Pos('?id=', URL) > 0) and (Pos('/addToServer', URL) > 0) then
   begin
-    UrlTemp := Copy(URL, Pos('?id=', URL) + 4, length(URL) - Pos('?id=', URL) + 4);
-    for i := 1 to length(UrlTemp) do
+    URLTemp := Copy(URL, Pos('?id=', URL) + 4, length(URL) - Pos('?id=',
+      URL) + 4);
+    for I := 1 to length(URLTemp) do
     begin
-      if CharInSet(UrlTemp[i], ['0'..'9']) then
+      if CharInSet(URLTemp[I], ['0' .. '9']) then
       begin
-        ItemID := ItemID + UrlTemp[i];
+        itemID := itemID + URLTemp[I];
       end
       else
       begin
         Break;
       end;
+    end;
+    Cancel := True;
+    ItemBrowserId := TempID;
+    btnAddClick(nil);
+  end
+end;
 
+procedure TFormWorkshop.wb1DocumentComplete(ASender: TObject;
+  const pDisp: IDispatch; const URL: OleVariant);
+var
+  itemID: string;
+  URLTemp: string;
+  I: Integer;
+begin
+  if Pos('?id=', URL) > 0 then
+  begin
+    wbReplaceSubcribe;
+    URLTemp := Copy(URL, Pos('?id=', URL) + 4, length(URL) - Pos('?id=',
+      URL) + 4);
+    for I := 1 to length(URLTemp) do
+    begin
+      if CharInSet(URLTemp[I], ['0' .. '9']) then
+      begin
+        itemID := itemID + URLTemp[I];
+      end
+      else
+      begin
+        Break;
+      end;
     end;
     btnAdd.Enabled := True;
-    lblId.Caption := 'ID: ' + ItemID;
-    TempID := ItemID;
+    lblId.Caption := 'ID: ' + itemID;
+    TempID := itemID;
     lblId.Visible := True;
 
   end
@@ -149,7 +191,29 @@ begin
     lblId.Caption := '';
     lblId.Visible := false;
   end;
+
+end;
+
+procedure TFormWorkshop.wbReplaceSubcribe;
+var
+  TextElement: IHTMLElement;
+  Element: IHTMLElement;
+  outHTML: String;
+begin
+  try
+    Element := (wb1.Document as IHTMLDocument3)
+      .getElementById('SubscribeItemBtn') as IHTMLElement;
+    outHTML := Element.OuterHTML;
+    outHTML := ReplaceStr(outHTML, 'onclick="SubscribeItem();"',
+      'href="' + wb1.LocationURL + '/addToServer"');
+    Element.OuterHTML := outHTML;
+    TextElement := ((wb1.Document as IHTMLDocument3)
+      .getElementById('SubscribeItemOptionAdd') as IHTMLElement);
+    if Assigned(TextElement) then
+      TextElement.innerText := 'Add to server';
+  finally
+
+  end;
 end;
 
 end.
-

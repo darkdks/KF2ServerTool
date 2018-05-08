@@ -25,28 +25,22 @@ object FormAdd: TFormAdd
     Height = 65
     Align = alTop
     TabOrder = 0
-    object jvlbl1: TJvLabel
-      Left = 16
-      Top = 9
-      Width = 75
-      Height = 13
-      Margins.Left = 2
+    object jvlbl1: TLabel
+      Left = 17
+      Top = 8
+      Width = 80
+      Height = 14
+      Margins.Left = 6
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Workshop ID'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
+      Font.Color = clBlack
+      Font.Height = -12
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      Transparent = True
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -11
-      HotTrackFont.Name = 'Tahoma'
-      HotTrackFont.Style = []
     end
     object edtID: TJvEdit
       Left = 17
@@ -80,36 +74,30 @@ object FormAdd: TFormAdd
     Margins.Bottom = 2
     Align = alClient
     TabOrder = 1
-    object jvlbl2: TJvLabel
+    object jvlbl2: TLabel
       AlignWithMargins = True
       Left = 17
-      Top = 3
+      Top = 5
       Width = 298
-      Height = 13
+      Height = 14
       Margins.Left = 16
-      Margins.Top = 2
+      Margins.Top = 4
       Margins.Right = 2
-      Margins.Bottom = 5
+      Margins.Bottom = 4
       Align = alTop
       Caption = 'Options'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
+      Font.Color = clBlack
+      Font.Height = -12
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      Transparent = True
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -11
-      HotTrackFont.Name = 'Tahoma'
-      HotTrackFont.Style = []
-      ExplicitWidth = 45
+      ExplicitWidth = 48
     end
     object chkDoForAll: TCheckBox
       AlignWithMargins = True
       Left = 31
-      Top = 100
+      Top = 102
       Width = 284
       Height = 12
       Margins.Left = 30
@@ -118,21 +106,20 @@ object FormAdd: TFormAdd
       Margins.Bottom = 2
       Align = alTop
       Caption = 'Do this for the next x items'
-      Color = clBlack
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlack
-      Font.Height = -11
+      Font.Height = -12
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
-      ParentColor = False
       ParentFont = False
       TabOrder = 0
       Visible = False
+      ExplicitTop = 99
     end
     object chkAddMapEntry: TCheckBox
       AlignWithMargins = True
       Left = 17
-      Top = 75
+      Top = 77
       Width = 298
       Height = 13
       Margins.Left = 16
@@ -142,11 +129,12 @@ object FormAdd: TFormAdd
       Align = alTop
       Caption = 'Add map entry'
       TabOrder = 1
+      ExplicitTop = 74
     end
     object chkAddMapCycle: TCheckBox
       AlignWithMargins = True
       Left = 17
-      Top = 42
+      Top = 44
       Width = 298
       Height = 12
       Margins.Left = 16
@@ -156,11 +144,12 @@ object FormAdd: TFormAdd
       Align = alTop
       Caption = 'Add map in map cycle'
       TabOrder = 2
+      ExplicitTop = 41
     end
     object chkDownloadItem: TCheckBox
       AlignWithMargins = True
       Left = 17
-      Top = 58
+      Top = 60
       Width = 298
       Height = 13
       Margins.Left = 16
@@ -171,11 +160,12 @@ object FormAdd: TFormAdd
       Caption = 'Download the item now'
       TabOrder = 3
       OnClick = chkDownloadItemClick
+      ExplicitTop = 57
     end
     object chkAddWorkshopRedirect: TCheckBox
       AlignWithMargins = True
       Left = 17
-      Top = 25
+      Top = 27
       Width = 298
       Height = 13
       Margins.Left = 16
@@ -185,6 +175,7 @@ object FormAdd: TFormAdd
       Align = alTop
       Caption = 'Subcribe the server '
       TabOrder = 4
+      ExplicitTop = 24
     end
   end
   object pnlBottom: TPanel
@@ -233,28 +224,22 @@ object FormAdd: TFormAdd
     Height = 63
     Align = alTop
     TabOrder = 3
-    object lblPn3: TJvLabel
-      Left = 16
-      Top = 9
-      Width = 65
-      Height = 13
-      Margins.Left = 2
+    object lblPn3: TLabel
+      Left = 18
+      Top = 8
+      Width = 66
+      Height = 14
+      Margins.Left = 6
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Item name'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
+      Font.Color = clBlack
+      Font.Height = -12
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      Transparent = True
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -11
-      HotTrackFont.Name = 'Tahoma'
-      HotTrackFont.Style = []
     end
     object edtItemName: TJvEdit
       Left = 17
@@ -292,28 +277,22 @@ object FormAdd: TFormAdd
     Height = 63
     Align = alTop
     TabOrder = 4
-    object jvlbl4: TJvLabel
-      Left = 16
-      Top = 9
-      Width = 75
-      Height = 13
-      Margins.Left = 2
+    object jvlbl4: TLabel
+      Left = 18
+      Top = 8
+      Width = 79
+      Height = 14
+      Margins.Left = 6
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Redirect URL'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
+      Font.Color = clBlack
+      Font.Height = -12
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      Transparent = True
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -11
-      HotTrackFont.Name = 'Tahoma'
-      HotTrackFont.Style = []
     end
     object edtRedirectURL: TJvEdit
       Left = 17

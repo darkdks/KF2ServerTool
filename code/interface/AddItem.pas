@@ -16,7 +16,6 @@ type
   TFormAdd = class(TForm)
     pnlWorkshopID: TPanel;
     edtID: TJvEdit;
-    jvlbl1: TJvLabel;
     pnlClient: TPanel;
     chkDoForAll: TCheckBox;
     chkAddMapEntry: TCheckBox;
@@ -26,14 +25,15 @@ type
     pnlBottom: TPanel;
     btnCancel: TButton;
     btnOk: TButton;
-    jvlbl2: TJvLabel;
     pnl3: TPanel;
-    lblPn3: TJvLabel;
     edtItemName: TJvEdit;
     pnlRedirectURL: TPanel;
-    jvlbl4: TJvLabel;
     edtRedirectURL: TJvEdit;
     btnFindMapRedirectNames: TButton;
+    jvlbl1: TLabel;
+    jvlbl4: TLabel;
+    lblPn3: TLabel;
+    jvlbl2: TLabel;
     procedure BrowseClick(Sender: TObject);
     procedure chkDownloadItemClick(Sender: TObject);
     procedure edtIDExit(Sender: TObject);
