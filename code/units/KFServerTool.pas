@@ -132,7 +132,7 @@ type
     KF_LOCALMAPSSUBFOLDER = 'KFGame' + PathDelim + 'BrewedPC' + PathDelim +
       'Maps' + PathDelim;
     KF_SERVERCACHEFOLDER = 'KFGame' + PathDelim + 'Cache' + PathDelim;
-    SERVERTOOLVERSION = '1.2.2';
+    SERVERTOOLVERSION = '1.2.3';
   end;
 
 implementation
