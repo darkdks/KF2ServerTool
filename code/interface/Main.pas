@@ -13,8 +13,11 @@ uses
   JvCombobox, JvEdit, IdBaseComponent,
   IdTCPClient, ImgList, OleCtrls,
   MSHTML, Variants, SHDocVw,
-  ItemProgress, KFRedirect, System.ImageList, JvExControls, JvColorBox,
-  JvExStdCtrls, JvExComCtrls, Vcl.Themes;
+  ItemProgress, System.ImageList, JvExControls, JvColorBox,
+  JvExStdCtrls, JvExComCtrls, Vcl.Themes, GitAutoUpdate, System.uitypes,
+  downloaderTool,
+  System.Net.HttpClient, System.Net.HttpClientComponent, Registry,
+  System.Net.URLClient;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -154,6 +157,7 @@ type
     cbbTheme: TJvComboBox;
     btnAddNew: TBitBtn;
     btnRemove: TBitBtn;
+    NetHTTPClient1: TNetHTTPClient;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -248,6 +252,8 @@ type
     procedure alignControlAtoControlB(elementA, elementB: TControl);
     procedure checkAutoWebLoginRequirements;
     procedure CheckIfTheServerIsRuning;
+    procedure VerifyToInstallUpdate;
+    procedure InstallRegBrowserKey;
 
   var
     ActiveLV: TListView;
@@ -257,7 +263,8 @@ type
 
   const
 
-    memoName = 'KF2ServerTool.text';
+    MEMONAME = 'KF2ServerTool.text';
+    UPDATEPARAM = '-installupdate';
     { Private declarations }
   public
   var
@@ -539,6 +546,15 @@ begin
         argCmd := argCmd + '?game=KFGameContent.KFGameInfo_VersusSurvival';
       3:
         argCmd := argCmd + '?game=KFGameContent.KFGameInfo_WeeklySurvival';
+      4:
+        begin
+          if (Pos('GAME=', UpperCase(edtExtra.Text)) <= 0) then
+            Application.MessageBox
+              ('You have set the game mode to custom but you won''t ' + #13 +
+              'specified the custom game in additional parameters',
+              'Invalid custom game mod', MB_OK + MB_ICONWARNING);
+
+        end;
     end;
 
     // ShowMessage(argCmd);
@@ -589,12 +605,13 @@ end;
 
 procedure TFormMain.btnAddNewClick(Sender: TObject);
 begin
-try
- with (Sender as TBitBtn).ClientToScreen(point( 0,  (Sender as TBitBtn).Height)) do
-    pmAdd.Popup(X, Y);
-except
+  try
+    with (Sender as TBitBtn).ClientToScreen
+      (point(0, (Sender as TBitBtn).Height)) do
+      pmAdd.Popup(X, Y);
+  except
 
-end;
+  end;
 end;
 
 procedure TFormMain.btnCheckForPreviewClick(Sender: TObject);
@@ -996,12 +1013,13 @@ end;
 
 procedure TFormMain.btnRemoveClick(Sender: TObject);
 begin
-try
- with (Sender as TBitBtn).ClientToScreen(point( 0,  (Sender as TBitBtn).Height)) do
-    pmRemove.Popup(X, Y);
-except
+  try
+    with (Sender as TBitBtn).ClientToScreen
+      (point(0, (Sender as TBitBtn).Height)) do
+      pmRemove.Popup(X, Y);
+  except
 
-end;
+  end;
 end;
 
 procedure TFormMain.btnRenameProfileClick(Sender: TObject);
@@ -1173,6 +1191,31 @@ end;
 procedure TFormMain.cbbGameModeChange(Sender: TObject);
 begin
   kfprofiles[defaultProfile].DefaultGameMode := cbbGameMode.ItemIndex;
+  if (cbbGameMode.ItemIndex = 4) then
+  begin
+    if (Pos('?GAME=', UpperCase(edtExtra.Text)) <= 0) then
+    begin
+      Application.MessageBox
+        ('Specify the gamemod param in additional paramenters.' + #13 + #13 +
+        'Example: ?Game=CustomModGame.MyGame', 'Custom game mode set',
+        MB_OK + MB_ICONINFORMATION);
+      edtExtra.SetFocus;
+    end;
+  end
+  else
+  begin
+
+    if Pos('?GAME=', UpperCase(edtExtra.Text)) > 0 then
+      Application.MessageBox
+        (PWideChar('You specified a custom game mode in additional parameters.'
+        + #13 + 'Configuring ' + cbbGameMode.Text +
+        ' as a game mode will cause the server to ignore' + #13 +
+        'the custom game that you specified in Additional parameters box.'),
+        'Custom game mode set', MB_OK + MB_ICONWARNING);
+
+    ;
+  end;
+
 end;
 
 procedure TFormMain.cbbLanguageChange(Sender: TObject);
@@ -1331,6 +1374,9 @@ end;
 procedure TFormMain.edtExtraChange(Sender: TObject);
 begin
   kfprofiles[defaultProfile].AdditionalParam := edtExtra.Text;
+  if Pos('GAME=', UpperCase(edtExtra.Text)) > 0 then
+    cbbGameMode.ItemIndex := 4;
+
 end;
 
 procedure TFormMain.edtExtraEnter(Sender: TObject);
@@ -2051,6 +2097,7 @@ var
   ExeName: String;
   i: Integer;
 begin
+  VerifyToInstallUpdate;
   ExeName := ExtractFileName(Application.ExeName);
   Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
   if ParamCount > 0 then
@@ -2128,23 +2175,23 @@ begin
   // ---- Files load
 
   serverTool := TKFServerTool.Create;
-    try
-  serverTool.SetKFApplicationPath(serverpath);
-  serverTool.SetKFngineIniSubPath(pathKFEngineIni);
-  serverTool.SetKFGameIniSubPath(pathKFGameIni);
-  serverTool.SetKFServerPathEXE(pathServerEXE);
-  serverTool.SetKFWebIniSubPath(pathKFWebIni);
+  try
+    serverTool.SetKFApplicationPath(serverpath);
+    serverTool.SetKFngineIniSubPath(pathKFEngineIni);
+    serverTool.SetKFGameIniSubPath(pathKFGameIni);
+    serverTool.SetKFServerPathEXE(pathServerEXE);
+    serverTool.SetKFWebIniSubPath(pathKFWebIni);
 
-  serverTool.SetSteamCmdPath(serverpath + pathCmdTool);
+    serverTool.SetSteamCmdPath(serverpath + pathCmdTool);
   except
-  on E: Exception do
-  Application.MessageBox(PWideChar( E.Message), 'Error', MB_OK + MB_ICONSTOP);
+    on E: Exception do
+      Application.MessageBox(PWideChar(E.Message), 'Error',
+        MB_OK + MB_ICONSTOP);
   end;
   serverTool.appType := atGui;
   LoadItensToLv('');
   LoadServerProfile();
   LoadUIConfig;
-
 
 end;
 
@@ -2254,8 +2301,9 @@ begin
   cbbTheme.ItemIndex := cbbTheme.Items.IndexOf(fdefaultStyleName);
   TStyleManager.TrySetStyle(fdefaultStyleName);
   // whatever was in the project settings.
-   Application.HintHidePause := 15000; //15 Sec
-
+  Application.HintHidePause := 15000; // 15 Sec
+  //Fix webbrowser compabillity
+ InstallRegBrowserKey()
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
@@ -2449,7 +2497,7 @@ var
   redirectURL: String;
   DownURL: string;
   FileName: String;
-  dlManager: TKFRedirectDownloadManager;
+  dlManager: TDownloadManager;
 
 begin
   frmAdd := TFormAdd.Create(Self);
@@ -2489,10 +2537,12 @@ begin
         if redirectURL[Length(redirectURL)] <> '/' then
           redirectURL := Trim(redirectURL) + '/';
         DownURL := redirectURL + FileName;
-        dlManager := TKFRedirectDownloadManager.Create;
-        dlManager.OnDownloadProgress := RedirectDownloadProgress;
-        dlManager.OnDownloadStarted := RedirectDownloadStarted;
-        dlManager.OnDownloadFinished := RedirectDownloadFinished;
+        dlManager := TDownloadManager.Create;
+
+        dlManager.OnProgress := RedirectDownloadProgress;
+        dlManager.OnStarted := RedirectDownloadStarted;
+        dlManager.OnFinished := RedirectDownloadFinished;
+
         dlManager.FileDAbort := @frmProgress.cancel;
         frmProgress.btncancel.Visible := True;
         frmProgress.Show;
@@ -2635,10 +2685,12 @@ begin
     else
     begin
       if appLanguage = 'BR' then
-      Application.MessageBox('O Web server não está sendo executado', 'Server', MB_OK + MB_ICONINFORMATION)
+        Application.MessageBox('O Web server não está sendo executado',
+          'Server', MB_OK + MB_ICONINFORMATION)
       else
-      Application.MessageBox('Web server is not running', 'Server', MB_OK + MB_ICONINFORMATION)
-     end;
+        Application.MessageBox('Web server is not running', 'Server',
+          MB_OK + MB_ICONINFORMATION)
+    end;
   end;
 
 end;
@@ -3063,10 +3115,93 @@ begin
 end;
 
 procedure TFormMain.lbl9Click(Sender: TObject);
+var
+  gitUpdate: TGitAutoUpdate;
+  latestRelease: TLatestRelease;
+  currentVCode, latestVCode: Integer;
+  dlManager: TDownloadManager;
 begin
-  ShellExecute(0, 'open',
-    Pchar('https://github.com/darkdks/KF2ServerTool/releases'), nil, nil,
-    SW_SHOWNORMAL);
+  gitUpdate := TGitAutoUpdate.Create(ExtractFilePath(Application.ExeName));
+  try
+    try
+      latestRelease := gitUpdate.GetLatestRelease('darkdks/KF2ServerTool');
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Falied to check for updates' + #13 + E.Message);
+        Exit
+      end;
+    end;
+    try
+      try
+        latestVCode := StrToInt(cleanInt(latestRelease.version));
+      except
+        latestVCode := 0;
+      end;
+      try
+        currentVCode := StrToInt(cleanInt(serverTool.SERVERTOOLVERSION));
+      except
+        currentVCode := 0;
+      end;
+      if latestVCode > currentVCode then
+      begin
+
+        if Application.MessageBox(PWideChar('A new version is avaliable.' +
+          #13#13 + 'Your current version is: ' + serverTool.SERVERTOOLVERSION +
+          #13 + 'The newer version is: ' + latestRelease.version + #13 + #13 +
+          'Change log: ' + #13 + latestRelease.change_log + #13 + #13 +
+          'Do you wanna update it now?'), 'Update aviable',
+          MB_YESNO + MB_ICONQUESTION) = mrYes then
+        begin
+          { ShellExecute(0, 'open', Pchar(latestRelease.download_url), nil, nil,
+            SW_SHOWNORMAL)
+          }
+          dlManager := TDownloadManager.Create;
+          if Assigned(frmProgress) then
+            frmProgress.Free;
+          frmProgress := TformPB.Create(Self);
+          dlManager := TDownloadManager.Create;
+          dlManager.OnProgress := RedirectDownloadProgress;
+          dlManager.OnStarted := RedirectDownloadStarted;
+          dlManager.OnFinished := RedirectDownloadFinished;
+          dlManager.FileDAbort := @frmProgress.cancel;
+          frmProgress.btncancel.Visible := True;
+          frmProgress.Show;
+          try
+            if gitUpdate.DownloadAndExtractUpdate(latestRelease.download_url,
+              dlManager, 'KF2ServerTool.exe', True) then
+            begin
+              ShowMessage
+                ('The application will be restarted to complete to update');
+              gitUpdate.executeUpdateInstall(gitUpdate.TEMUPDATEFILE,
+                UPDATEPARAM + ' ' + Application.ExeName);
+              Application.Terminate;
+            end
+            else
+              ShowMessage('Error to update');
+          finally
+            FreeAndNil(dlManager);
+            FreeAndNil(frmProgress);
+          end;
+
+        end;
+
+      end
+      else
+      begin
+        ShowMessage('The current version is updated.');
+
+      end;
+
+    except
+      on E: Exception do
+        ShowMessage('Falied to download update' + #13 + E.Message);
+    end;
+
+  finally
+    FreeAndNil(gitUpdate);
+    FreeAndNil(latestRelease);
+  end;
 end;
 
 procedure TFormMain.lblDonateClick(Sender: TObject);
@@ -3156,9 +3291,9 @@ begin
         appWidth := ReadInteger('GENERAL', 'WindowWidth', Self.Width);
         fontSize := ReadInteger('GENERAL', 'FontSize', 10);
         appMaximized := ReadBool('GENERAL', 'Maximized', false);
-        if FileExists(ExtractFilePath(Application.ExeName) + memoName) then
+        if FileExists(ExtractFilePath(Application.ExeName) + MEMONAME) then
           mmoNotepad.Lines.LoadFromFile(ExtractFilePath(Application.ExeName) +
-            memoName);
+            MEMONAME);
       end;
     finally
       IniConfig.Free;
@@ -3221,12 +3356,12 @@ begin
       if mmoNotepad.Text <> '' then
       begin
         mmoNotepad.Lines.SaveToFile(ExtractFilePath(Application.ExeName) +
-          memoName);
+          MEMONAME);
       end
       else
       begin
-        if FileExists(ExtractFilePath(Application.ExeName) + memoName) then
-          DeleteFile(ExtractFilePath(Application.ExeName) + memoName)
+        if FileExists(ExtractFilePath(Application.ExeName) + MEMONAME) then
+          DeleteFile(ExtractFilePath(Application.ExeName) + MEMONAME)
       end;
 
       Result := True;
@@ -3392,10 +3527,10 @@ begin
     + #13 + 'A pasta cache e maps serão ignorados. Isso é útil quando você tem vários servidores'
     + #13 + 'com várias configurações e não quer ver mapas de outro servidor na ferramenta.';
 
-   chkAutoLoginAdmin.Hint :=
-   'Habilitar esta opção fará com que o WebAdmin efetue login automaticamente usando o nome de usuário'
-   + #13 + ' do "Admin" e a senha especificada. Esta opção só entra em vigor se a conexão automática ao webadmin'
-   +  #13 + 'estiver ativada na aba server.';
+  chkAutoLoginAdmin.Hint :=
+    'Habilitar esta opção fará com que o WebAdmin efetue login automaticamente usando o nome de usuário'
+    + #13 + ' do "Admin" e a senha especificada. Esta opção só entra em vigor se a conexão automática ao webadmin'
+    + #13 + 'estiver ativada na aba server.';
 
   lblAllChangesWillbe.Caption :=
     'Todas alterações serão salvas automaticamente';
@@ -3438,6 +3573,64 @@ begin
     elementA.Left := elementB.Left + elementB.Width + 5;
   except
     serverTool.LogEvent('Error', 'Error aligncontrolAToB');
+  end;
+
+end;
+procedure TFormMain.InstallRegBrowserKey();
+var R: TRegistry;
+begin
+  try
+  R := TRegistry.Create(KEY_WRITE);
+  R.RootKey := HKEY_LOCAL_MACHINE;
+  try
+    if not R.OpenKey('SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION', True) then
+      RaiseLastOSError;
+    R.WriteInteger(ExtractFileName(Application.ExeName), 9999);
+  finally R.Free;
+  end;
+  except
+
+  end;
+end;
+
+procedure TFormMain.VerifyToInstallUpdate();
+var
+  ExeName: String;
+  exePath: String;
+  fSource: TStringList;
+begin
+  if ParamCount > 1 then
+  begin
+    if ParamStr(1) = UPDATEPARAM then
+    begin
+      try
+        exePath := ParamStr(2);
+        ExeName := ExtractFileName(exePath);
+        fSource := TStringList.Create;
+        try
+          if FileExists(exePath) then
+          begin
+            KillProcessByName(ExeName);
+            Sleep(500);
+
+            fSource.Add(exePath);
+            FileOperation(fSource, '', 3); // deleteOldExe
+            Sleep(100);
+            fSource.Clear;
+            fSource.Add(Application.ExeName);
+            FileOperation(fSource, exePath, 2); // copyNewExe
+            Sleep(100);
+            ExecuteFile(0, exePath, '', 1);
+            Application.Terminate;
+          end;
+        Finally
+          FreeAndNil(fSource);
+        end;
+      except
+        on E: Exception do
+          ShowMessage('Falied to install Update : ' + E.Message);
+      end;
+    end;
   end;
 end;
 

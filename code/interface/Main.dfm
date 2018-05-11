@@ -91,9 +91,9 @@ object FormMain: TFormMain
     end
     object lbl9: TLabel
       AlignWithMargins = True
-      Left = 567
+      Left = 574
       Top = 2
-      Width = 53
+      Width = 46
       Height = 21
       Cursor = crHandPoint
       Margins.Left = 10
@@ -102,7 +102,7 @@ object FormMain: TFormMain
       Margins.Bottom = 10
       Align = alRight
       Alignment = taRightJustify
-      Caption = 'Updates'
+      Caption = 'Update'
       Font.Charset = ANSI_CHARSET
       Font.Color = clTeal
       Font.Height = -11
@@ -424,7 +424,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsMaps
+    ActivePage = tsServer
     Align = alClient
     TabOrder = 1
     OnChange = jvpgcntrl1Change
@@ -562,10 +562,11 @@ object FormMain: TFormMain
             Left = 12
             Top = 3
             Width = 493
-            Height = 14
+            Height = 28
             Caption = 
               'Example: ?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15' +
-              '?MaxMonsters=64'
+              '?MaxMonsters=64'#13#10'Example: ?Game=MyCustoGameMode.GameMode?Mutator' +
+              '=MyMutator.Mutator'
             Color = clBtnFace
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowFrame
@@ -591,13 +592,10 @@ object FormMain: TFormMain
             Caption = 'Start server'
             TabOrder = 0
             OnClick = btnStartServerClick
-            ExplicitLeft = 0
-            ExplicitTop = 158
-            ExplicitWidth = 636
           end
           object chkAutoConnectWeb: TCheckBox
             Left = 12
-            Top = 32
+            Top = 45
             Width = 493
             Height = 17
             Hint = 
@@ -834,8 +832,8 @@ object FormMain: TFormMain
           BevelOuter = bvNone
           TabOrder = 4
           object lblGamePass: TLabel
-            Left = 176
-            Top = 11
+            Left = 208
+            Top = 9
             Width = 97
             Height = 17
             Margins.Left = 2
@@ -861,8 +859,8 @@ object FormMain: TFormMain
             ParentColor = False
           end
           object edtGmPass: TEdit
-            Left = 176
-            Top = 33
+            Left = 208
+            Top = 30
             Width = 180
             Height = 25
             Margins.Left = 2
@@ -876,8 +874,8 @@ object FormMain: TFormMain
           end
           object cbbGameMode: TComboBox
             Left = 5
-            Top = 33
-            Width = 161
+            Top = 30
+            Width = 193
             Height = 25
             Margins.Left = 6
             Margins.Top = 0
@@ -893,7 +891,8 @@ object FormMain: TFormMain
               'Endless'
               'Survival'
               'VersusSurvival'
-              'Weekly')
+              'Weekly'
+              'Custom')
           end
         end
       end
@@ -1747,7 +1746,7 @@ object FormMain: TFormMain
     Left = 584
     Top = 16
     Bitmap = {
-      494C010106002000C40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106002000E40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000
@@ -2140,5 +2139,15 @@ object FormMain: TFormMain
       Caption = 'Manual'
       Enabled = False
     end
+  end
+  object NetHTTPClient1: TNetHTTPClient
+    Asynchronous = False
+    ConnectionTimeout = 60000
+    ResponseTimeout = 60000
+    AllowCookies = True
+    HandleRedirects = True
+    UserAgent = 'Embarcadero URI Client/1.0'
+    Left = 468
+    Top = 349
   end
 end
