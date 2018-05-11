@@ -4,7 +4,7 @@ interface
 
 uses
   Classes,
-  SysUtils, KFFile, KFWksp, MiscFunc, IOUtils, KFRedirect, System.StrUtils;
+  SysUtils, KFFile, KFWksp, MiscFunc, IOUtils, KFRedirect, System.StrUtils, DownloaderTool;
 
 type
 
@@ -97,7 +97,7 @@ type
       MapEntry: Boolean): Boolean;
     function NewRedirectItem(downURL, itemName: String;
       DownloadNow, MapCycle, MapEntry: Boolean;
-      var dlManager: TKFRedirectDownloadManager): Boolean;
+      var dlManager: TDownloadManager): Boolean;
 
     function RemoveItem(itemName: string; itemID: string;
       rmvMapEntry, rmvMapCycle, rmvSubcribe, rmvLocalFile: Boolean;
@@ -132,7 +132,7 @@ type
     KF_LOCALMAPSSUBFOLDER = 'KFGame' + PathDelim + 'BrewedPC' + PathDelim +
       'Maps' + PathDelim;
     KF_SERVERCACHEFOLDER = 'KFGame' + PathDelim + 'Cache' + PathDelim;
-    SERVERTOOLVERSION = '1.2.3';
+    SERVERTOOLVERSION = '1.2.4';
   end;
 
 implementation
@@ -205,12 +205,13 @@ end;
 
 function TKFServerTool.NewRedirectItem(downURL: String; itemName: String;
   DownloadNow: Boolean; MapCycle: Boolean; MapEntry: Boolean;
-  var dlManager: TKFRedirectDownloadManager): Boolean;
+  var dlManager: TDownloadManager): Boolean;
 var
   ItemDownloaded: Boolean;
   AddedMapEntry: Boolean;
   AddedMapCycle: Boolean;
   KFRedirect: TKFRedirect;
+  dlTool: TDownloaderTool;
 begin
 
   result := False;
@@ -227,15 +228,17 @@ begin
         if DownloadNow and (downURL <> '') then
         begin
           KFRedirect := TKFRedirect.Create;
+          dlTool := TDownloaderTool.Create;
           try
-            ItemDownloaded := KFRedirect.downloadFile(downURL,
+            ItemDownloaded := dlTool.downloadFile(downURL,
               kfApplicationPath + KF_LOCALMAPSSUBFOLDER + itemName, dlManager);
             if not ItemDownloaded then
               raise Exception.Create('Falied to download file from url: '
                 + downURL);
 
           finally
-            KFRedirect.Free;
+            FreeAndNil(KFRedirect);
+
           end;
         end;
 
@@ -324,7 +327,7 @@ begin
       end;
     end;
   finally
-    outputList.Free;
+    FreeAndNil(outputList);
   end;
 
 end;
@@ -433,7 +436,7 @@ begin
       end;
     end;
   finally
-    inputList.Free;
+    FreeAndNil(inputList);
   end;
 end;
 
@@ -645,7 +648,7 @@ begin
             end;
           end;
         finally
-          files.Free;
+          FreeAndNil(files);
         end;
       except
         LogEvent('Error loading folder ', directorys[I] + ' of number ' +
@@ -714,16 +717,16 @@ begin
 
         end;
       finally
-        files.Free;
+        FreeAndNil(files);
       end;
     except
       raise Exception.Create('Error loading local maps folder.');
     end;
 
   finally
-    egIni.Free;
-    gmIni.Free;
-    directorys.Free;
+    FreeAndNil(egIni);
+    FreeAndNil(gmIni);
+    FreeAndNil(directorys);
   end;
 
 end;
@@ -748,7 +751,7 @@ begin
       eventDescription);
     logFile.SaveToFile(logPath);
   finally
-    logFile.Free;
+    FreeAndNil(logFile);
   end;
 
 end;
@@ -1163,7 +1166,7 @@ begin
     raise Exception.Create('Invalid KFGame path: ' + kfApplicationPath + path + #13 +
       'Make sure you you configured the correct path correcly.'+
       'If its a new server you need to start the server '+ #13 +
-      ' one to create the configs files time before use the tool.');
+      ' one time to create the configs files time before use the tool.');
     LogEvent('KFGameIniSubPath', 'Exception : ' + kfApplicationPath +path + ' not found');
   end;
 
@@ -1181,7 +1184,7 @@ if FileExists( kfApplicationPath + path) then
     raise Exception.Create('Invalid KFEngine path: ' + kfApplicationPath + path + #13 +
       'Make sure you you configured the correct path correcly.'+
       'If its a new server you need to start the server '+ #13 +
-      ' one to create the configs files time before use the tool.');
+      ' one time to create the configs files time before use the tool.');
     LogEvent('KFEngineIniSubPath', 'Exception : ' + kfApplicationPath + path + ' not found');
   end;
 

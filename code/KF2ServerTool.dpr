@@ -16,7 +16,9 @@ uses
   uRedirectItemsDialog in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog},
   KFWksp in 'units\KFWksp.pas',
   Vcl.Themes,
-  Vcl.Styles;
+  Vcl.Styles,
+  GitAutoUpdate in 'units\GitAutoUpdate.pas',
+  downloaderTool in 'units\DownloaderTool.pas';
 
 {$R *.res}
 {$R 'Manifest.res' 'Manifest.rc'}

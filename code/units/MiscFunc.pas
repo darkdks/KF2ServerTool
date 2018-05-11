@@ -29,7 +29,11 @@ type
     destructor Destroy; override;
   end;
 {$ENDIF}
+ {$IFDEF MSWINDOWS}
+function ExecuteFile(hWnd: Cardinal; filename: string; Parameters: string;
+ShowWindows: Integer): Boolean;
 
+{$ENDIF}
 function WordToBool(Word: String): Boolean;
 function FormatByteSize(const bytes: Int64): string;
 function BoolToWord(Bool: Boolean): string;
@@ -43,7 +47,7 @@ function GetAllFilesSubDirectory(path: string; filter: string): TStringList;
 function WorkshopURLtoID(URL: string): string;
 function TextForXchar(Text: String; numberOfChars: Integer): string;
 function CreateNewFolderInto(path, FolderName: String): String;
- function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
+function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
   Parameters: string; ShowWindows: Integer): Boolean;
 function FileOperation(Source: TStringList; Destination: String;
   Operation: Cardinal): Boolean;
@@ -51,6 +55,7 @@ function ProcessExists(ProcessName: string): Boolean;
 Function KillProcessByName(ExeName: String): Boolean;
 function ListDir(path: string): TStringList;
 function ExecuteTerminalProcess(Acmd: String; AParam: string;
+
   var abortExe: Boolean; Return: TProc<String>): TStringList;
 
 implementation
@@ -358,275 +363,292 @@ begin
 end;
 {$ENDIF}
 
-function ExecuteTerminalProcess(Acmd: String; AParam: string;
+
+{$IFDEF MSWINDOWS}
+function ExecuteFile(hWnd: Cardinal; filename: string; Parameters: string;
+ShowWindows: Integer): Boolean;
+begin
+  Result := False;
+    try
+      Result := ShellExecute(hWnd, 'runas', PWideChar(filename), nil, nil, ShowWindows) > 32;
+    except
+      on E: Exception do begin
+        raise Exception.Create('Falied to execute file ' + filename + ' ' +
+          E.Message);
+      end;
+    end;
+end;
+{$ENDIF}
+
+  function ExecuteTerminalProcess(Acmd: String; AParam: string;
   var abortExe: Boolean; Return: TProc<String>): TStringList;
 {$IFDEF MSWINDOWS}
-var
-  outlineCallBack: TExecuteCmdCallBack;
-begin
-  Result := TStringList.Create;
+  var
+    outlineCallBack: TExecuteCmdCallBack;
+  begin
+    Result := TStringList.Create;
 
-  if ExecuteFileAndWait(0,Acmd, AParam,0) then
-   Result.Add('True by ExecutefileAndWait') else
-   Result.Add('False by ExecutefileAndWait');
-{
+    if ExecuteFileAndWait(0, Acmd, AParam, 0) then
+      Result.Add('True by ExecutefileAndWait')
+    else
+      Result.Add('False by ExecutefileAndWait');
+    {
 
-    outlineCallBack := TExecuteCmdCallBack.Create;
-  outlineCallBack.ProcCallBack := Return;
-  outlineCallBack.executeResult := Result;
-  try
-    JclSysUtils.Execute(Acmd + ' ' + AParam, outlineCallBack.executeCallBack,
+      outlineCallBack := TExecuteCmdCallBack.Create;
+      outlineCallBack.ProcCallBack := Return;
+      outlineCallBack.executeResult := Result;
+      try
+      JclSysUtils.Execute(Acmd + ' ' + AParam, outlineCallBack.executeCallBack,
       False, @abortExe, ppNormal);
 
-  finally
-    FreeAndNil(outlineCallBack);
-  end;
+      finally
+      FreeAndNil(outlineCallBack);
+      end;
 
- }
-end;
+    }
+  end;
 {$ELSE}
 
-// Linux
-var
-  linuxUt: TLinuxUtils;
-  cmdResult: TStringList;
-begin
-
-  linuxUt := TLinuxUtils.Create;
-  Result := TStringList.Create;
-  cmdResult := Result;
-  try
-    linuxUt.RunCommandLine(Acmd + ' ' + AParam, (
-      procedure(rStr: String)
-      begin
-        try
-          if Assigned(Return) then
-            Return(rStr);
-          cmdResult.Add(rStr);
-
-        except
-          writeln('Exception calling line return');
-        end;
-      end));
-  finally
-    FreeAndNil(linuxUt);
-  end;
-end;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-
-constructor TExecuteCmdCallBack.Create;
-begin
-
-end;
-
-destructor TExecuteCmdCallBack.Destroy;
-begin
-
-  inherited;
-end;
-
-procedure TExecuteCmdCallBack.executeCallBack(const Text: string);
-begin
-  if Assigned(ProcCallBack) then
-    ProcCallBack(Text);
-  if Assigned(executeResult) then
-    executeResult.Add(Text);
-end;
-{$ENDIF}
-
-function FileOperation(Source: TStringList; Destination: String;
-Operation: Cardinal): Boolean;
-var
-  i: Integer;
-begin
-  Result := False;
-  case Operation of
-    1: // FO_MOVE
-      begin
-        for i := 0 to Source.Count - 1 do
-        begin
-
-          if FileExists(Source[i]) then
-          begin
-            IOUtils.TFile.Move(Source[i], Destination);
-            Sleep(500);
-            Result := FileExists(Destination);
-          end
-          else
-          begin
-            if DirectoryExists(Source[i]) then
-            begin
-              IOUtils.TDirectory.Move(Source[i], Destination);
-              Sleep(500);
-              Result := DirectoryExists(Destination);
-            end;
-          end;
-        end;
-      end;
-    2: // FO_COPY:
-      begin
-        for i := 0 to Source.Count - 1 do
-        begin
-          if FileExists(Source[i]) then
-          begin
-            IOUtils.TFile.Copy(Source[i], Destination);
-            Sleep(500);
-            Result := FileExists(Destination);
-          end
-          else
-          begin
-            if DirectoryExists(Source[i]) then
-            begin
-              IOUtils.TDirectory.Copy(Source[i], Destination);
-              Sleep(500);
-              Result := DirectoryExists(Destination);
-            end;
-          end;
-        end;
-
-      end;
-    3: // FO_DELETE:
-      begin
-
-        for i := 0 to Source.Count - 1 do
-        begin
-          if FileExists(Source[i]) then
-          begin
-            Result := DeleteFile(Source[i]);
-          end
-          else
-          begin
-            if DirectoryExists(Source[i]) then
-            begin
-              TDirectory.Delete(Source[i], True);
-              Sleep(100);
-              Result := DirectoryExists(Source[i]) = False;
-            end;
-          end;
-        end;
-
-      end;
-    4: // FO_RENAME:
-      begin
-        for i := 0 to Source.Count - 1 do
-        begin
-          Result := RenameFile(Source[i], Destination);
-
-        end;
-      end
-  else
-    raise Exception.Create('No implemented operation');
-  end;
-
-end;
-
-
-
-function ProcessExists(ProcessName: string): Boolean;
-{$IFDEF MSWINDOWS}
-var
-  ContinueLoop: Bool;
-  FSnapshotHandle: THandle;
-  FProcessEntry32: TProcessEntry32;
-  LC: Integer;
-begin
-  LC := 0;
-  FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-  FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
-  ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
-  Result := False;
-  while (Integer(ContinueLoop) <> 0) and (LC <= 1000) do
+  // Linux
+  var
+    linuxUt: TLinuxUtils;
+    cmdResult: TStringList;
   begin
-    if ((UpperCase(ExtractFileName(FProcessEntry32.szExeFile))
-      = UpperCase(ProcessName)) or (UpperCase(FProcessEntry32.szExeFile)
-      = UpperCase(ProcessName))) then
-    begin
-      Result := True;
-      ContinueLoop := False;
-    end
+
+    linuxUt := TLinuxUtils.Create;
+    Result := TStringList.Create;
+    cmdResult := Result;
+    try
+      linuxUt.RunCommandLine(Acmd + ' ' + AParam, (
+        procedure(rStr: String)
+        begin
+          try
+            if Assigned(Return) then
+              Return(rStr);
+            cmdResult.Add(rStr);
+
+          except
+            writeln('Exception calling line return');
+          end;
+        end));
+    finally
+      FreeAndNil(linuxUt);
+    end;
+  end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+
+  constructor TExecuteCmdCallBack.Create;
+  begin
+
+  end;
+
+  destructor TExecuteCmdCallBack.Destroy;
+  begin
+
+    inherited;
+  end;
+
+  procedure TExecuteCmdCallBack.executeCallBack(const Text: string);
+  begin
+    if Assigned(ProcCallBack) then
+      ProcCallBack(Text);
+    if Assigned(executeResult) then
+      executeResult.Add(Text);
+  end;
+{$ENDIF}
+
+  function FileOperation(Source: TStringList; Destination: String;
+  Operation: Cardinal): Boolean;
+  var
+    i: Integer;
+  begin
+    Result := False;
+    case Operation of
+      1: // FO_MOVE
+        begin
+          for i := 0 to Source.Count - 1 do
+          begin
+
+            if FileExists(Source[i]) then
+            begin
+              IOUtils.TFile.Move(Source[i], Destination);
+              Sleep(500);
+              Result := FileExists(Destination);
+            end
+            else
+            begin
+              if DirectoryExists(Source[i]) then
+              begin
+                IOUtils.TDirectory.Move(Source[i], Destination);
+                Sleep(500);
+                Result := DirectoryExists(Destination);
+              end;
+            end;
+          end;
+        end;
+      2: // FO_COPY:
+        begin
+          for i := 0 to Source.Count - 1 do
+          begin
+            if FileExists(Source[i]) then
+            begin
+              IOUtils.TFile.Copy(Source[i], Destination);
+              Sleep(500);
+              Result := FileExists(Destination);
+            end
+            else
+            begin
+              if DirectoryExists(Source[i]) then
+              begin
+                IOUtils.TDirectory.Copy(Source[i], Destination);
+                Sleep(500);
+                Result := DirectoryExists(Destination);
+              end;
+            end;
+          end;
+
+        end;
+      3: // FO_DELETE:
+        begin
+
+          for i := 0 to Source.Count - 1 do
+          begin
+            if FileExists(Source[i]) then
+            begin
+              Result := DeleteFile(Source[i]);
+            end
+            else
+            begin
+              if DirectoryExists(Source[i]) then
+              begin
+                TDirectory.Delete(Source[i], True);
+                Sleep(100);
+                Result := DirectoryExists(Source[i]) = False;
+              end;
+            end;
+          end;
+
+        end;
+      4: // FO_RENAME:
+        begin
+          for i := 0 to Source.Count - 1 do
+          begin
+            Result := RenameFile(Source[i], Destination);
+
+          end;
+        end
     else
-    begin
-      ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+      raise Exception.Create('No implemented operation');
     end;
-    Inc(LC);
+
   end;
-  CloseHandle(FSnapshotHandle);
 
-end;
-{$ELSE}
-
-var
-  processText: TStringList;
-  linuxUt: TLinuxUtils;
-  exeResult: String;
-begin
-
-  processText := TStringList.Create;
-  linuxUt := TLinuxUtils.Create;
-  try
-    linuxUt.RunCommandLine('ps -aux | less', (
-      procedure(rStr: String)
-      begin
-        processText.Add(rStr);
-      end));
-
-  finally
-    FreeAndNil(linuxUt);
-  end;
-  exeResult :=  processText.Text;
-  Result := Pos(ProcessName, processText.Text) > 0;
-end;
-
-{$ENDIF}
-
-Function KillProcessByName(ExeName: String): Boolean;
+  function ProcessExists(ProcessName: string): Boolean;
 {$IFDEF MSWINDOWS}
-var
-
-  ContinueLoop: Bool;
-  FSnapshotHandle: THandle;
-  FProcessEntry32: TProcessEntry32;
-  LC: Integer;
-begin
-  LC := 0;
-  FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-  FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
-  ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
-
-  while (Integer(ContinueLoop) <> 0) and (LC <= 1000) do
+  var
+    ContinueLoop: Bool;
+    FSnapshotHandle: THandle;
+    FProcessEntry32: TProcessEntry32;
+    LC: Integer;
   begin
-    if ((UpperCase(ExtractFileName(FProcessEntry32.szExeFile))
-      = UpperCase(ExeName)) or (UpperCase(FProcessEntry32.szExeFile)
-      = UpperCase(ExeName))) then
+    LC := 0;
+    FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
+    ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
+    Result := False;
+    while (Integer(ContinueLoop) <> 0) and (LC <= 1000) do
     begin
-      TerminateProcess(OpenProcess(PROCESS_TERMINATE, Bool(0),
-        FProcessEntry32.th32ProcessID), 0);
+      if ((UpperCase(ExtractFileName(FProcessEntry32.szExeFile))
+        = UpperCase(ProcessName)) or (UpperCase(FProcessEntry32.szExeFile)
+        = UpperCase(ProcessName))) then
+      begin
+        Result := True;
+        ContinueLoop := False;
+      end
+      else
+      begin
+        ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+      end;
+      Inc(LC);
     end;
-    ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
-    Inc(LC);
-  end;
-  CloseHandle(FSnapshotHandle);
-  Result := ProcessExists(ExeName) = False;
+    CloseHandle(FSnapshotHandle);
 
-end;
+  end;
 {$ELSE}
 
-var
-  resultCmd: TStringList;
-  abortCmd: Boolean;
-begin
-  abortCmd := False;
-  resultCmd := ExecuteTerminalProcess('killall', '-v ' + ExeName, abortCmd, nil);
-  if Assigned(resultCmd) then
+  var
+    processText: TStringList;
+    linuxUt: TLinuxUtils;
+    exeResult: String;
   begin
-    FreeAndNil(resultCmd);
-    Result := True;
-  end;
-  // options: killall /v exename ,kill $(pgrep irssi), kill `ps -ef | grep irssi | grep -v grep | awk ‘{print $2}’`
 
-end;
+    processText := TStringList.Create;
+    linuxUt := TLinuxUtils.Create;
+    try
+      linuxUt.RunCommandLine('ps -aux | less', (
+        procedure(rStr: String)
+        begin
+          processText.Add(rStr);
+        end));
+
+    finally
+      FreeAndNil(linuxUt);
+    end;
+    exeResult := processText.Text;
+    Result := Pos(ProcessName, processText.Text) > 0;
+  end;
+
 {$ENDIF}
-{ TExecuteCmdCallBack }
+
+  Function KillProcessByName(ExeName: String): Boolean;
+{$IFDEF MSWINDOWS}
+  var
+
+    ContinueLoop: Bool;
+    FSnapshotHandle: THandle;
+    FProcessEntry32: TProcessEntry32;
+    LC: Integer;
+  begin
+    LC := 0;
+    FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
+    ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
+
+    while (Integer(ContinueLoop) <> 0) and (LC <= 1000) do
+    begin
+      if ((UpperCase(ExtractFileName(FProcessEntry32.szExeFile))
+        = UpperCase(ExeName)) or (UpperCase(FProcessEntry32.szExeFile)
+        = UpperCase(ExeName))) then
+      begin
+        TerminateProcess(OpenProcess(PROCESS_TERMINATE, Bool(0),
+          FProcessEntry32.th32ProcessID), 0);
+      end;
+      ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+      Inc(LC);
+    end;
+    CloseHandle(FSnapshotHandle);
+    Result := ProcessExists(ExeName) = False;
+
+  end;
+{$ELSE}
+
+  var
+    resultCmd: TStringList;
+    abortCmd: Boolean;
+  begin
+    abortCmd := False;
+    resultCmd := ExecuteTerminalProcess('killall', '-v ' + ExeName,
+      abortCmd, nil);
+    if Assigned(resultCmd) then
+    begin
+      FreeAndNil(resultCmd);
+      Result := True;
+    end;
+    // options: killall /v exename ,kill $(pgrep irssi), kill `ps -ef | grep irssi | grep -v grep | awk ‘{print $2}’`
+
+  end;
+{$ENDIF}
+  { TExecuteCmdCallBack }
 
 end.

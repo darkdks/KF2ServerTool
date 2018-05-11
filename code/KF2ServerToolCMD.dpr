@@ -6,14 +6,15 @@ uses
   IniFiles,
   StrUtils,
   classes,
-{$IFDEF LINUX64}
+  {$IFDEF LINUX64}
   LinuxUtils in 'units\LinuxUtils.pas',
-{$ENDIF }
+  {$ENDIF }
   KFFile in 'units\KFFile.pas',
   KFRedirect in 'units\KFRedirect.pas',
   KFServerTool in 'units\KFServerTool.pas',
   KFWksp in 'units\KFWksp.pas',
-  MiscFunc in 'units\MiscFunc.pas';
+  MiscFunc in 'units\MiscFunc.pas',
+  DownloaderTool in 'units\DownloaderTool.pas';
 
 var
   useCustomServerPath: Boolean;
