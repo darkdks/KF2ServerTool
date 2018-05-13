@@ -224,6 +224,7 @@ procedure TGitAutoUpdate.DeleteUpdateFolder;
  updateFolderPath : String;
 begin
  updateFolderPath := workingPath + UPDATEFOLDER + PathDelim;
+ fSource := TStringList.Create;
   try
     if DirectoryExists(updateFolderPath) then
     begin

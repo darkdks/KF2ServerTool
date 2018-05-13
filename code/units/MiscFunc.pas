@@ -370,7 +370,7 @@ ShowWindows: Integer): Boolean;
 begin
   Result := False;
     try
-      Result := ShellExecute(hWnd, 'runas', PWideChar(filename), nil, nil, ShowWindows) > 32;
+      Result := ShellExecute(hWnd, 'runas', PWideChar(filename), PWideChar(Parameters), nil, ShowWindows) > 32;
     except
       on E: Exception do begin
         raise Exception.Create('Falied to execute file ' + filename + ' ' +

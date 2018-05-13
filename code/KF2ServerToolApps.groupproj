@@ -1,48 +1,48 @@
-﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-		<PropertyGroup>
-			<ProjectGuid>{9B73E818-86A4-41B7-994A-123D64DE3F4B}</ProjectGuid>
-		</PropertyGroup>
-		<ItemGroup>
-			<Projects Include="KF2ServerTool.dproj">
-				<Dependencies/>
-			</Projects>
-			<Projects Include="KF2ServerToolCMD.dproj">
-				<Dependencies/>
-			</Projects>
-		</ItemGroup>
-		<ProjectExtensions>
-			<Borland.Personality>Default.Personality.12</Borland.Personality>
-			<Borland.ProjectType/>
-			<BorlandProject>
-				<Default.Personality/>
-			</BorlandProject>
-		</ProjectExtensions>
-		<Target Name="KF2ServerTool">
-			<MSBuild Projects="KF2ServerTool.dproj"/>
-		</Target>
-		<Target Name="KF2ServerTool:Clean">
-			<MSBuild Targets="Clean" Projects="KF2ServerTool.dproj"/>
-		</Target>
-		<Target Name="KF2ServerTool:Make">
-			<MSBuild Targets="Make" Projects="KF2ServerTool.dproj"/>
-		</Target>
-		<Target Name="KF2ServerToolCMD">
-			<MSBuild Projects="KF2ServerToolCMD.dproj"/>
-		</Target>
-		<Target Name="KF2ServerToolCMD:Clean">
-			<MSBuild Targets="Clean" Projects="KF2ServerToolCMD.dproj"/>
-		</Target>
-		<Target Name="KF2ServerToolCMD:Make">
-			<MSBuild Targets="Make" Projects="KF2ServerToolCMD.dproj"/>
-		</Target>
-		<Target Name="Build">
-			<CallTarget Targets="KF2ServerTool;KF2ServerToolCMD"/>
-		</Target>
-		<Target Name="Clean">
-			<CallTarget Targets="KF2ServerTool:Clean;KF2ServerToolCMD:Clean"/>
-		</Target>
-		<Target Name="Make">
-			<CallTarget Targets="KF2ServerTool:Make;KF2ServerToolCMD:Make"/>
-		</Target>
-		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
-	</Project>
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{9B73E818-86A4-41B7-994A-123D64DE3F4B}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="KF2ServerTool.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="KF2ServerToolCMD.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="KF2ServerTool">
+        <MSBuild Projects="KF2ServerTool.dproj"/>
+    </Target>
+    <Target Name="KF2ServerTool:Clean">
+        <MSBuild Projects="KF2ServerTool.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="KF2ServerTool:Make">
+        <MSBuild Projects="KF2ServerTool.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="KF2ServerToolCMD">
+        <MSBuild Projects="KF2ServerToolCMD.dproj"/>
+    </Target>
+    <Target Name="KF2ServerToolCMD:Clean">
+        <MSBuild Projects="KF2ServerToolCMD.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="KF2ServerToolCMD:Make">
+        <MSBuild Projects="KF2ServerToolCMD.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="KF2ServerTool;KF2ServerToolCMD"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="KF2ServerTool:Clean;KF2ServerToolCMD:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="KF2ServerTool:Make;KF2ServerToolCMD:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

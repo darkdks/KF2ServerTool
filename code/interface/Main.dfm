@@ -109,7 +109,7 @@ object FormMain: TFormMain
       Font.Name = 'Verdana'
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
-      OnClick = lbl9Click
+      OnClick = checkForUpdates
       ExplicitHeight = 13
     end
     object btnReinstall: TBitBtn
@@ -1469,6 +1469,21 @@ object FormMain: TFormMain
           Text = ''
           OnChange = cbbThemeChange
         end
+        object chkAutoCheckForUpdates: TCheckBox
+          Left = 320
+          Top = 55
+          Width = 317
+          Height = 28
+          Hint = 
+            'Automatically check if updates are available for'#13#10'the tool in th' +
+            'e official KF2ServerTool repository.'
+          Align = alCustom
+          Caption = 'Automatically check for updates'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnClick = chkAutoCheckForUpdatesClick
+        end
       end
       object grpmaintenance: TGroupBox
         AlignWithMargins = True
@@ -1746,7 +1761,7 @@ object FormMain: TFormMain
     Left = 584
     Top = 16
     Bitmap = {
-      494C010106002000E40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106002000F00110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000

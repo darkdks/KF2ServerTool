@@ -158,6 +158,7 @@ type
     btnAddNew: TBitBtn;
     btnRemove: TBitBtn;
     NetHTTPClient1: TNetHTTPClient;
+    chkAutoCheckForUpdates: TCheckBox;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -214,7 +215,7 @@ type
     procedure btn2Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
     procedure btn4Click(Sender: TObject);
-    procedure lbl9Click(Sender: TObject);
+    procedure checkForUpdates(Sender: TObject);
     procedure lostFocusSave(Sender: TObject);
     procedure chkOnlyFromConfigItemsClick(Sender: TObject);
     procedure btn5Click(Sender: TObject);
@@ -233,6 +234,7 @@ type
       const URL: OleVariant);
     procedure cbbThemeChange(Sender: TObject);
     procedure btnRemoveClick(Sender: TObject);
+    procedure chkAutoCheckForUpdatesClick(Sender: TObject);
 
   private
     function loadConfig: Boolean;
@@ -252,7 +254,6 @@ type
     procedure alignControlAtoControlB(elementA, elementB: TControl);
     procedure checkAutoWebLoginRequirements;
     procedure CheckIfTheServerIsRuning;
-    procedure VerifyToInstallUpdate;
     procedure InstallRegBrowserKey;
 
   var
@@ -283,6 +284,7 @@ type
     serverTool: TKFServerTool;
     kfprofiles: array of TKFServerProfile;
     fdefaultStyleName: String;
+    AutoCheckForUpdates: Boolean;
   end;
 
 var
@@ -1175,6 +1177,11 @@ begin
 
   end;
 
+end;
+
+procedure TFormMain.chkAutoCheckForUpdatesClick(Sender: TObject);
+begin
+  AutoCheckForUpdates := chkAutoCheckForUpdates.Checked;
 end;
 
 procedure TFormMain.cbb1Change(Sender: TObject);
@@ -2096,10 +2103,13 @@ var
   pathDialogResult: Integer;
   ExeName: String;
   i: Integer;
+
 begin
-  VerifyToInstallUpdate;
+
   ExeName := ExtractFileName(Application.ExeName);
   Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
+
+  configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
   if ParamCount > 0 then
   begin
     for i := 0 to ParamCount do
@@ -2116,12 +2126,8 @@ begin
         Break;
       end;
     end;
-
-  end
-  else
-  begin
-    configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
   end;
+
   jvpgcntrl1.ActivePageIndex := 0;
   jvpgcntrl1Change(Self);
   SetLength(kfprofiles, 0);
@@ -2192,6 +2198,8 @@ begin
   LoadItensToLv('');
   LoadServerProfile();
   LoadUIConfig;
+  if AutoCheckForUpdates then
+    checkForUpdates(Self);
 
 end;
 
@@ -2298,12 +2306,15 @@ begin
     for i := 0 to High(TStyleManager.StyleNames) do
       cbbTheme.Items.Add(TStyleManager.StyleNames[i]);
   end;
+  // Auto check for updates checkbox
+  chkAutoCheckForUpdates.Checked := AutoCheckForUpdates;
+
   cbbTheme.ItemIndex := cbbTheme.Items.IndexOf(fdefaultStyleName);
   TStyleManager.TrySetStyle(fdefaultStyleName);
   // whatever was in the project settings.
   Application.HintHidePause := 15000; // 15 Sec
-  //Fix webbrowser compabillity
- InstallRegBrowserKey()
+  // Fix webbrowser compabillity
+  InstallRegBrowserKey()
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
@@ -3114,7 +3125,7 @@ begin
   end;
 end;
 
-procedure TFormMain.lbl9Click(Sender: TObject);
+procedure TFormMain.checkForUpdates(Sender: TObject);
 var
   gitUpdate: TGitAutoUpdate;
   latestRelease: TLatestRelease;
@@ -3173,8 +3184,9 @@ begin
             begin
               ShowMessage
                 ('The application will be restarted to complete to update');
+              KillProcessByName(gitUpdate.TEMUPDATEFILE);
               gitUpdate.executeUpdateInstall(gitUpdate.TEMUPDATEFILE,
-                UPDATEPARAM + ' ' + Application.ExeName);
+                UPDATEPARAM + ' "' + Application.ExeName + '"');
               Application.Terminate;
             end
             else
@@ -3189,7 +3201,9 @@ begin
       end
       else
       begin
-        ShowMessage('The current version is updated.');
+        if Assigned(Sender) then
+          if (Sender is TLabel) then
+            ShowMessage('The current version is updated.');
 
       end;
 
@@ -3291,6 +3305,8 @@ begin
         appWidth := ReadInteger('GENERAL', 'WindowWidth', Self.Width);
         fontSize := ReadInteger('GENERAL', 'FontSize', 10);
         appMaximized := ReadBool('GENERAL', 'Maximized', false);
+        AutoCheckForUpdates := ReadBool('GENERAL',
+          'AutoCheckForUpdates', false);
         if FileExists(ExtractFilePath(Application.ExeName) + MEMONAME) then
           mmoNotepad.Lines.LoadFromFile(ExtractFilePath(Application.ExeName) +
             MEMONAME);
@@ -3351,6 +3367,7 @@ begin
           WriteInteger('GENERAL', 'WindowWidth', appWidth);
           WriteInteger('GENERAL', 'FontSize', fontSize);
           WriteBool('GENERAL', 'Maximized', appMaximized);
+          WriteBool('GENERAL', 'AutoCheckForUpdates', AutoCheckForUpdates);
         end;
       end;
       if mmoNotepad.Text <> '' then
@@ -3521,7 +3538,11 @@ begin
     'Auto logar no web admin usando a senha especificada';
   chkOnlyFromConfigItems.Caption :=
     'Apenas monstrar itens que estão no arquivo configuração';
-
+  chkAutoCheckForUpdates.Caption :=
+    'Verificar automaticamente por atualizações';
+  chkAutoCheckForUpdates.Hint :=
+    'Verificar automaticamente se há atualizações disponíveis para' + #13 +
+    ' a ferramenta no repositório oficial do KF2ServerTool';
   chkOnlyFromConfigItems.Hint :=
     'Ative esta opção para ver apenas itens que estão no PCServer-KFGame e no PCServer-KFEngine.'
     + #13 + 'A pasta cache e maps serão ignorados. Isso é útil quando você tem vários servidores'
@@ -3576,61 +3597,25 @@ begin
   end;
 
 end;
+
 procedure TFormMain.InstallRegBrowserKey();
-var R: TRegistry;
+var
+  R: TRegistry;
 begin
   try
-  R := TRegistry.Create(KEY_WRITE);
-  R.RootKey := HKEY_LOCAL_MACHINE;
-  try
-    if not R.OpenKey('SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION', True) then
-      RaiseLastOSError;
-    R.WriteInteger(ExtractFileName(Application.ExeName), 9999);
-  finally R.Free;
-  end;
+    R := TRegistry.Create(KEY_WRITE);
+    R.RootKey := HKEY_LOCAL_MACHINE;
+    try
+      if not R.OpenKey
+        ('SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION',
+        True) then
+        RaiseLastOSError;
+      R.WriteInteger(ExtractFileName(Application.ExeName), 9999);
+    finally
+      R.Free;
+    end;
   except
 
-  end;
-end;
-
-procedure TFormMain.VerifyToInstallUpdate();
-var
-  ExeName: String;
-  exePath: String;
-  fSource: TStringList;
-begin
-  if ParamCount > 1 then
-  begin
-    if ParamStr(1) = UPDATEPARAM then
-    begin
-      try
-        exePath := ParamStr(2);
-        ExeName := ExtractFileName(exePath);
-        fSource := TStringList.Create;
-        try
-          if FileExists(exePath) then
-          begin
-            KillProcessByName(ExeName);
-            Sleep(500);
-
-            fSource.Add(exePath);
-            FileOperation(fSource, '', 3); // deleteOldExe
-            Sleep(100);
-            fSource.Clear;
-            fSource.Add(Application.ExeName);
-            FileOperation(fSource, exePath, 2); // copyNewExe
-            Sleep(100);
-            ExecuteFile(0, exePath, '', 1);
-            Application.Terminate;
-          end;
-        Finally
-          FreeAndNil(fSource);
-        end;
-      except
-        on E: Exception do
-          ShowMessage('Falied to install Update : ' + E.Message);
-      end;
-    end;
   end;
 end;
 
