@@ -32,7 +32,7 @@ var
   ExeName: String;
   exePath: String;
   fSource: TStringList;
-  i: Integer;
+ // i: Integer;
   upd: TGitAutoUpdate;
 begin
   Result := False;

@@ -1496,7 +1496,6 @@ end;
 procedure TFormMain.CheckIfTheServerIsRuning();
 var
   warningText, serverRunning: string;
-  cmdOp: String;
 begin
 
   warningText := 'You should close the server before make changes. ' + #13#10 +

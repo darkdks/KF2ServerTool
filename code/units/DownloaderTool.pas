@@ -3,8 +3,16 @@ unit DownloaderTool;
 interface
 
 uses
-  classes, System.SysUtils, System.Net.URLClient,
-  System.Net.HttpClient, System.Net.HttpClientComponent;
+  classes,
+
+  System.Net.URLClient,
+
+{$IFDEF MSWINDOWS}
+  System.Net.HttpClientComponent,
+  System.Net.HttpClient,
+
+{$ENDIF}
+  System.SysUtils;
 
 type
 
@@ -31,9 +39,10 @@ type
   private
     procedure HTTPClientReceiveData(const Sender: TObject;
       AContentLength, AReadCount: Int64; var Abort: Boolean);
+{$IFDEF MSWINDOWS}
     procedure HTTPClientRequestCompleted(const Sender: TObject;
       const AResponse: IHTTPResponse);
-
+{$ENDIF}
   public
     function downloadFile(URL: String; Destination: string;
       var dlManager: TDownloadManager): Boolean;
@@ -76,7 +85,7 @@ begin
     if Assigned(downloadManager.OnProgress) then
       downloadManager.OnProgress(AReadCount);
   end;
-end;
+end; {$IFDEF MSWINDOWS}
 
 procedure TDownloaderTool.HTTPClientRequestCompleted(const Sender: TObject;
   const AResponse: IHTTPResponse);
@@ -85,8 +94,11 @@ begin
     downloadManager.OnFinished();
 end;
 
+{$ENDIF}
+
 function TDownloaderTool.downloadFile(URL: String; Destination: string;
   var dlManager: TDownloadManager): Boolean;
+{$IFDEF MSWINDOWS}
 var
   httpRq: TNetHTTPClient;
   Stream: TMemoryStream;
@@ -98,7 +110,8 @@ begin
   httpRq := TNetHTTPClient.Create(nil);
   httpRq.OnReceiveData := HTTPClientReceiveData;
   httpRq.OnRequestCompleted := HTTPClientRequestCompleted;
-  httpRq.UserAgent := 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
+  httpRq.UserAgent :=
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
   httpRq.Get(URL, Stream, nil);
   try
     try
@@ -118,6 +131,14 @@ begin
     FreeAndNil(Stream);
   end;
 end;
+{$ELSE}
+
+begin
+  raise Exception.Create('No implemented');
+   result := False;
+end;
+
+{$ENDIF}
 
 constructor TDownloadManager.Create;
 begin

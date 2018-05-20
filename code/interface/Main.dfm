@@ -71,7 +71,7 @@ object FormMain: TFormMain
       Left = 630
       Top = 2
       Width = 46
-      Height = 29
+      Height = 13
       Cursor = crHandPoint
       Margins.Left = 10
       Margins.Top = 2
@@ -87,14 +87,13 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = lblDonateClick
-      ExplicitHeight = 13
     end
     object lbl9: TLabel
       AlignWithMargins = True
       Left = 574
       Top = 2
       Width = 46
-      Height = 21
+      Height = 13
       Cursor = crHandPoint
       Margins.Left = 10
       Margins.Top = 2
@@ -110,7 +109,6 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = checkForUpdates
-      ExplicitHeight = 13
     end
     object btnReinstall: TBitBtn
       Left = 272
@@ -437,6 +435,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Server'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpStartServer: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -469,14 +471,13 @@ object FormMain: TFormMain
             Left = 6
             Top = 2
             Width = 41
-            Height = 69
+            Height = 17
             Margins.Left = 6
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
             Align = alLeft
             Caption = 'Profile:'
-            ExplicitHeight = 17
           end
           object btnNewProfile: TButton
             Left = 49
@@ -638,7 +639,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 6
               Top = 2
-              Width = 270
+              Width = 25
               Height = 17
               Margins.Left = 6
               Margins.Top = 2
@@ -648,7 +649,6 @@ object FormMain: TFormMain
               Caption = 'Map'
               Color = clBlack
               ParentColor = False
-              ExplicitWidth = 25
             end
             object cbbMap: TComboBox
               AlignWithMargins = True
@@ -788,7 +788,7 @@ object FormMain: TFormMain
             AlignWithMargins = True
             Left = 6
             Top = 2
-            Width = 628
+            Width = 131
             Height = 17
             Margins.Left = 6
             Margins.Top = 2
@@ -798,7 +798,6 @@ object FormMain: TFormMain
             Caption = 'Additional parameters'
             Color = clBlack
             ParentColor = False
-            ExplicitWidth = 131
           end
           object edtExtra: TEdit
             AlignWithMargins = True
@@ -903,6 +902,10 @@ object FormMain: TFormMain
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Maps'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvMaps: TListView
         Left = 0
         Top = 28
@@ -1001,7 +1004,7 @@ object FormMain: TFormMain
           Left = 2
           Top = 6
           Width = 28
-          Height = 20
+          Height = 17
           Margins.Left = 2
           Margins.Top = 6
           Margins.Right = 2
@@ -1009,7 +1012,6 @@ object FormMain: TFormMain
           Align = alLeft
           Alignment = taRightJustify
           Caption = 'Filter'
-          ExplicitHeight = 17
         end
         object edtSearch: TEdit
           AlignWithMargins = True
@@ -1035,6 +1037,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Mods'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvMods: TListView
         Left = 0
         Top = 0
@@ -1077,6 +1083,10 @@ object FormMain: TFormMain
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Unknown'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvUnknowed: TListView
         Left = 0
         Top = 0
@@ -1163,6 +1173,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Options'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1581,6 +1595,10 @@ object FormMain: TFormMain
     object tswebadmin: TTabSheet
       Caption = 'WebAdmin'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object wb1: TWebBrowser
         Left = 0
         Top = 0
@@ -1602,11 +1620,15 @@ object FormMain: TFormMain
     object tsNotes: TTabSheet
       Caption = 'Notes'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbl1: TLabel
         AlignWithMargins = True
         Left = 8
         Top = 8
-        Width = 666
+        Width = 52
         Height = 17
         Margins.Left = 8
         Margins.Top = 8
@@ -1614,13 +1636,12 @@ object FormMain: TFormMain
         Margins.Bottom = 0
         Align = alTop
         Caption = 'Notepad'
-        ExplicitWidth = 52
       end
       object lblAllChangesWillbe: TLabel
         AlignWithMargins = True
-        Left = 3
+        Left = 430
         Top = 463
-        Width = 664
+        Width = 237
         Height = 14
         Margins.Right = 9
         Align = alBottom
@@ -1633,8 +1654,6 @@ object FormMain: TFormMain
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitLeft = 430
-        ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
         AlignWithMargins = True
@@ -1655,6 +1674,10 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbl4: TLabel
         Left = 22
         Top = 27
@@ -1761,7 +1784,7 @@ object FormMain: TFormMain
     Left = 584
     Top = 16
     Bitmap = {
-      494C010106002000F00110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106002000F40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000

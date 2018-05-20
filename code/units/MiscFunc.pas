@@ -9,7 +9,7 @@ uses
   JclSysUtils,
   Forms,
 {$ELSE}
-  LinuxUtils,
+  LinuxUtils, Posix.Unistd, Posix.Stdio,
 {$ENDIF}
   SysUtils, Classes,
   IOUtils, Types;

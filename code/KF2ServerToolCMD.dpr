@@ -544,7 +544,6 @@ end;
 procedure CheckIfTheServerIsRuning();
 var
   warningText, serverRunning: string;
-  cmdOp: String;
   cmdAnswer: string;
 begin
 
