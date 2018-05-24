@@ -21,11 +21,11 @@ KF2ServerToolCMD
 ### GUI Version to Windows (KF2ServerTool):
 Go to <a href="https://github.com/darkdks/KF2ServerTool/releases/latest">release</a> and download the latest KF2ServerToolX.X.X.zip version.
 
-### CMD Version to Windows (KF2ServerToolCMD)
+### CMD Version compiled to Windows (KF2ServerToolCMD)
 Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2ServerToolCMD.exe">code/KF2ServerToolCMD.exe</a> and download the file.
 
-### CMD Version to Linux (KF2ServerToolCMD)
-Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/7b2de24fefce22c5d8130f5552376426911b5008/code/KF2ServerToolCMD">code/KF2ServerToolCMD</a> and download the file.
+### CMD Version compiled to Linux (KF2ServerToolCMD)
+Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2ServerToolCMD">code/KF2ServerToolCMD</a> and download the file.
 
 # Install KF2ServerTool for Windows
 
@@ -42,14 +42,12 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/7b2de24fefce22c5d81
 
 ### Notes
 
-- You need start the server at least one time to generate server config files that the tool needs.
 - If you have never added the line for redirecting the clients to download from the workshop, check the "Options" tab and turn on the Workshop Download Manager.
-- If you have issues with the workshop browser inside the tool, like items displaying incorrectly, double click in the WorkshopBrowserFix.reg. 
 
 # Install KF2ServerToolCMD for Windows/linux
 
 - Just put the KF2ServerToolCMD inside the server folder and launch it from terminal with -list, a new file called KF2ServerToolCMD.ini will be created. You can adit inside this file the paths of KFEngine and KFGame if you dont use the default.
-- install steamcmd if you have not (see the install cmd section)
+- install steamcmd if you have not (see the install steamcmd section)
 - Configure the KF2ServerToolCMD.ini to specify it (for linux is the steamcmd.sh and for windows is the steamcmd.exe).
 - K2ServerToolCMD -help to see all avaliable commands
 
@@ -61,7 +59,10 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/7b2de24fefce22c5d81
 # How to use with multiples servers configs
 (very useful if you run multiple instances of servers in the same folder and have several different files for each server.)
 
-- Use the param -config in the .exe to specify a different configuration file. (Example: KF2ServerTool.exe (or KF2ServerToolCMD for cmd version) -config KFServerTool_sv2.ini) 
+- Use the param -config for GUI Version or -ini for CMD Version in the executable to specify a different configuration file. 
+Example: KF2ServerTool.exe -config KFServerTool_sv2.ini 
+Example: KF2ServerToolCMD -ini KFServerTool_sv2.ini 
+
 - The application will create a new config file and you should edit it to specify the custom paths of your configs (PCServer-Game, PCServer-Engine, etc) files
 
 Optional for windows gui only
