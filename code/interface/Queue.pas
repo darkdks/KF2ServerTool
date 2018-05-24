@@ -111,7 +111,7 @@ begin
             Item.SubItems.Add('Pendente')
           else
             Item.SubItems.Add('Pending');
-
+            btnProced.Enabled := True;
         end;
       end
       else
@@ -146,7 +146,7 @@ begin
     slItems := FormMain.getSelectedCount(lvQueue);
     itemsDone := 0;
     modalResult := mrNone;
-
+     btnProced.Enabled := false;
     try
 
       for i := 0 to lvQueue.Items.Count - 1 do
@@ -370,7 +370,7 @@ begin
 
         end;
 
-
+         btnProced.Enabled := True;
       end;
 
     finally

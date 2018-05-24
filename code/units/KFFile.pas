@@ -77,17 +77,18 @@ type
     function GetMapEntryIndex(name: String): Integer;
     function GetMapCycleIndex(name: String): Integer;
     function GetMapCycleList: TStringList;
+    function GetMapEntrysList: TStringList;
 
   const
-    CMapName = 'MapName';
-    CMapAssociation = 'MapAssociation';
-    CScreenShotPathName = 'ScreenshotPathName';
-    CDefaultScreenShot = 'UI_MapPreview_TEX.UI_MapPreview_Placeholder';
-    CType = 'KFMapSummary';
-    CGameInfo = 'KFGame.KFGameInfo';
-    CGameMapCycles = 'GameMapCycles';
-    CEngineAcessControl = 'Engine.AccessControl';
-    CAdminPassword = 'AdminPassword';
+    CMAPNAME = 'MapName';
+    CMAPASSOCIATION = 'MapAssociation';
+    CSCREENSHOTPATHNAME = 'ScreenshotPathName';
+    CDEFAULTSCREENSHOT = 'UI_MapPreview_TEX.UI_MapPreview_Placeholder';
+    CMAPTYPE = 'KFMapSummary';
+    CGAMEINFO = 'KFGame.KFGameInfo';
+    CGAMEMAPCYCLES = 'GameMapCycles';
+    CENGINEACESSCONTROL = 'Engine.AccessControl';
+    CADMINPASSWORD = 'AdminPassword';
 
   end;
 
@@ -110,13 +111,13 @@ type
     function GetWorkshopSubcribeID(itemIndex: Integer): String;
 
   const
-    CWorkshopSubTitle = 'OnlineSubsystemSteamworks.KFWorkshopSteamworks';
-    CWorkshopSubItem = 'ServerSubscribedWorkshopItems';
-    CTcpNetDriver = 'IpDrv.TcpNetDriver';
-    CDownloadManagers = 'DownloadManagers';
-    CDMWorkshop = 'OnlineSubsystemSteamworks.SteamWorkshopDownload';
-    CURLRedirect = 'RedirectToURL';
-    CHTTPDownload = 'IpDrv.HTTPDownload';
+    CWORKSHOPSUBTITLE = 'OnlineSubsystemSteamworks.KFWorkshopSteamworks';
+    CWORKSHOPSUBITEM = 'ServerSubscribedWorkshopItems';
+    CTCPNETDRIVER = 'IpDrv.TcpNetDriver';
+    CDOWNLOADMANAGERS = 'DownloadManagers';
+    CDMWORKSHOP = 'OnlineSubsystemSteamworks.SteamWorkshopDownload';
+    CURLREDIRECT = 'RedirectToURL';
+    CHTTPDOWNLOAD = 'IpDrv.HTTPDownload';
 
   end;
 
@@ -124,8 +125,8 @@ implementation
 
 function IsCategory(text: String): Boolean;
 begin
-  if (Length(text) > 1) and (text[1] = '[') and
-    (text[StrLen(PChar(text))] = ']') then
+  if (Length(text) > 1) and (text[1] = '[') and (text[StrLen(PChar(text))] = ']')
+  then
     Result := true
   else
     Result := false;
@@ -357,8 +358,8 @@ begin
   end;
 end;
 
-function TKFConfigFile.AddNewSectionAt(entry: TKFEntry;
-  index: Integer): Boolean;
+function TKFConfigFile.AddNewSectionAt(entry: TKFEntry; index: Integer)
+  : Boolean;
 var
   i: Integer;
   EntrysCopy: array of TKFEntry;
@@ -376,7 +377,7 @@ begin
       end;
       // Adding new entry
       SetLength(Entrys, Length(Entrys) + 1);
-      Entrys[ High(Entrys)] := TKFEntry.Create;
+      Entrys[High(Entrys)] := TKFEntry.Create;
       Entrys[index].title := entry.title;
       Entrys[index].items.text := entry.items.text;
       // Remounting Entrys
@@ -457,7 +458,7 @@ begin
         EntrysCopy[i].items.text := Entrys[i].items.text;
       end;
       // removing one item
-      Entrys[ High(Entrys)].Free;
+      Entrys[High(Entrys)].Free;
       SetLength(Entrys, Length(Entrys) - 1);
       // Remounting Entrys
       for i := 0 to High(EntrysCopy) do
@@ -494,14 +495,13 @@ end;
 
 function TKFConfigFile.RemoveItemAt(EntryIndex, itemIndex: Integer): Boolean;
 begin
-     Result := true;
+  Result := true;
   try
     if (EntryIndex > High(Entrys)) or
       (itemIndex > Entrys[EntryIndex].items.Count - 1) then
       raise Exception.Create('Invalid entry index or item index');
 
     Entrys[EntryIndex].items.Delete(itemIndex);
-
 
   except
     on e: Exception do
@@ -533,7 +533,7 @@ var
 begin
   Result := '';
   Titleline := Entrys[index].title;
-  if GetCategoryName(Titleline) = CType then
+  if GetCategoryName(Titleline) = CMAPTYPE then
   begin
     Result := Copy(Titleline, Pos('[', Titleline) + 1, Pos(' ', Titleline) - 2);
   end;
@@ -592,8 +592,8 @@ begin
 
   try
     try
-      GI_index := GetSectionIndex(CGameInfo, false);
-      GMC_index := GetItemIndex(CGameMapCycles, GI_index);
+      GI_index := GetSectionIndex(CGAMEINFO, false);
+      GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
       if (GI_index < 0) or (GMC_index < 0) then
       begin
         raise Exception.Create('Falied to remove. GameMapCycles not found.');
@@ -634,8 +634,8 @@ begin
 
   try
 
-    GI_index := GetSectionIndex(CGameInfo, false);
-    GMC_index := GetItemIndex(CGameMapCycles, GI_index);
+    GI_index := GetSectionIndex(CGAMEINFO, false);
+    GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
 
     if (GI_index < 0) or (GMC_index < 0) then
     begin
@@ -675,8 +675,8 @@ begin
 
   try
     try
-      GI_index := GetSectionIndex(CGameInfo, false);
-      GMC_index := GetItemIndex(CGameMapCycles, GI_index);
+      GI_index := GetSectionIndex(CGAMEINFO, false);
+      GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
 
       if (GI_index < 0) or (GMC_index < 0) then
       begin
@@ -706,8 +706,8 @@ begin
   i := 0;
   while i <= High(Entrys) do
   begin
-    if (GetCategoryName(Entrys[i].title) = CType) and (GetMapNameAt(i) = name)
-      then
+    if (GetCategoryName(Entrys[i].title) = CMAPTYPE) and (GetMapNameAt(i) = name)
+    then
     begin
       Result := RemoveSectionAt(i);
       if removeAll = false then
@@ -727,8 +727,8 @@ var
 begin
   Result := false;
   try
-    TND_index := GetSectionIndex(CEngineAcessControl, false);
-    DM_index := GetItemIndex(CAdminPassword, TND_index);
+    TND_index := GetSectionIndex(CENGINEACESSCONTROL, false);
+    DM_index := GetItemIndex(CADMINPASSWORD, TND_index);
 
     if (TND_index >= 0) and (DM_index >= 0) then
     begin
@@ -736,8 +736,8 @@ begin
     end
     else
     begin
-      raise Exception.Create('Falied to find ' + CEngineAcessControl + ' / ' +
-          CAdminPassword + ' fields.');
+      raise Exception.Create('Falied to find ' + CENGINEACESSCONTROL + ' / ' +
+        CADMINPASSWORD + ' fields.');
 
     end;
 
@@ -752,24 +752,44 @@ function TKFGameIni.AddMapEntry(name: String): Boolean;
 var
   newEntry: TKFEntry;
 begin
-  if GetSectionIndex(name + ' ' + CType, true) >= 0 then
+  if GetSectionIndex(name + ' ' + CMAPTYPE, true) >= 0 then
   begin
     RemoveMapEntry(name, true);
   end;
 
   newEntry := TKFEntry.Create;
-  newEntry.title := '[' + name + ' ' + CType + ']';
-  newEntry.items.Add(CMapName + '=' + name);
-  newEntry.items.Add(CMapAssociation + '=' + '0');
-  newEntry.items.Add(CScreenShotPathName + '=' + CDefaultScreenShot);
+  newEntry.title := '[' + name + ' ' + CMAPTYPE + ']';
+  newEntry.items.Add(CMAPNAME + '=' + name);
+  newEntry.items.Add(CMAPASSOCIATION + '=' + '0');
+  newEntry.items.Add(CSCREENSHOTPATHNAME + '=' + CDEFAULTSCREENSHOT);
   newEntry.items.Add('');
-  Result := AddNewSectionAt(newEntry,
-    GetCategoryIndex('KFMapSummary', true) + 1);
+  Result := AddNewSectionAt(newEntry, GetCategoryIndex('KFMapSummary',
+    true) + 1);
 end;
 
 function TKFGameIni.GetMapEntryIndex(name: String): Integer;
 begin
-  Result := GetSectionIndex(name + ' ' + CType, true);
+  Result := GetSectionIndex(name + ' ' + CMAPTYPE, true);
+end;
+
+function TKFGameIni.GetMapEntrysList: TStringList;
+var
+  i: Integer;
+  mapName: String;
+begin
+  Result := TStringList.Create;
+  try
+    for i := 0 to High(Entrys) do
+    begin
+    mapName := GetMapNameAt(i);
+      if mapName <> '' then begin
+         Result.Add(mapName);
+      end;
+    end;
+  finally
+
+  end;
+
 end;
 
 function TKFGameIni.GetAdminPass: String;
@@ -778,8 +798,8 @@ var
 begin
   Result := '';
   try
-    TND_index := GetSectionIndex(CEngineAcessControl, false);
-    DM_index := GetItemIndex(CAdminPassword, TND_index);
+    TND_index := GetSectionIndex(CENGINEACESSCONTROL, false);
+    DM_index := GetItemIndex(CADMINPASSWORD, TND_index);
 
     if (TND_index >= 0) and (DM_index >= 0) then
     begin
@@ -787,8 +807,8 @@ begin
     end
     else
     begin
-      raise Exception.Create('Falied to find ' + CEngineAcessControl + ' / ' +
-          CAdminPassword + ' fields.');
+      raise Exception.Create('Falied to find ' + CENGINEACESSCONTROL + ' / ' +
+        CADMINPASSWORD + ' fields.');
 
     end;
 
@@ -808,17 +828,7 @@ var
 begin
   Result := -1;
   try
-
-    GI_index := GetSectionIndex(CGameInfo, false);
-    GMC_index := GetItemIndex(CGameMapCycles, GI_index);
-
-    if (GI_index < 0) or (GMC_index < 0) then
-    begin
-      raise Exception.Create('Falied to read GameMapCycles.');
-      Exit;
-    end;
-    mapCycle := GetValue(GI_index, GMC_index);
-    mapList := GMCTextToStrings(mapCycle);
+    mapList := GetMapCycleList;
     try
       for i := 0 to mapList.Count - 1 do
       begin
@@ -834,7 +844,7 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied to edit gameMapCycle: ' + e.Message);
+      raise Exception.Create('Falied to get gameMapCycle: ' + e.Message);
   end;
 
 end;
@@ -847,19 +857,19 @@ var
 begin
   Result := false;
   try
-    TND_index := GetSectionIndex(CHTTPDownload, false);
-    DM_index := GetItemIndex(CURLRedirect, TND_index);
+    TND_index := GetSectionIndex(CHTTPDOWNLOAD, false);
+    DM_index := GetItemIndex(CURLREDIRECT, TND_index);
 
     if (TND_index >= 0) then
     begin
       if (DM_index < 0) then
-        Result := AddNewItemAt(CURLRedirect + '=' + URL, TND_index, 0)
+        Result := AddNewItemAt(CURLREDIRECT + '=' + URL, TND_index, 0)
       else
         Result := ModifyValue(URL, TND_index, DM_index);
     end
     else
     begin
-      raise Exception.Create('Falied to find section ' + CHTTPDownload);
+      raise Exception.Create('Falied to find section ' + CHTTPDOWNLOAD);
 
     end;
 
@@ -875,8 +885,8 @@ var
 begin
   Result := '';
   try
-    TND_index := GetSectionIndex(CHTTPDownload, false);
-    DM_index := GetItemIndex(CURLRedirect, TND_index);
+    TND_index := GetSectionIndex(CHTTPDOWNLOAD, false);
+    DM_index := GetItemIndex(CURLREDIRECT, TND_index);
 
     if (TND_index >= 0) and (DM_index >= 0) then
     begin
@@ -884,8 +894,8 @@ begin
     end
     else
     begin
-      raise Exception.Create(
-        'Falied to find redirect values. Option is not set.');
+      raise Exception.Create
+        ('Falied to find redirect values. Option is not set.');
 
     end;
 
@@ -902,9 +912,9 @@ begin
   Result := false;
   try
     try
-      if (GetSectionIndex(CWorkshopSubTitle, false) < 0) then
+      if (GetSectionIndex(CWORKSHOPSUBTITLE, false) < 0) then
         AddWorkshopSection();
-      WS_index := GetSectionIndex(CWorkshopSubTitle, false);
+      WS_index := GetSectionIndex(CWORKSHOPSUBTITLE, false);
       if (WS_index <= 0) then
       begin
         raise Exception.Create
@@ -918,7 +928,7 @@ begin
       begin
         RemoveWorkshopItem(ID, true);
       end;
-      AddNewItemAt(CWorkshopSubItem + '=' + ID, WS_index,
+      AddNewItemAt(CWORKSHOPSUBITEM + '=' + ID, WS_index,
         Entrys[WS_index].items.Count - 1);
       Result := true;
     finally
@@ -938,7 +948,7 @@ var
 begin
   Result := false;
   try
-    WS_index := GetSectionIndex(CWorkshopSubTitle, false);
+    WS_index := GetSectionIndex(CWORKSHOPSUBTITLE, false);
     if (WS_index < 0) then
     begin
       raise Exception.Create('Falied to remove workshop item. Item not found.');
@@ -947,7 +957,7 @@ begin
     i := 0;
     while i < Entrys[WS_index].items.Count do
     begin
-      if Entrys[WS_index].items.Strings[i] = CWorkshopSubItem + '=' + ID then
+      if Entrys[WS_index].items.Strings[i] = CWORKSHOPSUBITEM + '=' + ID then
       begin
         Entrys[WS_index].items.Delete(i);
         Result := true;
@@ -973,7 +983,7 @@ var
 begin
   Result := -1;
   try
-    WS_index := GetSectionIndex(CWorkshopSubTitle, false);
+    WS_index := GetSectionIndex(CWORKSHOPSUBTITLE, false);
     if (WS_index >= 0) then
     begin
 
@@ -1003,7 +1013,7 @@ begin
   Result := '';
 
   try
-    WS_index := GetSectionIndex(CWorkshopSubTitle, false);
+    WS_index := GetSectionIndex(CWORKSHOPSUBTITLE, false);
     if (WS_index >= 0) then
     begin
       if itemIndex <= Entrys[WS_index].items.Count - 1 then
@@ -1037,7 +1047,7 @@ var
 begin
   Result := -1;
   try
-    WS_index := GetSectionIndex(CWorkshopSubTitle, false);
+    WS_index := GetSectionIndex(CWORKSHOPSUBTITLE, false);
     if (WS_index >= 0) then
     begin
 
@@ -1056,14 +1066,14 @@ var
 begin
   Result := false;
   try
-    TND_index := GetSectionIndex(CTcpNetDriver, false);
-    DM_index := GetItemIndex(CDownloadManagers, TND_index);
+    TND_index := GetSectionIndex(CTCPNETDRIVER, false);
+    DM_index := GetItemIndex(CDOWNLOADMANAGERS, TND_index);
 
     if (TND_index < 0) or (DM_index < 0) then
-      raise Exception.Create('Falied to find ' + CTcpNetDriver + '/' +
-          CDownloadManagers + ' entry.');
+      raise Exception.Create('Falied to find ' + CTCPNETDRIVER + '/' +
+        CDOWNLOADMANAGERS + ' entry.');
 
-    Result := AddNewItemAt(CDownloadManagers + '=' + CDMWorkshop, TND_index,
+    Result := AddNewItemAt(CDOWNLOADMANAGERS + '=' + CDMWORKSHOP, TND_index,
       DM_index);
 
   except
@@ -1080,14 +1090,14 @@ var
 begin
   Result := false;
   try
-    WS_index := GetSectionIndex(CTcpNetDriver, false);
+    WS_index := GetSectionIndex(CTCPNETDRIVER, false);
     if (WS_index < 0) then
       raise Exception.Create('Falied to remove workshop redirect, ' +
-          CTcpNetDriver + ' section not found.');
+        CTCPNETDRIVER + ' section not found.');
     for i := 0 to Entrys[WS_index].items.Count - 1 do
     begin
       if StringReplace(Entrys[WS_index].items.Strings[i], ' ', '',
-        [rfReplaceAll]) = CDownloadManagers + '=' + CDMWorkshop then
+        [rfReplaceAll]) = CDOWNLOADMANAGERS + '=' + CDMWORKSHOP then
       begin
         Entrys[WS_index].items.Delete(i);
         Result := true;
@@ -1096,8 +1106,8 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create
-        ('Falied to remove workshop redirect: ' + e.Message);
+      raise Exception.Create('Falied to remove workshop redirect: ' +
+        e.Message);
   end;
 
 end;
@@ -1108,14 +1118,14 @@ var
 begin
   Result := false;
   try
-    WS_index := GetSectionIndex(CTcpNetDriver, false);
+    WS_index := GetSectionIndex(CTCPNETDRIVER, false);
     if (WS_index < 0) then
-      Exception.Create('Falied get workshop redirect, ' + CTcpNetDriver +
-          ' section not found.');
+      Exception.Create('Falied get workshop redirect, ' + CTCPNETDRIVER +
+        ' section not found.');
     for i := 0 to Entrys[WS_index].items.Count - 1 do
     begin
       if StringReplace(Entrys[WS_index].items.Strings[i], ' ', '',
-        [rfReplaceAll]) = CDownloadManagers + '=' + CDMWorkshop then
+        [rfReplaceAll]) = CDOWNLOADMANAGERS + '=' + CDMWORKSHOP then
       begin
         Result := true;
         Exit;
@@ -1123,8 +1133,8 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create
-        ('Falied get workshop redirect status: ' + e.Message);
+      raise Exception.Create('Falied get workshop redirect status: ' +
+        e.Message);
   end;
 
 end;
@@ -1137,7 +1147,7 @@ begin
   try
     try
       WorkshopSection := TKFEntry.Create;
-      WorkshopSection.title := '[' + CWorkshopSubTitle + ']';
+      WorkshopSection.title := '[' + CWORKSHOPSUBTITLE + ']';
       WorkshopSection.items.Add('');
       Result := AddNewSectionAt(WorkshopSection, High(Entrys));
     finally
@@ -1194,13 +1204,12 @@ begin
       begin
 
         raise Exception.Create(CWebPortTag + ' in [' + CCategoryWeb +
-            '] not found.');
+          '] not found.');
       end;
     except
       on e: Exception do
-        raise Exception.Create
-          ('Falied to get web port number. ' + #13 + 'File: ' + Filename +
-            #13 + e.Message);
+        raise Exception.Create('Falied to get web port number. ' + #13 +
+          'File: ' + Filename + #13 + e.Message);
     end;
   end
   else
@@ -1236,14 +1245,13 @@ begin
       else
       begin
 
-        raise Exception.Create
-          (CWebPortTag + ' in ' + CWebStatusTag + ' not found.');
+        raise Exception.Create(CWebPortTag + ' in ' + CWebStatusTag +
+          ' not found.');
       end;
     except
       on e: Exception do
-        raise Exception.Create
-          ('Falied get web status. ' + #13 + 'File: ' + Filename + #13 +
-            e.Message);
+        raise Exception.Create('Falied get web status. ' + #13 + 'File: ' +
+          Filename + #13 + e.Message);
     end;
   end
   else
@@ -1276,14 +1284,13 @@ begin
       else
       begin
 
-        raise Exception.Create
-          (CWebStatusTag + ' in ' + CCategoryWeb + ' not found.');
+        raise Exception.Create(CWebStatusTag + ' in ' + CCategoryWeb +
+          ' not found.');
       end;
     except
       on e: Exception do
-        raise Exception.Create
-          ('Falied to get web status. ' + #13 + 'File: ' + Filename + #13 +
-            e.Message);
+        raise Exception.Create('Falied to get web status. ' + #13 + 'File: ' +
+          Filename + #13 + e.Message);
     end;
   end
   else
@@ -1323,15 +1330,14 @@ begin
       end
       else
       begin
-        raise Exception.Create
-          (CWebStatusTag + ' in ' + CCategoryWeb + ' not found.');
+        raise Exception.Create(CWebStatusTag + ' in ' + CCategoryWeb +
+          ' not found.');
 
       end;
     except
       on e: Exception do
-        raise Exception.Create
-          ('Falied get web status. ' + #13 + 'File: ' + Filename + #13 +
-            e.Message);
+        raise Exception.Create('Falied get web status. ' + #13 + 'File: ' +
+          Filename + #13 + e.Message);
     end;
   end
   else

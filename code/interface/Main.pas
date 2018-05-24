@@ -53,15 +53,10 @@ type
     mniShowitempage1: TMenuItem;
     mniN2: TMenuItem;
     jvpgcntrl1: TJvPageControl;
-    tsMaps: TTabSheet;
-    lvMaps: TListView;
     tsMods: TTabSheet;
     lvMods: TListView;
     tsServer: TTabSheet;
     grpStartServer: TGroupBox;
-    pnl2: TPanel;
-    lblSearch: TLabel;
-    edtSearch: TEdit;
     JvgBitmapImage1: TJvgBitmapImage;
     tsExtra: TTabSheet;
     grpEnableDisable: TGroupBox;
@@ -157,8 +152,12 @@ type
     cbbTheme: TJvComboBox;
     btnAddNew: TBitBtn;
     btnRemove: TBitBtn;
-    NetHTTPClient1: TNetHTTPClient;
     chkAutoCheckForUpdates: TCheckBox;
+    tsMaps: TTabSheet;
+    pnl2: TPanel;
+    lblSearch: TLabel;
+    edtSearch: TEdit;
+    lvMaps: TListView;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -255,6 +254,7 @@ type
     procedure checkAutoWebLoginRequirements;
     procedure CheckIfTheServerIsRuning;
     procedure InstallRegBrowserKey;
+    procedure CheckDependencies;
 
   var
     ActiveLV: TListView;
@@ -736,6 +736,22 @@ begin
     Application.MessageBox('Finished', 'Clear cache',
       MB_OK + MB_ICONINFORMATION);
   end;
+end;
+
+procedure TFormMain.CheckDependencies;
+var
+  steamcmdpath: String;
+begin
+  steamcmdpath := ExtractFilePath(Application.ExeName) + pathCmdTool;
+  if not FileExists(steamcmdpath) then
+  begin
+    raise Exception.Create('SteamCmd tool not found. ' + #13 + #13 +
+      'Your installation of kf2servertool is incomplete.' + #13 +
+      'The steamcmd tool is missing in the path ' + #13 + steamcmdpath + #13 +
+      'Reinstall the tool and start the application again.');
+    Exit;
+  end;
+
 end;
 
 procedure TFormMain.btnDeleteProfileClick(Sender: TObject);
@@ -1593,6 +1609,7 @@ begin
   lvMaps.Items.Clear;
   lvMods.Clear;
   lvUnknowed.Items.Clear;
+  // lvSubscriptions.Clear;
   for i := 0 to High(serverTool.Items) do
   begin
     Filter := UpperCase(Filter);
@@ -1626,7 +1643,7 @@ begin
         Item.ImageIndex := 3;
         Item.Caption := serverTool.Items[i].FileName;
         Item.SubItems.Add(serverTool.Items[i].ID);
-
+        //ServerSubscription
         if serverTool.Items[i].ServerSubscribe then
         begin
           Item.SubItems.Add(textYes);
@@ -1645,7 +1662,7 @@ begin
           end;
 
         end;
-
+        //MapCycle
         if serverTool.Items[i].MapEntry then
         begin
           Item.SubItems.Add(textYes);
@@ -1659,7 +1676,7 @@ begin
           else
             Item.SubItemImages[2] := 1;
         end;
-
+        //MapEntry
         if serverTool.Items[i].MapCycleEntry then
         begin
           Item.SubItems.Add(textYes);
@@ -1673,7 +1690,7 @@ begin
           else
             Item.SubItemImages[3] := 1;
         end;
-
+         //ServerCache
         if serverTool.Items[i].ServerCache then
         begin
           Item.SubItems.Add(textYes);
@@ -1688,22 +1705,48 @@ begin
             Item.SubItemImages[4] := 1;
 
         end;
-        if serverTool.Items[i].SourceFrom = KFSteamWorkshop then
-        begin
-          Item.GroupID := 0;
-        end
-        else if serverTool.Items[i].SourceFrom = KFOfficial then
-        begin
-          Item.GroupID := 1;
-        end
-        else if serverTool.Items[i].SourceFrom = KFRedirectOrLocal then
-        begin
-          Item.GroupID := 2;
+        //Item group
+        case serverTool.Items[i].SourceFrom of
+          KFSteamWorkshop:
+            Item.GroupID := 0;
+          KFOfficial:
+            Item.GroupID := 1;
+          KFRedirectOrLocal:
+            Item.GroupID := 2;
+          KFUnknowedSource:
+            Item.GroupID := 3;
         end;
 
       end;
-
+      {
+        //LvSubscriptions
+        if serverTool.Items[i].ServerSubscribe then
+        begin
+        Item := lvSubscriptions.Items.Add;
+        Item.Caption := serverTool.Items[i].ID;
+        end;
+        //LvMapEntrys
+        if serverTool.Items[i].MapEntry then
+        begin
+        Item := lvMapEntrys.Items.Add;
+        Item.Caption := serverTool.Items[i].FileName;
+        end;
+        //LvMapCycle
+        if serverTool.Items[i].MapCycleEntry then
+        begin
+        Item := lvMapCycle.Items.Add;
+        Item.Caption := serverTool.Items[i].FileName;
+        end;
+        //LvCache
+        if serverTool.Items[i].ServerCache then
+        begin
+        Item := lvMapCycle.Items.Add;
+        Item.Caption := serverTool.Items[i].FileName;
+        Item.SubItems.Add(serverTool.Items[i].ID);
+        end;
+      }
     end;
+
   end;
 
   if lvUnknowed.Items.Count > 0 then
@@ -2104,10 +2147,8 @@ var
   i: Integer;
 
 begin
-
+  // ---- Configname path
   ExeName := ExtractFileName(Application.ExeName);
-  Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
-
   configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
   if ParamCount > 0 then
   begin
@@ -2127,18 +2168,28 @@ begin
     end;
   end;
 
-  jvpgcntrl1.ActivePageIndex := 0;
-  jvpgcntrl1Change(Self);
-  SetLength(kfprofiles, 0);
   // ---- Config load
   loadConfig;
+
+  // ----- Verify for dependencies
+  try
+    CheckDependencies;
+  except
+    on E: Exception do
+    begin
+      Application.MessageBox(PWideChar(E.Message), 'Dependencie not found',
+        MB_OK + MB_ICONSTOP);
+      Application.Terminate;
+      Exit;
+    end;
+  end;
+
   // ---- Server check
   repeat
     if useCustomServerPath then
       serverpath := IncludeTrailingPathDelimiter(customServerPath)
     else
       serverpath := ExtractFilePath(Application.ExeName);
-    // ShowMessage(serverPath);
 
     if FileExists(serverpath + pathServerEXE) = false then
     begin
@@ -2164,21 +2215,15 @@ begin
               serverpath := ExtractFilePath(Application.ExeName);
               InstallServer(ExtractFilePath(Application.ExeName));
             end;
-
         end;
 
       finally
         kfPathDialog.Free;
       end;
-
     end;
   until FileExists(serverpath + pathServerEXE);
 
-  // ---- Translation
-  if appLanguage = 'BR' then
-    TranstaleToBR;
   // ---- Files load
-
   serverTool := TKFServerTool.Create;
   try
     serverTool.SetKFApplicationPath(serverpath);
@@ -2186,17 +2231,21 @@ begin
     serverTool.SetKFGameIniSubPath(pathKFGameIni);
     serverTool.SetKFServerPathEXE(pathServerEXE);
     serverTool.SetKFWebIniSubPath(pathKFWebIni);
-
     serverTool.SetSteamCmdPath(serverpath + pathCmdTool);
   except
     on E: Exception do
+    begin
       Application.MessageBox(PWideChar(E.Message), 'Error',
         MB_OK + MB_ICONSTOP);
+      Application.Terminate;
+      Exit
+    end;
   end;
-  serverTool.appType := atGui;
-  LoadItensToLv('');
-  LoadServerProfile();
+
+  // ---- Load UI Config
   LoadUIConfig;
+
+  // ---- Auto check for update system
   if AutoCheckForUpdates then
     checkForUpdates(Self);
 
@@ -2210,6 +2259,14 @@ var
   webPort: String;
   customRedirect: string;
 begin
+  Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
+  LoadServerProfile();
+  LoadItensToLv('');
+
+  jvpgcntrl1.ActivePageIndex := 0;
+  // pgcMaps.ActivePageIndex := 0;
+  jvpgcntrl1Change(Self);
+
   btnRemove.Enabled := false;
   if jvpgcntrl1.ActivePage = tsMaps then
 
@@ -2312,6 +2369,10 @@ begin
   TStyleManager.TrySetStyle(fdefaultStyleName);
   // whatever was in the project settings.
   Application.HintHidePause := 15000; // 15 Sec
+
+  // ---- Translation
+  if appLanguage = 'BR' then
+    TranstaleToBR;
   // Fix webbrowser compabillity
   InstallRegBrowserKey()
 end;
@@ -3251,6 +3312,7 @@ var
   regCount, i: Integer;
   section: String;
 begin
+  SetLength(kfprofiles, 0);
   Result := false;
   try
 
