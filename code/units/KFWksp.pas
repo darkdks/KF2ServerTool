@@ -138,7 +138,6 @@ var
   exResult: TStringList;
   aborEx: Boolean;
 begin
-  ItemType := KFUnknowed;
   if (svPath = '') then
   begin
     raise Exception.Create('ERROR: No server path found');
@@ -164,7 +163,7 @@ begin
       {$ENDIF}
 
     end);
-
+  try
   if Assigned(exResult) then
   begin
     itemSteamAppFolder := svPath + WKP_CACHEFOLDER + PathDelim + ID + PathDelim;
@@ -185,6 +184,10 @@ begin
     raise Exception.Create('Falied to launcher steamcmd');
   end;
 
+  finally
+    if Assigned(exResult) then FreeAndNil(exResult);
+
+  end;
 end;
 
 function TKFWorkshop.GetMapName(MapFolder: string; withExt: Boolean): string;
@@ -306,7 +309,7 @@ begin
       // raise Exception.Create(CAcfFile + ' file not found.');
     end;
   finally
-    acfFile.Free;
+    FreeAndNil(acfFile);
   end;
 
 end;

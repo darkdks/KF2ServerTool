@@ -105,8 +105,6 @@ var
 begin
   Stream := TMemoryStream.Create;
   downloadManager := dlManager;
-  Result := False;
-
   httpRq := TNetHTTPClient.Create(nil);
   httpRq.OnReceiveData := HTTPClientReceiveData;
   httpRq.OnRequestCompleted := HTTPClientRequestCompleted;

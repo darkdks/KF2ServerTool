@@ -55,7 +55,6 @@ var
   isMod: Boolean;
 begin
   frmAdd := TFormAdd.Create(Self);
-  mdResult := mrNone;
   try
 
     if FormMain.appLanguage = 'BR' then
@@ -130,9 +129,7 @@ procedure TfrmQueue.btnProcedClick(Sender: TObject);
 var
   ItemName: string;
   itemID: string;
-  slItems, i: Integer;
-  itemsDone: Integer;
-  modalResult: Integer;
+   i: Integer;
   addWkspRedirect, downloadNow, addMapCycle, addMapENtry: Boolean;
 begin
 
@@ -143,9 +140,6 @@ begin
   end
   else
   begin
-    slItems := FormMain.getSelectedCount(lvQueue);
-    itemsDone := 0;
-    modalResult := mrNone;
      btnProced.Enabled := false;
     try
 
@@ -286,10 +280,8 @@ var
   itemID: string;
   isMod: Boolean;
   lgFindAItemWksp, lgSearchFor: string;
-  mdResult: Integer;
 
 begin
-  mdResult := mrNone;
   if FormMain.appLanguage = 'BR' then
   begin
     lgFindAItemWksp := 'Buscar na workshop';

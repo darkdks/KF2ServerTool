@@ -179,7 +179,7 @@ begin
       body := 'error';
     end;
     try
-      download_url := (jAssets.get(0) as TJSONObject)
+      download_url := (jAssets.Items[0] as TJSONObject)
         .GetValue('browser_download_url').ToString;
     except
       download_url := 'error';
@@ -202,8 +202,8 @@ begin
   try
     if DirectoryExists(updateFolderPath) then
     begin
+       fSource := GetAllFilesSubDirectory(updateFolderPath, '*');
       try
-        fSource := GetAllFilesSubDirectory(updateFolderPath, '*');
         if fSource.Count > 0 then
           FileOperation(fSource, '', 3 { FO_DELETE } );
       finally
@@ -224,10 +224,11 @@ procedure TGitAutoUpdate.DeleteUpdateFolder;
  updateFolderPath : String;
 begin
  updateFolderPath := workingPath + UPDATEFOLDER + PathDelim;
- fSource := TStringList.Create;
+
   try
     if DirectoryExists(updateFolderPath) then
     begin
+     fSource := TStringList.Create;
       try
         fSource.Add(updateFolderPath);
         FileOperation(fSource, '', 3 { FO_DELETE } );

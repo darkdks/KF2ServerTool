@@ -368,7 +368,6 @@ end;
 function ExecuteFile(hWnd: Cardinal; filename: string; Parameters: string;
 ShowWindows: Integer): Boolean;
 begin
-  Result := False;
     try
       Result := ShellExecute(hWnd, 'runas', PWideChar(filename), PWideChar(Parameters), nil, ShowWindows) > 32;
     except
@@ -383,8 +382,8 @@ end;
   function ExecuteTerminalProcess(Acmd: String; AParam: string;
   var abortExe: Boolean; Return: TProc<String>): TStringList;
 {$IFDEF MSWINDOWS}
-  var
-    outlineCallBack: TExecuteCmdCallBack;
+ // var
+  //  outlineCallBack: TExecuteCmdCallBack;
   begin
     Result := TStringList.Create;
 

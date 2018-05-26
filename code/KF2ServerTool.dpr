@@ -83,6 +83,7 @@ begin
   end
   else
   begin
+
     upd := TGitAutoUpdate.Create(ExtractFilePath(Application.ExeName));
     try
       upd.DeleteUpdateFolder;
@@ -96,6 +97,9 @@ end;
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  {$IFDEF DEBUG}
+  ReportMemoryLeaksOnShutdown := True;
+{$ENDIF}
   Application.Title := 'KF2 Server Tool';
   if VerifyToInstallUpdate then
     exit;

@@ -57,7 +57,6 @@ var
   redirectItems: TStringlist;
 //  IDHTTP: TIdHTTP;  Get file size is very slow, disabled
 begin
-  Result := False;
   KFRedirect := TKFRedirect.Create;
 
   try

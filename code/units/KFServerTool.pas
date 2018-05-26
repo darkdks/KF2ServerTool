@@ -219,10 +219,6 @@ var
   dlTool: TDownloaderTool;
 begin
 
-  result := False;
-  AddedMapEntry := False;
-  AddedMapCycle := False;
-
   try
 
     if (downURL <> '') or (ItemName <> '') then
@@ -254,10 +250,12 @@ begin
           if MapEntry then
           begin
             AddedMapEntry := AddMapEntry(ItemName);
+              LogEvent('Add item', 'Map entry added ' + BoolToWord(AddedMapEntry));
           end;
           if MapCycle then
           begin
             AddedMapCycle := AddMapCycle(ItemName);
+            LogEvent('Add item', 'Map Cycle added ' + BoolToWord(AddedMapCycle));
           end;
         end;
 
@@ -267,7 +265,6 @@ begin
         on E: Exception do
         begin
           raise Exception.Create('Error Adding item: ' + E.Message);
-          result := False;
         end;
       end;
 
@@ -276,7 +273,6 @@ begin
     begin
       // No id passed
       raise Exception.Create('No DownURL or itemname passed');
-      result := False;
     end;
 
   finally
@@ -291,7 +287,6 @@ var
   ItemDownloaded: Boolean;
   ItemInCache: Boolean;
 begin
-  result := False;
   wksp := TKFWorkshop.Create(kfApplicationPath);
   wksp.steamCmdTool := SteamCmdPath;
   try
@@ -327,7 +322,6 @@ begin
 
       on E: Exception do
       begin
-        result := 0;
         raise Exception.Create('Falied to export list: ' + E.Message);
       end;
     end;
@@ -342,7 +336,6 @@ var
   wksp: TKFWorkshop;
 
 begin
-  result := False;
   wksp := TKFWorkshop.Create(kfApplicationPath);
   wksp.steamCmdTool := SteamCmdPath;
   try
@@ -454,12 +447,6 @@ var
   AddedMapCycle: Boolean;
   AddedWkspSub: Boolean;
 begin
-
-  result := False;
-  AddedMapEntry := False;
-  AddedMapCycle := False;
-  AddedWkspSub := False;
-
   try
 
     if (ID <> '') or (Name <> '') then
@@ -502,7 +489,7 @@ begin
             LogEvent('Install workshop item', 'Adding map cycle for ' + Name);
             AddedMapCycle := AddMapCycle(Name);
             LogEvent('Install workshop item', 'Map cycle added = ' +
-              BoolToWord(AddedMapEntry));
+              BoolToWord(AddedMapCycle));
           end;
         end;
         LogEvent('Install workshop item', 'Finished job for item ' + ID);
@@ -513,9 +500,6 @@ begin
         begin
           LogEvent('Install workshop item', 'Exception ' + E.Message);
           raise Exception.Create('Error adding item: ' + E.Message);
-
-          result := False;
-
         end;
       end;
 
@@ -1020,7 +1004,6 @@ var
   egIniLoaded, gmIniLoaded: Boolean;
 
 begin
-  result := False;
   LogEvent('Remove item', 'Item name ' + ItemName + ' item id ' + itemID);
   case ItemSource of
     KFSteamWorkshop:

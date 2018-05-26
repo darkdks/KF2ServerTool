@@ -17,7 +17,7 @@ uses
   JvExStdCtrls, JvExComCtrls, Vcl.Themes, GitAutoUpdate, System.uitypes,
   downloaderTool,
   System.Net.HttpClient, System.Net.HttpClientComponent, Registry,
-  System.Net.URLClient;
+  System.Net.URLClient, System.Types;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -308,7 +308,6 @@ var
   progressForm: TformPB;
 
 begin
-  mdResult := mrNone;
   if appLanguage = 'BR' then
   begin
     lgFindAItemWksp := 'Buscar na workshop';
@@ -397,7 +396,6 @@ var
   mdResult: Integer;
   progressForm: TformPB;
 begin
-  mdResult := mrNone;
 
   if appLanguage = 'BR' then
   begin
@@ -697,7 +695,7 @@ begin
       DeleteFolder.Add(serverpath + 'KFGame\Cache\');
       FileOperation(DeleteFolder, '', FO_DELETE);
     finally
-      DeleteFolder.Free;
+     FreeAndNil(DeleteFolder);
     end;
     Application.MessageBox('Finished', 'Clear cache',
       MB_OK + MB_ICONINFORMATION);
@@ -730,8 +728,8 @@ begin
       FileOperation(DeleteFolder, '', FO_DELETE);
       serverTool.CreateBlankACFFile;
     finally
-      DeleteFolder.Free;
-      wkspacf.Free;
+      FreeAndNil(DeleteFolder);
+      FreeAndNil(wkspacf);
     end;
     Application.MessageBox('Finished', 'Clear cache',
       MB_OK + MB_ICONINFORMATION);
@@ -1761,7 +1759,7 @@ begin
     for i := 0 to mapCycle.Count - 1 do
       cbbMap.Items.Add(mapCycle[i]);
   finally
-    mapCycle.Free;
+    FreeAndNil(mapCycle);
   end;
 
 end;
@@ -2147,6 +2145,7 @@ var
   i: Integer;
 
 begin
+
   // ---- Configname path
   ExeName := ExtractFileName(Application.ExeName);
   configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
@@ -2279,7 +2278,6 @@ begin
   customRedirect := serverTool.GetCustomRedirect;
   // ShowMessage(configName);
 {$IFDEF DEBUG}
-  // ReportMemoryLeaksOnShutdown := True;
   tsDebug.TabVisible := True;
 {$ELSE}
   tsDebug.TabVisible := false;
@@ -2383,6 +2381,7 @@ var
 begin
   try
     // cb Server Length and Difficulty
+    if Assigned(kfprofiles) then begin
     with kfprofiles[defaultProfile] do
     begin
       DefaultDifficulty := cbbDifficulty.ItemIndex;
@@ -2391,11 +2390,14 @@ begin
       AdditionalParam := edtExtra.Text;
       DefaultMap := cbbMap.Text;
     end;
+    end;
     appWidth := Self.Width;
     appHeight := Self.Height;
     appMaximized := FormMain.WindowState = wsMaximized;
     saveconfig;
-    serverTool.Free;
+    if Assigned(serverTool) then
+
+    FreeAndNil(serverTool);
     for i := 0 to High(kfprofiles) do
       FreeAndNil(kfprofiles[i]);
   except
@@ -2553,8 +2555,9 @@ begin
       LoadItensToLv('');
       Application.MessageBox('Finished!', '', MB_OK + MB_ICONINFORMATION)
     finally
-      progressForm.Free;
-      frmReinstall.Free;
+      FreeAndNil(progressForm);
+      FreeAndNil(frmReinstall);
+      FreeAndNil(bkpFile);
     end;
 
   end;

@@ -22,7 +22,7 @@ type
     function ModifyValue(newValue: String;
       EntryIndex, ItemIdex: Integer): Boolean;
     function RemoveSectionAt(index: Integer): Boolean;
-    function RemoveItemAt(EntryIndex, itemIndex: Integer): Boolean;
+  //  function RemoveItemAt(EntryIndex, itemIndex: Integer): Boolean;
     Function AddNewSectionAt(entry: TKFEntry; index: Integer): Boolean;
     function GetCategoryIndex(category: String; getLast: Boolean): Integer;
     function GetItemIndex(name: String; index: Integer): Integer;
@@ -396,8 +396,6 @@ begin
     on e: Exception do
     begin
       raise Exception.Create('Falied add map entry: ' + e.Message);
-      Result := false;
-
     end;
   end;
 end;
@@ -486,13 +484,12 @@ begin
   except
     on e: Exception do
     begin
-      Result := false;
       raise Exception.Create('Falied to remove item: ' + e.Message);
 
     end;
   end;
 end;
-
+ {
 function TKFConfigFile.RemoveItemAt(EntryIndex, itemIndex: Integer): Boolean;
 begin
   Result := true;
@@ -506,14 +503,12 @@ begin
   except
     on e: Exception do
     begin
-
       raise Exception.Create('Falied to remove item: ' + e.Message);
-      Result := false;
     end;
   end;
 
 end;
-
+ }
 { TKFGameIni }
 
 constructor TKFGameIni.Create;
@@ -591,7 +586,7 @@ var
 begin
 
   try
-    try
+
       GI_index := GetSectionIndex(CGAMEINFO, false);
       GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
       if (GI_index < 0) or (GMC_index < 0) then
@@ -601,6 +596,7 @@ begin
       end;
       oldMapCycle := GetValue(GI_index, GMC_index);
       mapList := GMCTextToStrings(oldMapCycle);
+      try
       i := 0;
       while i < mapList.Count do
       begin
@@ -618,7 +614,7 @@ begin
       ModifyValue(newMapCycle, GI_index, GMC_index);
       Result := true;
     finally
-
+      FreeAndNil(mapList);
     end;
   except
     Result := false;
@@ -647,19 +643,18 @@ begin
       RemoveMapCycle(name, true);
     end;
     oldMapCycle := GetValue(GI_index, GMC_index);
-    mapList := GMCTextToStrings(oldMapCycle);
     try
+      mapList := GMCTextToStrings(oldMapCycle);
       mapList.Add(name);
       newMapCycle := GMCStringsToText(mapList);
       ModifyValue(newMapCycle, GI_index, GMC_index);
       Result := true;
     finally
-      mapList.Free;
+      FreeAndNil(mapList);
     end;
   except
     on e: Exception do
     begin
-      Result := false;
       raise Exception.Create('Falied to edit: ' + e.Message);
 
     end;
@@ -725,7 +720,6 @@ function TKFGameIni.SetAdminPass(password: String): Boolean;
 var
   TND_index, DM_index: Integer;
 begin
-  Result := false;
   try
     TND_index := GetSectionIndex(CENGINEACESSCONTROL, false);
     DM_index := GetItemIndex(CADMINPASSWORD, TND_index);
@@ -758,6 +752,7 @@ begin
   end;
 
   newEntry := TKFEntry.Create;
+  try
   newEntry.title := '[' + name + ' ' + CMAPTYPE + ']';
   newEntry.items.Add(CMAPNAME + '=' + name);
   newEntry.items.Add(CMAPASSOCIATION + '=' + '0');
@@ -765,6 +760,9 @@ begin
   newEntry.items.Add('');
   Result := AddNewSectionAt(newEntry, GetCategoryIndex('KFMapSummary',
     true) + 1);
+  finally
+    FreeAndNil(newEntry);
+  end;
 end;
 
 function TKFGameIni.GetMapEntryIndex(name: String): Integer;
@@ -821,8 +819,6 @@ end;
 
 function TKFGameIni.GetMapCycleIndex(name: String): Integer;
 var
-  mapCycle: string;
-  GI_index, GMC_index: Integer;
   mapList: TStringList;
   i: Integer;
 begin
@@ -855,7 +851,6 @@ function TKFEngineIni.SetCustomRedirect(URL: String): Boolean;
 var
   TND_index, DM_index: Integer;
 begin
-  Result := false;
   try
     TND_index := GetSectionIndex(CHTTPDOWNLOAD, false);
     DM_index := GetItemIndex(CURLREDIRECT, TND_index);
@@ -909,7 +904,6 @@ function TKFEngineIni.AddWorkshopItem(ID: string): Boolean;
 var
   WS_index: Integer;
 begin
-  Result := false;
   try
     try
       if (GetSectionIndex(CWORKSHOPSUBTITLE, false) < 0) then
@@ -1064,7 +1058,6 @@ function TKFEngineIni.AddWorkshopRedirect: Boolean;
 var
   TND_index, DM_index: Integer;
 begin
-  Result := false;
   try
     TND_index := GetSectionIndex(CTCPNETDRIVER, false);
     DM_index := GetItemIndex(CDOWNLOADMANAGERS, TND_index);
