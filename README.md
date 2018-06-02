@@ -59,9 +59,9 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2Serv
 # How to use with multiples servers configs
 (very useful if you run multiple instances of servers in the same folder and have several different files for each server.)
 
-- Use the param -config for GUI Version or -ini for CMD Version in the executable to specify a different configuration file. 
-Example: KF2ServerTool.exe -config KFServerTool_sv2.ini 
-Example: KF2ServerToolCMD -ini KFServerTool_sv2.ini 
+- Use the param -config to specify a different configuration file. 
+Example: KF2ServerTool -config KFServerTool_sv2.ini 
+Example: KF2ServerToolCMD -config KFServerTool_sv2.ini 
 
 - The application will create a new config file and you should edit it to specify the custom paths of your configs (PCServer-Game, PCServer-Engine, etc) files
 

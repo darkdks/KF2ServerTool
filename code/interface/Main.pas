@@ -16,8 +16,8 @@ uses
   ItemProgress, System.ImageList, JvExControls, JvColorBox,
   JvExStdCtrls, JvExComCtrls, Vcl.Themes, GitAutoUpdate, System.uitypes,
   downloaderTool,
-  System.Net.HttpClient, System.Net.HttpClientComponent, Registry,
-  System.Net.URLClient, System.Types;
+  System.Net.HttpClient, Registry,
+  System.Types;
 
 type
   TLvSelectedItems = Array of TListItem;

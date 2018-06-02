@@ -6,9 +6,9 @@ uses
   IniFiles,
   StrUtils,
   classes,
-  {$IFDEF LINUX64}
+{$IFDEF LINUX64}
   LinuxUtils in 'units\LinuxUtils.pas',
-  {$ENDIF }
+{$ENDIF }
   KFFile in 'units\KFFile.pas',
   KFRedirect in 'units\KFRedirect.pas',
   KFServerTool in 'units\KFServerTool.pas',
@@ -16,10 +16,13 @@ uses
   MiscFunc in 'units\MiscFunc.pas',
   DownloaderTool in 'units\DownloaderTool.pas';
 
+type
+  TDisplayInfoType = (DIT_all, DIT_path, DIT_web, DIT_redirect, DIT_items);
+
 var
   useCustomServerPath: Boolean;
   ignoreCacheFolder: Boolean = False;
-  customServerPath, pathKFGameIni, pathKFEngineIni, pathCmdTool,
+  customServerPath, pathKFGameIni, pathKFEngineIni, pathKFWebIni, pathCmdTool,
     pathServerEXE: string;
   serverTool: TKFServerTool;
   serverPath: string;
@@ -35,7 +38,6 @@ var
   iniPath: string;
 
 begin
-  Result := False;
 
   iniPath := ExtractFilePath(ApplicationPath) + configName;
   IniConfig := TIniFile.Create(iniPath);
@@ -63,8 +65,10 @@ begin
       WriteString('PATHS', 'KFGameIni', 'KFGame/Config/LinuxServer-KFGame.ini');
       WriteString('PATHS', 'KFEngineIni',
         'KFGame/Config/LinuxServer-KFEngine.ini');
+      WriteString('PATHS', 'KFWebIni', 'KFGame/Config/KFWeb.ini');
 {$ELSE}
       WriteString('PATHS', 'KFGameIni', 'KFGame\Config\PCServer-KFGame.ini');
+      WriteString('PATHS', 'KFWebIni', 'KFGame\Config\KFWeb.ini');
       WriteString('PATHS', 'KFEngineIni',
         'KFGame\Config\PCServer-KFEngine.ini');
       WriteString('PATHS', 'ServerEXE', 'Binaries\win64\kfserver.exe');
@@ -89,6 +93,8 @@ begin
         'KFGame/Config/LinuxServer-KFGame.ini');
       pathKFEngineIni := ReadString('PATHS', 'KFEngineIni',
         'KFGame/Config/LinuxServer-KFEngine.ini');
+      pathKFWebIni := ReadString('PATHS', 'KFWebIni',
+        'KFGame/Config/KFWeb.ini');
 {$ELSE}
       pathCmdTool := ReadString('PATHS', 'SteamCmdTool',
         'STEAMCMD\SteamCmd.exe');
@@ -98,6 +104,8 @@ begin
         'KFGame' + PathDelim + 'Config' + PathDelim + 'PCServer-KFGame.ini');
       pathKFEngineIni := ReadString('PATHS', 'KFEngineIni',
         'KFGame' + PathDelim + 'Config' + PathDelim + 'PCServer-KFEngine.ini');
+      pathKFWebIni := ReadString('PATHS', 'KFWebIni',
+        'KFGame\Config\KFWeb.ini');
 {$ENDIF}
     end;
     Result := True;
@@ -145,13 +153,14 @@ procedure ShowHelp;
 begin
   writeln('KF2ServerToolCmd by darkdks');
   writeln('');
-  writeln('CMD Version :' + KF2CMDTOOLVERSION);
+  writeln('CMD Version: ' + KF2CMDTOOLVERSION);
   writeln('KF2ServerTool library: ' + TKFServerTool.SERVERTOOLVERSION);
 {$IFDEF LINUX64}
   writeln('Console for Linux');
 {$ELSE}
   writeln('Console for Windows');
-
+  writeln('');
+  writeln('');
 {$ENDIF }
   writeln('  Usage:');
   writeln('  KF2ServerToolCMD -option <value>');
@@ -160,15 +169,15 @@ begin
   writeln('');
   writeln('');
   writeln('Options:');
-  writeln('-list : list all installed items');
-  writeln('');
-  writeln('-report : report all items installed without formatting');
-  writeln('');
-  writeln('-remove <WorkshopID>   : Fully remove item');
-  writeln('');
   writeln('-addmap <WorkshopID>   : Download and add entrys to map');
   writeln('');
   writeln('-addmod <WorkshopID>   : Download and add entrys to mod');
+  writeln('');
+  writeln('-config <FileName.ini>  : Specify a custom  KF2ServerToolCMD.ini, if dont exists');
+  writeln('    a new one will be created. Then the tool will work only with the configured KF2Game ');
+  writeln('    and KFEngine ini specified inside the custom KF2ServerToolCMD ini file.');
+  writeln('    Also when this option is set the tool will ignore show items');
+  writeln('    that the current config is not subscribed');
   writeln('');
   writeln('-custom <Arguments>  : Does one o more specied steps');
   writeln('    Custom arguments:');
@@ -184,20 +193,36 @@ begin
   writeln('    Example: KF2ServerToolCMD -custom ame=KF-MyMap amc=KF-MyMap aws=1234567891');
   writeln('   (This will add just the map entry, the map in server cycle and workshop subscription.)');
   writeln('');
-  writeln('');
-  writeln('-config <FileName.ini>  : Specify a custom  KF2ServerToolCMD.ini, if dont exists');
-  writeln('    a new one will be created. Then the tool will work only with the configured KF2Game ');
-  writeln('    and KFEngine ini specified inside the custom KF2ServerToolCMD ini file.');
-  writeln('    Also when this option is set the tool will ignore show items');
-  writeln('    that the current config is not subscribed');
+  writeln('-help : Show this message');
   writeln('');
   writeln('-ig  : Ignore if the server is running (Not recommended)');
+  writeln('');
+  writeln('-info : display application and server info');
+  writeln('');
+  writeln('-list : list all installed items');
+  writeln('');
+  writeln('-redirect <URL>: set custom redirect');
+  writeln('');
+  writeln('-redirect off: disable custom redirect');
+  writeln('');
+  writeln('-remove <WorkshopID>   : Fully remove item');
+  writeln('');
+  writeln('-report : report all items installed without formatting');
   writeln('');
   writeln('-update <WorkshopID>  : Update an item from workshop)');
   writeln('');
   writeln('-validate  : Redownload all subscribed workshop files');
   writeln('');
-  writeln('-help : Show this message');
+  writeln('-webadmin on: enable webadmin');
+  writeln('');
+  writeln('-webadmin on: disable webadmin');
+  writeln('');
+  writeln('-webadmin port <NUMBER>: set webadmin port (default 8080)');
+  writeln('');
+  writeln('-workshop on : enable workshop redirect');
+  writeln('');
+  writeln('-workshop off : disable workshop redirect');
+  writeln('');
 
 end;
 
@@ -218,7 +243,7 @@ begin
   sortedList.Sort;
 
   try
-    //Workshop maps
+    // Workshop maps
     CategoryTitleAdded := False;
     for I := 0 to sortedList.Count - 1 do
     begin
@@ -252,7 +277,7 @@ begin
       end;
     end;
 
-    //Workshop Mods
+    // Workshop Mods
     CategoryTitleAdded := False;
     for I := 0 to sortedList.Count - 1 do
     begin
@@ -282,7 +307,7 @@ begin
       end;
     end;
 
-      //Official maps
+    // Official maps
     CategoryTitleAdded := False;
     for I := 0 to sortedList.Count - 1 do
     begin
@@ -308,7 +333,7 @@ begin
       end;
     end;
 
-    //Local or redirect maps
+    // Local or redirect maps
     if not ignoreCacheFolder then
     begin
       CategoryTitleAdded := False;
@@ -403,86 +428,166 @@ end;
 
 procedure addmod(itemID: string);
 begin
-  writeln(' Adding mod...');
-  writeln(' Item ID: ' + itemID);
+  writeln('Adding mod...');
+  writeln('Item ID: ' + itemID);
   serverTool.InstallWorkshopItem(itemID, '', True, True, False, False);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure addMap(itemID: String);
 begin
-  writeln(' Adding Map...');
-  writeln(' Item ID: ' + itemID);
+  writeln('Adding Map...');
+  writeln('Item ID: ' + itemID);
   serverTool.InstallWorkshopItem(itemID, '', True, True, True, True);
-  writeln(' Finished');
+  writeln('Done');
+end;
+
+procedure DisplayInfo(displayType: TDisplayInfoType);
+var
+  I, wkspMapsCount, localMapsCount, oficialMapsCount, wkspModsCount,
+    unknowedCount: Integer;
+begin
+  serverTool.LoadItems;
+  localMapsCount := 0;
+  wkspMapsCount := 0;
+  wkspModsCount := 0;
+  oficialMapsCount := 0;
+  unknowedCount := 0;
+  for I := 0 to High(serverTool.Items) do
+  begin
+    case serverTool.Items[I].SourceFrom of
+      KFSteamWorkshop:
+        begin
+          case serverTool.Items[I].ItemType of
+            KFMap:
+              Inc(wkspMapsCount, 1);
+            KFmod:
+              Inc(wkspModsCount, 1)
+          end;
+        end;
+      KFRedirectOrLocal:
+        begin
+          Inc(localMapsCount, 1);
+        end;
+      KFUnknowedSource:
+        begin
+          Inc(unknowedCount, 1);
+        end;
+      KFOfficial:
+        begin
+          Inc(oficialMapsCount, 1);
+        end;
+    end;
+  end;
+  writeln('Server tool version: ' + serverTool.SERVERTOOLVERSION);
+  writeln(' ');
+  if (displayType = DIT_path) or (displayType = DIT_all) then
+  begin
+    writeln('----------------------- Paths ----------------------- ');
+    writeln('            SteamCMD path: ' + serverTool.GetSteamCmdPath);
+    writeln('            KFServer path: ' + serverTool.GetKFApplicationPath);
+    writeln('        KFServer exe path: ' + serverTool.GetKFServerPathEXE);
+    writeln('          KFGame ini path: ' + serverTool.getKFGameIniPath);
+    writeln('        KFEngine ini path: ' + serverTool.getKFEngineIniPath);
+    writeln('           KFWeb ini path: ' + serverTool.getKFWebIniPath);
+    writeln(' ');
+  end;
+  if (displayType = DIT_items) or (displayType = DIT_all) then
+  begin
+    writeln('-----------------------  Items ----------------------- ');
+    writeln('       Maps from workshop: ' + IntToStr(wkspMapsCount));
+    writeln('       Mods from workshop: ' + IntToStr(wkspModsCount));
+    writeln('             Oficial maps: ' + IntToStr(oficialMapsCount));
+    writeln('           Unknowed items: ' + IntToStr(unknowedCount));
+    writeln('        Redirect or local: ' + IntToStr(localMapsCount));
+    writeln('Workshop download manager: ' +
+      BoolToWord(serverTool.IsWorkshopManagerInstalled));
+    writeln(' ');
+  end;
+  if (displayType = DIT_web) or (displayType = DIT_all) then
+  begin
+    writeln('-----------------------  Web admin ------------------- ');
+    writeln('        Web admin enabled: ' +
+      BoolToWord(serverTool.GetWebStatus));
+    writeln('           Web admin port: ' + IntToStr(serverTool.GetWebPort));
+    writeln(' ');
+  end;
+  if (displayType = DIT_redirect) or (displayType = DIT_all) then
+  begin
+    writeln('-----------------------  Custom redirect --------------');
+    writeln('  Custom Redirect enabled: ' +
+      BoolToWord(serverTool.GetCustomRedirect <> ''));
+    writeln('      Custom Redirect URL: ' + serverTool.GetCustomRedirect);
+    writeln(' ');
+  end;
 end;
 
 procedure addWorkshopSubscribe(itemID: String);
 begin
-  writeln(' Adding Subscribe...');
-  writeln(' Item ID: ' + itemID);
+  writeln('Adding Subscribe...');
+  writeln('Item ID: ' + itemID);
   serverTool.InstallWorkshopItem(itemID, '', True, False, False, False);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure removeWorkshopSubscribe(itemID: String);
 begin
-  writeln(' Removing Subscribe...');
-  writeln(' Item ID: ' + itemID);
+  writeln('Removing Subscribe...');
+  writeln('Item ID: ' + itemID);
   serverTool.RemoveItem('', itemID, False, False, True, False,
     TKFSource.KFSteamWorkshop);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure addMapEntry(ItemName: String);
 begin
-  writeln(' Adding map entry...');
-  writeln(' Item Name: ' + ItemName);
+  writeln('Adding map entry...');
+  writeln('Item Name: ' + ItemName);
   serverTool.InstallWorkshopItem('', ItemName, False, False, False, True);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure removeMapEntry(ItemName: String);
 begin
-  writeln(' Removing map entry...');
-  writeln(' Item Name: ' + ItemName);
+  writeln('Removing map entry...');
+  writeln('Item Name: ' + ItemName);
   serverTool.RemoveItem(ItemName, '', False, True, False, False,
     TKFSource.KFSteamWorkshop);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure addMapCycle(ItemName: String);
 begin
-  writeln(' Adding map cycle...');
-  writeln(' Item Name: ' + ItemName);
+  writeln('Adding map cycle...');
+  writeln('Item Name: ' + ItemName);
   serverTool.InstallWorkshopItem('', ItemName, False, False, True, False);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure removeMapCycle(ItemName: String);
 begin
-  writeln(' Removing map cycle...');
-  writeln(' Item Name: ' + ItemName);
+  writeln('Removing map cycle...');
+  writeln('Item Name: ' + ItemName);
   serverTool.RemoveItem(ItemName, '', False, False, True, False,
     TKFSource.KFSteamWorkshop);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure downloadItem(itemID: String);
 begin
-  writeln(' Downloading item...');
-  writeln(' Item ID: ' + itemID);
+  writeln('Downloading item...');
+  writeln('Item ID: ' + itemID);
   serverTool.InstallWorkshopItem(itemID, '', False, True, False, False);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure removeDownloadedItem(itemID: String);
 begin
-  writeln(' Removing cache...');
-  writeln(' Item ID: ' + itemID);
+  writeln('Removing cache...');
+  writeln('Item ID: ' + itemID);
   serverTool.RemoveItem('', itemID, False, False, False, True,
     TKFSource.KFSteamWorkshop);
-  writeln(' Finished');
+  writeln('Done');
 end;
 
 procedure updateItem(itemID: String);
@@ -490,8 +595,8 @@ var
   I: Integer;
   itemExists: Boolean;
 begin
-  writeln(' Updating item...');
-  writeln(' Item ID: ' + itemID);
+  writeln('Updating item...');
+  writeln('Item ID: ' + itemID);
   itemExists := False;
   for I := 0 to High(serverTool.Items) do
   begin
@@ -504,7 +609,7 @@ begin
   else
     writeln('Item + ' + itemID + 'not found');
 
-  writeln('Finished');
+  writeln('Done');
 end;
 
 procedure ValidateWorkshopItems();
@@ -525,8 +630,8 @@ begin
         with serverTool.Items[I] do
         begin
           writeln('');
-          writeln('Validating item ' + intToStr(I + 1) + ' of ' +
-            intToStr(High(serverTool.Items) + 1));
+          writeln('Validating item ' + IntToStr(I + 1) + ' of ' +
+            IntToStr(High(serverTool.Items) + 1));
           writeln('Name:            ' + FileName);
           writeln('ID:              ' + ID);
           writeln('Subscribed:      ' + BoolToWord(ServerSubscribe));
@@ -585,6 +690,7 @@ begin
   writeln('Begin of debug test function with argument: "' + argument + '"');
   CheckIfTheServerIsRuning;
   writeln('End of debug test function');
+  Result := True;
 end;
 
 function RemoveItem(itemID: string): Boolean;
@@ -618,16 +724,16 @@ var
   option, argument, argType, argValue: string;
   actions: TStringList;
   enableVerbose: Boolean;
-  ignoreParam: Boolean;
   ignoreServerRunning: Boolean;
+  webPort: Integer;
 
 begin
   ApplicationPath := IncludeTrailingPathDelimiter(GetCurrentDir);
   actions := TStringList.Create;
   ignoreServerRunning := False;
+  enableVerbose := False;
   for I := 1 to ParamCount do
   begin // Discart set options and do actions list
-    ignoreParam := False;
     case AnsiIndexStr(LowerCase(ParamStr(I)), ['-v', '-config', '-ig']) of
       0: { -v }
         begin
@@ -641,7 +747,6 @@ begin
             configName := ParamStr(I + 1);
             writeln('Option: Custom ini is set to ' + configName);
             ignoreCacheFolder := True;
-            ignoreParam := True;
           end;
         end;
       3: { -ig }
@@ -651,7 +756,6 @@ begin
         end;
     else
       begin
-        if Not ignoreParam then
           actions.Add(LowerCase(Trim(ParamStr(I)))); // add action param
       end;
     end;
@@ -659,7 +763,7 @@ begin
   end;
 
   try
-    if (actions.Count < 1) or (actions.IndexOf('-help') > 0) then
+    if (actions.Count < 1) or (actions.IndexOf('-help') >= 0) then
     begin
       ShowHelp;
     end
@@ -672,6 +776,7 @@ begin
         serverTool.verbose := enableVerbose;
         serverTool.SetKFApplicationPath(serverPath);
         serverTool.SetKFngineIniSubPath(pathKFEngineIni);
+        serverTool.SetKFWebIniSubPath(pathKFWebIni);
         serverTool.SetKFGameIniSubPath(pathKFGameIni);
         serverTool.SetKFServerPathEXE(pathServerEXE);
         serverTool.SetSteamCmdPath(pathCmdTool);
@@ -721,15 +826,15 @@ begin
         if option = '-list' then
         begin
           if actions.Count <> 1 then
-            raise Exception.Create('addmod: Invalid arguments');
+            raise Exception.Create('list: Invalid arguments');
           ShowItems;
           Exit;
         end;
         // ------------------------------------------------------------------ -listdDetailed
-        if option = '-listdetailed' then
+        if option = '-report' then
         begin
           if actions.Count <> 1 then
-            raise Exception.Create('addmod: Invalid arguments');
+            raise Exception.Create('report: Invalid arguments');
           ShowItemsDetailed;
           Exit;
         end;
@@ -784,45 +889,116 @@ begin
                 end;
             end;
           end;
-          // ------------------------------------------------------------------ -validate
-          if option = '-validate' then
-          begin
-            if actions.Count <> 1 then
-              raise Exception.Create('validate: Invalid arguments');
-            ValidateWorkshopItems;
-            Exit;
-          end;
-          if option = '-update' then
-          begin
-            if actions.Count <> 2 then
-              raise Exception.Create('update: Invalid arguments');
-            itemID := CleanInt(argument);
-            if Length(itemID) < 6 then
-              raise Exception.Create('update: Invalid ID');
-            updateItem(itemID);
-            Exit;
+          Exit;
 
-            Exit;
-          end;
+        end;
+        // ------------------------------------------------------------------ -workshop redirect
+        if option = '-workshop' then
+        begin
+          if actions.Count <> 2 then
+            raise Exception.Create
+              ('enable/disable workshop redirect: Invalid arguments');
+          if (argument <> 'on') and (argument <> 'off') then
+            raise Exception.Create
+              ('enable/disable workshop redirect: Invalid option');
+          if (argument = 'on') then
+            serverTool.InstallWorkshopManager
+          else if (argument = 'off') then
+            serverTool.RemoveWorkshopManager
+          else
+            raise Exception.Create
+              ('enable/disable workshop redirect: Invalid option');
+          DisplayInfo(DIT_items);
+          Exit;
+        end;
+        // ------------------------------------------------------------------ -custom redirect
+        if option = '-redirect' then
+        begin
+          if actions.Count <> 2 then
+            raise Exception.Create
+              ('enable/disable custom redirect: Invalid arguments');
+          if (argument = 'off') then
+            serverTool.SetCustomRedirect('')
+          else if (argument = 'on') then
+          serverTool.SetCustomRedirect(argument);
+          DisplayInfo(DIT_redirect);
+          Exit;
+        end;
+        // ------------------------------------------------------------------ -webadmin
+        if option = '-webadmin' then
+        begin
+          if actions.Count < 2 then
+            raise Exception.Create('webadmin: Invalid arguments');
+
+          if (argument = 'on') then
+            serverTool.SetWebStatus(True)
+          else if (argument = 'off') then
+            serverTool.SetWebStatus(False)
+          else if argument = 'port' then
+          begin
+            try
+              webPort := StrToInt(actions[2]);
+              serverTool.SetWebPort(webPort)
+            except
+              writeln('Invalid port');
+            end;
+          end
+          else
+            raise Exception.Create('webadmin: Invalid arguments');
+          DisplayInfo(DIT_web);
+          Exit;
+        end;
+        // ------------------------------------------------------------------ -info
+        if option = '-info' then
+        begin
+          if actions.Count <> 1 then
+            raise Exception.Create('status: Invalid arguments');
+          DisplayInfo(DIT_all);
+          Exit;
+        end;
+        // ------------------------------------------------------------------ -validate
+        if option = '-validate' then
+        begin
+          if actions.Count <> 1 then
+            raise Exception.Create('validate: Invalid arguments');
+          ValidateWorkshopItems;
+          Exit;
+        end;
+        if option = '-update' then
+        begin
+          if actions.Count <> 2 then
+            raise Exception.Create('update: Invalid arguments');
+          itemID := CleanInt(argument);
+          if Length(itemID) < 6 then
+            raise Exception.Create('update: Invalid ID');
+          updateItem(itemID);
+          Exit;
 
           Exit;
         end;
+
         // ------------------------------------------------------------------ -test
         { begin
           //debugTest(argument);
           Exit;
           end;
         }
-        writeln('KF2ServerTool finished. Wrong param?');
+        raise Exception.Create('Invalid arguments');
+
       finally
-        // Readln(option);
+{$IFDEF DEBUG}
+        writeln('  Press ENTER to close the application ...');
+        Readln(option);
+{$ENDIF}
         serverTool.Free;
       end;
 
     end;
   except
-    on E: Exception do
+    on E: Exception do begin
       writeln('Error: ' + E.Message);
+      writeln('Use -help to show help');
+    end;
   end;
 
 end.

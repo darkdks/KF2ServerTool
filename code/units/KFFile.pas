@@ -4,7 +4,7 @@ interface
 
 uses
   Classes,
-  SysUtils, MiscFunc;
+  SysUtils, MiscFunc, Character;
 
 type
 

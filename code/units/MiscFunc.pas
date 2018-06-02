@@ -13,7 +13,6 @@ uses
 {$ENDIF}
   SysUtils, Classes,
   IOUtils, Types;
-
 type
   TWordTriple = Array [0 .. 2] of Word;
 {$IFDEF MSWINDOWS}
@@ -145,6 +144,7 @@ begin
       URL) + 4);
     for i := 1 to length(UrlTemp) do
     begin
+
       if CharInSet(UrlTemp[i], ['0' .. '9']) then
       begin
         ItemID := ItemID + UrlTemp[i];
@@ -274,6 +274,7 @@ var
 begin
   Result := '';
   for i := 1 to length(Text) do
+
     if CharInSet(Text[i], ['0' .. '9']) then
       Result := Result + Text[i];
 end;
@@ -636,6 +637,7 @@ end;
     resultCmd: TStringList;
     abortCmd: Boolean;
   begin
+    result := false;
     abortCmd := False;
     resultCmd := ExecuteTerminalProcess('killall', '-v ' + ExeName,
       abortCmd, nil);

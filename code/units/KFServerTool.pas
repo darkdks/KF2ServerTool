@@ -83,13 +83,17 @@ type
     function GetGameCycle(): TStringList;
     function GetKFApplicationPath(): string;
     function GetSteamCmdPath(): String;
+    function getKFGameIniPath(): String;
+    function getKFEngineIniPath(): String;
+    function getKFWebIniPath(): String;
+
     function GetMapName(ID: string): string;
     function GetWebPort(): Integer;
     function GetWebPass(): string;
     function GetItemIndexByName(ItemName: String; ignoreCase: Boolean): Integer;
     procedure SetWebPass(pass: String);
     function GetWebStatus(): Boolean;
-    procedure GetKFServerPathEXE(path: string);
+    function GetKFServerPathEXE: string;
     function InstallWorkshopManager: Boolean;
     function IsOfficialMap(mapName: String): Boolean;
     function IsWorkshopManagerInstalled: Boolean;
@@ -1244,6 +1248,16 @@ begin
   result := kfApplicationPath;
 end;
 
+function TKFServerTool.getKFEngineIniPath: String;
+begin
+Result := kfEngineIniSubPath;
+end;
+
+function TKFServerTool.getKFGameIniPath: String;
+begin
+ Result := kfGameIniSubPath;
+end;
+
 procedure TKFServerTool.SetKFGameIniSubPath(path: string);
 begin
   if FileExists(kfApplicationPath + path) then
@@ -1393,9 +1407,14 @@ begin
 
 end;
 
-procedure TKFServerTool.GetKFServerPathEXE(path: string);
+function TKFServerTool.GetKFServerPathEXE: string;
 begin
-  KFServerPathEXE := path;
+  Result := KFServerPathEXE;
+end;
+
+function TKFServerTool.getKFWebIniPath: String;
+begin
+ Result := kfWebIniSubPath;
 end;
 
 { TKFServerProfile }

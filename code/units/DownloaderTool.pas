@@ -37,9 +37,9 @@ type
 
   TDownloaderTool = class(TObject)
   private
+ {$IFDEF MSWINDOWS}
     procedure HTTPClientReceiveData(const Sender: TObject;
       AContentLength, AReadCount: Int64; var Abort: Boolean);
-{$IFDEF MSWINDOWS}
     procedure HTTPClientRequestCompleted(const Sender: TObject;
       const AResponse: IHTTPResponse);
 {$ENDIF}
@@ -67,7 +67,7 @@ begin
 
   inherited;
 end;
-
+{$IFDEF MSWINDOWS}
 procedure TDownloaderTool.HTTPClientReceiveData(const Sender: TObject;
   AContentLength, AReadCount: Int64; var Abort: Boolean);
 begin
@@ -85,7 +85,8 @@ begin
     if Assigned(downloadManager.OnProgress) then
       downloadManager.OnProgress(AReadCount);
   end;
-end; {$IFDEF MSWINDOWS}
+end;
+
 
 procedure TDownloaderTool.HTTPClientRequestCompleted(const Sender: TObject;
   const AResponse: IHTTPResponse);
