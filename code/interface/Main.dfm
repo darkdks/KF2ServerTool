@@ -424,7 +424,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsExtra
+    ActivePage = tsMods
     Align = alClient
     TabOrder = 1
     OnChange = jvpgcntrl1Change
@@ -1766,7 +1766,7 @@ object FormMain: TFormMain
     Left = 584
     Top = 16
     Bitmap = {
-      494C010106002000180210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101060020001C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D1A89900B94C0000BA4D000000000000000000000000
@@ -2152,7 +2152,7 @@ object FormMain: TFormMain
       Enabled = False
     end
     object Multipleitems1: TMenuItem
-      Caption = 'Multiple items'
+      Caption = 'Multiple workshop items'
       OnClick = Multipleitems1Click
     end
     object AddManualEntry: TMenuItem

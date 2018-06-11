@@ -58,6 +58,7 @@ begin
   end
   else
   begin
+    files := TStringList.Create;
     files.Add(ItemFolder + itemName)
   end;
 
@@ -68,6 +69,7 @@ begin
       else
         Result := True;
     finally
+      if Assigned(files) then
       FreeAndNil(files);
     end;
   except
@@ -103,7 +105,8 @@ begin
 
       end;
     finally
-
+    if Assigned(itemsText) then
+      FreeAndNil(itemsText);
     end;
   except
     On E: Exception do

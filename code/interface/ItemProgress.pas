@@ -12,6 +12,7 @@ type
     btncancel: TButton;
     pb1: TProgressBar;
     tmrUndeterminedPB: TTimer;
+    lblTitle: TLabel;
     procedure btncancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure tmrUndeterminedPBTimer(Sender: TObject);
@@ -53,6 +54,7 @@ procedure TformPB.FormCreate(Sender: TObject);
 begin
 cancel := False;
 btncancel.Enabled := True;
+lblTitle.Caption := '';
 end;
 
 function TformPB.GetPBMax: Integer;

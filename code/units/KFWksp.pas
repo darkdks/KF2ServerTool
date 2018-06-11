@@ -138,7 +138,7 @@ end;
 
 function TKFWorkshop.DownloadWorkshopImage(URL, name: String): boolean;
 begin
-
+Result := false;
 end;
 
 function TKFWorkshop.DownloadWorkshopItem(ID: string;

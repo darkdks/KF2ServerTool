@@ -114,7 +114,6 @@ object FormAdd: TFormAdd
       ParentFont = False
       TabOrder = 0
       Visible = False
-      ExplicitTop = 99
     end
     object chkAddMapEntry: TCheckBox
       AlignWithMargins = True
@@ -129,7 +128,6 @@ object FormAdd: TFormAdd
       Align = alTop
       Caption = 'Add map entry'
       TabOrder = 1
-      ExplicitTop = 74
     end
     object chkAddMapCycle: TCheckBox
       AlignWithMargins = True
@@ -144,7 +142,6 @@ object FormAdd: TFormAdd
       Align = alTop
       Caption = 'Add map in map cycle'
       TabOrder = 2
-      ExplicitTop = 41
     end
     object chkDownloadItem: TCheckBox
       AlignWithMargins = True
@@ -160,7 +157,6 @@ object FormAdd: TFormAdd
       Caption = 'Download the item now'
       TabOrder = 3
       OnClick = chkDownloadItemClick
-      ExplicitTop = 57
     end
     object chkAddWorkshopRedirect: TCheckBox
       AlignWithMargins = True
@@ -175,7 +171,6 @@ object FormAdd: TFormAdd
       Align = alTop
       Caption = 'Subcribe the server '
       TabOrder = 4
-      ExplicitTop = 24
     end
   end
   object pnlBottom: TPanel
@@ -227,13 +222,13 @@ object FormAdd: TFormAdd
     object lblPn3: TLabel
       Left = 18
       Top = 8
-      Width = 66
+      Width = 82
       Height = 14
       Margins.Left = 6
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
-      Caption = 'Item name'
+      Caption = 'Item(s) name'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlack
       Font.Height = -12
@@ -256,6 +251,7 @@ object FormAdd: TFormAdd
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ReadOnly = True
       TabOrder = 0
       Text = ''
       OnExit = edtIDExit

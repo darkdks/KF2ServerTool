@@ -16,11 +16,11 @@ type
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
   private
-     var
+  var
 
     { Private declarations }
   public
-    selectedItem: String;
+    selectedItems: String;
     function loadListFromRedirect(URL: String): Boolean;
     { Public declarations }
   end;
@@ -34,60 +34,63 @@ implementation
 
 procedure TfrmRedirectItemsDialog.btnCancelClick(Sender: TObject);
 begin
- ModalResult := mrCancel;
+  ModalResult := mrCancel;
 end;
 
 procedure TfrmRedirectItemsDialog.btnOkClick(Sender: TObject);
+var
+  i: Integer;
 begin
   if lvRedirectItems.Selected <> nil then
-    selectedItem := lvRedirectItems.Selected.Caption;
+  begin
+    for i := 0 to lvRedirectItems.Items.Count - 1 do
+    begin
+      if lvRedirectItems.Items[i].Selected then
+      begin
+        if selectedItems <> '' then
+          selectedItems := selectedItems + ',' + lvRedirectItems.Items
+            [i].Caption
+        else
+          selectedItems := lvRedirectItems.Items[i].Caption;
+      end;
+    end;
+
+  end;
   ModalResult := mrOk;
 end;
 
 procedure TfrmRedirectItemsDialog.FormShow(Sender: TObject);
 begin
-  selectedItem := '';
+  selectedItems := '';
 end;
 
 function TfrmRedirectItemsDialog.loadListFromRedirect(URL: String): Boolean;
 var
   lItem: TListItem;
-  I: Integer;
+  i: Integer;
   KFRedirect: TKFRedirect;
   redirectItems: TStringlist;
-//  IDHTTP: TIdHTTP;  Get file size is very slow, disabled
 begin
   KFRedirect := TKFRedirect.Create;
-
   try
-  try
-    redirectItems := KFRedirect.getRedirectItems(URL);
- //   IDHTTP :=  TIdHTTP.Create(nil);
-    lvRedirectItems.Clear;
-
-    for I := 0 to redirectItems.Count - 1 do
-    begin
-
-      lItem := lvRedirectItems.Items.Add;
-      lItem.Caption := redirectItems[I];
-      try
- //    IDHTTP.Head(URL + redirectItems[i]);
- //    lItem.SubItems.Add(FormatByteSize(IDHTTP.Response.ContentLength));
-      except
-
+    try
+      redirectItems := KFRedirect.getRedirectItems(URL);
+      lvRedirectItems.Clear;
+      for i := 0 to redirectItems.Count - 1 do
+      begin
+        lItem := lvRedirectItems.Items.Add;
+        lItem.Caption := redirectItems[i];
       end;
+      lvRedirectItems.SortType := stText;
+      Result := lvRedirectItems.Items.Count > 0;
+    finally
+      if Assigned(redirectItems) then
+        FreeAndNil(redirectItems);
+      FreeAndNil(KFRedirect);
     end;
-    lvRedirectItems.SortType := stText;
-    Result := lvRedirectItems.Items.Count > 0;
-  finally
-    if Assigned(redirectItems) then
-    FreeAndNil(redirectItems);
- //   IDHTTP.Free;
-  end;
   except
-  On E: Exception do
-  raise Exception.Create('Falied to load files list from URL.');
-
+    On E: Exception do
+      raise Exception.Create('Falied to load files list from URL.')
   end;
 
 end;

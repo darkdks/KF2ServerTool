@@ -4,7 +4,7 @@ object formPB: TformPB
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'Working'
-  ClientHeight = 64
+  ClientHeight = 69
   ClientWidth = 270
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +19,8 @@ object formPB: TformPB
   PixelsPerInch = 96
   TextHeight = 12
   object lblStatus: TLabel
-    Left = 6
-    Top = 38
+    Left = 7
+    Top = 49
     Width = 40
     Height = 12
     Margins.Left = 2
@@ -29,9 +29,20 @@ object formPB: TformPB
     Margins.Bottom = 2
     Caption = 'Working'
   end
+  object lblTitle: TLabel
+    Left = 7
+    Top = 2
+    Width = 29
+    Height = 12
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
+    Caption = '<title>'
+  end
   object btncancel: TButton
-    Left = 203
-    Top = 38
+    Left = 207
+    Top = 49
     Width = 56
     Height = 19
     Margins.Left = 2
@@ -45,7 +56,7 @@ object formPB: TformPB
   end
   object pb1: TProgressBar
     Left = 8
-    Top = 8
+    Top = 19
     Width = 254
     Height = 25
     TabOrder = 1
@@ -54,7 +65,7 @@ object formPB: TformPB
     Enabled = False
     Interval = 300
     OnTimer = tmrUndeterminedPBTimer
-    Left = 112
-    Top = 32
+    Left = 224
+    Top = 65528
   end
 end

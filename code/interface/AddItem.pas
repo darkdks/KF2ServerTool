@@ -116,8 +116,8 @@ begin
       if frmRedirectContent.loadListFromRedirect(redirectURL) then
       begin
         mdResult := frmRedirectContent.ShowModal;
-        if (mdResult = mrOk) and (frmRedirectContent.selectedItem <> '') then
-          edtItemName.Text := frmRedirectContent.selectedItem;
+        if (mdResult = mrOk) and (frmRedirectContent.selectedItems <> '') then
+          edtItemName.Text := frmRedirectContent.selectedItems;
 
       end else begin
         raise Exception.Create('Falied to load item from URL: ' + redirectURL);

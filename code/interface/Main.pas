@@ -239,7 +239,7 @@ type
     function loadConfig: Boolean;
     function saveconfig: Boolean;
     procedure LoadItensToLv(Filter: String);
-    procedure TranstaleToBR;
+    procedure TranslateToBR;
     procedure LoadServerProfile;
     procedure LoadUIConfig;
     procedure InstallServer(Path: String);
@@ -695,7 +695,7 @@ begin
       DeleteFolder.Add(serverpath + 'KFGame\Cache\');
       FileOperation(DeleteFolder, '', FO_DELETE);
     finally
-     FreeAndNil(DeleteFolder);
+      FreeAndNil(DeleteFolder);
     end;
     Application.MessageBox('Finished', 'Clear cache',
       MB_OK + MB_ICONINFORMATION);
@@ -1641,7 +1641,7 @@ begin
         Item.ImageIndex := 3;
         Item.Caption := serverTool.Items[i].FileName;
         Item.SubItems.Add(serverTool.Items[i].ID);
-        //ServerSubscription
+        // ServerSubscription
         if serverTool.Items[i].ServerSubscribe then
         begin
           Item.SubItems.Add(textYes);
@@ -1660,7 +1660,7 @@ begin
           end;
 
         end;
-        //MapCycle
+        // MapCycle
         if serverTool.Items[i].MapEntry then
         begin
           Item.SubItems.Add(textYes);
@@ -1674,7 +1674,7 @@ begin
           else
             Item.SubItemImages[2] := 1;
         end;
-        //MapEntry
+        // MapEntry
         if serverTool.Items[i].MapCycleEntry then
         begin
           Item.SubItems.Add(textYes);
@@ -1688,7 +1688,7 @@ begin
           else
             Item.SubItemImages[3] := 1;
         end;
-         //ServerCache
+        // ServerCache
         if serverTool.Items[i].ServerCache then
         begin
           Item.SubItems.Add(textYes);
@@ -1703,7 +1703,7 @@ begin
             Item.SubItemImages[4] := 1;
 
         end;
-        //Item group
+        // Item group
         case serverTool.Items[i].SourceFrom of
           KFSteamWorkshop:
             Item.GroupID := 0;
@@ -2261,7 +2261,14 @@ begin
   Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
   LoadServerProfile();
   LoadItensToLv('');
+  // Language
+  if appLanguage = 'EG' then
+    cbbLanguage.ItemIndex := 0
+  else
+    cbbLanguage.ItemIndex := 1;
 
+  if appLanguage = 'BR' then
+    TranslateToBR;
   jvpgcntrl1.ActivePageIndex := 0;
   // pgcMaps.ActivePageIndex := 0;
   jvpgcntrl1Change(Self);
@@ -2347,11 +2354,6 @@ begin
       ShowMessage('Falied to get webPass ' + E.Message);
   end;
 
-  // Language
-  if appLanguage = 'EG' then
-    cbbLanguage.ItemIndex := 0
-  else
-    cbbLanguage.ItemIndex := 1;
   chkAutoLoginAdmin.Checked := autoLoginWebAdmin;
   checkAutoWebLoginRequirements();
 
@@ -2369,8 +2371,7 @@ begin
   Application.HintHidePause := 15000; // 15 Sec
 
   // ---- Translation
-  if appLanguage = 'BR' then
-    TranstaleToBR;
+
   // Fix webbrowser compabillity
   InstallRegBrowserKey()
 end;
@@ -2381,15 +2382,16 @@ var
 begin
   try
     // cb Server Length and Difficulty
-    if Assigned(kfprofiles) then begin
-    with kfprofiles[defaultProfile] do
+    if Assigned(kfprofiles) then
     begin
-      DefaultDifficulty := cbbDifficulty.ItemIndex;
-      DefaultLength := cbbLength.ItemIndex;
-      DefaultPass := edtGmPass.Text;
-      AdditionalParam := edtExtra.Text;
-      DefaultMap := cbbMap.Text;
-    end;
+      with kfprofiles[defaultProfile] do
+      begin
+        DefaultDifficulty := cbbDifficulty.ItemIndex;
+        DefaultLength := cbbLength.ItemIndex;
+        DefaultPass := edtGmPass.Text;
+        AdditionalParam := edtExtra.Text;
+        DefaultMap := cbbMap.Text;
+      end;
     end;
     appWidth := Self.Width;
     appHeight := Self.Height;
@@ -2397,7 +2399,7 @@ begin
     saveconfig;
     if Assigned(serverTool) then
 
-    FreeAndNil(serverTool);
+      FreeAndNil(serverTool);
     for i := 0 to High(kfprofiles) do
       FreeAndNil(kfprofiles[i]);
   except
@@ -2572,12 +2574,11 @@ var
   DownURL: string;
   FileName: String;
   dlManager: TDownloadManager;
-
+  i: Integer;
+  itemsList: TStringList;
 begin
   frmAdd := TFormAdd.Create(Self);
-  if Assigned(frmProgress) then
-    frmProgress.Free;
-  frmProgress := TformPB.Create(Self);
+
   try
     try
       if ActiveLV = lvMaps then
@@ -2591,48 +2592,61 @@ begin
       end;
       redirectURL := serverTool.GetCustomRedirect();
       if redirectURL <> '' then
-      begin
-        frmAdd.edtRedirectURL.Text := redirectURL;
-
-      end
+        frmAdd.edtRedirectURL.Text := redirectURL
       else
-      begin
-
         ShowMessage
           ('Warning: The redirect URL is not set. Go to the options tab to set it up.');
-      end;
-      mdResult := frmAdd.ShowModal;
 
+      mdResult := frmAdd.ShowModal;
       if mdResult = mrOk then
       begin
-
-        redirectURL := frmAdd.edtRedirectURL.Text;
-        FileName := Trim(frmAdd.edtItemName.Text);
-        if redirectURL[Length(redirectURL)] <> '/' then
-          redirectURL := Trim(redirectURL) + '/';
-        DownURL := redirectURL + FileName;
-        dlManager := TDownloadManager.Create;
-
-        dlManager.OnProgress := RedirectDownloadProgress;
-        dlManager.OnStarted := RedirectDownloadStarted;
-        dlManager.OnFinished := RedirectDownloadFinished;
-
-        dlManager.FileDAbort := @frmProgress.cancel;
-        frmProgress.btncancel.Visible := True;
-        frmProgress.Show;
+        itemsList := TStringList.Create;
         try
-          CheckIfTheServerIsRuning;
-          serverTool.NewRedirectItem(DownURL, FileName, (DownURL <> ''),
-            frmAdd.addMapCycle, frmAdd.addMapENtry, dlManager);
+          if Assigned(frmProgress) then
+            FreeAndNil(frmProgress);
+          frmProgress := TformPB.Create(Self);
+          if Pos(',', frmAdd.edtItemName.Text) > 0 then
+            ExtractStrings([','], [], Pchar(frmAdd.edtItemName.Text), itemsList)
+          else
+            itemsList.Add(Trim(frmAdd.edtItemName.Text));
+
+          for i := 0 to itemsList.Count - 1 do
+          begin
+
+            redirectURL := frmAdd.edtRedirectURL.Text;
+            FileName := itemsList.Strings[i];
+            if redirectURL[Length(redirectURL)] <> '/' then
+              redirectURL := Trim(redirectURL) + '/';
+            DownURL := redirectURL + FileName;
+
+            dlManager := TDownloadManager.Create;
+            try
+              dlManager.OnProgress := RedirectDownloadProgress;
+              dlManager.OnStarted := RedirectDownloadStarted;
+              dlManager.OnFinished := RedirectDownloadFinished;
+              dlManager.FileDAbort := @frmProgress.cancel;
+              frmProgress.btncancel.Visible := True;
+              frmProgress.lblTitle.Caption := '[' + IntToStr(i + 1) + '/' +
+                IntToStr(itemsList.Count) + '] ' + FileName;
+              frmProgress.Show;
+              CheckIfTheServerIsRuning;
+              serverTool.NewRedirectItem(DownURL, FileName, (DownURL <> ''),
+                frmAdd.addMapCycle, frmAdd.addMapENtry, dlManager);
+            finally
+              FreeAndNil(dlManager);
+            end;
+          end;
+
         finally
-          FreeAndNil(dlManager);
+          FreeAndNil(frmProgress);
+          LoadItensToLv('');
         end;
       end;
     finally
       FreeAndNil(frmAdd);
-      FreeAndNil(frmProgress);
-      LoadItensToLv('');
+      FreeAndNil(itemsList);
     end;
+
   except
     on E: Exception do
       ShowMessage('Falied to add item: ' + E.Message);
@@ -3519,7 +3533,7 @@ begin
   end;
 end;
 
-procedure TFormMain.TranstaleToBR();
+procedure TFormMain.TranslateToBR();
 begin
   btnRemove.Caption := 'Remover';
   btnAddNew.Caption := 'Adicionar';
@@ -3575,7 +3589,7 @@ begin
   btnDeleteProfile.Caption := 'Remover';
   lblProfile.Caption := 'Perfil';
   chkAutoConnectWeb.Caption := 'Auto conectar ao WebServer';
-  Multipleitems1.Caption := 'Multiplos items';
+  Multipleitems1.Caption := 'Multiplos items da workshop';
   lblDescWebPort.Caption := 'Porta do Web admin:';
   cbWorkshopDMStatus.Items[0] := 'Desativado';
   cbWorkshopDMStatus.Items[1] := 'Ativado';

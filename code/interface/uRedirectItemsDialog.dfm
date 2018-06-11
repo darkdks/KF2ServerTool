@@ -28,6 +28,7 @@ object frmRedirectItemsDialog: TfrmRedirectItemsDialog
         AutoSize = True
         Caption = 'Nome'
       end>
+    MultiSelect = True
     TabOrder = 0
     ViewStyle = vsReport
     OnDblClick = btnOkClick

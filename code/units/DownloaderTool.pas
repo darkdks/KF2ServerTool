@@ -128,6 +128,7 @@ begin
     end;
   finally
     FreeAndNil(Stream);
+    FreeAndNil(httpRq);
   end;
 end;
 {$ELSE}

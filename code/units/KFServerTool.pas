@@ -140,7 +140,7 @@ type
       'Maps' + PathDelim;
     KF_SERVERCACHEFOLDER = 'KFGame' + PathDelim + 'Cache' + PathDelim;
 
-    SERVERTOOLVERSION = '1.2.5';
+    SERVERTOOLVERSION = '1.2.6';
 
   end;
 
@@ -243,7 +243,7 @@ begin
 
           finally
             FreeAndNil(KFRedirect);
-
+            FreeAndNil(dlTool);
           end;
         end;
 
