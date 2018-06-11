@@ -5,6 +5,11 @@ interface
 uses
   Classes,
   SysUtils, MiscFunc, System.StrUtils,
+  {$IFDEF MSWINDOWS}
+    System.Net.HttpClientComponent,
+  System.Net.HttpClient,
+  MSHTML,
+       {$ENDIF}
        {$IFDEF CONSOLE}
       {$ELSE}
       forms,
@@ -27,6 +32,8 @@ type
 
     constructor Create(serverPath: string);
     destructor Destroy; override;
+    function GetWorkshopItemImageURL(ID: string): String;
+    function DownloadWorkshopImage(URL: string; name: String): boolean;
     function DownloadWorkshopItem(ID: string; VerboseCmd: Boolean): Boolean;
     function CopyItemToCache(ID: string): Boolean;
     function RemoveServeItemCache(ID: string): Boolean;
@@ -129,6 +136,11 @@ begin
 
 end;
 
+function TKFWorkshop.DownloadWorkshopImage(URL, name: String): boolean;
+begin
+
+end;
+
 function TKFWorkshop.DownloadWorkshopItem(ID: string;
   VerboseCmd: Boolean): Boolean;
 var
@@ -214,6 +226,33 @@ begin
 
     Result := '';
   end;
+end;
+
+function TKFWorkshop.GetWorkshopItemImageURL(ID: string): String;
+begin
+{var
+  httpRq: TNetHTTPClient;
+  Stream: TMemoryStream;
+    TextElement: IHTMLElement;
+  Elements: IHTMLElement;
+  outHTML: String;
+  i: integer;
+  begin
+   Stream := TMemoryStream.Create;
+     httpRq := TNetHTTPClient.Create(nil);
+  httpRq.UserAgent :=
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
+  httpRq.Get('https://steamcommunity.com/sharedfiles/filedetails/?id=' + ID, Stream, nil);
+
+  try
+    Elements := (Stream as IHTMLDocument3);
+    for i := 0 to Elements do
+
+
+  finally
+
+  end;
+   }
 end;
 
 function TKFWorkshop.GetItemType(itemFolder: string): TKFItemType;

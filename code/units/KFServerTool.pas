@@ -140,7 +140,7 @@ type
       'Maps' + PathDelim;
     KF_SERVERCACHEFOLDER = 'KFGame' + PathDelim + 'Cache' + PathDelim;
 
-    SERVERTOOLVERSION = '1.2.4';
+    SERVERTOOLVERSION = '1.2.5';
 
   end;
 

@@ -27,9 +27,6 @@ object frmRedirectItemsDialog: TfrmRedirectItemsDialog
       item
         AutoSize = True
         Caption = 'Nome'
-      end
-      item
-        Caption = 'Size'
       end>
     TabOrder = 0
     ViewStyle = vsReport

@@ -6,7 +6,7 @@ uses
   Classes,
   SysUtils, MiscFunc,
 {$IFDEF WIN32}
-Forms,
+  Forms,
   MSHTML, ComObj, ActiveX,
 {$ELSE}
 {$ENDIF}
@@ -14,14 +14,10 @@ Forms,
 
 type
 
-
-
-
   TKFRedirect = class(TObject)
 
   private
     function getUrlText(URL: String): TStringList;
-
 
   public
     function getRedirectItems(URL: String): TStringList;
@@ -49,7 +45,6 @@ begin
 
   inherited;
 end;
-
 
 function TKFRedirect.removeFile(itemName, ItemFolder: string;
   searchSubFolder: Boolean): Boolean;
@@ -86,6 +81,8 @@ var
   itemsText: TStringList;
   i: integer;
   lineC: string;
+  posKF, posKFM: integer;
+  mapName: string;
 begin
   itemsText := getUrlText(URL);
   Result := TStringList.Create;
@@ -95,9 +92,14 @@ begin
       begin
 
         lineC := Trim(itemsText[i]);
-        if (Pos('KF-', UpperCase(lineC)) = 1) and
-          (Pos('.KFM', UpperCase(lineC)) = Length(lineC) - 3) then
-          Result.Add(lineC);
+        posKF := Pos('KF-', UpperCase(lineC));
+        posKFM := Pos('.KFM', UpperCase(lineC));
+        if (posKF > 0) and (posKFM > 0) and (posKFM > posKF) then
+        begin
+          mapName := Copy(lineC, posKF,  posKFM - posKF + 4);
+          Result.Add(mapName);
+        end;
+
 
       end;
     finally
@@ -155,7 +157,5 @@ begin
 end;
 {$ENDIF}
 { TKFRedirectDownloadManager }
-
-
 
 end.
