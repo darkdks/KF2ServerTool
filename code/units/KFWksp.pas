@@ -4,22 +4,19 @@ interface
 
 uses
   Classes,
-  SysUtils, MiscFunc, System.StrUtils,
-  {$IFDEF MSWINDOWS}
-    System.Net.HttpClientComponent,
+  SysUtils, MiscFunc, System.StrUtils, KFTypes,
+{$IFDEF MSWINDOWS}
+  System.Net.HttpClientComponent,
   System.Net.HttpClient,
-  MSHTML,
-       {$ENDIF}
-       {$IFDEF CONSOLE}
-      {$ELSE}
-      forms,
-      {$ENDIF}
-
-
+  MSHTML, System.Net.URLClient, DownloaderTool,
+{$ENDIF}
+{$IFDEF CONSOLE}
+{$ELSE}
+  forms,
+{$ENDIF}
   IOUtils;
 
 type
-  TKFItemType = (KFMap, KFmod, KFUnknowed);
 
   TKFWorkshop = class(TObject)
 
@@ -27,44 +24,27 @@ type
   var
     svPath: string;
     FsteamCmdTool: string;
+    function GetWorkshopItemImageURL(ID: string): String;
   public
   var
 
     constructor Create(serverPath: string);
     destructor Destroy; override;
-    function GetWorkshopItemImageURL(ID: string): String;
-    function DownloadWorkshopImage(URL: string; name: String): boolean;
-    function DownloadWorkshopItem(ID: string; VerboseCmd: Boolean): Boolean;
-    function CopyItemToCache(ID: string): Boolean;
-    function RemoveServeItemCache(ID: string): Boolean;
-    function RemoveWorkshoItemCache(ID: string): Boolean;
-    function AddAcfReference(ID: string): Boolean;
-    function RemoveAcfReference(ID: string; removeAll: Boolean): Boolean;
-    function GetMapName(MapFolder: string; withExt: Boolean): string;
+
+    function DownloadWorkshopImage(ID: String;
+      dlManager: TDownloadManager): boolean;
+    function DownloadWorkshopItem(ID: string; VerboseCmd: boolean): boolean;
+    function CopyItemToCache(ID: string): boolean;
+    function RemoveServeItemCache(ID: string): boolean;
+    function RemoveWorkshoItemCache(ID: string): boolean;
+    function AddAcfReference(ID: string): boolean;
+    function RemoveAcfReference(ID: string; removeAll: boolean): boolean;
+    function GetMapName(MapFolder: string; withExt: boolean): string;
     function GetItemType(itemFolder: string): TKFItemType;
-    function CreateBlankACFFile: Boolean;
+    function CreateBlankACFFile: boolean;
     property steamCmdTool: string read FsteamCmdTool write FsteamCmdTool;
 
   const
-    // KF2 File types prefix
-    KF_MAPPREFIX = '.KFM';
-    KF_MODPREFIX: array [1 .. 4] of string = ('.U', '.UPX', '.UC', '.UPK');
-
-    // Workshop files paths and names
-    WKP_ACFFILENAME = 'appworkshop_232090.acf';
-{$IFDEF LINUX64}
-    WKP_ACFFILEFOLDER = 'Binaries/Win64/steamapps/workshop/';
-    WKP_CACHEFOLDER = 'Binaries/Win64/steamapps/workshop/content/232090';
-    STEAMAPPCACHEFOLDER = 'Binaries/Win64';
-    SERVERCACHEFOLDER = 'KFGame/Cache/';
-    WORKSHOPSUBITEM = 'steamapps/workshop/content/232090';
-{$ELSE}
-    WKP_ACFFILEFOLDER = 'Binaries\Win64\steamapps\workshop\';
-    WKP_CACHEFOLDER = 'Binaries\Win64\steamapps\workshop\content\232090';
-    STEAMAPPCACHEFOLDER = 'Binaries\Win64';
-    SERVERCACHEFOLDER = 'KFGame\Cache\';
-    WORKSHOPSUBITEM = 'steamapps\workshop\content\232090';
-{$ENDIF}
     // SteamCmdTool commands
     ST_LOGIN = '+login anonymous ';
     ST_INSTALLDIR = '+force_install_dir';
@@ -81,13 +61,13 @@ implementation
 
 { TKFWorkshop }
 
-function TKFWorkshop.AddAcfReference(ID: string): Boolean;
+function TKFWorkshop.AddAcfReference(ID: string): boolean;
 begin
 
   Result := False;
 end;
 
-function TKFWorkshop.CopyItemToCache(ID: string): Boolean;
+function TKFWorkshop.CopyItemToCache(ID: string): boolean;
 var
   source: TStringList;
 begin
@@ -118,7 +98,7 @@ begin
   inherited;
 end;
 
-function TKFWorkshop.CreateBlankACFFile(): Boolean;
+function TKFWorkshop.CreateBlankACFFile(): boolean;
 var
   wkspacf: TStringList;
 begin
@@ -136,19 +116,37 @@ begin
 
 end;
 
-function TKFWorkshop.DownloadWorkshopImage(URL, name: String): boolean;
+function TKFWorkshop.DownloadWorkshopImage(ID: String;
+  dlManager: TDownloadManager): boolean;
+var
+  dlTool: TDownloaderTool;
+  imgURL: String;
+  destIMG: String;
 begin
-Result := false;
+  Result := False;
+  imgURL := GetWorkshopItemImageURL(ID);
+  destIMG := svPath + IMGCACHEFOLDER + ID + '.jpg';
+  if imgURL <> '' then
+  begin
+    dlTool := TDownloaderTool.Create;
+    try
+      Result := dlTool.downloadFile(imgURL, destIMG, dlManager);
+    finally
+      FreeAndNil(dlTool);
+    end;
+
+  end;
+
 end;
 
 function TKFWorkshop.DownloadWorkshopItem(ID: string;
-  VerboseCmd: Boolean): Boolean;
+  VerboseCmd: boolean): boolean;
 var
   paramStCmd: string;
   itemSteamAppFolder: String;
   ItemType: TKFItemType;
   exResult: TStringList;
-  aborEx: Boolean;
+  aborEx: boolean;
 begin
   if (svPath = '') then
   begin
@@ -159,50 +157,52 @@ begin
   paramStCmd := ST_LOGIN + ' ' + ST_INSTALLDIR + ' ' +
     StrEmAspas(svPath + STEAMAPPCACHEFOLDER) + ' ' + ST_WKPITEM + ' ' + ID + ' '
     + ST_EXIT;
-   if VerboseCmd then begin
-        Writeln('sv path: ' + svPath);
-        Writeln('steamcmd tool: ' + steamCmdTool);
-        Writeln('ParamStr: ' + paramStCmd);
-   end;
+  if VerboseCmd then
+  begin
+    Writeln('sv path: ' + svPath);
+    Writeln('steamcmd tool: ' + steamCmdTool);
+    Writeln('ParamStr: ' + paramStCmd);
+  end;
   exResult := ExecuteTerminalProcess(steamCmdTool, paramStCmd, aborEx,
     procedure(text: String)
     begin
       if VerboseCmd then
         Writeln('Debug: ' + text);
-      {$IFDEF CONSOLE}
-      {$ELSE}
+{$IFDEF CONSOLE}
+{$ELSE}
       Application.processmessages;
-      {$ENDIF}
-
+{$ENDIF}
     end);
   try
-  if Assigned(exResult) then
-  begin
-    itemSteamAppFolder := svPath + WKP_CACHEFOLDER + PathDelim + ID + PathDelim;
-    ItemType := GetItemType(itemSteamAppFolder);
-    if (ItemType = KFMap) or (ItemType = KFmod) then
+    if Assigned(exResult) then
     begin
-      Result := True;
+      itemSteamAppFolder := svPath + WKP_CACHEFOLDER + PathDelim + ID +
+        PathDelim;
+      ItemType := GetItemType(itemSteamAppFolder);
+      if (ItemType = KFMap) or (ItemType = KFmod) then
+      begin
+        Result := True;
+      end
+      else
+      begin
+        raise Exception.Create('Falied to download ' + ID);
+
+      end;
+
     end
     else
     begin
-      raise Exception.Create('Falied to download ' + ID);
-
+      raise Exception.Create('Falied to launcher steamcmd');
     end;
 
-  end
-  else
-  begin
-    raise Exception.Create('Falied to launcher steamcmd');
-  end;
-
   finally
-    if Assigned(exResult) then FreeAndNil(exResult);
+    if Assigned(exResult) then
+      FreeAndNil(exResult);
 
   end;
 end;
 
-function TKFWorkshop.GetMapName(MapFolder: string; withExt: Boolean): string;
+function TKFWorkshop.GetMapName(MapFolder: string; withExt: boolean): string;
 var
   mapsFound: TStringList;
 begin
@@ -229,30 +229,56 @@ begin
 end;
 
 function TKFWorkshop.GetWorkshopItemImageURL(ID: string): String;
-begin
-{var
+var
   httpRq: TNetHTTPClient;
-  Stream: TMemoryStream;
-    TextElement: IHTMLElement;
-  Elements: IHTMLElement;
-  outHTML: String;
-  i: integer;
-  begin
-   Stream := TMemoryStream.Create;
-     httpRq := TNetHTTPClient.Create(nil);
-  httpRq.UserAgent :=
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
-  httpRq.Get('https://steamcommunity.com/sharedfiles/filedetails/?id=' + ID, Stream, nil);
+  httpres: IHTTPResponse;
+  imgURL: String;
+  htmlContent: String;
+  posBeginTagImg: Integer;
+  posEndTagImg: Integer;
+  imgTags: array [0 .. 2] of String;
+  imgTagIdx: Integer;
+begin
 
+  httpRq := TNetHTTPClient.Create(nil);
+  imgTagIdx := 0;
+  imgTags[0] := '<link rel="image_src" href="';
+  imgTags[1] :=
+    '<img id="previewImageMain" class="workshopItemPreviewImageMain" src="';
+  imgTags[2] :=
+    '<img id="previewImage" class="workshopItemPreviewImageEnlargeable" src="';
   try
-    Elements := (Stream as IHTMLDocument3);
-    for i := 0 to Elements do
+    httpRq.UserAgent :=
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
+    httpres := httpRq.Get
+      ('https://steamcommunity.com/sharedfiles/filedetails/?id=' + ID,
+      nil, nil);
 
-
+    try
+      htmlContent := httpres.ContentAsString;
+      // Alternate img tags if not found
+      while (Pos(imgTags[imgTagIdx], htmlContent) < 1) and
+        (imgTagIdx < High(imgTags)) do
+      begin
+        Inc(imgTagIdx);
+      end;
+      if Pos(imgTags[imgTagIdx], htmlContent) < 1 then
+        Exit;
+      posBeginTagImg := Pos(imgTags[imgTagIdx], htmlContent) +
+        Length(imgTags[imgTagIdx]);
+      posEndTagImg := Pos('"', htmlContent.Substring(posBeginTagImg,
+        Length(htmlContent) - posBeginTagImg)) + posBeginTagImg;
+      imgURL := Copy(htmlContent, posBeginTagImg,
+        posEndTagImg - posBeginTagImg);
+    except
+      on E: Exception do
+        raise Exception.Create('Falied to extract IMG URL from HTML page');
+    end;
+    Result := imgURL;
   finally
+    FreeAndNil(httpRq);
 
   end;
-   }
 end;
 
 function TKFWorkshop.GetItemType(itemFolder: string): TKFItemType;
@@ -271,7 +297,7 @@ begin
       begin
 
         ext := UpperCase(ExtractFileExt(ItemsFound[i]));
-       if MatchStr(ext, KF_MODPREFIX)  then
+        if MatchStr(ext, KF_MODPREFIX) then
         begin
 
           Result := KFmod;
@@ -298,12 +324,12 @@ begin
   end;
 end;
 
-function TKFWorkshop.RemoveAcfReference(ID: string; removeAll: Boolean)
-  : Boolean;
+function TKFWorkshop.RemoveAcfReference(ID: string; removeAll: boolean)
+  : boolean;
 var
   acfFile: TStringList;
   i: Integer;
-  rmvSubSection: Boolean;
+  rmvSubSection: boolean;
 begin
 
   Result := False;
@@ -353,7 +379,7 @@ begin
 
 end;
 
-function TKFWorkshop.RemoveServeItemCache(ID: string): Boolean;
+function TKFWorkshop.RemoveServeItemCache(ID: string): boolean;
 var
   DeleteFolder: TStringList;
 begin
@@ -373,7 +399,7 @@ begin
 
 end;
 
-function TKFWorkshop.RemoveWorkshoItemCache(ID: string): Boolean;
+function TKFWorkshop.RemoveWorkshoItemCache(ID: string): boolean;
 var
   DeleteFolder: TStringList;
 begin

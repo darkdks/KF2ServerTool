@@ -38,6 +38,16 @@ type
     destructor Destroy; override;
     function LoadFile(path: String): Boolean;
     function SaveFile(path: String): Boolean;
+    const
+      CMAPNAME = 'MapName';
+  CMAPASSOCIATION = 'MapAssociation';
+  CSCREENSHOTPATHNAME = 'ScreenshotPathName';
+  CDEFAULTSCREENSHOT = 'UI_MapPreview_TEX.UI_MapPreview_Placeholder';
+  CMAPTYPE = 'KFMapSummary';
+  CGAMEINFO = 'KFGame.KFGameInfo';
+  CGAMEMAPCYCLES = 'GameMapCycles';
+  CENGINEACESSCONTROL = 'Engine.AccessControl';
+  CADMINPASSWORD = 'AdminPassword';
 
   end;
 
@@ -79,16 +89,8 @@ type
     function GetMapCycleList: TStringList;
     function GetMapEntrysList: TStringList;
 
-  const
-    CMAPNAME = 'MapName';
-    CMAPASSOCIATION = 'MapAssociation';
-    CSCREENSHOTPATHNAME = 'ScreenshotPathName';
-    CDEFAULTSCREENSHOT = 'UI_MapPreview_TEX.UI_MapPreview_Placeholder';
-    CMAPTYPE = 'KFMapSummary';
-    CGAMEINFO = 'KFGame.KFGameInfo';
-    CGAMEMAPCYCLES = 'GameMapCycles';
-    CENGINEACESSCONTROL = 'Engine.AccessControl';
-    CADMINPASSWORD = 'AdminPassword';
+
+
 
   end;
 

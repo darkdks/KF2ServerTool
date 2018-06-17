@@ -8,6 +8,7 @@ uses
   TlHelp32, ShellAPI,
   JclSysUtils,
   Forms,
+  graphics,
 {$ELSE}
   LinuxUtils, Posix.Unistd, Posix.Stdio,
 {$ENDIF}
@@ -31,6 +32,7 @@ type
  {$IFDEF MSWINDOWS}
 function ExecuteFile(hWnd: Cardinal; filename: string; Parameters: string;
 ShowWindows: Integer): Boolean;
+procedure ResizeBitmap(Bitmap: TBitmap; const NewWidth, NewHeight: integer);
 
 {$ENDIF}
 function WordToBool(Word: String): Boolean;
@@ -43,6 +45,7 @@ function CleanText(Text: string): string;
 Function TextToInt(Text: String): Int64;
 function CleanInt(Text: string): string;
 function GetAllFilesSubDirectory(path: string; filter: string): TStringList;
+function GetAllFilesInsideDirectory(path: string; filter: string): TStringList;
 function WorkshopURLtoID(URL: string): string;
 function TextForXchar(Text: String; numberOfChars: Integer): string;
 function CreateNewFolderInto(path, FolderName: String): String;
@@ -76,6 +79,39 @@ begin
     end;
   end;
 end;
+function GetAllFilesInsideDirectory(path: string; filter: string): TStringList;
+var
+  Files: TStringDynArray;
+  i: Integer;
+begin
+  Result := TStringList.Create;
+  if DirectoryExists(path) then
+  begin
+
+    Files := TDirectory.GetFiles(path, filter, TSearchOption.soTopDirectoryOnly);
+    for i := 0 to High(Files) do
+    begin
+      Result.Add(Files[i]);
+
+    end;
+  end;
+end;
+  {$IFDEF MSWINDOWS}
+procedure ResizeBitmap(Bitmap: TBitmap; const NewWidth, NewHeight: integer);
+var
+  buffer: TBitmap;
+begin
+  buffer := TBitmap.Create;
+  try
+    buffer.SetSize(NewWidth, NewHeight);
+    buffer.Canvas.StretchDraw(Rect(0, 0, NewWidth, NewHeight), Bitmap);
+    Bitmap.SetSize(NewWidth, NewHeight);
+    Bitmap.Canvas.Draw(0, 0, buffer);
+  finally
+    buffer.Free;
+  end;
+end;
+ {$ENDIF}
 
 function ListDir(path: string): TStringList;
 { var

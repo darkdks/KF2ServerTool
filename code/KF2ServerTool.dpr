@@ -2,25 +2,27 @@ program KF2ServerTool;
 
 uses
   Forms,
-  Main in 'interface\Main.pas' {FormMain} ,
-  AddItem in 'interface\AddItem.pas' {FormAdd} ,
-  Workshop in 'interface\Workshop.pas' {FormWorkshop} ,
+  Main in 'interface\Main.pas' {FormMain},
+  AddItem in 'interface\AddItem.pas' {FormAdd},
+  Workshop in 'interface\Workshop.pas' {FormWorkshop},
   KFFile in 'units\KFFile.pas',
   KFRedirect in 'units\KFRedirect.pas',
   MiscFunc in 'units\MiscFunc.pas',
   KFServerTool in 'units\KFServerTool.pas',
-  ItemProgress in 'interface\ItemProgress.pas' {formPB} ,
-  frmDnt in 'interface\frmDnt.pas' {frmDonate} ,
-  PathDialog in 'interface\PathDialog.pas' {kfPathDialog} ,
-  Queue in 'interface\Queue.pas' {frmQueue} ,
-  uRedirectItemsDialog
-    in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog} ,
+  ItemProgress in 'interface\ItemProgress.pas' {formPB},
+  frmDnt in 'interface\frmDnt.pas' {frmDonate},
+  PathDialog in 'interface\PathDialog.pas' {kfPathDialog},
+  Queue in 'interface\Queue.pas' {frmQueue},
+  uRedirectItemsDialog in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog},
   KFWksp in 'units\KFWksp.pas',
   Vcl.Themes,
   Vcl.Styles,
-  classes, System.SysUtils, dialogs,
+  classes,
+  System.SysUtils,
+  dialogs,
   GitAutoUpdate in 'units\GitAutoUpdate.pas',
-  downloaderTool in 'units\DownloaderTool.pas';
+  DownloaderTool in 'units\DownloaderTool.pas',
+  KFTypes in 'units\KFTypes.pas';
 
 const
   UPDATEPARAM = '-installupdate';

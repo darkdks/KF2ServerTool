@@ -14,8 +14,8 @@ uses
   KFServerTool in 'units\KFServerTool.pas',
   KFWksp in 'units\KFWksp.pas',
   MiscFunc in 'units\MiscFunc.pas',
-  DownloaderTool in 'units\DownloaderTool.pas';
-
+  DownloaderTool in 'units\DownloaderTool.pas',
+  KFTypes in 'units\KFTypes.pas';
 type
   TDisplayInfoType = (DIT_all, DIT_path, DIT_web, DIT_redirect, DIT_items);
 
@@ -430,7 +430,7 @@ procedure addmod(itemID: string);
 begin
   writeln('Adding mod...');
   writeln('Item ID: ' + itemID);
-  serverTool.InstallWorkshopItem(itemID, '', True, True, False, False);
+  serverTool.InstallWorkshopItem(itemID, '', True, True,False, False, False);
   writeln('Done');
 end;
 
@@ -438,7 +438,7 @@ procedure addMap(itemID: String);
 begin
   writeln('Adding Map...');
   writeln('Item ID: ' + itemID);
-  serverTool.InstallWorkshopItem(itemID, '', True, True, True, True);
+  serverTool.InstallWorkshopItem(itemID, '', True, True, False,True, True);
   writeln('Done');
 end;
 
@@ -526,7 +526,7 @@ procedure addWorkshopSubscribe(itemID: String);
 begin
   writeln('Adding Subscribe...');
   writeln('Item ID: ' + itemID);
-  serverTool.InstallWorkshopItem(itemID, '', True, False, False, False);
+  serverTool.InstallWorkshopItem(itemID, '', True, False, False,False, False);
   writeln('Done');
 end;
 
@@ -535,7 +535,7 @@ begin
   writeln('Removing Subscribe...');
   writeln('Item ID: ' + itemID);
   serverTool.RemoveItem('', itemID, False, False, True, False,
-    TKFSource.KFSteamWorkshop);
+    TKFSource.KFSteamWorkshop, KFMap);
   writeln('Done');
 end;
 
@@ -543,7 +543,7 @@ procedure addMapEntry(ItemName: String);
 begin
   writeln('Adding map entry...');
   writeln('Item Name: ' + ItemName);
-  serverTool.InstallWorkshopItem('', ItemName, False, False, False, True);
+  serverTool.InstallWorkshopItem('', ItemName, False, False,False, False, True);
   writeln('Done');
 end;
 
@@ -552,7 +552,7 @@ begin
   writeln('Removing map entry...');
   writeln('Item Name: ' + ItemName);
   serverTool.RemoveItem(ItemName, '', False, True, False, False,
-    TKFSource.KFSteamWorkshop);
+    TKFSource.KFSteamWorkshop, KFMap);
   writeln('Done');
 end;
 
@@ -560,7 +560,7 @@ procedure addMapCycle(ItemName: String);
 begin
   writeln('Adding map cycle...');
   writeln('Item Name: ' + ItemName);
-  serverTool.InstallWorkshopItem('', ItemName, False, False, True, False);
+  serverTool.InstallWorkshopItem('', ItemName, False, False, False,True, False);
   writeln('Done');
 end;
 
@@ -569,7 +569,7 @@ begin
   writeln('Removing map cycle...');
   writeln('Item Name: ' + ItemName);
   serverTool.RemoveItem(ItemName, '', False, False, True, False,
-    TKFSource.KFSteamWorkshop);
+    TKFSource.KFSteamWorkshop, KFMap);
   writeln('Done');
 end;
 
@@ -577,7 +577,7 @@ procedure downloadItem(itemID: String);
 begin
   writeln('Downloading item...');
   writeln('Item ID: ' + itemID);
-  serverTool.InstallWorkshopItem(itemID, '', False, True, False, False);
+  serverTool.InstallWorkshopItem(itemID, '', False, True,False, False, False);
   writeln('Done');
 end;
 
@@ -586,7 +586,7 @@ begin
   writeln('Removing cache...');
   writeln('Item ID: ' + itemID);
   serverTool.RemoveItem('', itemID, False, False, False, True,
-    TKFSource.KFSteamWorkshop);
+    TKFSource.KFSteamWorkshop, KFMap);
   writeln('Done');
 end;
 
@@ -638,7 +638,7 @@ begin
           writeln('In Map Entry:    ' + BoolToWord(MapEntry));
           writeln('In Map Cycle:    ' + BoolToWord(MapCycleEntry));
           writeln('In Server cache: ' + BoolToWord(ServerCache));
-          serverTool.InstallWorkshopItem(ID, FileName, ServerSubscribe, True,
+          serverTool.InstallWorkshopItem(ID, FileName, ServerSubscribe, True,False,
             MapCycleEntry, MapEntry);
         end;
       end;
@@ -710,7 +710,7 @@ begin
       writeln(' Item Name: ' + ItemName);
 
       Result := serverTool.RemoveItem(ItemName, itemID, True, True, True, True,
-        TKFSource.KFSteamWorkshop);
+        TKFSource.KFSteamWorkshop, KFMap);
       Exit;
     end;
 

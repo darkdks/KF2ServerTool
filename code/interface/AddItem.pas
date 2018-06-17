@@ -5,13 +5,13 @@ interface
 uses
   Windows, SysUtils, Classes, Controls, Forms,
   StdCtrls, JvLabel, JvEdit,
-  MiscFunc, JvExStdCtrls, JvExControls, ExtCtrls, Dialogs, Menus;
+  MiscFunc, JvExStdCtrls, JvExControls, ExtCtrls, Dialogs, Menus, KFRedirect,
+  KFTypes;
 
 type
-  TKFItemType = (WorkshopMap,
-    WorkshopItem, ReinstallWorkshopMap, ReinstallWorkshopItem,
-    UnknowedWorkshopItem, LocalOrRedirectItem, OfficialItem,
-    RedirectMap, backupWorkhopMap);
+  TKFItemType = (WorkshopMap, WorkshopItem, ReinstallWorkshopMap,
+    ReinstallWorkshopItem, UnknowedWorkshopItem, LocalOrRedirectItem,
+    OfficialItem, RedirectMap, RedirectMod, backupWorkhopMap);
 
   TFormAdd = class(TForm)
     pnlWorkshopID: TPanel;
@@ -34,6 +34,7 @@ type
     jvlbl4: TLabel;
     lblPn3: TLabel;
     jvlbl2: TLabel;
+    lblItemNameNote: TLabel;
     procedure BrowseClick(Sender: TObject);
     procedure chkDownloadItemClick(Sender: TObject);
     procedure edtIDExit(Sender: TObject);
@@ -46,7 +47,8 @@ type
 
   private
     FrmItemType: TKFItemType;
-    procedure createItemsNameRedirectForm;
+    procedure createItemsNameRedirectForm(itemType: TKFRedirectItemType);
+    function CalculateWindownHeight: Integer;
     { Private declarations }
   public
     procedure SetAddType(AddType: TKFItemType);
@@ -92,13 +94,16 @@ end;
 
 procedure TFormAdd.btnFindMapRedirectNamesClick(Sender: TObject);
 begin
-
- if FrmItemType = RedirectMap then
- createItemsNameRedirectForm();
+  case FrmItemType of
+    RedirectMap:
+      createItemsNameRedirectForm(KFRmap);
+    RedirectMod:
+      createItemsNameRedirectForm(KFRmod);
+  end;
 
 end;
 
-procedure TFormAdd.createItemsNameRedirectForm();
+procedure TFormAdd.createItemsNameRedirectForm(itemType: TKFRedirectItemType);
 var
   frmRedirectContent: TfrmRedirectItemsDialog;
   mdResult: Integer;
@@ -113,13 +118,15 @@ begin
   frmRedirectContent := TfrmRedirectItemsDialog.Create(Self);
   try
     try
-      if frmRedirectContent.loadListFromRedirect(redirectURL) then
+      if frmRedirectContent.loadListFromRedirect(redirectURL, itemType) then
       begin
         mdResult := frmRedirectContent.ShowModal;
         if (mdResult = mrOk) and (frmRedirectContent.selectedItems <> '') then
           edtItemName.Text := frmRedirectContent.selectedItems;
 
-      end else begin
+      end
+      else
+      begin
         raise Exception.Create('Falied to load item from URL: ' + redirectURL);
       end;
     finally
@@ -127,8 +134,9 @@ begin
     end;
   except
     on E: Exception do
-    Application.MessageBox(PWideChar(E.Message + #13 + #13 + 'Make sure you have placed a valid redirect URL.'), 'Error loading files from URL', MB_OK +
-      MB_ICONWARNING);
+      Application.MessageBox(PWideChar(E.Message + #13 + #13 +
+        'Make sure you have placed a valid redirect URL.'),
+        'Error loading files from URL', MB_OK + MB_ICONWARNING);
 
   end;
 
@@ -143,9 +151,9 @@ begin
 
       addWkspRedirect := chkAddWorkshopRedirect.Checked;
       downloadNow := chkDownloadItem.Checked;
-      if (ItemName <> '') and ((FrmItemType in [ReinstallWorkshopMap,
-          ReinstallWorkshopItem, OfficialItem,
-          LocalOrRedirectItem])) then
+      if (ItemName <> '') and
+        ((FrmItemType in [ReinstallWorkshopMap, ReinstallWorkshopItem,
+        OfficialItem, LocalOrRedirectItem])) then
       begin
         addMapCycle := chkAddMapCycle.Checked;
         addMapENtry := chkAddMapEntry.Checked;
@@ -223,18 +231,11 @@ end;
 
 procedure TFormAdd.FormShow(Sender: TObject);
 begin
-  if chkDoForAll.Visible then
-    Self.Height := 245
-  else
-    Self.Height := 220;
 
   if chkDoForAll.Checked then
     Exit;
-
+  lblItemNameNote.Visible := false;
   case FrmItemType of
-
-
-
 
     WorkshopMap:
       begin
@@ -256,7 +257,6 @@ begin
         edtID.Enabled := false;
 
         btnOk.Enabled := true;
-        Exit;
       end;
 
     WorkshopItem:
@@ -279,7 +279,6 @@ begin
         edtID.Enabled := false;
 
         btnOk.Enabled := true;
-        Exit;
       end;
     ReinstallWorkshopMap:
       begin
@@ -301,7 +300,6 @@ begin
         edtID.Enabled := false;
 
         btnOk.Enabled := true;
-        Exit;
       end;
 
     ReinstallWorkshopItem:
@@ -327,8 +325,7 @@ begin
         btnOk.Enabled := true;
       end;
 
-
-     UnknowedWorkshopItem:
+    UnknowedWorkshopItem:
       begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
@@ -372,10 +369,6 @@ begin
 
         btnOk.Enabled := true;
         jvlbl1.Visible := false;
-        if chkDoForAll.Visible then
-          Self.Height := 125
-        else
-          Self.Height := 100;
       end;
 
     LocalOrRedirectItem:
@@ -400,10 +393,6 @@ begin
 
         btnOk.Enabled := true;
         jvlbl1.Visible := false;
-        if chkDoForAll.Visible then
-          Self.Height := 150
-        else
-          Self.Height := 125;
       end;
 
     RedirectMap:
@@ -414,7 +403,7 @@ begin
         Self.Caption := 'Install from redirect';
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
-
+        lblItemNameNote.Visible := true;
         chkAddWorkshopRedirect.Checked := false;
         chkAddWorkshopRedirect.Visible := false;
 
@@ -428,13 +417,36 @@ begin
 
         btnOk.Enabled := true;
         jvlbl1.Visible := false;
-        if chkDoForAll.Visible then
-          Self.Height := 250
-        else
-          Self.Height := 275;
+
       end;
-      backupWorkhopMap:
-       begin
+
+    RedirectMod:
+      begin
+        pnlWorkshopID.Visible := false;
+        pnlRedirectURL.Visible := true;
+        pnl3.Visible := true;
+        Self.Caption := 'Install from redirect';
+        chkDownloadItem.Checked := true;
+        chkDownloadItem.Visible := true;
+        chkDownloadItem.Enabled := false;
+
+        chkAddWorkshopRedirect.Checked := false;
+        chkAddWorkshopRedirect.Visible := false;
+
+        chkAddMapEntry.Checked := false;
+        chkAddMapEntry.Visible := false;
+
+        chkAddMapCycle.Checked := false;
+        chkAddMapCycle.Visible := false;
+        edtID.Enabled := false;
+        edtID.Visible := false;
+
+        btnOk.Enabled := true;
+        jvlbl1.Visible := false;
+      end;
+
+    backupWorkhopMap:
+      begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := true;
         pnl3.Visible := true;
@@ -456,20 +468,63 @@ begin
 
         btnOk.Enabled := true;
         jvlbl1.Visible := false;
-        if chkDoForAll.Visible then
-          Self.Height := 250
-        else
-          Self.Height := 275;
+
       end;
 
   end;
+  Application.ProcessMessages;
+  Self.Height := CalculateWindownHeight;
 end;
-
-
 
 procedure TFormAdd.SetAddType(AddType: TKFItemType);
 begin
   FrmItemType := AddType;
+end;
+
+function TFormAdd.CalculateWindownHeight(): Integer;
+var
+  winHeight: Integer;
+  WinMargin: Integer;
+  latestItemTop: Integer;
+  i: Integer;
+  pnlComponent: TControl;
+  panelMargin: Integer;
+begin
+  winHeight := 0;
+  WinMargin := 40;
+  latestItemTop := 0;
+  panelMargin := 1;
+  try
+    if pnlWorkshopID.Visible then
+      winHeight := winHeight + pnlWorkshopID.Height + panelMargin;
+
+    if pnlRedirectURL.Visible then
+      winHeight := winHeight + pnlRedirectURL.Height + panelMargin;
+
+    if pnl3.Visible then
+      winHeight := winHeight + pnl3.Height + panelMargin;
+
+    if pnlClient.Visible then
+    begin
+      for i := 0 to Self.ComponentCount - 1 do
+      begin
+        if (Self.Components[i] is TControl) and
+          (Self.Components[i].GetParentComponent = pnlClient) then
+        begin
+          pnlComponent := (Self.Components[i] as TControl);
+          if (pnlComponent.Visible) and (latestItemTop < pnlComponent.Top) then
+            latestItemTop := pnlComponent.Top + pnlComponent.Height;
+        end;
+      end;
+      winHeight := winHeight + latestItemTop + panelMargin;
+    end;
+
+    if pnlBottom.Visible then
+      winHeight := winHeight + pnlBottom.Height + panelMargin;
+    Result := winHeight + WinMargin;
+  except
+    Result := 450; // fail safe value
+  end;
 end;
 
 end.

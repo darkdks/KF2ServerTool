@@ -156,7 +156,7 @@ begin
         lvQueue.Items[i].SubItems[4] := 'Working';
         try
           if FormMain.serverTool.InstallWorkshopItem(itemID, ItemName,
-            addWkspRedirect, downloadNow, addMapCycle, addMapENtry) then
+            addWkspRedirect, downloadNow, downloadNow{dlImg}, addMapCycle, addMapENtry) then
           begin
 
             lvQueue.Items[i].SubItems[4] := 'Sucess';

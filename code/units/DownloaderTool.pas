@@ -37,17 +37,19 @@ type
 
   TDownloaderTool = class(TObject)
   private
- {$IFDEF MSWINDOWS}
+{$IFDEF MSWINDOWS}
     procedure HTTPClientReceiveData(const Sender: TObject;
       AContentLength, AReadCount: Int64; var Abort: Boolean);
     procedure HTTPClientRequestCompleted(const Sender: TObject;
       const AResponse: IHTTPResponse);
 {$ENDIF}
+      var
+    DLSize: Int64;
+    DLPostion: Int64;
   public
     function downloadFile(URL: String; Destination: string;
       var dlManager: TDownloadManager): Boolean;
 
-  var
   var
     downloadManager: TDownloadManager;
     constructor Create();
@@ -68,9 +70,12 @@ begin
   inherited;
 end;
 {$IFDEF MSWINDOWS}
+
 procedure TDownloaderTool.HTTPClientReceiveData(const Sender: TObject;
   AContentLength, AReadCount: Int64; var Abort: Boolean);
 begin
+DLSize := AContentLength;
+DLPostion := AReadCount;
   if Assigned(downloadManager) then
   begin
     if Assigned(downloadManager.FileDAbort) then
@@ -87,12 +92,13 @@ begin
   end;
 end;
 
-
 procedure TDownloaderTool.HTTPClientRequestCompleted(const Sender: TObject;
   const AResponse: IHTTPResponse);
 begin
+  if Assigned(downloadManager) then begin
   if Assigned(downloadManager.OnFinished) then
     downloadManager.OnFinished();
+  end;
 end;
 
 {$ENDIF}
@@ -114,8 +120,13 @@ begin
   httpRq.Get(URL, Stream, nil);
   try
     try
-      if downloadManager.FileDSize = downloadManager.FileDPostion then
+      if DLSize = DLPostion then
       begin
+        if DirectoryExists(ExtractFilePath(Destination)) = false then
+          CreateDir(ExtractFilePath(Destination));
+        if FileExists(Destination) then
+          DeleteFile(Destination);
+
         Stream.SaveToFile(Destination);
         Result := FileExists(Destination);
       end
@@ -135,7 +146,7 @@ end;
 
 begin
   raise Exception.Create('No implemented');
-   result := False;
+  Result := False;
 end;
 
 {$ENDIF}

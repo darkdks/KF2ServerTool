@@ -10,9 +10,10 @@ uses
   MSHTML, ComObj, ActiveX,
 {$ELSE}
 {$ENDIF}
-  IDHttp, Variants;
+  IDHttp, Variants, KFTypes;
 
 type
+
 
   TKFRedirect = class(TObject)
 
@@ -20,7 +21,8 @@ type
     function getUrlText(URL: String): TStringList;
 
   public
-    function getRedirectItems(URL: String): TStringList;
+    function getRedirectItems(URL: String; itemsType: TKFRedirectItemType)
+      : TStringList;
     function removeFile(itemName, ItemFolder: string;
       searchSubFolder: Boolean): Boolean;
 
@@ -70,7 +72,7 @@ begin
         Result := True;
     finally
       if Assigned(files) then
-      FreeAndNil(files);
+        FreeAndNil(files);
     end;
   except
 
@@ -78,35 +80,71 @@ begin
 
 end;
 
-function TKFRedirect.getRedirectItems(URL: String): TStringList;
+function TKFRedirect.getRedirectItems(URL: String;
+  itemsType: TKFRedirectItemType): TStringList;
 var
   itemsText: TStringList;
-  i: integer;
+  i, y: integer;
   lineC: string;
-  posKF, posKFM: integer;
-  mapName: string;
+  KFtagPos, extTagPos, spaceTagPos: integer;
+  tagSize: Integer;
+  RDtagName: String;
+  itemName: string;
+const
+  // KF2 File types prefix
+  KF_MAPPREFIX = '.KFM';
+  KF_MODPREFIX: array [0 .. 3] of string = ( '.UPX', '.UPK' , '.UC', '.U');
+
 begin
   itemsText := getUrlText(URL);
   Result := TStringList.Create;
   try
     try
-      for i := 0 to itemsText.Count - 1 do
+      if itemsType = KFRmap then
       begin
-
-        lineC := Trim(itemsText[i]);
-        posKF := Pos('KF-', UpperCase(lineC));
-        posKFM := Pos('.KFM', UpperCase(lineC));
-        if (posKF > 0) and (posKFM > 0) and (posKFM > posKF) then
+        for i := 0 to itemsText.Count - 1 do
         begin
-          mapName := Copy(lineC, posKF,  posKFM - posKF + 4);
-          Result.Add(mapName);
+          lineC := Trim(itemsText[i]);
+          KFtagPos := Pos('KF-', UpperCase(lineC));
+          extTagPos := Pos(KF_MAPPREFIX, UpperCase(lineC));
+          if (KFtagPos > 0) and (extTagPos > 0) and (extTagPos > KFtagPos) then
+          begin
+            itemName := Copy(lineC, KFtagPos, extTagPos - KFtagPos + 4);
+            spaceTagPos := Pos(' ', itemName);
+            if (spaceTagPos > 0) and (spaceTagPos < KFtagPos)then
+              itemName := Copy(itemName, spaceTagPos,
+                length(itemName) - spaceTagPos);
+            Result.Add(itemName);
+          end;
         end;
-
-
       end;
+      if itemsType = KFRmod then
+      begin
+        for i := 0 to itemsText.Count - 1 do
+        begin
+          lineC := Trim(itemsText[i]);
+          for y := 0 to High(KF_MODPREFIX) do
+          begin
+            RDtagName := KF_MODPREFIX[y];
+            extTagPos := Pos(RDtagName, UpperCase(lineC));
+            if (extTagPos > 0) then
+            begin
+              tagSize := length(RDtagName);
+              itemName := Copy(lineC, 0, extTagPos + tagSize-1);
+              spaceTagPos := Pos(' ', itemName);
+              if (spaceTagPos > 0) and (spaceTagPos < extTagPos) then
+                itemName := Copy(itemName, spaceTagPos,
+                  length(itemName) - spaceTagPos);
+              Result.Add(itemName);
+              Break
+            end;
+          end;
+        end;
+      end;
+
     finally
-    if Assigned(itemsText) then
-      FreeAndNil(itemsText);
+      if Assigned(itemsText) then
+        FreeAndNil(itemsText);
     end;
   except
     On E: Exception do

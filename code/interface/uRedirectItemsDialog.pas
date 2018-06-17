@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ComCtrls, KFRedirect, ExtCtrls;
+  Dialogs, StdCtrls, ComCtrls, KFRedirect, ExtCtrls, KFTypes;
 
 type
   TfrmRedirectItemsDialog = class(TForm)
@@ -21,7 +21,7 @@ type
     { Private declarations }
   public
     selectedItems: String;
-    function loadListFromRedirect(URL: String): Boolean;
+    function loadListFromRedirect(URL: String;itemType: TKFRedirectItemType): Boolean;
     { Public declarations }
   end;
 
@@ -64,7 +64,7 @@ begin
   selectedItems := '';
 end;
 
-function TfrmRedirectItemsDialog.loadListFromRedirect(URL: String): Boolean;
+function TfrmRedirectItemsDialog.loadListFromRedirect(URL: String;itemType: TKFRedirectItemType): Boolean;
 var
   lItem: TListItem;
   i: Integer;
@@ -74,7 +74,7 @@ begin
   KFRedirect := TKFRedirect.Create;
   try
     try
-      redirectItems := KFRedirect.getRedirectItems(URL);
+      redirectItems := KFRedirect.getRedirectItems(URL, itemType);
       lvRedirectItems.Clear;
       for i := 0 to redirectItems.Count - 1 do
       begin

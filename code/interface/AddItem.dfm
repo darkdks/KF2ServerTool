@@ -4,7 +4,7 @@ object FormAdd: TFormAdd
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Add map'
-  ClientHeight = 355
+  ClientHeight = 362
   ClientWidth = 318
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
@@ -65,15 +65,17 @@ object FormAdd: TFormAdd
   end
   object pnlClient: TPanel
     Left = 0
-    Top = 191
+    Top = 209
     Width = 318
-    Height = 136
+    Height = 125
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
     Align = alClient
     TabOrder = 1
+    ExplicitTop = 208
+    ExplicitHeight = 134
     object jvlbl2: TLabel
       AlignWithMargins = True
       Left = 17
@@ -175,11 +177,12 @@ object FormAdd: TFormAdd
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 327
+    Top = 334
     Width = 318
     Height = 28
     Align = alBottom
     TabOrder = 2
+    ExplicitTop = 343
     object btnCancel: TButton
       AlignWithMargins = True
       Left = 198
@@ -216,7 +219,7 @@ object FormAdd: TFormAdd
     Left = 0
     Top = 128
     Width = 318
-    Height = 63
+    Height = 81
     Align = alTop
     TabOrder = 3
     object lblPn3: TLabel
@@ -235,6 +238,15 @@ object FormAdd: TFormAdd
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+    end
+    object lblItemNameNote: TLabel
+      Left = 18
+      Top = 54
+      Width = 283
+      Height = 24
+      Caption = 
+        'Note: If the map requires an upk(package) file you should add'#13#10' ' +
+        'this file as mod file in mod tab'
     end
     object edtItemName: TJvEdit
       Left = 17
@@ -273,6 +285,7 @@ object FormAdd: TFormAdd
     Height = 63
     Align = alTop
     TabOrder = 4
+    ExplicitTop = 68
     object jvlbl4: TLabel
       Left = 18
       Top = 8

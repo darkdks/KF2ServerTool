@@ -17,10 +17,12 @@ uses
   JvExStdCtrls, JvExComCtrls, Vcl.Themes, GitAutoUpdate, System.uitypes,
   downloaderTool,
   System.Net.HttpClient, Registry,
-  System.Types;
+  System.Types, KFRedirect, KFTypes, Jpeg, JvExForms, JvCustomItemViewer,
+  JvImageListViewer, TypInfo, IOUtils, JvComponentBase, JvBalloonHint, CommCtrl;
 
 type
   TLvSelectedItems = Array of TListItem;
+  TListViewDisplayStyle = (LVDS_Simple, LVDS_Thumbnail, LVDS_Icon);
 
   TFormMain = class(TForm)
     pmRemove: TPopupMenu;
@@ -28,7 +30,7 @@ type
     RemovefromCycle1: TMenuItem;
     RemoveMapEntry1: TMenuItem;
     Removeall1: TMenuItem;
-    il1: TImageList;
+    ilSmallIcons: TImageList;
     RemoveServerSubcribe1: TMenuItem;
     pmLV: TPopupMenu;
     add1: TMenuItem;
@@ -57,7 +59,6 @@ type
     lvMods: TListView;
     tsServer: TTabSheet;
     grpStartServer: TGroupBox;
-    JvgBitmapImage1: TJvgBitmapImage;
     tsExtra: TTabSheet;
     grpEnableDisable: TGroupBox;
     tsUnknowed: TTabSheet;
@@ -122,7 +123,7 @@ type
     lbl8: TLabel;
     btn3: TButton;
     btn4: TButton;
-    lbl9: TLabel;
+    lblUpdate: TLabel;
     chkOnlyFromConfigItems: TCheckBox;
     btn5: TButton;
     Redirect1: TMenuItem;
@@ -158,6 +159,20 @@ type
     lblSearch: TLabel;
     edtSearch: TEdit;
     lvMaps: TListView;
+    btn6: TButton;
+    imgListItems: TImageList;
+    btn7: TButton;
+    cbbListViewDisplayStyle: TJvComboBox;
+    lbl2: TLabel;
+    Image1: TImage;
+    ilOfficialMaps: TImageList;
+    mmoDebug: TMemo;
+    ilMiscImgs: TImageList;
+    jvmglstvwr1: TJvImageListViewer;
+    btnSvIntegrityCurrent: TButton;
+    Label1: TLabel;
+    btnSvIntegrityBeta: TButton;
+    mniRedownloadThumbnail: TMenuItem;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -191,7 +206,7 @@ type
     procedure cbbLengthChange(Sender: TObject);
     procedure edtExtraChange(Sender: TObject);
     procedure edtGmPassChange(Sender: TObject);
-    procedure trckbrFontSizeChange(Sender: TObject);
+    procedure RealignUIItems(Sender: TObject);
     procedure btnCheckForUpdateClick(Sender: TObject);
     procedure cbb1Change(Sender: TObject);
     procedure cbWorkshopDMStatusChange(Sender: TObject);
@@ -199,7 +214,6 @@ type
     procedure edtPortExit(Sender: TObject);
     procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
       var Resize: Boolean);
-    procedure btnCheckForPreviewClick(Sender: TObject);
     procedure btnCleanDownloadCacheClick(Sender: TObject);
     procedure btnCleanWorkshopDataClick(Sender: TObject);
     procedure tmrWebAdminTimer(Sender: TObject);
@@ -234,6 +248,12 @@ type
     procedure cbbThemeChange(Sender: TObject);
     procedure btnRemoveClick(Sender: TObject);
     procedure chkAutoCheckForUpdatesClick(Sender: TObject);
+    procedure RedownloadSelectedThumbnails(Sender: TObject);
+    procedure loadIMGFolder(Sender: TObject);
+    procedure cbbListViewDisplayStyleChange(Sender: TObject);
+    procedure lvMapsDblClick(Sender: TObject);
+    procedure lvMapsInfoTip(Sender: TObject; Item: TListItem;
+      var InfoTip: string);
 
   private
     function loadConfig: Boolean;
@@ -285,6 +305,8 @@ type
     kfprofiles: array of TKFServerProfile;
     fdefaultStyleName: String;
     AutoCheckForUpdates: Boolean;
+    imgListIDIndex: TStringList;
+    LVStyle: TListViewDisplayStyle;
   end;
 
 var
@@ -360,7 +382,8 @@ begin
               Application.ProcessMessages;
               if serverTool.InstallWorkshopItem(frmAdd.edtID.Text,
                 frmAdd.ItemName, frmAdd.addWkspRedirect, frmAdd.downloadNow,
-                frmAdd.addMapCycle, frmAdd.addMapENtry) = false then
+                True { dlImg } , frmAdd.addMapCycle, frmAdd.addMapENtry) = false
+              then
               begin
                 Application.MessageBox
                   (PWideChar('One o more steps for item ' + frmAdd.edtID.Text +
@@ -448,7 +471,8 @@ begin
             progressForm.tmrUndeterminedPB.Enabled := True;
             if serverTool.InstallWorkshopItem(frmAdd.edtID.Text,
               frmAdd.ItemName, frmAdd.addWkspRedirect, frmAdd.downloadNow,
-              frmAdd.addMapCycle, frmAdd.addMapENtry) = false then
+              True { dlImg } , frmAdd.addMapCycle, frmAdd.addMapENtry) = false
+            then
             begin
               Application.MessageBox
                 (PWideChar('One o more steps for item ' + frmAdd.edtID.Text +
@@ -603,6 +627,152 @@ begin
 
 end;
 
+procedure TFormMain.RedownloadSelectedThumbnails(Sender: TObject);
+var
+  wksp: TKFWorkshop;
+  dlManager: TDownloadManager;
+  i: Integer;
+  itemID: String;
+  seletectItems: TLvSelectedItems;
+begin
+  wksp := TKFWorkshop.Create(serverTool.GetKFApplicationPath);
+  dlManager := TDownloadManager.Create;
+  seletectItems := GetLVSelectedItems(lvMaps);
+  if Assigned(frmProgress) then
+    FreeAndNil(frmProgress);
+  frmProgress := TformPB.Create(Self);
+  frmProgress.Show;
+  frmProgress.lblTitle.Caption := 'Preparing to start';
+  frmProgress.SetPBMax(Length(seletectItems));
+  Application.ProcessMessages;
+
+  try
+    try
+      for i := 0 to High(seletectItems) do
+      begin
+        Application.ProcessMessages;
+        if seletectItems[i].GroupID = 0 then
+
+          itemID := seletectItems[i].SubItems[0]
+        else
+          Continue;
+
+        dlManager.OnFinished := RedirectDownloadFinished;
+        dlManager.FileDAbort := @frmProgress.cancel;
+        frmProgress.btncancel.Visible := True;
+        frmProgress.lblTitle.Caption := 'Download Thrumnail of item ' + itemID;
+        frmProgress.lblStatus.Caption := '[' + IntToStr(i + 1) + '/' +
+          IntToStr(Length(seletectItems)) + '] item ' + itemID;
+        frmProgress.SetPBValue(i + 1);
+        wksp.DownloadWorkshopImage(itemID, dlManager);
+        Application.ProcessMessages;
+      end;
+      Application.ProcessMessages;
+    finally
+
+      FreeAndNil(dlManager);
+      FreeAndNil(wksp);
+      FreeAndNil(frmProgress);
+    end;
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
+
+  end;
+  LoadItensToLv('');
+end;
+
+procedure TFormMain.loadIMGFolder(Sender: TObject);
+var
+  imgsPathList: TStringList;
+  i: Integer;
+  filename: String;
+  imgId: String;
+  BmpIMG: TBitmap;
+  wic: TWICImage;
+  imgIdx: Integer;
+  fileImgIdx: String;
+begin
+  try
+    imgsPathList := GetAllFilesInsideDirectory(serverTool.GetKFApplicationPath +
+      IMGCACHEFOLDER, '*.jpg');
+    imgListItems.Clear;
+    imgListIDIndex.Clear;
+    // LocalCache Load
+    try
+      for i := 0 to imgsPathList.Count - 1 do
+      begin
+        try
+          filename := TPath.GetFileNameWithoutExtension(imgsPathList[i]);
+          imgId := UpperCase(filename);
+          BmpIMG := TBitmap.Create;
+          wic := TWICImage.Create;
+          try
+            wic.LoadFromFile(imgsPathList[i]);
+            BmpIMG.Assign(wic);
+            ResizeBitmap(BmpIMG, imgListItems.Width, imgListItems.Height);
+            imgIdx := imgListItems.Add(BmpIMG, nil);
+            if imgIdx >= 0 then
+              imgListIDIndex.AddPair(imgId, IntToStr(imgIdx));
+          finally
+            FreeAndNil(BmpIMG);
+            FreeAndNil(wic);
+          end;
+        except
+          on E: Exception do
+            serverTool.LogEvent('Preview images load',
+              'Error to load ' + filename + ' image. / Error: ' + E.Message);
+        end;
+
+      end;
+    finally
+      FreeAndNil(imgsPathList);
+    end;
+    // Official maps imgs
+    for i := 0 to High(KF_OFFICIALMAPS) do
+    begin
+      if i > ilOfficialMaps.Count - 1 then
+        break;
+      BmpIMG := TBitmap.Create;
+      try
+        fileImgIdx := KF_OFFICIALMAPS[i, 1];
+        filename := KF_OFFICIALMAPS[i, 0];
+        ilOfficialMaps.GetBitmap(StrToInt(fileImgIdx), BmpIMG);
+        imgIdx := imgListItems.Add(BmpIMG, nil);
+        imgListIDIndex.AddPair
+          (UpperCase(TPath.GetFileNameWithoutExtension(filename)),
+          IntToStr(imgIdx));
+      finally
+        FreeAndNil(BmpIMG);
+      end;
+    end;
+    // Default Redirect img
+    BmpIMG := TBitmap.Create;
+    try
+      ilMiscImgs.GetBitmap(0, BmpIMG);
+      imgIdx := imgListItems.Add(BmpIMG, nil);
+      imgListIDIndex.AddPair('DEFAULT_REDIRECT', IntToStr(imgIdx));
+
+    finally
+      FreeAndNil(BmpIMG);
+    end;
+    // Default Steam img
+    try
+      ilMiscImgs.GetBitmap(1, BmpIMG);
+      imgIdx := imgListItems.Add(BmpIMG, nil);
+      imgListIDIndex.AddPair('DEFAULT_STEAM', IntToStr(imgIdx));
+
+    finally
+      FreeAndNil(BmpIMG);
+    end;
+    mmoDebug.Text := imgListIDIndex.Text;
+  except
+    on E: Exception do
+      serverTool.LogEvent('imgCacheLoad', 'Error: ' + E.Message);
+  end;
+
+end;
+
 procedure TFormMain.btnAddNewClick(Sender: TObject);
 begin
   try
@@ -614,61 +784,67 @@ begin
   end;
 end;
 
-procedure TFormMain.btnCheckForPreviewClick(Sender: TObject);
-var
-  i: Integer;
-  cmdToolFullPath, cmdToolArgs: string;
-  serverpath: string;
-begin
-  i := Application.MessageBox
-    ('This will check for a BETA PREVIEW server update.' + #13 +
-    ' If it''s avaliable the server will be updated.' + #13#10 +
-    'Are you sure?', 'Update server to BETA/PREVIEW',
-    MB_OKCANCEL + MB_ICONQUESTION);
-
-  if i = IDOK then
-  begin
-    if useCustomServerPath then
-      serverpath := IncludeTrailingPathDelimiter(customServerPath)
-    else
-      serverpath := ExtractFilePath(Application.ExeName);
-
-    cmdToolFullPath := serverpath + pathCmdTool;
-    cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
-      ' +app_update 232130 -beta preview +exit';
-    ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
-
-    Application.MessageBox('Finished', 'Server update',
-      MB_OK + MB_ICONINFORMATION);
-
-  end;
-end;
-
 procedure TFormMain.btnCheckForUpdateClick(Sender: TObject);
 var
   i: Integer;
   cmdToolFullPath, cmdToolArgs: string;
   serverpath: string;
+  dlgMsg: string;
+  dlgType: string;
 begin
-  i := Application.MessageBox('This will check for a server update.' + #13 +
-    ' If it''s avaliable the server will be updated.' + #13#10 +
-    'Are you sure?', 'Update server', MB_OKCANCEL + MB_ICONQUESTION);
+  if useCustomServerPath then
+    serverpath := IncludeTrailingPathDelimiter(customServerPath)
+  else
+    serverpath := ExtractFilePath(Application.ExeName);
+  if Sender = btnCheckForUpdate then
+  begin
+    cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
+      ' +app_update 232130 +exit';
+    dlgMsg := 'This will check for a server update.' + #13 +
+      ' If it''s avaliable the server will be updated.' + #13#10 +
+      'Are you sure?';
+    dlgType := 'Update server';
+  end;
+  if Sender = btnSvIntegrityCurrent then
+  begin
+    cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
+      ' +app_update 232130 validate +exit';
+    dlgMsg := 'This will force verify the integrity of server, if some file is missing/corrupted will be reapaired'
+      + #13 + 'Also if it''s avaliable the server will be updated.' + #13#10 +
+      'Are you sure?';
+    dlgType := 'Server Integrity';
+  end;
+
+  if Sender = btnCheckForPreview then
+  begin
+    dlgMsg := 'This will check for a BETA PREVIEW server update.' + #13 +
+      ' If it''s avaliable the server will be updated.' + #13#10 +
+      'Are you sure?';
+    dlgType := 'Update server to BETA/PREVIEW';
+    cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
+      ' +app_update 232130 -beta preview +exit';
+
+  end;
+  if Sender = btnSvIntegrityBeta then
+  begin
+    dlgMsg := 'This will force verify the integrity of server BETA/PREVIEW state, if some file is missing/corrupted will be reapaired'
+      + #13 + 'Also if it''s avaliable the server will be updated.' + #13#10 +
+      'Are you sure?';
+    dlgType := 'Update server to BETA/PREVIEW';
+    cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
+      ' +app_update 232130 validate -beta preview +exit';
+
+  end;
+
+  i := Application.MessageBox(PWideChar(dlgMsg), PWideChar(dlgType),
+    MB_OKCANCEL + MB_ICONQUESTION);
 
   if i = IDOK then
   begin
-    if useCustomServerPath then
-      serverpath := IncludeTrailingPathDelimiter(customServerPath)
-    else
-      serverpath := ExtractFilePath(Application.ExeName);
-
     cmdToolFullPath := serverpath + pathCmdTool;
-    cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
-      ' +app_update 232130 +exit';
     ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
-
-    Application.MessageBox('Finished', 'Server update',
+    Application.MessageBox('Finished', PWideChar(dlgType),
       MB_OK + MB_ICONINFORMATION);
-
   end;
 
 end;
@@ -857,6 +1033,7 @@ var
   modalResult: Integer;
   selectedItems: TLvSelectedItems;
   progressForm: TformPB;
+
 begin
 
   if ActiveLV.Selected = nil then
@@ -890,6 +1067,7 @@ begin
             // For more than one item
             ItemName := selectedItems[i].Caption;
             itemID := selectedItems[i].SubItems[0];
+
             if ActiveLV = lvMaps then
             begin
               if (ItemName <> '') and (itemID <> '') then
@@ -918,7 +1096,19 @@ begin
               if (ItemName <> '') and (itemID <> '') then
                 frmReinstall.SetAddType(TKFItemType.ReinstallWorkshopItem)
               else
-                frmReinstall.SetAddType(TKFItemType.WorkshopItem);
+              begin
+                case selectedItems[i].GroupID of
+                  0:
+                    frmReinstall.SetAddType(TKFItemType.WorkshopItem);
+                  1:
+                    frmReinstall.SetAddType(TKFItemType.OfficialItem);
+                  2:
+                    frmReinstall.SetAddType(TKFItemType.RedirectMod);
+                else
+                  raise Exception.Create('Unknowed Group ID unsuported');
+                end;
+
+              end;
             end
             else if ActiveLV = lvUnknowed then
             begin
@@ -956,14 +1146,15 @@ begin
               if (modalResult = mrOk) or (modalResult = mrAll) then
               begin
                 if progressForm.cancel then
-                  Break;
+                  break;
 
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
                   IntToStr(High(selectedItems)) + ' Installing item ' + itemID);
                 if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
-                  frmReinstall.downloadNow, frmReinstall.addMapCycle,
-                  frmReinstall.addMapENtry) = false then
+                  frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
+                  frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
+                then
                 begin
                   Application.MessageBox
                     (PWideChar('One o more steps for item ' +
@@ -974,7 +1165,7 @@ begin
               end
               else
               begin
-                Break;
+                break;
               end;
 
               itemsDone := itemsDone + 1;
@@ -990,8 +1181,9 @@ begin
 
                 if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
-                  frmReinstall.downloadNow, frmReinstall.addMapCycle,
-                  frmReinstall.addMapENtry) = false then
+                  frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
+                  frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
+                then
                 begin
                   Application.MessageBox
                     (PWideChar('One o more steps for item ' +
@@ -1161,7 +1353,7 @@ begin
           for i := 0 to High(selectedItems) do
           begin
             if progressForm.cancel then
-              Break;
+              break;
 
             ItemName := selectedItems[i].Caption;
             itemID := selectedItems[i].SubItems[0];
@@ -1255,6 +1447,17 @@ end;
 procedure TFormMain.cbbLengthChange(Sender: TObject);
 begin
   kfprofiles[defaultProfile].DefaultLength := cbbLength.ItemIndex;
+end;
+
+procedure TFormMain.cbbListViewDisplayStyleChange(Sender: TObject);
+begin
+  LVStyle := TListViewDisplayStyle(cbbListViewDisplayStyle.ItemIndex);
+  LoadItensToLv('');
+  // force update column size
+  Self.Height := Self.Height + 1;
+  Self.Height := Self.Height - 1;
+  lvMaps.ShowHint := (LVStyle = LVDS_Icon);
+
 end;
 
 procedure TFormMain.cbbMapChange(Sender: TObject);
@@ -1491,15 +1694,18 @@ begin
   for i := 0 to High(slItems) do
   begin
     case slItems[i].GroupID of
-      0:
-        itemPath := serverTool.GetKFApplicationPath +
-          TKFWorkshop.WKP_CACHEFOLDER + slItems[i].SubItems[0];
-      1:
-        itemPath := serverTool.GetKFApplicationPath +
-          serverTool.KF_LOCALMAPSSUBFOLDER;
-      2:
-        itemPath := serverTool.GetKFApplicationPath +
-          serverTool.KF_LOCALMAPSSUBFOLDER;
+      0: // workshop
+        itemPath := serverTool.GetKFApplicationPath + WKP_CACHEFOLDER +
+          slItems[i].SubItems[0];
+      1, 2: // redirect or official
+        begin
+          if ActiveLV = lvMods then
+            itemPath := serverTool.GetKFApplicationPath + KF_BREWEDPCSSUBFOLDER
+          else
+            itemPath := serverTool.GetKFApplicationPath + KF_LOCALMAPSSUBFOLDER
+        end;
+      3:
+        ShowMessage('Unable to browser.');
     end;
     ShellExecute(Application.handle, 'open', 'explorer.exe', Pchar(itemPath),
       nil, SW_NORMAL);
@@ -1519,7 +1725,7 @@ begin
   if serverTool.IsServerRunning then
   begin
 
-    if serverTool.GetKFAppLanguage = KFServerTool.KFL_PORTUGUESE then
+    if serverTool.GetKFAppLanguage = KFL_PORTUGUESE then
     begin
       warningText := 'Você precisa fechar o server antes de fazer alterações. '
         + #13#10 + 'Fecha-lo agora??';
@@ -1550,7 +1756,7 @@ begin
     try
       SetLength(exportItems, 0);
 
-      dlgOutputFile.FileName := 'MapListBackup.mapList';
+      dlgOutputFile.filename := 'MapListBackup.mapList';
       dlgOutputFile.Options := [ofFileMustExist];
       dlgOutputFile.Filter := 'KF2 MAP LIST BACKUP (*.mapList)|*.mapList';
       selectedItems := GetLVSelectedItems(ActiveLV);
@@ -1567,14 +1773,14 @@ begin
         begin
 
           aKFItem := TKFItem.Create;
-          aKFItem.FileName := selectedItems[i].Caption;
+          aKFItem.filename := selectedItems[i].Caption;
           aKFItem.ID := selectedItems[i].SubItems[0];
 
           SetLength(exportItems, Length(exportItems) + 1);
           exportItems[High(exportItems)] := aKFItem;
         end;
         itemsExported := serverTool.ExportItemsList(exportItems,
-          dlgOutputFile.FileName);
+          dlgOutputFile.filename);
         if itemsExported > 0 then
         begin
           ShowMessage(IntToStr(itemsExported) +
@@ -1598,168 +1804,313 @@ var
   textYes, textNo: string;
   mapCycle: TStringList;
   ItemNameF, ItemIDF: string;
-
+  itemImgIdx: String;
+  itemType: KFTypes.TKFItemType;
 begin
 
   serverTool.LoadItems;
-  textYes := '';
-  textNo := '';
+
   lvMaps.Items.Clear;
   lvMods.Clear;
   lvUnknowed.Items.Clear;
-  // lvSubscriptions.Clear;
-  for i := 0 to High(serverTool.Items) do
-  begin
-    Filter := UpperCase(Filter);
-    ItemNameF := UpperCase(serverTool.Items[i].FileName);
-    ItemIDF := UpperCase(serverTool.Items[i].ID);
-
-    if (Filter = '') or (Pos(Filter, ItemNameF) > 0) or
-      (Pos(Filter, ItemIDF) > 0) then
-    begin
-      // Ignore cache files if the server is not subscribed
-      if (onlyFromConfigItems) and (serverTool.Items[i].ServerCache) and
-        (serverTool.Items[i].ServerSubscribe = false) then
-      begin
-        Continue;
-      end;
-
-      if serverTool.Items[i].ItemType = KFMod then
-      begin
-        Item := lvMods.Items.Add;
-        Item.Caption := serverTool.Items[i].FileName;
-        Item.SubItems.Add(serverTool.Items[i].ID);
-        Item.SubItems.Add(BoolToWord(serverTool.Items[i].ServerSubscribe));
-        Item.SubItems.Add(BoolToWord(serverTool.Items[i].ServerCache));
-      end
-      else
-      begin
-        if serverTool.Items[i].ItemType = KFMap then
-          Item := lvMaps.Items.Add
-        else
-          Item := lvUnknowed.Items.Add;
-        Item.ImageIndex := 3;
-        Item.Caption := serverTool.Items[i].FileName;
-        Item.SubItems.Add(serverTool.Items[i].ID);
-        // ServerSubscription
-        if serverTool.Items[i].ServerSubscribe then
+  if (LVStyle = LVDS_Thumbnail) or (LVStyle = LVDS_Icon) then
+    loadIMGFolder(nil);
+  lvMaps.Items.BeginUpdate;
+  try
+    case LVStyle of
+      LVDS_Simple:
         begin
-          Item.SubItems.Add(textYes);
-          Item.SubItemImages[1] := 0;
+          // Simple icon
+          lvMaps.SmallImages := ilSmallIcons;
+          // No text
+          textYes := '';
+          textNo := '';
+          lvMaps.ViewStyle := vsReport;
+        end;
+      LVDS_Thumbnail:
+        begin
+          // Preview image list
+          lvMaps.SmallImages := imgListItems;
+          // Yes no text
+          textYes := 'True';
+          textNo := 'False';
+          lvMaps.ViewStyle := vsReport;
+        end;
+      LVDS_Icon:
+        begin
+          // Preview image list
+          lvMaps.SmallImages := imgListItems;
+          // Yes no text
+          textYes := '';
+          textNo := '';
+          lvMaps.ViewStyle := vsIcon;
+        end;
+    end;
+    // lvSubscriptions.Clear;
+    for i := 0 to High(serverTool.Items) do
+    begin
+      Filter := UpperCase(Filter);
+      ItemNameF := UpperCase(serverTool.Items[i].filename);
+      ItemIDF := UpperCase(serverTool.Items[i].ID);
+      itemType := serverTool.Items[i].itemType;
+      if (Filter = '') or (Pos(Filter, ItemNameF) > 0) or
+        (Pos(Filter, ItemIDF) > 0) then
+      begin
+        // Ignore cache files if the server is not subscribed
+        if (onlyFromConfigItems) and (serverTool.Items[i].ServerCache) and
+          (serverTool.Items[i].ServerSubscribe = false) then
+        begin
+          Continue;
+        end;
+
+        if itemType = KFMod then
+        begin
+          Item := lvMods.Items.Add;
+          Item.Caption := serverTool.Items[i].filename;
+          Item.SubItems.Add(serverTool.Items[i].ID);
+          Item.Data := @serverTool.Items[i];
+          case serverTool.Items[i].SourceFrom of
+            KFSteamWorkshop:
+              begin
+                Item.GroupID := 0;
+                Item.SubItems.Add
+                  (BoolToWord(serverTool.Items[i].ServerSubscribe));
+              end;
+            KFOfficial:
+              begin
+                Item.GroupID := 1;
+                Item.SubItems.Add('');
+              end;
+            KFRedirectOrLocal:
+              begin
+                Item.GroupID := 2;
+                Item.SubItems.Add('');
+              end;
+            KFUnknowedSource:
+              begin
+                Item.GroupID := 3;
+                Item.SubItems.Add('');
+              end;
+          end;
+          Item.SubItems.Add(BoolToWord(serverTool.Items[i].ServerCache));
+
         end
         else
         begin
-          Item.SubItems.Add(textNo);
-          if serverTool.Items[i].SourceFrom = KFSteamWorkshop then
-          begin
+          if itemType = KFMap then
+            Item := lvMaps.Items.Add
+          else
+            Item := lvUnknowed.Items.Add;
+          Item.Data := @serverTool.Items[i];
+          case LVStyle of
+            LVDS_Simple:
+              begin
+                Item.ImageIndex := 3;
+              end;
+            LVDS_Thumbnail, LVDS_Icon:
+              begin
+                if itemType = KFMap then
+                begin
 
-            if serverTool.Items[i].ItemType = KFUnknowed then
-              Item.SubItemImages[1] := 4
+                  try
+                    itemImgIdx := '';
+                    if serverTool.Items[i].SourceFrom = KFSteamWorkshop then
+                    begin
+                      itemImgIdx := imgListIDIndex.ValueFromIndex
+                        [imgListIDIndex.IndexOfName(serverTool.Items[i].ID)];
+                      if itemImgIdx = '' then
+                        itemImgIdx := imgListIDIndex.ValueFromIndex
+                          [imgListIDIndex.IndexOfName('DEFAULT_STEAM')];
+                    end;
+
+                    if serverTool.Items[i].SourceFrom = KFOfficial then
+                      itemImgIdx := imgListIDIndex.ValueFromIndex
+                        [imgListIDIndex.IndexOfName
+                        (UpperCase(serverTool.Items[i].filename))];
+                    if serverTool.Items[i].SourceFrom = KFRedirectOrLocal then
+                    begin
+                      itemImgIdx := imgListIDIndex.ValueFromIndex
+                        [imgListIDIndex.IndexOfName
+                        (UpperCase(serverTool.Items[i].filename))];
+                      if itemImgIdx = '' then
+                        itemImgIdx := imgListIDIndex.ValueFromIndex
+                          [imgListIDIndex.IndexOfName('DEFAULT_REDIRECT')];
+                    end;
+
+                    if cleanInt(itemImgIdx) <> '' then
+
+                      Item.ImageIndex := StrToInt(itemImgIdx)
+                    else
+                      Item.ImageIndex := -1;
+                  except
+                    Item.ImageIndex := -1;
+                  end;
+
+                  { try
+                    with lblTest do
+                    begin
+                    Parent := lvMaps;
+                    lblRect := Item.DisplayRect(drBounds);
+
+                    BoundsRect := lblRect;
+                    Caption := 'test';//serverTool.Items[i].filename;
+                    Font.Size := 14;
+                    end;
+                    except
+
+                    end;
+                  }
+                end
+                else
+                begin
+                  Item.ImageIndex := 3;
+                end;
+
+              end;
+
+          end;
+
+          Item.Caption := serverTool.Items[i].filename;
+          Item.SubItems.Add(serverTool.Items[i].ID);
+          if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+            Item.Caption := Item.Caption + #13 + #13 + 'Workshop ID: ' +
+              serverTool.Items[i].ID;
+          // ServerSubscription
+          if serverTool.Items[i].ServerSubscribe then
+          begin
+            Item.SubItems.Add(textYes);
+            Item.SubItemImages[1] := 0;
+            if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+              Item.Caption := Item.Caption + #13 + 'Server subscribed: '
+                + textYes;
+          end
+          else
+          begin
+            Item.SubItems.Add(textNo);
+            if serverTool.Items[i].SourceFrom = KFSteamWorkshop then
+            begin
+
+              if itemType = KFUnknowed then
+                Item.SubItemImages[1] := 4
+              else
+                Item.SubItemImages[1] := 1;
+              if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+                Item.Caption := Item.Caption + #13 +
+                  'Server subscribed: ' + textNo;
+            end;
+
+          end;
+          // MapCycle
+          if serverTool.Items[i].MapEntry then
+          begin
+            Item.SubItems.Add(textYes);
+            Item.SubItemImages[2] := 0;
+            if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+              Item.Caption := Item.Caption + #13 + 'In map entrys: ' + textYes;
+          end
+          else
+          begin
+            Item.SubItems.Add(textNo);
+            if itemType = KFUnknowed then
+              Item.SubItemImages[2] := 4
             else
-              Item.SubItemImages[1] := 1;
+              Item.SubItemImages[2] := 1;
+            if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+              Item.Caption := Item.Caption + #13 + 'In map entrys: ' + textNo;
+          end;
+          // MapEntry
+          if serverTool.Items[i].MapCycleEntry then
+          begin
+            Item.SubItems.Add(textYes);
+            Item.SubItemImages[3] := 0;
+            if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+              Item.Caption := Item.Caption + #13 + 'In map cycle: ' + textYes;
+          end
+          else
+          begin
+            Item.SubItems.Add(textNo);
+            if itemType = KFUnknowed then
+              Item.SubItemImages[3] := 4
+            else
+              Item.SubItemImages[3] := 1;
+            if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+              Item.Caption := Item.Caption + #13 + 'In map cycle: ' + textNo;
+          end;
+          // ServerCache
+          if serverTool.Items[i].ServerCache then
+          begin
+            Item.SubItems.Add(textYes);
+            Item.SubItemImages[4] := 0;
+            if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+              Item.Caption := Item.Caption + #13 + 'In server Cache: '
+                + textYes;
+          end
+          else
+          begin
+            Item.SubItems.Add(textNo);
+            if itemType = KFUnknowed then
+              Item.SubItemImages[4] := 4
+            else
+              Item.SubItemImages[4] := 1;
+            if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
+              Item.Caption := Item.Caption + #13 + 'In server Cache: ' + textNo;
+
+          end;
+          // Item group
+          case serverTool.Items[i].SourceFrom of
+            KFSteamWorkshop:
+              Item.GroupID := 0;
+            KFOfficial:
+              Item.GroupID := 1;
+            KFRedirectOrLocal:
+              Item.GroupID := 2;
+            KFUnknowedSource:
+              Item.GroupID := 3;
           end;
 
         end;
-        // MapCycle
-        if serverTool.Items[i].MapEntry then
-        begin
-          Item.SubItems.Add(textYes);
-          Item.SubItemImages[2] := 0
-        end
-        else
-        begin
-          Item.SubItems.Add(textNo);
-          if serverTool.Items[i].ItemType = KFUnknowed then
-            Item.SubItemImages[2] := 4
-          else
-            Item.SubItemImages[2] := 1;
-        end;
-        // MapEntry
-        if serverTool.Items[i].MapCycleEntry then
-        begin
-          Item.SubItems.Add(textYes);
-          Item.SubItemImages[3] := 0
-        end
-        else
-        begin
-          Item.SubItems.Add(textNo);
-          if serverTool.Items[i].ItemType = KFUnknowed then
-            Item.SubItemImages[3] := 4
-          else
-            Item.SubItemImages[3] := 1;
-        end;
-        // ServerCache
-        if serverTool.Items[i].ServerCache then
-        begin
-          Item.SubItems.Add(textYes);
-          Item.SubItemImages[4] := 0
-        end
-        else
-        begin
-          Item.SubItems.Add(textNo);
-          if serverTool.Items[i].ItemType = KFUnknowed then
-            Item.SubItemImages[4] := 4
-          else
-            Item.SubItemImages[4] := 1;
-
-        end;
-        // Item group
-        case serverTool.Items[i].SourceFrom of
-          KFSteamWorkshop:
-            Item.GroupID := 0;
-          KFOfficial:
-            Item.GroupID := 1;
-          KFRedirectOrLocal:
-            Item.GroupID := 2;
-          KFUnknowedSource:
-            Item.GroupID := 3;
-        end;
-
       end;
-      {
-        //LvSubscriptions
-        if serverTool.Items[i].ServerSubscribe then
-        begin
-        Item := lvSubscriptions.Items.Add;
-        Item.Caption := serverTool.Items[i].ID;
-        end;
-        //LvMapEntrys
-        if serverTool.Items[i].MapEntry then
-        begin
-        Item := lvMapEntrys.Items.Add;
-        Item.Caption := serverTool.Items[i].FileName;
-        end;
-        //LvMapCycle
-        if serverTool.Items[i].MapCycleEntry then
-        begin
-        Item := lvMapCycle.Items.Add;
-        Item.Caption := serverTool.Items[i].FileName;
-        end;
-        //LvCache
-        if serverTool.Items[i].ServerCache then
-        begin
-        Item := lvMapCycle.Items.Add;
-        Item.Caption := serverTool.Items[i].FileName;
-        Item.SubItems.Add(serverTool.Items[i].ID);
-        end;
-      }
+
     end;
 
-  end;
+    if lvUnknowed.Items.Count > 0 then
+      tsUnknowed.TabVisible := True
+    else
+      tsUnknowed.TabVisible := false;
+    // Map Cycle to combo box
 
-  if lvUnknowed.Items.Count > 0 then
-    tsUnknowed.TabVisible := True
-  else
-    tsUnknowed.TabVisible := false;
-  // Map Cycle to combo box
-
-  cbbMap.Clear;
-  mapCycle := serverTool.GetGameCycle;
-  try
-    for i := 0 to mapCycle.Count - 1 do
-      cbbMap.Items.Add(mapCycle[i]);
+    cbbMap.Clear;
+    mapCycle := serverTool.GetGameCycle;
+    try
+      for i := 0 to mapCycle.Count - 1 do
+        cbbMap.Items.Add(mapCycle[i]);
+    finally
+      FreeAndNil(mapCycle);
+    end;
+    case LVStyle of
+      LVDS_Simple:
+        begin
+          // Show columns
+          lvMaps.Column[1].Width := 89;
+          lvMaps.Column[2].Width := 85;
+          lvMaps.Column[3].Width := 73;
+          lvMaps.Column[4].Width := 73;
+          lvMaps.Column[5].Width := 85;
+          lvMaps.ShowColumnHeaders := True;
+        end;
+      LVDS_Thumbnail:
+        begin
+          // Hide columns
+          lvMaps.Column[1].Width := 0;
+          lvMaps.Column[2].Width := 0;
+          lvMaps.Column[3].Width := 0;
+          lvMaps.Column[4].Width := 0;
+          lvMaps.Column[5].Width := 0;
+          lvMaps.ShowColumnHeaders := false;
+        end;
+    end;
   finally
-    FreeAndNil(mapCycle);
+    lvMaps.Items.EndUpdate;
   end;
 
 end;
@@ -1789,6 +2140,48 @@ begin
       else
         Color := clWhite;
     end;
+
+end;
+
+procedure TFormMain.lvMapsDblClick(Sender: TObject);
+begin
+  try
+
+    pmLV.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+
+  except
+
+  end;
+end;
+
+procedure TFormMain.lvMapsInfoTip(Sender: TObject; Item: TListItem;
+  var InfoTip: string);
+var
+
+  kfitem: TKFItem;
+  kfitemP: ^TKFItem;
+begin
+
+  if Assigned(Item.Data) then
+  begin
+
+    kfitemP := Item.Data;
+    kfitem := kfitemP^;
+    InfoTip := '';
+    InfoTip := kfitem.filename + #13 + #13;
+
+    if kfitem.SourceFrom = KFSteamWorkshop then
+    begin
+      InfoTip := InfoTip + 'Workshop ID: ' + kfitem.ID + #13;
+      InfoTip := InfoTip + 'Subcribed: ' +
+        BoolToWord(kfitem.ServerSubscribe) + #13;
+    end;
+    InfoTip := InfoTip + 'Map Entry: ' + BoolToWord(kfitem.MapEntry) + #13;
+    InfoTip := InfoTip + 'Map in cycle: ' +
+      BoolToWord(kfitem.MapCycleEntry) + #13;
+    InfoTip := InfoTip + 'In Cache: ' + BoolToWord(kfitem.ServerCache);
+  end;
+
 end;
 
 procedure TFormMain.lvCompare(Sender: TObject; Item1, Item2: TListItem;
@@ -1849,8 +2242,17 @@ begin
       end
       else if ActiveLV.Selected.GroupID = 2 then
       begin // Redirect or local
-        btnReinstall.Enabled := True;
-        btnReinstall.Visible := True;
+        if ActiveLV = lvMaps then
+        begin
+
+          btnReinstall.Enabled := True;
+          btnReinstall.Visible := True;
+        end
+        else
+        begin
+          btnReinstall.Enabled := false;
+          btnReinstall.Visible := false;
+        end;
         btnUpdate.Visible := false;
         btnUpdate.Enabled := false;
         btnRemove.Enabled := True;
@@ -1956,12 +2358,13 @@ begin
     begin
       Mapentry1.Visible := True;
       MapCycle1.Visible := True;
-
+      mniRedownloadThumbnail.Visible := True;
     end
     else if ActiveLV = lvMods then
     begin
       Mapentry1.Visible := false;
       MapCycle1.Visible := false;
+      mniRedownloadThumbnail.Visible := false;
     end;
 
     if (ActiveLV.Selected = nil) or IsDiffCategory(selectedItems) then
@@ -1980,6 +2383,7 @@ begin
       Reinstall1.Enabled := false;
       mniShowitempage1.Visible := false;
       mniCopyID1.Visible := false;
+      mniRedownloadThumbnail.Visible := false;
     end
     else
     begin
@@ -2002,8 +2406,19 @@ begin
         MapCycle1.Enabled := True;
         allfilesandentry1.Visible := True;
         cache1.Visible := True;
-        RemoveMapEntry1.Visible := True;
-        MapCycle1.Visible := True;
+        if ActiveLV = lvMaps then
+        begin
+
+          RemoveMapEntry1.Visible := True;
+          MapCycle1.Visible := True;
+          mniRedownloadThumbnail.Visible := True;
+        end
+        else
+        begin
+          RemoveMapEntry1.Visible := false;
+          MapCycle1.Visible := false;
+          mniRedownloadThumbnail.Visible := false;
+        end;
       end
       else if ActiveLV.Selected.GroupID = 1 then
       begin // Official
@@ -2019,8 +2434,18 @@ begin
         MapCycle1.Enabled := True;
         allfilesandentry1.Visible := false;
         cache1.Visible := false;
-        RemoveMapEntry1.Visible := false;
-        MapCycle1.Visible := True;
+        mniRedownloadThumbnail.Visible := false;
+        if ActiveLV = lvMaps then
+        begin
+
+          RemoveMapEntry1.Visible := True;
+          MapCycle1.Visible := True;
+        end
+        else
+        begin
+          RemoveMapEntry1.Visible := false;
+          MapCycle1.Visible := false;
+        end;
 
       end
       else if ActiveLV.Selected.GroupID = 2 then
@@ -2038,8 +2463,21 @@ begin
         MapCycle1.Enabled := True;
         allfilesandentry1.Visible := True;
         cache1.Visible := True;
-        RemoveMapEntry1.Visible := false;
-        MapCycle1.Visible := True;
+        mniRedownloadThumbnail.Visible := false;
+        if ActiveLV = lvMaps then
+        begin
+          Reinstall1.Visible := True;
+          Reinstall1.Enabled := True;
+          RemoveMapEntry1.Visible := True;
+          MapCycle1.Visible := True;
+        end
+        else
+        begin
+          Reinstall1.Visible := false;
+          Reinstall1.Enabled := false;
+          RemoveMapEntry1.Visible := false;
+          MapCycle1.Visible := false;
+        end;
       end;
 
       Remove1.Enabled := True;
@@ -2158,11 +2596,11 @@ begin
         if ExtractFileExt(ParamStr(i + 1)) = '.ini' then
         begin
           configName := ParamStr(i + 1);
-          Break;
+          break;
         end
         else
           ShowMessage('Config is not valid');
-        Break;
+        break;
       end;
     end;
   end;
@@ -2260,6 +2698,8 @@ var
 begin
   Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
   LoadServerProfile();
+  imgListIDIndex := TStringList.Create;
+
   LoadItensToLv('');
   // Language
   if appLanguage = 'EG' then
@@ -2269,6 +2709,8 @@ begin
 
   if appLanguage = 'BR' then
     TranslateToBR;
+
+  // ------------------------------- all component changes after language set
   jvpgcntrl1.ActivePageIndex := 0;
   // pgcMaps.ActivePageIndex := 0;
   jvpgcntrl1Change(Self);
@@ -2320,7 +2762,7 @@ begin
     cbWorkshopDMStatus.ItemIndex := 0;
   chkAutoConnectWeb.Checked := AutoConnectWeb;
   cbWorkshopDMStatus.Font.Size := fontSize;
-  cbWorkshopDMStatus.Top := lblWkspDownMan.Top;
+  cbWorkshopDMStatus.top := lblWkspDownMan.top;
   cbWorkshopDMStatus.Left := lblWkspDownMan.Left + lblWkspDownMan.Width + 5;
   // Web port
   try
@@ -2346,6 +2788,14 @@ begin
       ShowMessage(E.Message);
     end;
   end;
+  case LVStyle of
+    LVDS_Simple:
+      cbbListViewDisplayStyle.ItemIndex := 0;
+    LVDS_Thumbnail:
+      cbbListViewDisplayStyle.ItemIndex := 1;
+    LVDS_Icon:
+      cbbListViewDisplayStyle.ItemIndex := 2;
+  end;
   // Web pass
   try
     edtWebPass.Text := serverTool.GetWebPass;
@@ -2370,10 +2820,9 @@ begin
   // whatever was in the project settings.
   Application.HintHidePause := 15000; // 15 Sec
 
-  // ---- Translation
-
   // Fix webbrowser compabillity
-  InstallRegBrowserKey()
+  InstallRegBrowserKey();
+  RealignUIItems(nil);
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
@@ -2402,6 +2851,8 @@ begin
       FreeAndNil(serverTool);
     for i := 0 to High(kfprofiles) do
       FreeAndNil(kfprofiles[i]);
+    if Assigned(imgListIDIndex) then
+      FreeAndNil(imgListIDIndex);
   except
 
   end;
@@ -2429,7 +2880,7 @@ begin
   dlgOpenbkp := TOpenDialog.Create(Self);
   dlgOpenbkp.Filter := '';
   if dlgOpenbkp.Execute(Self.handle) then
-    bkpFilePath := dlgOpenbkp.FileName;
+    bkpFilePath := dlgOpenbkp.filename;
 
   if bkpFilePath = '' then
   begin
@@ -2496,13 +2947,14 @@ begin
               if (modalResult = mrOk) or (modalResult = mrAll) then
               begin
                 if progressForm.cancel then
-                  Break;
+                  break;
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
                   IntToStr(bkpFile.Count) + ' Installing item ' + itemID);
                 if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
-                  frmReinstall.downloadNow, frmReinstall.addMapCycle,
-                  frmReinstall.addMapENtry) = false then
+                  frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
+                  frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
+                then
                 begin
                   Application.MessageBox
                     (PWideChar('One o more steps for item ' +
@@ -2513,7 +2965,7 @@ begin
               end
               else
               begin
-                Break;
+                break;
               end;
 
               itemsDone := itemsDone + 1;
@@ -2528,8 +2980,9 @@ begin
                 progressForm.NextPBValue('Installing item ' + itemID);
                 if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
-                  frmReinstall.downloadNow, frmReinstall.addMapCycle,
-                  frmReinstall.addMapENtry) = false then
+                  frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
+                  frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
+                then
                 begin
                   Application.MessageBox
                     (PWideChar('One o more steps for item ' +
@@ -2572,10 +3025,11 @@ var
   mdResult: Integer;
   redirectURL: String;
   DownURL: string;
-  FileName: String;
+  filename: String;
   dlManager: TDownloadManager;
   i: Integer;
   itemsList: TStringList;
+  redirectItemType: TKFRedirectItemType;
 begin
   frmAdd := TFormAdd.Create(Self);
 
@@ -2584,11 +3038,12 @@ begin
       if ActiveLV = lvMaps then
       begin
         frmAdd.SetAddType(TKFItemType.RedirectMap);
+        redirectItemType := KFRmap;
       end
       else
       begin
-        ShowMessage('Not supported yet');
-        Exit;
+        frmAdd.SetAddType(TKFItemType.RedirectMod);
+        redirectItemType := KFRmod;
       end;
       redirectURL := serverTool.GetCustomRedirect();
       if redirectURL <> '' then
@@ -2598,7 +3053,7 @@ begin
           ('Warning: The redirect URL is not set. Go to the options tab to set it up.');
 
       mdResult := frmAdd.ShowModal;
-      if mdResult = mrOk then
+      if (mdResult = mrOk) and (Trim(frmAdd.edtItemName.Text) <> '') then
       begin
         itemsList := TStringList.Create;
         try
@@ -2614,10 +3069,10 @@ begin
           begin
 
             redirectURL := frmAdd.edtRedirectURL.Text;
-            FileName := itemsList.Strings[i];
+            filename := itemsList.Strings[i];
             if redirectURL[Length(redirectURL)] <> '/' then
               redirectURL := Trim(redirectURL) + '/';
-            DownURL := redirectURL + FileName;
+            DownURL := redirectURL + filename;
 
             dlManager := TDownloadManager.Create;
             try
@@ -2627,11 +3082,15 @@ begin
               dlManager.FileDAbort := @frmProgress.cancel;
               frmProgress.btncancel.Visible := True;
               frmProgress.lblTitle.Caption := '[' + IntToStr(i + 1) + '/' +
-                IntToStr(itemsList.Count) + '] ' + FileName;
+                IntToStr(itemsList.Count) + '] ' + filename;
               frmProgress.Show;
               CheckIfTheServerIsRuning;
-              serverTool.NewRedirectItem(DownURL, FileName, (DownURL <> ''),
-                frmAdd.addMapCycle, frmAdd.addMapENtry, dlManager);
+              if True then
+
+                serverTool.NewRedirectItem(DownURL, filename, (DownURL <> ''),
+                  (frmAdd.addMapCycle) and (redirectItemType = KFRmap),
+                  (frmAdd.addMapENtry) and (redirectItemType = KFRmap),
+                  dlManager, redirectItemType);
             finally
               FreeAndNil(dlManager);
             end;
@@ -2679,6 +3138,7 @@ begin
     frmProgress.pb1.Max := fileSize;
 
   end;
+  Application.ProcessMessages;
 end;
 
 procedure TFormMain.RedirectDownloadFinished();
@@ -2687,6 +3147,7 @@ begin
   begin
     frmProgress.pb1.Position := 0;
   end;
+  Application.ProcessMessages;
 end;
 
 procedure TFormMain.LoadServerProfile();
@@ -2797,7 +3258,7 @@ procedure TFormMain.Removeall1Click(Sender: TObject);
 var
   ItemName: string;
   itemID: string;
-  lgText1, lgText2, lgText: string;
+  lgText: string;
   i: Integer;
   slCount: Integer;
   itemSource: TKFSource;
@@ -2814,50 +3275,24 @@ begin
   else
   begin
     try
-
       if appLanguage = 'BR' then
       begin
         if slCount = 1 then
-        begin
-
-          lgText1 :=
-            'Você tem certeza que deseja apagar completamente o mapa? ';
-          lgText2 := 'Você tem certeza que deseja apagar completamente o item?';
-
-        end
+          lgText := 'Você tem certeza que deseja apagar completamente o item?'
         else
-        begin
-          lgText1 := 'Você tem certeza que deseja apagar completamente os ' +
-            IntToStr(slCount) + ' mapa selecionados? ';
-          lgText2 := 'Você tem certeza que deseja apagar completamente os ' +
+          lgText := 'Você tem certeza que deseja apagar completamente os ' +
             IntToStr(slCount) + ' itens selecionados?';
-
-        end;
       end
       else
       begin
         if slCount = 1 then
-        begin
-          lgText1 := 'Are you sure you want to full delete the map? ';
-          lgText2 := 'Are you sure you want to full delete the item?';
-        end
+          lgText := 'Are you sure you want to full delete the item?'
         else
-        begin
-          lgText1 := 'Are you sure you want to full delete the ' +
-            IntToStr(slCount) + ' selected maps? ';
-          lgText2 := 'Are you sure you want to full delete the ' +
+          lgText := 'Are you sure you want to full delete the ' +
             IntToStr(slCount) + ' selected items?';
-
-        end;
-
       end;
 
-      if ActiveLV = lvMaps then
-        lgText := lgText1;
-      if ActiveLV = lvMods then
-        lgText := lgText2;
-
-      if messagedlg(lgText1, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
+      if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
       begin
 
         progressForm := TformPB.Create(Self);
@@ -2876,7 +3311,8 @@ begin
               progressForm.NextPBValue(IntToStr(i + 1) + '/' + IntToStr(slCount)
                 + ' Removing map ' + ItemName + ' ' + itemID);
               serverTool.RemoveItem(ItemName, itemID, (ItemName <> ''),
-                (ItemName <> ''), (itemID <> ''), (ItemName <> ''), itemSource);
+                (ItemName <> ''), (itemID <> ''), (ItemName <> ''),
+                itemSource, KFMap);
 
             end
             else
@@ -2886,8 +3322,8 @@ begin
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
                   IntToStr(slCount) + ' Removing mod ' + ItemName + ' '
                   + itemID);
-                serverTool.RemoveItem(ItemName, itemID, false, false, True,
-                  True, itemSource);
+                serverTool.RemoveItem(ItemName, itemID, false, false,
+                  itemSource = KFSteamWorkshop, True, itemSource, KFMod);
 
               end
               else
@@ -2897,7 +3333,7 @@ begin
                   + itemID);
                 if ActiveLV = lvUnknowed then
                   serverTool.RemoveItem(ItemName, itemID, True, True, True,
-                    True, itemSource);
+                    True, itemSource, KFUnknowed);
               end;
             end;
             progressForm.Close;
@@ -2973,7 +3409,7 @@ begin
             progressForm.NextPBValue('Removing map ' + ItemName +
               ' from map cycle');
             serverTool.RemoveItem(ItemName, itemID, false, True, false, false,
-              itemSource);
+              itemSource, KFMap);
             progressForm.Close;
           end;
         finally
@@ -3043,8 +3479,22 @@ begin
             itemSource := TKFSource(slItems[i].GroupID);
             progressForm.NextPBValue('Removing cache for item ' + ItemName + ' '
               + itemID);
-            serverTool.RemoveItem(ItemName, itemID, false, false, false, True,
-              itemSource);
+            if ActiveLV = lvMods then
+            begin
+              serverTool.RemoveItem(ItemName, itemID, false, false, false, True,
+                itemSource, KFMod);
+            end;
+            if ActiveLV = lvMaps then
+            begin
+              serverTool.RemoveItem(ItemName, itemID, false, false, false, True,
+                itemSource, KFMap);
+            end;
+
+            if ActiveLV = lvUnknowed then
+            begin
+              serverTool.RemoveItem(ItemName, itemID, false, false, false, True,
+                itemSource, KFUnknowed);
+            end;
           end;
           progressForm.Close;
         finally
@@ -3115,7 +3565,7 @@ begin
             progressForm.NextPBValue('Removing map entry of  ' + ItemName + ' '
               + itemID);
             serverTool.RemoveItem(ItemName, itemID, True, false, false, false,
-              itemSource);
+              itemSource, KFMap);
             progressForm.Close;
           end;
         finally
@@ -3185,7 +3635,7 @@ begin
             itemID := slItems[i].SubItems[0];
             itemSource := TKFSource(slItems[i].GroupID);
             serverTool.RemoveItem(ItemName, itemID, false, false, True, false,
-              itemSource);
+              itemSource, KFUnknowed);
 
           end;
           progressForm.Close;
@@ -3249,7 +3699,6 @@ begin
             frmProgress.Free;
           frmProgress := TformPB.Create(Self);
           dlManager := TDownloadManager.Create;
-          dlManager.OnProgress := RedirectDownloadProgress;
           dlManager.OnStarted := RedirectDownloadStarted;
           dlManager.OnFinished := RedirectDownloadFinished;
           dlManager.FileDAbort := @frmProgress.cancel;
@@ -3382,6 +3831,9 @@ begin
         appHeight := ReadInteger('GENERAL', 'WindowHeight', Self.Height);
         appWidth := ReadInteger('GENERAL', 'WindowWidth', Self.Width);
         fontSize := ReadInteger('GENERAL', 'FontSize', 10);
+        LVStyle := TListViewDisplayStyle(ReadInteger('GENERAL',
+          'ListViewMode', 0));
+
         appMaximized := ReadBool('GENERAL', 'Maximized', false);
         AutoCheckForUpdates := ReadBool('GENERAL',
           'AutoCheckForUpdates', false);
@@ -3444,6 +3896,16 @@ begin
           WriteInteger('GENERAL', 'WindowHeight', appHeight);
           WriteInteger('GENERAL', 'WindowWidth', appWidth);
           WriteInteger('GENERAL', 'FontSize', fontSize);
+
+          case LVStyle of
+            LVDS_Simple:
+              WriteInteger('GENERAL', 'ListViewMode', 0);
+            LVDS_Thumbnail:
+              WriteInteger('GENERAL', 'ListViewMode', 1);
+            LVDS_Icon:
+              WriteInteger('GENERAL', 'ListViewMode', 2);
+          end;
+
           WriteBool('GENERAL', 'Maximized', appMaximized);
           WriteBool('GENERAL', 'AutoCheckForUpdates', AutoCheckForUpdates);
         end;
@@ -3595,6 +4057,8 @@ begin
   cbWorkshopDMStatus.Items[1] := 'Ativado';
   cbStatusWeb.Items[0] := 'Desativado';
   cbStatusWeb.Items[1] := 'Ativado';
+  cbbRedirectEnabled.Items[0] := 'Desativado';
+  cbbRedirectEnabled.Items[1] := 'Ativado';
   tsExtra.Caption := 'Opções';
   btnCheckForUpdate.Caption := 'Versão atual';
   btnCleanDownloadCache.Caption := 'Limpar chache de download';
@@ -3618,24 +4082,27 @@ begin
     'Apenas monstrar itens que estão no arquivo configuração';
   chkAutoCheckForUpdates.Caption :=
     'Verificar automaticamente por atualizações';
-  chkAutoCheckForUpdates.Hint :=
+  chkAutoCheckForUpdates.hint :=
     'Verificar automaticamente se há atualizações disponíveis para' + #13 +
     ' a ferramenta no repositório oficial do KF2ServerTool';
-  chkOnlyFromConfigItems.Hint :=
+  chkOnlyFromConfigItems.hint :=
     'Ative esta opção para ver apenas itens que estão no PCServer-KFGame e no PCServer-KFEngine.'
     + #13 + 'A pasta cache e maps serão ignorados. Isso é útil quando você tem vários servidores'
     + #13 + 'com várias configurações e não quer ver mapas de outro servidor na ferramenta.';
 
-  chkAutoLoginAdmin.Hint :=
+  chkAutoLoginAdmin.hint :=
     'Habilitar esta opção fará com que o WebAdmin efetue login automaticamente usando o nome de usuário'
     + #13 + ' do "Admin" e a senha especificada. Esta opção só entra em vigor se a conexão automática ao webadmin'
     + #13 + 'estiver ativada na aba server.';
 
   lblAllChangesWillbe.Caption :=
     'Todas alterações serão salvas automaticamente';
+  cbbListViewDisplayStyle.Items[0] := 'Lista simples';
+  cbbListViewDisplayStyle.Items[1] := 'Miniaturas';
+  cbbListViewDisplayStyle.Items[2] := 'Ícones';
 end;
 
-procedure TFormMain.trckbrFontSizeChange(Sender: TObject);
+procedure TFormMain.RealignUIItems(Sender: TObject);
 begin
   fontSize := trckbrFontSize.Position;
   Self.Font.Size := fontSize;
@@ -3666,7 +4133,7 @@ end;
 procedure TFormMain.alignControlAtoControlB(elementA, elementB: TControl);
 begin
   try
-    elementA.Top := elementB.Top + Round(elementB.Height / 2) -
+    elementA.top := elementB.top + Round(elementB.Height / 2) -
       Round(elementA.Height / 2);
 
     elementA.Left := elementB.Left + elementB.Width + 5;
