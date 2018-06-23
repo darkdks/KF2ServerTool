@@ -205,6 +205,9 @@ end;
 function TKFWorkshop.GetMapName(MapFolder: string; withExt: boolean): string;
 var
   mapsFound: TStringList;
+var
+  I: integer;
+  mainKFMFile: String;
 begin
   Result := '';
   try
@@ -213,10 +216,24 @@ begin
     try
       if mapsFound.Count > 0 then
       begin
-        if withExt then
+        // Get main kfm file
+        for I := 0 to mapsFound.Count - 1 do
+        begin
+          if Pos('KF-', UpperCase(mapsFound[i])) > 1 then
+          begin
+            if withExt then
+              mainKFMFile := ExtractFileName(mapsFound.Strings[I])
+            else
+              mainKFMFile := TPath.GetFileNameWithoutExtension
+                (mapsFound.Strings[I]);
+          end;
+
+        end;
+        if mainKFMFile = '' then
           Result := ExtractFileName(mapsFound.Strings[0])
         else
-          Result := TPath.GetFileNameWithoutExtension(mapsFound.Strings[0]);
+          Result := mainKFMFile;
+
       end;
 
     finally
@@ -234,10 +251,10 @@ var
   httpres: IHTTPResponse;
   imgURL: String;
   htmlContent: String;
-  posBeginTagImg: Integer;
-  posEndTagImg: Integer;
+  posBeginTagImg: integer;
+  posEndTagImg: integer;
   imgTags: array [0 .. 2] of String;
-  imgTagIdx: Integer;
+  imgTagIdx: integer;
 begin
 
   httpRq := TNetHTTPClient.Create(nil);
@@ -284,7 +301,7 @@ end;
 function TKFWorkshop.GetItemType(itemFolder: string): TKFItemType;
 var
   ItemsFound: TStringList;
-  i: Integer;
+  I: integer;
   ext: string;
 begin
   Result := KFUnknowed;
@@ -293,10 +310,10 @@ begin
     ItemsFound := GetAllFilesSubDirectory(itemFolder, '*.*');
     try
 
-      for i := 0 to ItemsFound.Count - 1 do
+      for I := 0 to ItemsFound.Count - 1 do
       begin
 
-        ext := UpperCase(ExtractFileExt(ItemsFound[i]));
+        ext := UpperCase(ExtractFileExt(ItemsFound[I]));
         if MatchStr(ext, KF_MODPREFIX) then
         begin
 
@@ -328,7 +345,7 @@ function TKFWorkshop.RemoveAcfReference(ID: string; removeAll: boolean)
   : boolean;
 var
   acfFile: TStringList;
-  i: Integer;
+  I: integer;
   rmvSubSection: boolean;
 begin
 
@@ -338,23 +355,23 @@ begin
     if FileExists(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME) then
     begin
       acfFile.LoadFromFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
-      i := 0;
+      I := 0;
 
-      while i <= acfFile.Count - 1 do
+      while I <= acfFile.Count - 1 do
       begin
         // If is the entry
-        if Pos('"' + ID + '"', acfFile[i]) > 0 then
+        if Pos('"' + ID + '"', acfFile[I]) > 0 then
         begin
           // Delete "ID"
-          acfFile.Delete(i);
+          acfFile.Delete(I);
           // Delete while if there is {
-          rmvSubSection := (Pos('{', acfFile[i]) > 0);
+          rmvSubSection := (Pos('{', acfFile[I]) > 0);
           while rmvSubSection do
           begin
-            acfFile.Delete(i);
-            if (Pos('}', acfFile[i]) > 0) then
+            acfFile.Delete(I);
+            if (Pos('}', acfFile[I]) > 0) then
             begin
-              acfFile.Delete(i);
+              acfFile.Delete(I);
               Break;
             end;
           end;
@@ -364,7 +381,7 @@ begin
         end
         else
         begin;
-          i := i + 1;
+          I := I + 1;
         end;
       end;
       acfFile.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);

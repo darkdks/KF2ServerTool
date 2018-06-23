@@ -125,8 +125,11 @@ type
 
   const
 
-    SERVERTOOLVERSION = '1.2.6';
+    SERVERTOOLVERSION = '1.2.7';
     {
+     CHANGE LOG VERSION 1.2.7 For Gui and CMD version
+     - Process to identify the improved map file to avoid errors with workshop items that have more than one .kfm
+    ----------------------------------------------------
  CHANGE LOG VERSION 1.2.6 For Gui and CMD version
 
 

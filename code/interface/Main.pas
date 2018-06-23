@@ -18,7 +18,8 @@ uses
   downloaderTool,
   System.Net.HttpClient, Registry,
   System.Types, KFRedirect, KFTypes, Jpeg, JvExForms, JvCustomItemViewer,
-  JvImageListViewer, TypInfo, IOUtils, JvComponentBase, JvBalloonHint, CommCtrl;
+  JvImageListViewer, TypInfo, IOUtils, JvComponentBase, JvBalloonHint, CommCtrl,
+  JvExExtCtrls, JvExtComponent, JvPanel, JvgGroupBox;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -173,6 +174,8 @@ type
     Label1: TLabel;
     btnSvIntegrityBeta: TButton;
     mniRedownloadThumbnail: TMenuItem;
+    pb1: TPaintBox;
+    btn8: TButton;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -254,6 +257,7 @@ type
     procedure lvMapsDblClick(Sender: TObject);
     procedure lvMapsInfoTip(Sender: TObject; Item: TListItem;
       var InfoTip: string);
+    procedure btn8Click(Sender: TObject);
 
   private
     function loadConfig: Boolean;
@@ -624,6 +628,13 @@ begin
   frmRedirect := TfrmRedirectItemsDialog.Create(Self);
   frmRedirect.ShowModal;
   frmRedirect.Free;
+
+end;
+
+procedure TFormMain.btn8Click(Sender: TObject);
+
+begin
+ShowMessage(serverTool.GetMapName(edtDebugID.Text))
 
 end;
 
@@ -1149,7 +1160,7 @@ begin
                   break;
 
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
-                  IntToStr(High(selectedItems)) + ' Installing item ' + itemID);
+                  IntToStr(High(selectedItems) +1) + ' Installing item ' + itemID);
                 if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
                   frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
@@ -1461,8 +1472,23 @@ begin
 end;
 
 procedure TFormMain.cbbMapChange(Sender: TObject);
+var
+  itemImgIdx: String;
+  BmpIMG: TBitmap;
 begin
   kfprofiles[defaultProfile].DefaultMap := cbbMap.Items[cbbMap.ItemIndex];
+ // Exit;
+  {
+  itemImgIdx := imgListIDIndex.ValueFromIndex
+    [(imgListIDIndex.IndexOfName(UpperCase(cbbMap.Text)))];
+  if itemImgIdx = '' then
+    Exit;
+
+  BmpIMG := TBitmap.Create;
+  imgListItems.GetBitmap(StrToInt(itemImgIdx), BmpIMG);
+  ResizeBitmap(BmpIMG, pb1.Width, pb1.Height);
+  pb1.Canvas.Draw(0, 0, BmpIMG);
+  }
 end;
 
 procedure TFormMain.cbbProfileChange(Sender: TObject);
