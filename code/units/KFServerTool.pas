@@ -125,7 +125,7 @@ type
 
   const
 
-    SERVERTOOLVERSION = '1.2.7';
+    SERVERTOOLVERSION = '1.2.8';
     {
  CHANGE LOG VERSION 1.2.8 For Gui
 
