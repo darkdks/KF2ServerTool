@@ -1,7 +1,7 @@
 ---
 ---
 
-$header-heading-color: #fff;
+$header-heading-color: #ffffffb5;
 $header-bg-color: #000000; 
 $header-bg-color-secondary: #6f0000; 
 $section-headings-color: #fff;
@@ -35,10 +35,12 @@ body {
   background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(45,1,6,1) 50%, rgba(0,0,0,1) 100%);
   color: #b7b7b7;*/
    background-color: #000;
+  color: #d6d6d6;
+ 
 }
 
 .main-content h2 {
     font-weight: bold;
-    color: #fff;
+    color: #496d73;
     background-color: black;
 }
