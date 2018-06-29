@@ -6,20 +6,19 @@ uses
   Forms, Windows, SysUtils, Classes, Graphics, Controls,
   Dialogs, ComCtrls, JvComCtrls, StdCtrls,
   Menus,
-  JvSpeedButton, IniFiles, KFServerTool,
+  IniFiles, KFServerTool,
   MiscFunc, ExtCtrls, Buttons, ShellAPI, frmDnt, Workshop, Clipbrd,
-  JvgImage,
-  KFWksp, JvColorButton,
+
+  KFWksp,
   JvCombobox, JvEdit, IdBaseComponent,
   IdTCPClient, ImgList, OleCtrls,
   MSHTML, Variants, SHDocVw,
-  ItemProgress, System.ImageList, JvExControls, JvColorBox,
-  JvExStdCtrls, JvExComCtrls, Vcl.Themes, GitAutoUpdate, System.uitypes,
+  ItemProgress,
+  Vcl.Themes, GitAutoUpdate, System.uitypes,
   downloaderTool,
-  System.Net.HttpClient, Registry,
-  System.Types, KFRedirect, KFTypes, Jpeg, JvExForms, JvCustomItemViewer,
-  JvImageListViewer, TypInfo, IOUtils, JvComponentBase, JvBalloonHint, CommCtrl,
-  JvExExtCtrls, JvExtComponent, JvPanel, JvgGroupBox;
+  Registry,
+  System.Types, KFTypes, Jpeg,
+  TypInfo, IOUtils, CommCtrl, System.ImageList, JvExStdCtrls, JvExComCtrls;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -116,17 +115,8 @@ type
     lblLanguage: TLabel;
     cbbLanguage: TJvComboBox;
     tsDebug: TTabSheet;
-    btn1: TButton;
-    btn2: TButton;
-    edtDebugID: TEdit;
-    edtDebugItemName: TEdit;
-    lbl4: TLabel;
-    lbl8: TLabel;
-    btn3: TButton;
-    btn4: TButton;
     lblUpdate: TLabel;
     chkOnlyFromConfigItems: TCheckBox;
-    btn5: TButton;
     Redirect1: TMenuItem;
     ManualEntry1: TMenuItem;
     pnl7: TPanel;
@@ -160,22 +150,18 @@ type
     lblSearch: TLabel;
     edtSearch: TEdit;
     lvMaps: TListView;
-    btn6: TButton;
     imgListItems: TImageList;
-    btn7: TButton;
     cbbListViewDisplayStyle: TJvComboBox;
     lbl2: TLabel;
     Image1: TImage;
     ilOfficialMaps: TImageList;
-    mmoDebug: TMemo;
     ilMiscImgs: TImageList;
-    jvmglstvwr1: TJvImageListViewer;
     btnSvIntegrityCurrent: TButton;
     Label1: TLabel;
     btnSvIntegrityBeta: TButton;
     mniRedownloadThumbnail: TMenuItem;
     pb1: TPaintBox;
-    btn8: TButton;
+    ilLVGroups: TImageList;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -227,14 +213,9 @@ type
       State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure cbbGameModeChange(Sender: TObject);
     procedure cbbLanguageChange(Sender: TObject);
-    procedure btn1Click(Sender: TObject);
-    procedure btn2Click(Sender: TObject);
-    procedure btn3Click(Sender: TObject);
-    procedure btn4Click(Sender: TObject);
     procedure checkForUpdates(Sender: TObject);
     procedure lostFocusSave(Sender: TObject);
     procedure chkOnlyFromConfigItemsClick(Sender: TObject);
-    procedure btn5Click(Sender: TObject);
     procedure edtRedirectURLExit(Sender: TObject);
     procedure cbbRedirectEnabledCloseUp(Sender: TObject);
     procedure FromRedirect1Click(Sender: TObject);
@@ -257,7 +238,7 @@ type
     procedure lvMapsDblClick(Sender: TObject);
     procedure lvMapsInfoTip(Sender: TObject; Item: TListItem;
       var InfoTip: string);
-    procedure btn8Click(Sender: TObject);
+    procedure GenerateGroupTitleImages(Sender: TObject);
 
   private
     function loadConfig: Boolean;
@@ -319,7 +300,7 @@ var
 implementation
 
 uses
-  AddItem, PathDialog, Queue, uRedirectItemsDialog;
+  AddItem, PathDialog, Queue;
 {$R *.dfm}
 
 procedure TFormMain.AddWorkshopClick(Sender: TObject);
@@ -601,40 +582,93 @@ begin
 
 end;
 
-procedure TFormMain.btn1Click(Sender: TObject);
-begin
-  serverTool.AddWorkshopSubcribe(edtDebugID.Text);
-end;
-
-procedure TFormMain.btn2Click(Sender: TObject);
-begin
-  serverTool.DownloadWorkshopItem(edtDebugID.Text);
-end;
-
-procedure TFormMain.btn3Click(Sender: TObject);
-begin
-  serverTool.addMapCycle(edtDebugItemName.Text);
-end;
-
-procedure TFormMain.btn4Click(Sender: TObject);
-begin
-  serverTool.addMapENtry(edtDebugItemName.Text);
-end;
-
-procedure TFormMain.btn5Click(Sender: TObject);
+procedure TFormMain.GenerateGroupTitleImages(Sender: TObject);
 var
-  frmRedirect: TfrmRedirectItemsDialog;
+
+  Bmp: TBitmap;
+  i: Integer;
 begin
-  frmRedirect := TfrmRedirectItemsDialog.Create(Self);
-  frmRedirect.ShowModal;
-  frmRedirect.Free;
+  ilLVGroups.Clear;
+  for i := 0 to 6 do
+  begin
 
-end;
+    Bmp := TBitmap.Create();
+    Bmp.Canvas.Brush.Color := StyleServices.GetStyleColor(scListView);;
+    Bmp.Width := ilLVGroups.Width;
+    Bmp.Height := ilLVGroups.Height;
+    Bmp.Transparent := True;
+    Bmp.TransparentColor := StyleServices.GetStyleColor(scListView);;
+    try
+      with Bmp.Canvas do
+      begin
+        Font.Color := StyleServices.GetStyleFontColor(sfCaptionTextNormal);
+        Brush.Style := bsClear;
+        Font.Size := 14;
+        case i of
+          0:
+            begin
+              Font.Color := StyleServices.GetStyleColor(scButtonHot);
+              TextOut(2, 2, 'Steam Workshop');
+              Font.Color := StyleServices.GetStyleFontColor
+                (sfCaptionTextNormal);
+              TextOut(3, 3, 'Steam Workshop');
+            end;
+          1:
+            begin
+              Font.Color := StyleServices.GetStyleColor(scButtonHot);
+              TextOut(2, 2, 'Official');
+              Font.Color := StyleServices.GetStyleFontColor
+                (sfCaptionTextNormal);
+              TextOut(3, 3, 'Official');
+            end;
+          2:
+            begin
+              Font.Color := StyleServices.GetStyleColor(scButtonHot);
+              TextOut(2, 2, 'Oficial');
+              Font.Color := StyleServices.GetStyleFontColor
+                (sfCaptionTextNormal);
+              TextOut(3, 3, 'Oficial');
+            end;
+          3:
+            begin
+              Font.Color := StyleServices.GetStyleColor(scButtonHot);
+              TextOut(2, 2, 'Local or redirect');
+              Font.Color := StyleServices.GetStyleFontColor
+                (sfCaptionTextNormal);
+              TextOut(3, 3, 'Local or redirect');
+            end;
+          4:
+            begin
+              Font.Color := StyleServices.GetStyleColor(scButtonHot);
+              TextOut(2, 2, 'Local ou redirect');
+              Font.Color := StyleServices.GetStyleFontColor
+                (sfCaptionTextNormal);
+              TextOut(3, 3, 'Local ou redirect');
+            end;
+          5:
+            begin
+              Font.Color := StyleServices.GetStyleColor(scButtonHot);
+              TextOut(2, 2, 'Incomplete');
+              Font.Color := StyleServices.GetStyleFontColor
+                (sfCaptionTextNormal);
+              TextOut(3, 3, 'Incomplete');
+            end;
+          6:
+            begin
+              Font.Color := StyleServices.GetStyleColor(scButtonHot);
+              TextOut(2, 2, 'Incompleto');
+              Font.Color := StyleServices.GetStyleFontColor
+                (sfCaptionTextNormal);
+              TextOut(3, 3, 'Incompleto');
+            end;
+        end;
 
-procedure TFormMain.btn8Click(Sender: TObject);
-
-begin
-ShowMessage(serverTool.GetMapName(edtDebugID.Text))
+      end;
+      ilLVGroups.Add(Bmp, nil);
+    finally
+      Bmp.Free
+    end;
+  end;
 
 end;
 
@@ -776,7 +810,7 @@ begin
     finally
       FreeAndNil(BmpIMG);
     end;
-    mmoDebug.Text := imgListIDIndex.Text;
+
   except
     on E: Exception do
       serverTool.LogEvent('imgCacheLoad', 'Error: ' + E.Message);
@@ -1160,7 +1194,8 @@ begin
                   break;
 
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
-                  IntToStr(High(selectedItems) +1) + ' Installing item ' + itemID);
+                  IntToStr(High(selectedItems) + 1) + ' Installing item '
+                  + itemID);
                 if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
                   frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
@@ -1472,22 +1507,23 @@ begin
 end;
 
 procedure TFormMain.cbbMapChange(Sender: TObject);
-var
+{var
   itemImgIdx: String;
   BmpIMG: TBitmap;
+}
 begin
   kfprofiles[defaultProfile].DefaultMap := cbbMap.Items[cbbMap.ItemIndex];
- // Exit;
+  // Exit;
   {
-  itemImgIdx := imgListIDIndex.ValueFromIndex
+    itemImgIdx := imgListIDIndex.ValueFromIndex
     [(imgListIDIndex.IndexOfName(UpperCase(cbbMap.Text)))];
-  if itemImgIdx = '' then
+    if itemImgIdx = '' then
     Exit;
 
-  BmpIMG := TBitmap.Create;
-  imgListItems.GetBitmap(StrToInt(itemImgIdx), BmpIMG);
-  ResizeBitmap(BmpIMG, pb1.Width, pb1.Height);
-  pb1.Canvas.Draw(0, 0, BmpIMG);
+    BmpIMG := TBitmap.Create;
+    imgListItems.GetBitmap(StrToInt(itemImgIdx), BmpIMG);
+    ResizeBitmap(BmpIMG, pb1.Width, pb1.Height);
+    pb1.Canvas.Draw(0, 0, BmpIMG);
   }
 end;
 
@@ -1529,6 +1565,7 @@ begin
   if Assigned(TStyleManager.ActiveStyle) then
   begin
     TStyleManager.TrySetStyle(fdefaultStyleName);
+    GenerateGroupTitleImages(nil);
     // whatever was in the project settings.
   end;
 end;
@@ -1931,7 +1968,7 @@ begin
           case LVStyle of
             LVDS_Simple:
               begin
-                Item.ImageIndex := 3;
+                Item.ImageIndex := 5;
               end;
             LVDS_Thumbnail, LVDS_Icon:
               begin
@@ -2725,13 +2762,35 @@ begin
   Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
   LoadServerProfile();
   imgListIDIndex := TStringList.Create;
+  // Language
+
+  if appLanguage = 'EG' then
+  begin
+    cbbLanguage.ItemIndex := 0;
+    lvMaps.Groups[0].TitleImage := 0;
+    lvMaps.Groups[1].TitleImage := 1;
+    lvMaps.Groups[2].TitleImage := 3;
+    lvMaps.Groups[3].TitleImage := 5;
+    lvMods.Groups[0].TitleImage := 0;
+    lvMods.Groups[1].TitleImage := 1;
+    lvMods.Groups[2].TitleImage := 3;
+    lvMods.Groups[3].TitleImage := 5;
+  end
+  else
+  begin
+    cbbLanguage.ItemIndex := 1;
+    lvMaps.Groups[0].TitleImage := 0;
+    lvMaps.Groups[1].TitleImage := 2;
+    lvMaps.Groups[2].TitleImage := 4;
+    lvMaps.Groups[3].TitleImage := 6;
+    lvMods.Groups[0].TitleImage := 0;
+    lvMods.Groups[1].TitleImage := 2;
+    lvMods.Groups[2].TitleImage := 4;
+    lvMods.Groups[3].TitleImage := 6;
+
+  end;
 
   LoadItensToLv('');
-  // Language
-  if appLanguage = 'EG' then
-    cbbLanguage.ItemIndex := 0
-  else
-    cbbLanguage.ItemIndex := 1;
 
   if appLanguage = 'BR' then
     TranslateToBR;
@@ -2849,6 +2908,8 @@ begin
   // Fix webbrowser compabillity
   InstallRegBrowserKey();
   RealignUIItems(nil);
+  // Generate group images title by theme colors
+  GenerateGroupTitleImages(nil);
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
@@ -4103,7 +4164,7 @@ begin
   Explorerlocalfolder1.Caption := 'Abrir a pasta do item';
   lblWebPass.Caption := 'Senha do Web admin:';
   chkAutoLoginAdmin.Caption :=
-    'Auto logar no web admin usando a senha especificada';
+    'Auto logar no web admin';
   chkOnlyFromConfigItems.Caption :=
     'Apenas monstrar itens que estão no arquivo configuração';
   chkAutoCheckForUpdates.Caption :=

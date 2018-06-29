@@ -37,9 +37,6 @@ Coordinates=529,614,57,58
 [edtGmPass]
 Coordinates=1175,478,81,58
 
-[lbl8]
-Coordinates=10,614,49,58
-
 [lblDifficulty]
 Coordinates=10,478,77,58
 
@@ -48,9 +45,6 @@ Coordinates=1070,478,95,58
 
 [cbbGameMode]
 Coordinates=499,10,102,124
-
-[lbl4]
-Coordinates=288,478,49,58
 
 [lblRedirectURL]
 Coordinates=991,342,101,58
@@ -130,9 +124,6 @@ Coordinates=329,1012,56,36
 [MapCycle1]
 Coordinates=240,1012,79,36
 
-[btn1]
-Coordinates=352,614,49,58
-
 [tsUnknowed]
 Coordinates=627,682,85,36
 
@@ -150,9 +141,6 @@ Coordinates=445,682,106,36
 
 [btnDeleteProfile]
 Coordinates=170,614,107,58
-
-[edtDebugID]
-Coordinates=738,342,83,58
 
 [lvMods]
 Coordinates=262,10,116,278
@@ -178,9 +166,6 @@ Coordinates=1285,410,82,58
 [lblFontSize]
 Coordinates=139,410,79,58
 
-[btn6]
-Coordinates=672,546,49,58
-
 [tswebadmin]
 Coordinates=220,682,83,36
 
@@ -190,14 +175,8 @@ Coordinates=289,342,118,58
 [Reinstall1]
 Coordinates=1257,331,71,36
 
-[edtDebugItemName]
-Coordinates=1350,478,129,58
-
 [btnCheckForPreview]
 Coordinates=754,410,134,58
-
-[btn4]
-Coordinates=932,342,49,58
 
 [btnRemove]
 Coordinates=69,546,80,58
@@ -207,9 +186,6 @@ Coordinates=228,410,95,58
 
 [Export1]
 Coordinates=1257,386,59,36
-
-[btn3]
-Coordinates=229,478,49,58
 
 [lvMaps]
 Coordinates=10,10,116,322
@@ -344,9 +320,6 @@ Coordinates=426,1086,85,36
 [lblCredits]
 Coordinates=1078,546,69,58
 
-[btn2]
-Coordinates=411,614,49,58
-
 [Browserworkshop1]
 Coordinates=297,1086,124,36
 
@@ -377,9 +350,6 @@ Coordinates=445,478,49,58
 [lblSearch]
 Coordinates=992,478,68,58
 
-[btn5]
-Coordinates=277,546,49,58
-
 [lblProfile]
 Coordinates=898,410,65,58
 
@@ -401,9 +371,6 @@ Coordinates=504,478,69,58
 [ManualEntry1]
 Coordinates=21,1086,94,36
 
-[btn7]
-Coordinates=1226,410,49,58
-
 [btnUpdate]
 Coordinates=1266,478,74,58
 
@@ -417,7 +384,7 @@ Coordinates=1453,221,71,36
 Coordinates=944,10,57,58
 
 []
-Coordinates=78,682,82,36
+Coordinates=352,614,49,58
 
 [ilSmallIcons]
 Coordinates=1257,826,40,36

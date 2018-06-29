@@ -4,7 +4,7 @@
     </PropertyGroup>
     <ItemGroup>
         <Projects Include="KF2ServerTool.dproj">
-            <Dependencies/>
+            <Dependencies>KF2ServerToolCMD.dproj</Dependencies>
         </Projects>
         <Projects Include="KF2ServerToolCMD.dproj">
             <Dependencies/>
@@ -17,13 +17,13 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="KF2ServerTool">
+    <Target Name="KF2ServerTool" DependsOnTargets="KF2ServerToolCMD">
         <MSBuild Projects="KF2ServerTool.dproj"/>
     </Target>
-    <Target Name="KF2ServerTool:Clean">
+    <Target Name="KF2ServerTool:Clean" DependsOnTargets="KF2ServerToolCMD:Clean">
         <MSBuild Projects="KF2ServerTool.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="KF2ServerTool:Make">
+    <Target Name="KF2ServerTool:Make" DependsOnTargets="KF2ServerToolCMD:Make">
         <MSBuild Projects="KF2ServerTool.dproj" Targets="Make"/>
     </Target>
     <Target Name="KF2ServerToolCMD">
