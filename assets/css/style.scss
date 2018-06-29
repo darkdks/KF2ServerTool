@@ -14,7 +14,7 @@ $section-headings-color: #fff;
   background-color: $header-bg-color;
   background-size: 100%;
   background-position-y: -311px;
-  background-image: url("https://github.com/darkdks/KF2ServerTool/blob/master/imgs/background_gitpage.jpg?raw=true");
+  background-image: url("https://vignette.wikia.nocookie.net/steamtradingcards/images/7/78/Killing_Floor_2_Background_Perks.jpg/revision/latest?cb=20151209060730");
 /*linear-gradient(120deg, $header-bg-color-secondary, $header-bg-color);*/
 
   @include large {
@@ -31,9 +31,10 @@ $section-headings-color: #fff;
 }
 body {
   
-  /*  background: radial-gradient(#000, #270000, #000000);*/
+  /*  background: radial-gradient(#000, #270000, #000000);
   background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(45,1,6,1) 50%, rgba(0,0,0,1) 100%);
-  color: #b7b7b7;
+  color: #b7b7b7;*/
+   background-color: #000;
 }
 
 .main-content h2 {
