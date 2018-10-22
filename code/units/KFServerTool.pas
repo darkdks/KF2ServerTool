@@ -135,9 +135,9 @@ type
     {
 
       CHANGE LOG VERSION 1.2.9 For Gui and cmd
-      - New map as official
-      - Map cycle group option and separators in app and in server
-      - Beta Server Update command updated
+		Added new map from update as official
+		Added map cycle group and separator option
+		Beta Server Update command updated
 
       CHANGE LOG VERSION 1.2.8 For Gui
 
