@@ -12,10 +12,11 @@ type
   TKFAppLanguage = (KFL_ENGLISH, KFL_PORTUGUESE);
   TKFItemType = (KFMap, KFmod, KFUnknowed);
   TKFRedirectItemType = (KFRmod, KFRmap, KFRAny);
-
+  TKFCycleSort = (KFCSortByName, KFCSortByType, KFCKeepSame);
+  function IsOfficialMap(mapName: String): Boolean;
 const
 KF_OFFICIALMAPS:
-array [0 .. 21, 0 .. 1]{filename/ImgIdx} of string = (('KF-Airship.kfm','0'), ('KF-BioticsLab.kfm', '1'),
+array [0 .. 22, 0 .. 1]{filename/ImgIdx} of string = (('KF-Airship.kfm','0'), ('KF-BioticsLab.kfm', '1'),
   ('KF-BlackForest.kfm', '2'), ('KF-BurningParis.kfm', '3'),
   ('KF-Catacombs.kfm', '4'), ('KF-ContainmentStation.kfm','5'), ('KF-DieSector.kfm','6'),
   ('KF-EvacuationPoint.kfm','7'), ('KF-Farmhouse.kfm', '8'),
@@ -23,7 +24,7 @@ array [0 .. 21, 0 .. 1]{filename/ImgIdx} of string = (('KF-Airship.kfm','0'), ('
   ('KF-KrampusLair.kfm','11'), ('KF-Nightmare.kfm','12'), ('KF-Nuked.kfm',
   '13'), ('KF-Outpost.kfm', '14'), ('KF-PowerCore_Holdout.kfm', '15'),
   ('KF-Prison.kfm', '16'), ('KF-TheDescent.kfm', '17'), ('KF-TragicKingdom.kfm',
-  '18'), ('KF-VolterManor.kfm', '19'), ('KF-ZedLanding.kfm', '20'), ('KF-Lockdown.kfm', '21'));
+  '18'), ('KF-VolterManor.kfm', '19'), ('KF-ZedLanding.kfm', '20'), ('KF-Lockdown.kfm', '21'), ('KF-MonsterBall.kfm', '22'));
 
   ARRAYTEST: array [0 .. 2, 0 .. 1] of string = (('teste', '0'), ('teste1',
   '1'), ('teste2', '2'));
@@ -46,6 +47,8 @@ array [0 .. 21, 0 .. 1]{filename/ImgIdx} of string = (('KF-Airship.kfm','0'), ('
   KF_IGNOREMAPSENTRYS: array [1 .. 2] of string = ('KF-DebugItem',
   'KF-Default'); KF_MAPPREFIX = '.KFM';
   KF_MODPREFIX: array [0 .. 3] of string = ('.U', '.UPX', '.UC', '.UPK');
+  KF_CYCLE_OFFICIAL_SEPARATOR =   '----- Official -----';
+  KF_CYCLE_CUSTOM_SEPARATOR =    '------ Custom ------';
 
   // Workshop files paths and names
   WKP_ACFFILENAME = 'appworkshop_232090.acf';
@@ -67,5 +70,20 @@ array [0 .. 21, 0 .. 1]{filename/ImgIdx} of string = (('KF-Airship.kfm','0'), ('
   PathDelim; KF_SERVERCACHEFOLDER = 'KFGame' + PathDelim + 'Cache' + PathDelim;
 
   implementation
+function IsOfficialMap(mapName: String): Boolean;
+var
+  I: Integer;
+begin
+  result := False;
+  if ExtractFileExt(mapName) = '' then mapName := mapName + '.kfm';
 
+  for I := 0 to High(KF_OFFICIALMAPS) do
+  begin
+    if UpperCase(mapName) = UpperCase(KF_OFFICIALMAPS[I, 0]) then
+    begin
+      result := true;
+      Break;
+    end;
+  end;
+end;
 end.

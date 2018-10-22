@@ -56,6 +56,8 @@ type
     SteamCmdPath: string;
     GenerateLog: Boolean;
     FverboseMod: Boolean;
+    CycleSortType: TKFCycleSort;
+    CycleSortSeparators: Boolean;
     appLanguage: TKFAppLanguage;
     function GetIDIndex(ID: string): Integer;
     function GetModName(files: TStringList): string;
@@ -63,12 +65,14 @@ type
     function IsIgnoredFile(FileName: String): Boolean;
     function DownloadWorkshopItemImage(ID: String): Boolean;
 
+
   public
   var
     Items: array of TKFItem;
     constructor Create;
     destructor Destroy; override;
-    function AddMapCycle(name: String): Boolean;
+    function AddMapCycle(name: String; sortType: TKFCycleSort;
+      separators: Boolean): Boolean;
     function AddMapEntry(name: String): Boolean;
     function AddWorkshopSubcribe(ID: String): Boolean;
     function CreateBlankACFFile: Boolean;
@@ -93,7 +97,6 @@ type
     function GetWebStatus(): Boolean;
     function GetKFServerPathEXE: string;
     function InstallWorkshopManager: Boolean;
-    function IsOfficialMap(mapName: String): Boolean;
     function IsWorkshopManagerInstalled: Boolean;
     function LoadItems(): Boolean;
     function InstallWorkshopItem(ID, name: String;
@@ -115,6 +118,8 @@ type
     procedure SetKFWebIniSubPath(path: string);
     procedure SetWebPort(Port: Integer);
     procedure SetWebStatus(Status: Boolean);
+    procedure SetMapCycleOptions(groupMapsByType: Boolean;
+      includeSeparators: Boolean);
     procedure SetKFngineIniSubPath(path: string);
     procedure SetKFAppLanguage(language: TKFAppLanguage);
     function GetKFAppLanguage(): TKFAppLanguage;
@@ -122,25 +127,32 @@ type
     procedure LogEvent(eventName: String; eventDescription: String);
     function IsServerRunning: Boolean;
     property verbose: Boolean read FverboseMod write FverboseMod;
+    procedure ResortMapCycle;
 
   const
 
-    SERVERTOOLVERSION = '1.2.8';
+    SERVERTOOLVERSION = '1.2.9';
     {
- CHANGE LOG VERSION 1.2.8 For Gui
 
-     - Some user interface improvements
+      CHANGE LOG VERSION 1.2.9 For Gui and cmd
+      - New map as official
+      - Map cycle group option and separators in app and in server
+      - Beta Server Update command updated
 
+      CHANGE LOG VERSION 1.2.8 For Gui
 
- CHANGE LOG VERSION 1.2.7 For Gui and CMD version
-
-     - Process to identify the improved map file to avoid errors with workshop
-     items that have more than one .kfm
-
--------------------------------------------------------------------------------
+      - Some user interface improvements
 
 
- CHANGE LOG VERSION 1.2.6 For Gui and CMD version
+      CHANGE LOG VERSION 1.2.7 For Gui and CMD version
+
+      - Process to identify the improved map file to avoid errors with workshop
+      items that have more than one .kfm
+
+      -------------------------------------------------------------------------------
+
+
+      CHANGE LOG VERSION 1.2.6 For Gui and CMD version
 
 
 
@@ -328,7 +340,8 @@ begin
         end;
         if MapCycle then
         begin
-          AddedMapCycle := AddMapCycle(ItemName);
+          AddedMapCycle := AddMapCycle(ItemName, CycleSortType,
+            CycleSortSeparators);
           LogEvent('Add item', 'Map Cycle added ' + BoolToWord(AddedMapCycle));
         end;
       end;
@@ -439,7 +452,8 @@ begin
   end;
 end;
 
-function TKFServerTool.AddMapCycle(name: String): Boolean;
+function TKFServerTool.AddMapCycle(name: String; sortType: TKFCycleSort;
+  separators: Boolean): Boolean;
 var
   gmIni: TKFGameIni;
 begin
@@ -448,7 +462,7 @@ begin
   try
     if gmIni.LoadFile(kfApplicationPath + kfGameIniSubPath) then
     begin
-      if gmIni.AddMapCycle(Name) then
+      if gmIni.AddMapCycle(Name, sortType, separators) then
       begin
         gmIni.SaveFile(kfApplicationPath + kfGameIniSubPath);
         result := true;
@@ -585,7 +599,8 @@ begin
           if MapCycle then
           begin
             LogEvent('Install workshop item', 'Adding map cycle for ' + Name);
-            AddedMapCycle := AddMapCycle(Name);
+            AddedMapCycle := AddMapCycle(Name, CycleSortType,
+              CycleSortSeparators);
             LogEvent('Install workshop item', 'Map cycle added = ' +
               BoolToWord(AddedMapCycle));
           end;
@@ -845,14 +860,14 @@ begin
     end;
 
     // -------------------------------------------  Cycle list load
-    cycleList := gmIni.GetMapCycleList;
+    cycleList := gmIni.GetMapCycleList();
     try
       for I := 0 to cycleList.Count - 1 do
       begin
         ItemName := cycleList[I];
         //
         if (GetItemIndexByName(ItemName, true) = -1) and
-          (IsIgnoredMap(ItemName) = False) then
+          (IsIgnoredMap(ItemName) = False) and (ItemName <> KF_CYCLE_OFFICIAL_SEPARATOR) and (ItemName <> KF_CYCLE_CUSTOM_SEPARATOR) then
         begin
           aItem := TKFItem.Create;
           aItem.ID := '';
@@ -1109,11 +1124,33 @@ begin
   try
     if gmIni.LoadFile(kfApplicationPath + kfGameIniSubPath) then
     begin
-      result := gmIni.GetMapCycleList;
+      result := gmIni.GetMapCycleList();
     end
     else
     begin
       result := TStringList.Create;
+    end;
+
+  finally
+    gmIni.Free;
+  end;
+
+end;
+
+procedure TKFServerTool.ResortMapCycle();
+var
+  gmIni: TKFGameIni;
+begin
+  gmIni := TKFGameIni.Create;
+  try
+    if gmIni.LoadFile(kfApplicationPath + kfGameIniSubPath) then
+    begin
+      gmIni.SortMapCycle(CycleSortType, CycleSortSeparators);
+      gmIni.SaveFile(kfApplicationPath + kfGameIniSubPath);
+    end
+    else
+    begin
+      raise Exception.Create('Falied to load KF-Game file.');
     end;
 
   finally
@@ -1204,7 +1241,8 @@ begin
         if rmvMapCycle and gmIniLoaded then
         begin
           LogEvent('Remove item', 'Removing Map Cycle for item ' + ItemName);
-          gmIni.RemoveMapCycle(ItemName, true);
+          gmIni.RemoveMapCycle(ItemName, true, CycleSortType,
+            CycleSortSeparators);
         end;
         gmIni.SaveFile(kfApplicationPath + kfGameIniSubPath);
 
@@ -1287,21 +1325,6 @@ begin
 
   result := true;
 
-end;
-
-function TKFServerTool.IsOfficialMap(mapName: String): Boolean;
-var
-  I: Integer;
-begin
-  result := False;
-  for I := 0 to High(KF_OFFICIALMAPS) do
-  begin
-    if UpperCase(mapName) = UpperCase(KF_OFFICIALMAPS[I, 0]) then
-    begin
-      result := true;
-      Break;
-    end;
-  end;
 end;
 
 function TKFServerTool.IsIgnoredMap(mapName: String): Boolean;
@@ -1556,6 +1579,16 @@ end;
 procedure TKFServerTool.SetKFWebIniSubPath(path: string);
 begin
   kfWebIniSubPath := path;
+end;
+
+procedure TKFServerTool.SetMapCycleOptions(groupMapsByType, includeSeparators
+  : Boolean);
+begin
+  if groupMapsByType then
+    CycleSortType := KFCSortByType
+  else
+    CycleSortType := KFCSortByName;
+  CycleSortSeparators := includeSeparators;
 end;
 
 procedure TKFServerTool.SetSteamCmdPath(path: String);

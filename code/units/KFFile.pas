@@ -4,7 +4,7 @@ interface
 
 uses
   Classes,
-  SysUtils, MiscFunc, Character;
+  SysUtils, MiscFunc, Character, KFTypes;
 
 type
 
@@ -22,7 +22,7 @@ type
     function ModifyValue(newValue: String;
       EntryIndex, ItemIdex: Integer): Boolean;
     function RemoveSectionAt(index: Integer): Boolean;
-  //  function RemoveItemAt(EntryIndex, itemIndex: Integer): Boolean;
+    // function RemoveItemAt(EntryIndex, itemIndex: Integer): Boolean;
     Function AddNewSectionAt(entry: TKFEntry; index: Integer): Boolean;
     function GetCategoryIndex(category: String; getLast: Boolean): Integer;
     function GetItemIndex(name: String; index: Integer): Integer;
@@ -38,16 +38,17 @@ type
     destructor Destroy; override;
     function LoadFile(path: String): Boolean;
     function SaveFile(path: String): Boolean;
-    const
-      CMAPNAME = 'MapName';
-  CMAPASSOCIATION = 'MapAssociation';
-  CSCREENSHOTPATHNAME = 'ScreenshotPathName';
-  CDEFAULTSCREENSHOT = 'UI_MapPreview_TEX.UI_MapPreview_Placeholder';
-  CMAPTYPE = 'KFMapSummary';
-  CGAMEINFO = 'KFGame.KFGameInfo';
-  CGAMEMAPCYCLES = 'GameMapCycles';
-  CENGINEACESSCONTROL = 'Engine.AccessControl';
-  CADMINPASSWORD = 'AdminPassword';
+
+  const
+    CMAPNAME = 'MapName';
+    CMAPASSOCIATION = 'MapAssociation';
+    CSCREENSHOTPATHNAME = 'ScreenshotPathName';
+    CDEFAULTSCREENSHOT = 'UI_MapPreview_TEX.UI_MapPreview_Placeholder';
+    CMAPTYPE = 'KFMapSummary';
+    CGAMEINFO = 'KFGame.KFGameInfo';
+    CGAMEMAPCYCLES = 'GameMapCycles';
+    CENGINEACESSCONTROL = 'Engine.AccessControl';
+    CADMINPASSWORD = 'AdminPassword';
 
   end;
 
@@ -71,6 +72,9 @@ type
 
   TKFGameIni = class(TKFConfigFile)
   private
+    procedure removeMapCycleSeparators(var mapCycle: TStringList);
+    function GetCycleTextArray: String;
+    procedure SetCycleTextArray(textArray: string);
 
   public
     constructor Create;
@@ -80,17 +84,16 @@ type
     function SetAdminPass(password: String): Boolean;
     function AddMapEntry(name: String): Boolean;
     function RemoveMapEntry(name: String; removeAll: Boolean): Boolean;
-    function AddMapCycle(name: String): Boolean;
-    function RemoveMapCycle(name: String; removeAll: Boolean): Boolean;
+    function AddMapCycle(name: String; sortType: TKFCycleSort;
+      separators: Boolean): Boolean;
+    procedure SortMapCycle(sortType: TKFCycleSort; addSeparator: Boolean);
+    function RemoveMapCycle(name: String; removeAll: Boolean;sortType: TKFCycleSort; separators: Boolean): Boolean;
     function GMCTextToStrings(GMCText: string): TStringList;
     function GMCStringsToText(GMCStrings: TStringList): string;
     function GetMapEntryIndex(name: String): Integer;
     function GetMapCycleIndex(name: String): Integer;
-    function GetMapCycleList: TStringList;
+    function GetMapCycleList(): TStringList;
     function GetMapEntrysList: TStringList;
-
-
-
 
   end;
 
@@ -491,26 +494,26 @@ begin
     end;
   end;
 end;
- {
-function TKFConfigFile.RemoveItemAt(EntryIndex, itemIndex: Integer): Boolean;
-begin
+{
+  function TKFConfigFile.RemoveItemAt(EntryIndex, itemIndex: Integer): Boolean;
+  begin
   Result := true;
   try
-    if (EntryIndex > High(Entrys)) or
-      (itemIndex > Entrys[EntryIndex].items.Count - 1) then
-      raise Exception.Create('Invalid entry index or item index');
+  if (EntryIndex > High(Entrys)) or
+  (itemIndex > Entrys[EntryIndex].items.Count - 1) then
+  raise Exception.Create('Invalid entry index or item index');
 
-    Entrys[EntryIndex].items.Delete(itemIndex);
+  Entrys[EntryIndex].items.Delete(itemIndex);
 
   except
-    on e: Exception do
-    begin
-      raise Exception.Create('Falied to remove item: ' + e.Message);
-    end;
+  on e: Exception do
+  begin
+  raise Exception.Create('Falied to remove item: ' + e.Message);
+  end;
   end;
 
-end;
- }
+  end;
+}
 { TKFGameIni }
 
 constructor TKFGameIni.Create;
@@ -562,14 +565,14 @@ begin
     chrInx := chrInx + 1;
 
   end;
+
 end;
 
 function TKFGameIni.GMCStringsToText(GMCStrings: TStringList): string;
 var
   i: Integer;
-
 begin
-  GMCStrings.Sort;
+
   Result := '(Maps=(';
   for i := 0 to GMCStrings.Count - 1 do
   begin
@@ -578,9 +581,10 @@ begin
       Result := Result + ','
   end;
   Result := Result + '))';
+
 end;
 
-function TKFGameIni.RemoveMapCycle(name: String; removeAll: Boolean): Boolean;
+function TKFGameIni.RemoveMapCycle(name: String; removeAll: Boolean;sortType: TKFCycleSort; separators: Boolean): Boolean;
 var
   i, GI_index, GMC_index: Integer;
   newMapCycle, oldMapCycle: string;
@@ -589,16 +593,16 @@ begin
 
   try
 
-      GI_index := GetSectionIndex(CGAMEINFO, false);
-      GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
-      if (GI_index < 0) or (GMC_index < 0) then
-      begin
-        raise Exception.Create('Falied to remove. GameMapCycles not found.');
-        Exit;
-      end;
-      oldMapCycle := GetValue(GI_index, GMC_index);
-      mapList := GMCTextToStrings(oldMapCycle);
-      try
+    GI_index := GetSectionIndex(CGAMEINFO, false);
+    GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
+    if (GI_index < 0) or (GMC_index < 0) then
+    begin
+      raise Exception.Create('Falied to remove. GameMapCycles not found.');
+      Exit;
+    end;
+    oldMapCycle := GetValue(GI_index, GMC_index);
+    mapList := GMCTextToStrings(oldMapCycle);
+    try
       i := 0;
       while i < mapList.Count do
       begin
@@ -614,6 +618,7 @@ begin
       end;
       newMapCycle := GMCStringsToText(mapList);
       ModifyValue(newMapCycle, GI_index, GMC_index);
+      SortMapCycle(sortType, separators);
       Result := true;
     finally
       FreeAndNil(mapList);
@@ -623,33 +628,57 @@ begin
   end;
 end;
 
-function TKFGameIni.AddMapCycle(name: String): Boolean;
+function TKFGameIni.GetCycleTextArray(): String;
 var
-  newMapCycle, oldMapCycle: string;
   GI_index, GMC_index: Integer;
+begin
+  GI_index := GetSectionIndex(CGAMEINFO, false);
+  GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
+
+  if (GI_index < 0) or (GMC_index < 0) then
+  begin
+    raise Exception.Create
+      ('Falied to get mapcycle array. GameMapCycles not found.');
+    Exit;
+  end;
+  Result := GetValue(GI_index, GMC_index);
+end;
+
+procedure TKFGameIni.SetCycleTextArray(textArray: String);
+var
+  GI_index, GMC_index: Integer;
+begin
+  GI_index := GetSectionIndex(CGAMEINFO, false);
+  GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
+  if (GI_index < 0) or (GMC_index < 0) then
+  begin
+    raise Exception.Create
+      ('Falied to get mapcycle array. GameMapCycles not found.');
+    Exit;
+  end;
+  ModifyValue(textArray, GI_index, GMC_index);
+end;
+
+function TKFGameIni.AddMapCycle(name: String; sortType: TKFCycleSort;
+  separators: Boolean): Boolean;
+var
+  newMapCycle: string;
+  cycleTextArray: String;
   mapList: TStringList;
 begin
-
   try
+    cycleTextArray := GetCycleTextArray();
 
-    GI_index := GetSectionIndex(CGAMEINFO, false);
-    GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
-
-    if (GI_index < 0) or (GMC_index < 0) then
+    if Pos('"' + name + '"', cycleTextArray) > 0 then
     begin
-      raise Exception.Create('Falied to add. GameMapCycles not found.');
-      Exit;
+      RemoveMapCycle(name, true, sortType, separators);
     end;
-    if Pos('"' + name + '"', GetValue(GI_index, GMC_index)) > 0 then
-    begin
-      RemoveMapCycle(name, true);
-    end;
-    oldMapCycle := GetValue(GI_index, GMC_index);
     try
-      mapList := GMCTextToStrings(oldMapCycle);
+      mapList := GMCTextToStrings(cycleTextArray);
       mapList.Add(name);
       newMapCycle := GMCStringsToText(mapList);
-      ModifyValue(newMapCycle, GI_index, GMC_index);
+      SetCycleTextArray(newMapCycle);
+      SortMapCycle(sortType, separators);
       Result := true;
     finally
       FreeAndNil(mapList);
@@ -661,8 +690,8 @@ begin
 
     end;
   end;
-
 end;
+
 
 function TKFGameIni.GetMapCycleList(): TStringList;
 var
@@ -683,8 +712,6 @@ begin
       end;
       mapCycle := GetValue(GI_index, GMC_index);
       Result := GMCTextToStrings(mapCycle);
-      Result.Sort;
-
     finally
 
     end;
@@ -744,6 +771,77 @@ begin
 
 end;
 
+procedure TKFGameIni.SortMapCycle(sortType: TKFCycleSort;
+  addSeparator: Boolean);
+var
+  i: Integer;
+  OfficialMapsCycle, CustomMapsCycle: TStringList;
+  mapCycle: TStringList;
+  cycleText: String;
+begin
+
+  cycleText := GetCycleTextArray;
+  mapCycle := GMCTextToStrings(cycleText);
+  try
+    if Assigned(mapCycle) = false then
+      raise Exception.Create('Falied to get map cycle list');
+    case sortType of
+      KFCSortByType:
+        begin
+          OfficialMapsCycle := TStringList.Create;
+          CustomMapsCycle := TStringList.Create;
+          try
+            removeMapCycleSeparators(mapCycle);
+            for i := 0 to mapCycle.Count - 1 do
+            begin
+              if IsOfficialMap((mapCycle[i])) then
+                OfficialMapsCycle.Add(mapCycle[i])
+              else
+                CustomMapsCycle.Add(mapCycle[i]);
+            end;
+            OfficialMapsCycle.Sort;
+            CustomMapsCycle.Sort;
+            mapCycle.Clear;
+            if OfficialMapsCycle.Count > 0 then
+            begin
+              if addSeparator then
+                mapCycle.Add(KF_CYCLE_OFFICIAL_SEPARATOR);
+              mapCycle.AddStrings(OfficialMapsCycle);
+            end;
+            if CustomMapsCycle.Count > 0 then
+            begin
+              if addSeparator then
+                mapCycle.Add(KF_CYCLE_CUSTOM_SEPARATOR);
+              mapCycle.AddStrings(CustomMapsCycle);
+            end;
+          finally
+            FreeAndNil(CustomMapsCycle);
+            FreeAndNil(OfficialMapsCycle);
+          end;
+        end;
+      KFCSortByName:
+        begin
+          removeMapCycleSeparators(mapCycle);
+          mapCycle.Sort;
+        end;
+      KFCKeepSame:
+        Exit;
+    end;
+    cycleText := GMCStringsToText(mapCycle);
+    SetCycleTextArray(cycleText);
+  finally
+    FreeAndNil(mapCycle);
+  end;
+end;
+
+procedure TKFGameIni.removeMapCycleSeparators(var mapCycle: TStringList);
+begin
+  if mapCycle.IndexOf(KF_CYCLE_OFFICIAL_SEPARATOR) >= 0 then
+    mapCycle.Delete(mapCycle.IndexOf(KF_CYCLE_OFFICIAL_SEPARATOR));
+  if mapCycle.IndexOf(KF_CYCLE_CUSTOM_SEPARATOR) >= 0 then
+    mapCycle.Delete(mapCycle.IndexOf(KF_CYCLE_CUSTOM_SEPARATOR));
+end;
+
 function TKFGameIni.AddMapEntry(name: String): Boolean;
 var
   newEntry: TKFEntry;
@@ -755,13 +853,13 @@ begin
 
   newEntry := TKFEntry.Create;
   try
-  newEntry.title := '[' + name + ' ' + CMAPTYPE + ']';
-  newEntry.items.Add(CMAPNAME + '=' + name);
-  newEntry.items.Add(CMAPASSOCIATION + '=' + '0');
-  newEntry.items.Add(CSCREENSHOTPATHNAME + '=' + CDEFAULTSCREENSHOT);
-  newEntry.items.Add('');
-  Result := AddNewSectionAt(newEntry, GetCategoryIndex('KFMapSummary',
-    true) + 1);
+    newEntry.title := '[' + name + ' ' + CMAPTYPE + ']';
+    newEntry.items.Add(CMAPNAME + '=' + name);
+    newEntry.items.Add(CMAPASSOCIATION + '=' + '0');
+    newEntry.items.Add(CSCREENSHOTPATHNAME + '=' + CDEFAULTSCREENSHOT);
+    newEntry.items.Add('');
+    Result := AddNewSectionAt(newEntry, GetCategoryIndex('KFMapSummary',
+      true) + 1);
   finally
     FreeAndNil(newEntry);
   end;
@@ -781,9 +879,10 @@ begin
   try
     for i := 0 to High(Entrys) do
     begin
-    mapName := GetMapNameAt(i);
-      if mapName <> '' then begin
-         Result.Add(mapName);
+      mapName := GetMapNameAt(i);
+      if mapName <> '' then
+      begin
+        Result.Add(mapName);
       end;
     end;
   finally
@@ -826,7 +925,7 @@ var
 begin
   Result := -1;
   try
-    mapList := GetMapCycleList;
+    mapList := GetMapCycleList();
     try
       for i := 0 to mapList.Count - 1 do
       begin

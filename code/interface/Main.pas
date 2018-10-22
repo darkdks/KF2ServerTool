@@ -162,6 +162,9 @@ type
     mniRedownloadThumbnail: TMenuItem;
     pb1: TPaintBox;
     ilLVGroups: TImageList;
+    lblMapCycleOptions: TLabel;
+    chkGrouMapCycle: TCheckBox;
+    chkIncludeSepratorsMapCycle: TCheckBox;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -239,6 +242,9 @@ type
     procedure lvMapsInfoTip(Sender: TObject; Item: TListItem;
       var InfoTip: string);
     procedure GenerateGroupTitleImages(Sender: TObject);
+    procedure sortCycleChange(Sender: TObject);
+    procedure chkGrouMapCycleClick(Sender: TObject);
+    procedure chkIncludeSepratorsMapCycleClick(Sender: TObject);
 
   private
     function loadConfig: Boolean;
@@ -276,7 +282,8 @@ type
   var
     pathKFGameIni, pathKFEngineIni, pathKFWebIni, pathCmdTool, customServerPath,
       pathServerEXE: string;
-    useCustomServerPath, AutoConnectWeb, appMaximized: Boolean;
+    useCustomServerPath, AutoConnectWeb, appMaximized, GroupMapCycle,
+      GroupMapCycleSeparators: Boolean;
     onlyFromConfigItems: Boolean;
     appLanguage: string;
     appWidth: Integer;
@@ -292,6 +299,7 @@ type
     AutoCheckForUpdates: Boolean;
     imgListIDIndex: TStringList;
     LVStyle: TListViewDisplayStyle;
+    UILoaded: Boolean;
   end;
 
 var
@@ -867,7 +875,7 @@ begin
       'Are you sure?';
     dlgType := 'Update server to BETA/PREVIEW';
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
-      ' +app_update 232130 -beta preview +exit';
+      ' +app_update 232130 -beta +exit';
 
   end;
   if Sender = btnSvIntegrityBeta then
@@ -1507,24 +1515,11 @@ begin
 end;
 
 procedure TFormMain.cbbMapChange(Sender: TObject);
-{var
-  itemImgIdx: String;
-  BmpIMG: TBitmap;
-}
 begin
+  if (cbbMap.Items[cbbMap.ItemIndex] = KF_CYCLE_OFFICIAL_SEPARATOR) or
+    (cbbMap.Items[cbbMap.ItemIndex] = KF_CYCLE_CUSTOM_SEPARATOR) then
+    cbbMap.ItemIndex := -1;
   kfprofiles[defaultProfile].DefaultMap := cbbMap.Items[cbbMap.ItemIndex];
-  // Exit;
-  {
-    itemImgIdx := imgListIDIndex.ValueFromIndex
-    [(imgListIDIndex.IndexOfName(UpperCase(cbbMap.Text)))];
-    if itemImgIdx = '' then
-    Exit;
-
-    BmpIMG := TBitmap.Create;
-    imgListItems.GetBitmap(StrToInt(itemImgIdx), BmpIMG);
-    ResizeBitmap(BmpIMG, pb1.Width, pb1.Height);
-    pb1.Canvas.Draw(0, 0, BmpIMG);
-  }
 end;
 
 procedure TFormMain.cbbProfileChange(Sender: TObject);
@@ -1623,6 +1618,28 @@ end;
 procedure TFormMain.chkAutoLoginAdminClick(Sender: TObject);
 begin
   autoLoginWebAdmin := chkAutoLoginAdmin.Checked;
+end;
+
+procedure TFormMain.chkGrouMapCycleClick(Sender: TObject);
+begin
+  chkIncludeSepratorsMapCycle.Enabled := chkGrouMapCycle.Checked;
+  GroupMapCycle := chkGrouMapCycle.Checked;
+  if UILoaded then
+    sortCycleChange(Sender);
+end;
+
+procedure TFormMain.chkIncludeSepratorsMapCycleClick(Sender: TObject);
+begin
+  GroupMapCycleSeparators := chkIncludeSepratorsMapCycle.Checked;
+  if UILoaded then
+    sortCycleChange(Sender);
+end;
+
+procedure TFormMain.sortCycleChange(Sender: TObject);
+begin
+  serverTool.SetMapCycleOptions(GroupMapCycle, GroupMapCycleSeparators);
+  serverTool.ResortMapCycle();
+  LoadItensToLv(edtSearch.Text);
 end;
 
 procedure TFormMain.cbStatusWebChange(Sender: TObject);
@@ -2143,6 +2160,7 @@ begin
     // Map Cycle to combo box
 
     cbbMap.Clear;
+
     mapCycle := serverTool.GetGameCycle;
     try
       for i := 0 to mapCycle.Count - 1 do
@@ -2646,7 +2664,7 @@ var
   i: Integer;
 
 begin
-
+  UILoaded := false;
   // ---- Configname path
   ExeName := ExtractFileName(Application.ExeName);
   configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
@@ -2732,6 +2750,7 @@ begin
     serverTool.SetKFServerPathEXE(pathServerEXE);
     serverTool.SetKFWebIniSubPath(pathKFWebIni);
     serverTool.SetSteamCmdPath(serverpath + pathCmdTool);
+    serverTool.SetMapCycleOptions(GroupMapCycle, GroupMapCycleSeparators);
   except
     on E: Exception do
     begin
@@ -2760,7 +2779,7 @@ var
   customRedirect: string;
 begin
   Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
-  LoadServerProfile();
+
   imgListIDIndex := TStringList.Create;
   // Language
 
@@ -2902,6 +2921,10 @@ begin
 
   cbbTheme.ItemIndex := cbbTheme.Items.IndexOf(fdefaultStyleName);
   TStyleManager.TrySetStyle(fdefaultStyleName);
+  // Map cycle group
+  chkGrouMapCycle.Checked := GroupMapCycle;
+  chkIncludeSepratorsMapCycle.Checked := GroupMapCycleSeparators;
+  chkIncludeSepratorsMapCycle.Enabled := chkGrouMapCycle.Checked;
   // whatever was in the project settings.
   Application.HintHidePause := 15000; // 15 Sec
 
@@ -2910,6 +2933,8 @@ begin
   RealignUIItems(nil);
   // Generate group images title by theme colors
   GenerateGroupTitleImages(nil);
+  LoadServerProfile();
+  UILoaded := True;
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
@@ -2926,7 +2951,11 @@ begin
         DefaultLength := cbbLength.ItemIndex;
         DefaultPass := edtGmPass.Text;
         AdditionalParam := edtExtra.Text;
-        DefaultMap := cbbMap.Text;
+        if (cbbMap.Text <> KF_CYCLE_CUSTOM_SEPARATOR) and
+          (cbbMap.Text <> KF_CYCLE_OFFICIAL_SEPARATOR) then
+          DefaultMap := cbbMap.Text
+        else
+          DefaultMap := '';
       end;
     end;
     appWidth := Self.Width;
@@ -3256,8 +3285,10 @@ begin
     cbbLength.ItemIndex := DefaultLength;
     edtGmPass.Text := DefaultPass;
     edtExtra.Text := AdditionalParam;
-    if cbbMap.Items.IndexOf(DefaultMap) > 0 then
-      cbbMap.ItemIndex := cbbMap.Items.IndexOf(DefaultMap);
+    if (cbbMap.Items.IndexOf(DefaultMap) > 0) and
+      (DefaultMap <> KF_CYCLE_CUSTOM_SEPARATOR) and
+      (DefaultMap <> KF_CYCLE_OFFICIAL_SEPARATOR) then
+      cbbMap.ItemIndex := cbbMap.Items.IndexOf(DefaultMap) else cbbMap.ItemIndex := -1;
     cbbGameMode.ItemIndex := DefaultGameMode;
   end;
   if High(kfprofiles) < 1 then
@@ -3906,6 +3937,9 @@ begin
             DefaultGameMode := ReadInteger(section, 'DefaultGameMode', 0);
             ProfileName := ReadString(section, 'ProfileName', 'Default');
             AutoConnectWeb := ReadBool(section, 'AutoConnectWeb', false);
+            GroupMapCycle := ReadBool(section, 'GroupMapCycle', True);
+            GroupMapCycleSeparators :=
+              ReadBool(section, 'GroupMapCycleSeparators', false);
           end;
         end;
 
@@ -3975,6 +4009,9 @@ begin
             WriteString(section, 'DefaultMap', DefaultMap);
             WriteString(section, 'ProfileName', ProfileName);
             WriteBool(section, 'AutoConnectWeb', AutoConnectWeb);
+            WriteBool(section, 'GroupMapCycle', GroupMapCycle);
+            WriteBool(section, 'GroupMapCycleSeparators',
+              GroupMapCycleSeparators);
           end;
           WriteBool('GENERAL', 'OnlyShowItemsFromConfig', onlyFromConfigItems);
           WriteString('GENERAL', 'Language', appLanguage);
@@ -4163,8 +4200,7 @@ begin
   lblTheme.Caption := 'Tema:';
   Explorerlocalfolder1.Caption := 'Abrir a pasta do item';
   lblWebPass.Caption := 'Senha do Web admin:';
-  chkAutoLoginAdmin.Caption :=
-    'Auto logar no web admin';
+  chkAutoLoginAdmin.Caption := 'Auto logar no web admin';
   chkOnlyFromConfigItems.Caption :=
     'Apenas monstrar itens que estão no arquivo configuração';
   chkAutoCheckForUpdates.Caption :=
