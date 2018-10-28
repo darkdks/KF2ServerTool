@@ -672,8 +672,10 @@ begin
     if Pos('"' + name + '"', cycleTextArray) > 0 then
     begin
       RemoveMapCycle(name, true, sortType, separators);
+      cycleTextArray := GetCycleTextArray();
     end;
     try
+
       mapList := GMCTextToStrings(cycleTextArray);
       mapList.Add(name);
       newMapCycle := GMCStringsToText(mapList);

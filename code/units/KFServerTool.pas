@@ -131,8 +131,11 @@ type
 
   const
 
-    SERVERTOOLVERSION = '1.2.9';
+    SERVERTOOLVERSION = '1.3.0';
     {
+
+    CHANGE LOG VERSION 1.3.0 For Gui
+     Fixed duplicate item in map cycle when an item is reinstalled
 
       CHANGE LOG VERSION 1.2.9 For Gui and cmd
 		Added new map from update as official
