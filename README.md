@@ -6,7 +6,7 @@ Easy way to add/remove/update maps in your Killing Floor 2 Dedicated Server
 ## What is this?
 With this tool you can easily install and configure your Killing Floor 2 dedicated server. You can easily install or update maps and mods from workshop or a custom redirect, perform server maintenance(updates and verify server integrity), start the server with custom mutators and also have diferent profiles with different settings. All this without wasting time editing lines of config files.
 
-How easy is that?
+## How easy is that?
 You will just browse the workshop inside the app or paste a URL of an workshop item and click on a button. The application will do everything for you (download the map, add the server subscription, add the map entry, add the map to the cycle of maps, and add the server redirect if needed). For update an outdated workshop item just right click inside the item and choose update.
 
 KF2ServerTool
