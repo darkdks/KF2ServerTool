@@ -32,33 +32,23 @@ h1.project-name {
     padding: 2rem 1rem;
   }
 }
-body {
-  
-  /*  background: radial-gradient(#000, #270000, #000000);
-  background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(45,1,6,1) 50%, rgba(0,0,0,1) 100%);
-  color: #b7b7b7;*/
-   background-color: #000;
-  color: #d6d6d6;
- 
-}
+
 section.main-content {
     background-color: #000000d6;
 }
-
 .main-content h2 {
-    font-weight: bold;
     color: #ffffff;
     background-color: black;
 }
 section.page-header {
     border-bottom: 9px solid #420000;
 }
-
 .main-content h2 {
     color: white;
-    /* background-color: black; */
 }
 body {
+    background-color: #000;
+    color: #d6d6d6;
     background-image: url(https://steamuserimages-a.akamaihd.net/ugc/39747379219899085/A35F08AAFF4A225210E505678FA3AD27A889880A/);
     background-attachment: fixed;
 }
