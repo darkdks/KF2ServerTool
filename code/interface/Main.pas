@@ -3834,13 +3834,14 @@ begin
           dlManager.OnFinished := RedirectDownloadFinished;
           dlManager.FileDAbort := @frmProgress.cancel;
           frmProgress.btncancel.Visible := True;
+          frmProgress.lblStatus.Caption := 'Downloading the update, please wait...';
           frmProgress.Show;
           try
             if gitUpdate.DownloadAndExtractUpdate(latestRelease.download_url,
               dlManager, 'KF2ServerTool.exe', True) then
             begin
               ShowMessage
-                ('The application will be restarted to complete to update');
+                ('The application will restart to complete the update');
               KillProcessByName(gitUpdate.TEMUPDATEFILE);
               gitUpdate.executeUpdateInstall(gitUpdate.TEMUPDATEFILE,
                 UPDATEPARAM + ' "' + Application.ExeName + '"');

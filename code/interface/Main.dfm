@@ -411,7 +411,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsMaps
+    ActivePage = tsUnknowed
     Align = alClient
     TabOrder = 1
     OnChange = jvpgcntrl1Change
@@ -1048,7 +1048,7 @@ object FormMain: TFormMain
           end
           item
             Alignment = taCenter
-            Caption = 'Subscrited'
+            Caption = 'Subscription'
             Width = 85
           end
           item
@@ -1151,7 +1151,7 @@ object FormMain: TFormMain
             Width = 97
           end
           item
-            Caption = 'Subscrited'
+            Caption = 'Subscription'
             Width = 73
           end
           item
