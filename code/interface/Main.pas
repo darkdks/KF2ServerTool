@@ -91,7 +91,6 @@ type
     lblGamePass: TLabel;
     btnStartServer: TButton;
     tsNotes: TTabSheet;
-    lbl1: TLabel;
     mmoNotepad: TMemo;
     grpmaintenance: TGroupBox;
     btnCheckForUpdate: TButton;
@@ -154,7 +153,6 @@ type
     cbbListViewDisplayStyle: TJvComboBox;
     lbl2: TLabel;
     Image1: TImage;
-    ilOfficialMaps: TImageList;
     ilMiscImgs: TImageList;
     btnSvIntegrityCurrent: TButton;
     Label1: TLabel;
@@ -266,6 +264,7 @@ type
     procedure CheckIfTheServerIsRuning;
     procedure InstallRegBrowserKey;
     procedure CheckDependencies;
+    procedure LoadFolderToImageList(Path: String);
 
   var
     ActiveLV: TListView;
@@ -737,68 +736,37 @@ end;
 
 procedure TFormMain.loadIMGFolder(Sender: TObject);
 var
-  imgsPathList: TStringList;
-  i: Integer;
-  filename: String;
-  imgId: String;
+
   BmpIMG: TBitmap;
-  wic: TWICImage;
   imgIdx: Integer;
-  fileImgIdx: String;
 begin
   try
-    imgsPathList := GetAllFilesInsideDirectory(serverTool.GetKFApplicationPath +
-      IMGCACHEFOLDER, '*.jpg');
+    // LocalCache Load
     imgListItems.Clear;
     imgListIDIndex.Clear;
-    // LocalCache Load
-    try
-      for i := 0 to imgsPathList.Count - 1 do
-      begin
-        try
-          filename := TPath.GetFileNameWithoutExtension(imgsPathList[i]);
-          imgId := UpperCase(filename);
-          BmpIMG := TBitmap.Create;
-          wic := TWICImage.Create;
-          try
-            wic.LoadFromFile(imgsPathList[i]);
-            BmpIMG.Assign(wic);
-            ResizeBitmap(BmpIMG, imgListItems.Width, imgListItems.Height);
-            imgIdx := imgListItems.Add(BmpIMG, nil);
-            if imgIdx >= 0 then
-              imgListIDIndex.AddPair(imgId, IntToStr(imgIdx));
-          finally
-            FreeAndNil(BmpIMG);
-            FreeAndNil(wic);
-          end;
-        except
-          on E: Exception do
-            serverTool.LogEvent('Preview images load',
-              'Error to load ' + filename + ' image. / Error: ' + E.Message);
-        end;
-
-      end;
-    finally
-      FreeAndNil(imgsPathList);
-    end;
+    LoadFolderToImageList(serverTool.GetKFApplicationPath + IMGCACHEFOLDER);
     // Official maps imgs
-    for i := 0 to High(KF_OFFICIALMAPS) do
-    begin
+    LoadFolderToImageList(serverTool.GetKFApplicationPath +
+      IMGWEBFOLDER);
+    { for i := 0 to High(KF_OFFICIALMAPS) do
+      begin
+
+
       if i > ilOfficialMaps.Count - 1 then
-        break;
+      break;
       BmpIMG := TBitmap.Create;
       try
-        fileImgIdx := KF_OFFICIALMAPS[i, 1];
-        filename := KF_OFFICIALMAPS[i, 0];
-        ilOfficialMaps.GetBitmap(StrToInt(fileImgIdx), BmpIMG);
-        imgIdx := imgListItems.Add(BmpIMG, nil);
-        imgListIDIndex.AddPair
-          (UpperCase(TPath.GetFileNameWithoutExtension(filename)),
-          IntToStr(imgIdx));
+      fileImgIdx := KF_OFFICIALMAPS[i, 1];
+      filename := KF_OFFICIALMAPS[i, 0];
+      ilOfficialMaps.GetBitmap(StrToInt(fileImgIdx), BmpIMG);
+      imgIdx := imgListItems.Add(BmpIMG, nil);
+      imgListIDIndex.AddPair
+      (UpperCase(TPath.GetFileNameWithoutExtension(filename)),
+      IntToStr(imgIdx));
       finally
-        FreeAndNil(BmpIMG);
+      FreeAndNil(BmpIMG);
       end;
-    end;
+      end; }
     // Default Redirect img
     BmpIMG := TBitmap.Create;
     try
@@ -826,6 +794,48 @@ begin
 
 end;
 
+procedure TFormMain.LoadFolderToImageList(Path: String);
+var
+  imgsPathList: TStringList;
+  wic: TWICImage;
+  BmpIMG: TBitmap;
+  imgIdx: Integer;
+  i: Integer;
+  filename: String;
+  imgId: String;
+begin
+  imgsPathList := GetAllFilesInsideDirectory(Path, '*.jpg');
+
+  try
+    for i := 0 to imgsPathList.Count - 1 do
+    begin
+      try
+        filename := TPath.GetFileNameWithoutExtension(imgsPathList[i]);
+        imgId := UpperCase(filename);
+        BmpIMG := TBitmap.Create;
+        wic := TWICImage.Create;
+        try
+          wic.LoadFromFile(imgsPathList[i]);
+          BmpIMG.Assign(wic);
+          ResizeBitmap(BmpIMG, imgListItems.Width, imgListItems.Height);
+          imgIdx := imgListItems.Add(BmpIMG, nil);
+          if imgIdx >= 0 then
+            imgListIDIndex.AddPair(imgId, IntToStr(imgIdx));
+        finally
+          FreeAndNil(BmpIMG);
+          FreeAndNil(wic);
+        end;
+      except
+        on E: Exception do
+          serverTool.LogEvent('Preview images load', 'Error to load ' + filename
+            + ' image. / Error: ' + E.Message);
+      end;
+
+    end;
+  finally
+    FreeAndNil(imgsPathList);
+  end;
+end;
 procedure TFormMain.btnAddNewClick(Sender: TObject);
 begin
   try
@@ -2261,8 +2271,8 @@ begin
     InfoTip := InfoTip + 'Map in cycle: ' +
       BoolToWord(kfitem.MapCycleEntry) + #13;
     InfoTip := InfoTip + 'In Cache: ' + BoolToWord(kfitem.ServerCache);
-  end;
 
+  end;
 end;
 
 procedure TFormMain.lvCompare(Sender: TObject; Item1, Item2: TListItem;
@@ -2761,13 +2771,13 @@ begin
     end;
   end;
 
+
   // ---- Load UI Config
   LoadUIConfig;
 
   // ---- Auto check for update system
   if AutoCheckForUpdates then
     checkForUpdates(Self);
-
 end;
 
 procedure TFormMain.LoadUIConfig;
@@ -2809,6 +2819,7 @@ begin
 
   end;
 
+   LoadOfficialMapList(serverTool.GetKFApplicationPath);
   LoadItensToLv('');
 
   if appLanguage = 'BR' then
@@ -2866,7 +2877,7 @@ begin
     cbWorkshopDMStatus.ItemIndex := 0;
   chkAutoConnectWeb.Checked := AutoConnectWeb;
   cbWorkshopDMStatus.Font.Size := fontSize;
-  cbWorkshopDMStatus.top := lblWkspDownMan.top;
+  cbWorkshopDMStatus.Top := lblWkspDownMan.Top;
   cbWorkshopDMStatus.Left := lblWkspDownMan.Left + lblWkspDownMan.Width + 5;
   // Web port
   try
@@ -3288,7 +3299,9 @@ begin
     if (cbbMap.Items.IndexOf(DefaultMap) > 0) and
       (DefaultMap <> KF_CYCLE_CUSTOM_SEPARATOR) and
       (DefaultMap <> KF_CYCLE_OFFICIAL_SEPARATOR) then
-      cbbMap.ItemIndex := cbbMap.Items.IndexOf(DefaultMap) else cbbMap.ItemIndex := -1;
+      cbbMap.ItemIndex := cbbMap.Items.IndexOf(DefaultMap)
+    else
+      cbbMap.ItemIndex := -1;
     cbbGameMode.ItemIndex := DefaultGameMode;
   end;
   if High(kfprofiles) < 1 then
@@ -4256,7 +4269,7 @@ end;
 procedure TFormMain.alignControlAtoControlB(elementA, elementB: TControl);
 begin
   try
-    elementA.top := elementB.top + Round(elementB.Height / 2) -
+    elementA.Top := elementB.Top + Round(elementB.Height / 2) -
       Round(elementA.Height / 2);
 
     elementA.Left := elementB.Left + elementB.Width + 5;

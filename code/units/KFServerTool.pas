@@ -131,8 +131,15 @@ type
 
   const
 
-    SERVERTOOLVERSION = '1.3.0';
+
+
+
+    SERVERTOOLVERSION = '1.3.1';
     {
+
+    CHANGE LOG VERSION 1.3.1 For Gui
+     - Automatic detection of new official maps(Now new maps will be added as official automatically as soon the webadmin is updated by tripwire)
+     - Image cache for Official maps removed from executable (reduced the size of executable)
 
     CHANGE LOG VERSION 1.3.0 For Gui
      Fixed duplicate item in map cycle when an item is reinstalled
