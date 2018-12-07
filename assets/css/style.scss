@@ -41,9 +41,15 @@ body {
   color: #d6d6d6;
  
 }
+section.main-content {
+    background-color: #000000d6;
+}
 
 .main-content h2 {
     font-weight: bold;
     color: #ffffff;
     background-color: black;
+}
+section.page-header {
+    border-bottom: 9px solid #420000;
 }
