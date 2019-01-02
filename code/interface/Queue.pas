@@ -50,27 +50,13 @@ procedure TfrmQueue.AddWorkshopMapClick(Sender: TObject);
 var
   frmAdd: TFormAdd;
   mdResult: Integer;
-  itemID, lgAddWkspItem, lgWkspIdUrl, lgInvalidUrlID, inputText: string;
+  itemID, inputText: string;
   Item: TListItem;
   isMod: Boolean;
 begin
   frmAdd := TFormAdd.Create(Self);
   try
-
-    if FormMain.appLanguage = 'BR' then
-    begin
-      lgAddWkspItem := 'Adicionar item da Workshop';
-      lgWkspIdUrl := 'ID ou URL da Workshop:';
-      lgInvalidUrlID := 'ID/URL inválidos';
-    end
-    else
-    begin
-      lgAddWkspItem := 'Add Workshop item';
-      lgWkspIdUrl := 'Workshop ID or URL:';
-      lgInvalidUrlID := 'Invalid ID/URL';
-    end;
-
-    if InputQuery(lgAddWkspItem, lgWkspIdUrl, inputText) then
+    if InputQuery(FormMain._s('Add Workshop item'), FormMain._s('Workshop ID or URL:'), inputText) then
     begin
       if Length(inputText) <= 11 then
       begin
@@ -106,17 +92,15 @@ begin
           end;
 
           Item.SubItems.Add(BoolToWord(frmAdd.downloadNow));
-          if FormMain.appLanguage = 'BR' then
-            Item.SubItems.Add('Pendente')
-          else
-            Item.SubItems.Add('Pending');
+
+            Item.SubItems.Add(FormMain._s('Pending'));
             btnProced.Enabled := True;
         end;
       end
       else
       begin
 
-        ShowMessage('Invalid ID/URL');
+        ShowMessage(FormMain._s('Invalid ID/URL'));
       end;
 
     end;
@@ -135,7 +119,7 @@ begin
 
   if lvQueue.Items.Count < 0 then
   begin
-    ShowMessage('You need add some items to download');
+    ShowMessage(formMain._s('You need add some items to install'));
     Exit;
   end
   else
@@ -153,25 +137,25 @@ begin
         addMapCycle := UpperCase(lvQueue.Items[i].SubItems[2]) = 'TRUE';
         downloadNow := UpperCase(lvQueue.Items[i].SubItems[3]) = 'TRUE';
 
-        lvQueue.Items[i].SubItems[4] := 'Working';
+        lvQueue.Items[i].SubItems[4] := formMain._s('Working');
         try
           if FormMain.serverTool.InstallWorkshopItem(itemID, ItemName,
             addWkspRedirect, downloadNow, downloadNow{dlImg}, addMapCycle, addMapENtry) then
           begin
 
-            lvQueue.Items[i].SubItems[4] := 'Sucess';
+            lvQueue.Items[i].SubItems[4] := formMain._s('Sucess');
           end
           else
           begin
-            lvQueue.Items[i].SubItems[4] := 'Falied';
+            lvQueue.Items[i].SubItems[4] := formMain._s('Failed');
           end;
         except
-          lvQueue.Items[i].SubItems[4] := 'Falied';
+          lvQueue.Items[i].SubItems[4] := formMain._s('Failed');
 
         end;
 
       end;
-      ShowMessage('All items finished');
+      ShowMessage(formMain._s('All items finished'));
     except
       on E: Exception do
         ShowMessage(E.Message);
@@ -187,7 +171,7 @@ begin
 
   if lvQueue.Selected = nil then
   begin
-    ShowMessage('Select na item first.');
+    ShowMessage(FormMain._s('Select na item first.'));
     Exit;
   end
   else
@@ -208,18 +192,16 @@ procedure TfrmQueue.FormCreate(Sender: TObject);
 begin
   btnRemove.Enabled := False;
   btnProced.Enabled := False;
-  if FormMain.appLanguage = 'BR' then
-  begin
-    btnRemove.Caption := 'Remover';
-    btnAddNew.Caption := 'Adicionar';
-    btnProced.Caption := 'Proceder';
-    lvQueue.Columns[1].Caption := 'Ad. inscrição';
-    lvQueue.Columns[2].Caption := 'Ad. entrada do mapa';
-    lvQueue.Columns[3].Caption := 'Ad. ao ciclo de mapas';
-    lvQueue.Columns[4].Caption := 'Baixar agora';
-    MenuItem1.Caption := 'ID/URL da workshop';
-    MenuItem2.Caption := 'Procurar na workshop';
-  end;
+
+    btnRemove.Caption := FormMain._s(btnRemove.Caption);
+    btnAddNew.Caption := FormMain._s(btnAddNew.Caption);
+    btnProced.Caption := FormMain._s(btnProced.Caption);
+    lvQueue.Columns[1].Caption := FormMain._s(lvQueue.Columns[1].Caption);
+    lvQueue.Columns[2].Caption := FormMain._s(lvQueue.Columns[2].Caption);
+    lvQueue.Columns[3].Caption := FormMain._s(lvQueue.Columns[3].Caption);
+    lvQueue.Columns[4].Caption := FormMain._s(lvQueue.Columns[4].Caption);
+    MenuItem1.Caption := FormMain._s(MenuItem1.Caption);
+    MenuItem2.Caption := FormMain._s(MenuItem2.Caption);
 
 end;
 
@@ -279,20 +261,10 @@ var
   textToFind: string;
   itemID: string;
   isMod: Boolean;
-  lgFindAItemWksp, lgSearchFor: string;
 
 begin
-  if FormMain.appLanguage = 'BR' then
-  begin
-    lgFindAItemWksp := 'Buscar na workshop';
-    lgSearchFor := 'Buscar por';
-  end
-  else
-  begin
-    lgFindAItemWksp := 'Find an item in workshop';
-    lgSearchFor := 'Search for';
-  end;
-  if InputQuery(lgFindAItemWksp, lgSearchFor, textToFind) then
+
+  if InputQuery(FormMain._s('Find an item in workshop'), FormMain._s('Search for'), textToFind) then
   begin
 
     frmWksp := TFormWorkshop.Create(Self);
@@ -350,17 +322,9 @@ begin
           Item.SubItems.Add(BoolToWord(frmAdd.addMapCycle));
         end;
         Item.SubItems.Add(BoolToWord(frmAdd.downloadNow));
-
-        if FormMain.appLanguage = 'BR' then  begin
-          Item.SubItems.Add('Pendente');
-          Application.MessageBox( 'Sucesso, item adicionado a fila.', 'Sucesso',
+          Item.SubItems.Add(FormMain._s('Pending'));
+          Application.MessageBox(formMain._p('Sucess, item added to queue.'), formMain._p('Sucess') ,
             MB_OK + MB_ICONINFORMATION);
-        end else begin
-          Item.SubItems.Add('Pending');
-          Application.MessageBox('Sucess, item added to queue.', 'Sucess' ,
-            MB_OK + MB_ICONINFORMATION);
-
-        end;
 
          btnProced.Enabled := True;
       end;

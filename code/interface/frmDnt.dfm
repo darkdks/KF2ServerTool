@@ -4,8 +4,8 @@ object frmDonate: TfrmDonate
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Donate'
-  ClientHeight = 197
-  ClientWidth = 197
+  ClientHeight = 291
+  ClientWidth = 226
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,11 +14,12 @@ object frmDonate: TfrmDonate
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   object img1: TImage
-    Left = 12
-    Top = 126
+    Left = 20
+    Top = 223
     Width = 199
     Height = 61
     Cursor = crHandPoint
@@ -476,8 +477,8 @@ object frmDonate: TfrmDonate
     OnClick = img1Click
   end
   object img2: TImage
-    Left = 6
-    Top = 32
+    Left = 14
+    Top = 129
     Width = 205
     Height = 65
     Cursor = crHandPoint
@@ -911,10 +912,10 @@ object frmDonate: TfrmDonate
     OnClick = img2Click
   end
   object lbl1: TLabel
-    Left = 12
-    Top = 12
-    Width = 115
-    Height = 16
+    Left = 20
+    Top = 109
+    Width = 126
+    Height = 14
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
@@ -922,16 +923,16 @@ object frmDonate: TfrmDonate
     Caption = 'Iternational - Paypal'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -12
     Font.Name = 'Tahoma'
-    Font.Style = []
+    Font.Style = [fsBold]
     ParentFont = False
   end
   object lbl2: TLabel
-    Left = 12
-    Top = 106
-    Width = 123
-    Height = 16
+    Left = 20
+    Top = 203
+    Width = 130
+    Height = 14
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
@@ -939,9 +940,25 @@ object frmDonate: TfrmDonate
     Caption = 'Brazilian - PagSeguro'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object lblTextDonate: TLabel
+    Left = 8
+    Top = 8
+    Width = 210
+    Height = 96
+    Caption = 
+      'Help this amazing tool continue in development with updates and ' +
+      'new features. Your help can make all the difference!'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
     Font.Height = -13
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
+    WordWrap = True
   end
 end

@@ -411,7 +411,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsUnknowed
+    ActivePage = tsDebug
     Align = alClient
     TabOrder = 1
     OnChange = jvpgcntrl1Change
@@ -476,7 +476,7 @@ object FormMain: TFormMain
           object btnNewProfile: TButton
             Left = 49
             Top = 31
-            Width = 61
+            Width = 95
             Height = 25
             Hint = 'Create a new server profile'
             Margins.Left = 2
@@ -490,9 +490,9 @@ object FormMain: TFormMain
             OnClick = btnNewProfileClick
           end
           object btnRenameProfile: TButton
-            Left = 114
+            Left = 148
             Top = 31
-            Width = 74
+            Width = 93
             Height = 25
             Hint = 'Rename current profile'
             Margins.Left = 2
@@ -506,9 +506,9 @@ object FormMain: TFormMain
             OnClick = btnRenameProfileClick
           end
           object btnDeleteProfile: TButton
-            Left = 192
+            Left = 245
             Top = 31
-            Width = 69
+            Width = 94
             Height = 25
             Hint = 'Delete current profile'
             Margins.Left = 2
@@ -623,7 +623,7 @@ object FormMain: TFormMain
           object chkGrouMapCycle: TCheckBox
             Left = 12
             Top = 53
-            Width = 429
+            Width = 624
             Height = 24
             Hint = 
               'Enabling this option will sort map list cycle by type (official ' +
@@ -1564,9 +1564,6 @@ object FormMain: TFormMain
           TabOrder = 1
           Text = ''
           OnChange = cbbLanguageChange
-          Items.Strings = (
-            'English'
-            'Portuguese')
         end
         object chkOnlyFromConfigItems: TCheckBox
           Left = 26
@@ -1706,8 +1703,8 @@ object FormMain: TFormMain
           Height = 25
           Hint = 
             'This will clean workshop data (Binaries\Win64\steamapps\workshop' +
-            '\content\232090)'#13#10'This is helpfull to force update in all maps a' +
-            'nd auto repair some broken items.'
+            '\content\232090)'#13#10'This is helpful to force update in all maps an' +
+            'd auto repair some broken items.'
           Caption = 'Clean workshop data '
           ParentShowHint = False
           ShowHint = True
@@ -1817,6 +1814,24 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
+      object btnGenerateCurrentStrings: TButton
+        Left = 24
+        Top = 40
+        Width = 201
+        Height = 25
+        Caption = 'Generate current Strings'
+        TabOrder = 0
+        OnClick = btnGenerateCurrentStringsClick
+      end
+      object btnGenerateNewTranslation: TButton
+        Left = 24
+        Top = 71
+        Width = 201
+        Height = 25
+        Caption = 'Generate new translation'
+        TabOrder = 1
+        OnClick = btnGenerateNewTranslationClick
+      end
     end
   end
   object pmRemove: TPopupMenu
@@ -1849,7 +1864,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800440010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101060008005C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2259,7 +2274,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C0101020008009000DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800A800DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

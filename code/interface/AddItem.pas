@@ -112,7 +112,7 @@ begin
   redirectURL := edtRedirectURL.Text;
   if redirectURL = '' then
   begin
-    ShowMessage('First configure the redirect URL');
+    ShowMessage(FormMain._s('First configure the redirect URL'));
     Exit;
   end;
   frmRedirectContent := TfrmRedirectItemsDialog.Create(Self);
@@ -127,7 +127,7 @@ begin
       end
       else
       begin
-        raise Exception.Create('Falied to load item from URL: ' + redirectURL);
+        raise Exception.Create(FormMain._s('Failed to load item from URL: ') + redirectURL);
       end;
     finally
       frmRedirectContent.Free;
@@ -135,8 +135,8 @@ begin
   except
     on E: Exception do
       Application.MessageBox(PWideChar(E.Message + #13 + #13 +
-        'Make sure you have placed a valid redirect URL.'),
-        'Error loading files from URL', MB_OK + MB_ICONWARNING);
+        FormMain._s('Make sure you have placed a valid redirect URL.')),
+        FormMain._p('Error loading files from URL'), MB_OK + MB_ICONWARNING);
 
   end;
 
@@ -216,18 +216,20 @@ end;
 
 procedure TFormAdd.FormCreate(Sender: TObject);
 begin
-  if FormMain.appLanguage = 'BR' then
-  begin
-    chkAddMapEntry.Caption := 'Adicionar entrada do mapa';
-    chkAddMapCycle.Caption := 'Adicionar mapa ao ciclo de mapas';
-    chkDownloadItem.Caption := 'Baixar item agora';
-    chkAddWorkshopRedirect.Caption := 'Adicionar redirecionamento da workshop';
-    btnCancel.Caption := 'Cancelar';
+  with FormMain do begin
+    chkAddMapEntry.Caption := _s(chkAddMapEntry.Caption);
+    chkAddMapCycle.Caption := _s(chkAddMapCycle.Caption);
+    chkDownloadItem.Caption := _s(chkDownloadItem.Caption);
+    chkAddWorkshopRedirect.Caption := _s(chkAddWorkshopRedirect.Caption);
+    lblItemNameNote.Caption := _s(lblItemNameNote.Caption);
+ lblPn3.Caption := _s(lblPn3.Caption);
+    btnCancel.Caption := _s(btnCancel.Caption);
+        jvlbl4.Caption := _s(jvlbl4.Caption);
 
     chkDoForAll.Visible := false;
-
   end;
 end;
+
 
 procedure TFormAdd.FormShow(Sender: TObject);
 begin
@@ -242,7 +244,7 @@ begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
         pnl3.Visible := false;
-        Self.Caption := 'Add Map';
+        Self.Caption := FormMain._s('Add Map');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
 
@@ -264,7 +266,7 @@ begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
         pnl3.Visible := false;
-        Self.Caption := 'Add Mod';
+        Self.Caption := formMain._s('Add Mod');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
 
@@ -285,7 +287,7 @@ begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
         pnl3.Visible := false;
-        Self.Caption := 'Reinstall Map';
+        Self.Caption := formMain._s('Reinstall Map');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
 
@@ -307,7 +309,7 @@ begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
         pnl3.Visible := false;
-        Self.Caption := 'Reinstall Mod';
+        Self.Caption := formMain._s('Reinstall Mod');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
 
@@ -330,7 +332,7 @@ begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
         pnl3.Visible := false;
-        Self.Caption := 'Reinstall Unknowed item';
+        Self.Caption := formMain._s('Reinstall Unknowed item');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
 
@@ -352,7 +354,7 @@ begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := false;
         pnl3.Visible := false;
-        Self.Caption := 'Reinstall Official';
+        Self.Caption := formMain._s('Reinstall Official');
         chkDownloadItem.Checked := false;
         chkDownloadItem.Visible := false;
 
@@ -376,7 +378,7 @@ begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := false;
         pnl3.Visible := false;
-        Self.Caption := 'Reinstall Local or redirect';
+        Self.Caption := formMain._s('Reinstall Local or redirect');
         chkDownloadItem.Checked := false;
         chkDownloadItem.Visible := false;
 
@@ -400,7 +402,7 @@ begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := true;
         pnl3.Visible := true;
-        Self.Caption := 'Install from redirect';
+        Self.Caption := formMain._s('Install from redirect');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
         lblItemNameNote.Visible := true;
@@ -425,7 +427,7 @@ begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := true;
         pnl3.Visible := true;
-        Self.Caption := 'Install from redirect';
+        Self.Caption := formMain._s('Install from redirect');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
         chkDownloadItem.Enabled := false;
@@ -450,8 +452,8 @@ begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := true;
         pnl3.Visible := true;
-        lblPn3.Caption := 'Backup file';
-        Self.Caption := 'Restore backup';
+        lblPn3.Caption := formMain._s('Backup file');
+        Self.Caption := formMain._s('Restore backup');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
 

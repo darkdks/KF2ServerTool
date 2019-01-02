@@ -23,11 +23,12 @@ type
   public
     procedure UpdateStatus(status: string);
     procedure SetPBMax(value: Integer);
-    function GetPBMax():Integer;
+    function GetPBMax(): Integer;
     procedure SetPBValue(value: Integer);
-    procedure NextPBValue(Status: String);
+    procedure NextPBValue(status: String);
+
   var
-  cancel: Boolean;
+    cancel: Boolean;
     { Public declarations }
   end;
 
@@ -36,44 +37,46 @@ var
 
 implementation
 
+uses main;
 {$R *.dfm}
 
 procedure TformPB.btncancelClick(Sender: TObject);
 begin
   cancel := True;
   btncancel.Enabled := False;
-  lblStatus.Caption := 'Canceling, please wait this item finish...';
+  lblStatus.Caption :=
+    FormMain._s('Canceling, please wait this item finish...');
 end;
 
 procedure TformPB.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-tmrUndeterminedPB.Enabled := false;
+  tmrUndeterminedPB.Enabled := False;
 end;
 
 procedure TformPB.FormCreate(Sender: TObject);
 begin
-cancel := False;
-btncancel.Enabled := True;
-lblTitle.Caption := '';
+  cancel := False;
+  btncancel.Enabled := True;
+  lblTitle.Caption := '';
 end;
 
 function TformPB.GetPBMax: Integer;
 begin
-Result := pb1.Max;
+  Result := pb1.Max;
 end;
 
 procedure TformPB.NextPBValue(status: String);
 begin
   if pb1.Position < pb1.Max then
-  pb1.Position := pb1.Position +1;
-  if Status <> '' then
-   UpdateStatus(Status);
+    pb1.Position := pb1.Position + 1;
+  if status <> '' then
+    UpdateStatus(status);
 end;
 
 procedure TformPB.SetPBMax(value: Integer);
 begin
-pb1.Max := value;
-Application.ProcessMessages;
+  pb1.Max := value;
+  Application.ProcessMessages;
 end;
 
 procedure TformPB.SetPBValue(value: Integer);
@@ -85,15 +88,17 @@ end;
 
 procedure TformPB.tmrUndeterminedPBTimer(Sender: TObject);
 begin
-if pb1.Position < pb1.Max then
-pb1.Position := pb1.Position + 1 else pb1.Position := 0;
-Application.ProcessMessages;
+  if pb1.Position < pb1.Max then
+    pb1.Position := pb1.Position + 1
+  else
+    pb1.Position := 0;
+  Application.ProcessMessages;
 end;
 
 procedure TformPB.UpdateStatus(status: string);
 begin
-lblStatus.Caption := status;
-Application.ProcessMessages;
+  lblStatus.Caption := status;
+  Application.ProcessMessages;
 
 end;
 

@@ -36,7 +36,7 @@ type
 
   var
     ItemBrowserId, TempID: string;
-    callBackAdd : TProc<string>;
+    callBackAdd: TProc<string>;
     { Public declarations }
   end;
 
@@ -78,7 +78,7 @@ begin
 
   end;
   Self.ShowModal;
-   Result := ItemBrowserId;
+  Result := ItemBrowserId;
 end;
 
 procedure TFormWorkshop.btnAddClick(Sender: TObject);
@@ -86,9 +86,9 @@ begin
   ItemBrowserId := TempID;
 
   if Assigned(callBackAdd) then
-  callBackAdd(ItemBrowserId)
-   else
- Self.Close;
+    callBackAdd(ItemBrowserId)
+  else
+    Self.Close;
 
 end;
 
@@ -97,13 +97,8 @@ begin
   lblTip.Visible := false;
   btnForward.Enabled := false;
   btnBack.Enabled := false;
-
-  if FormMain.appLanguage = 'BR' then
-  begin
-    lblTip.Caption :=
-      'Procure pelo item, entre em sua página da workshop e clique no botão Adicionar';
-    btnAdd.Caption := 'Adicionar';
-  end;
+  lblTip.Caption := FormMain._s(lblTip.Caption);
+  btnAdd.Caption := FormMain._s('Add');
 end;
 
 procedure TFormWorkshop.NavigateBW(URL: string);

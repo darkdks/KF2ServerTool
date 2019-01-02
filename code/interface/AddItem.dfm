@@ -74,8 +74,6 @@ object FormAdd: TFormAdd
     Margins.Bottom = 2
     Align = alClient
     TabOrder = 1
-    ExplicitTop = 208
-    ExplicitHeight = 134
     object jvlbl2: TLabel
       AlignWithMargins = True
       Left = 17
@@ -171,7 +169,7 @@ object FormAdd: TFormAdd
       Margins.Right = 2
       Margins.Bottom = 0
       Align = alTop
-      Caption = 'Subcribe the server '
+      Caption = 'Subcribe the server'
       TabOrder = 4
     end
   end
@@ -182,7 +180,6 @@ object FormAdd: TFormAdd
     Height = 28
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 343
     object btnCancel: TButton
       AlignWithMargins = True
       Left = 198
@@ -285,7 +282,6 @@ object FormAdd: TFormAdd
     Height = 63
     Align = alTop
     TabOrder = 4
-    ExplicitTop = 68
     object jvlbl4: TLabel
       Left = 18
       Top = 8

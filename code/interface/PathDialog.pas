@@ -8,12 +8,13 @@ uses
 
 type
   TkfPathDialog = class(TForm)
-    btn1: TButton;
-    btn2: TButton;
-    lbl1: TLabel;
+    btnConfigurePath: TButton;
+    btnInstallServer: TButton;
+    lblDescriptionHelp: TLabel;
     dlgServerBrowser: TJvBrowseForFolderDialog;
-    procedure btn1Click(Sender: TObject);
-    procedure btn2Click(Sender: TObject);
+    procedure btnConfigurePathClick(Sender: TObject);
+    procedure btnInstallServerClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -30,7 +31,7 @@ implementation
 uses
   Main;
 
-procedure TkfPathDialog.btn1Click(Sender: TObject);
+procedure TkfPathDialog.btnConfigurePathClick(Sender: TObject);
 begin
   // dlgServerBrowser.RootDirectoryPath := GetCurrentDir;
   if dlgServerBrowser.Execute then
@@ -40,14 +41,14 @@ begin
   end;
 end;
 
-procedure TkfPathDialog.btn2Click(Sender: TObject);
+procedure TkfPathDialog.btnInstallServerClick(Sender: TObject);
 begin
 
   case Application.MessageBox
-    (PWideChar( 'This will download and install the KF2 Server in '
+    (PWideChar(FormMain._s('This will download and install the KF2 Server in ')
       + extractFilePath(Application.ExeName)
-      + '. ' + #13#10 + 'this will take time depending on your internet connection.'),
-    'Install Killing Floor 2 Server', MB_OKCANCEL + MB_ICONQUESTION) of
+      + '. ' + #13#10 + FormMain._s('this will take time depending on your internet connection.')),
+    FormMain._p('Install Killing Floor 2 Server'), MB_OKCANCEL + MB_ICONQUESTION) of
     IDOK:
       begin
           Self.ModalResult := 102;
@@ -55,6 +56,13 @@ begin
   end;
 
 
+end;
+
+procedure TkfPathDialog.FormCreate(Sender: TObject);
+begin
+lblDescriptionHelp.Caption := FormMain._s('To use this tool you need to select the path of your existing server or install a new one. \nWhat do you want to do?');
+btnConfigurePath.Caption := FormMain._s('Configure the path');
+btnInstallServer.Caption := FormMain._s('Install a new server');
 end;
 
 end.

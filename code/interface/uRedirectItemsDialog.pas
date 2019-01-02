@@ -90,7 +90,7 @@ begin
     end;
   except
     On E: Exception do
-      raise Exception.Create('Falied to load files list from URL.')
+      raise Exception.Create('Falied to load file list from URL.')
   end;
 
 end;

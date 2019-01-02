@@ -22,7 +22,8 @@ uses
   dialogs,
   GitAutoUpdate in 'units\GitAutoUpdate.pas',
   DownloaderTool in 'units\DownloaderTool.pas',
-  KFTypes in 'units\KFTypes.pas';
+  KFTypes in 'units\KFTypes.pas',
+  toolLanguage in 'units\toolLanguage.pas';
 
 const
   UPDATEPARAM = '-installupdate';

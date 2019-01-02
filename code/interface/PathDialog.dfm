@@ -13,9 +13,10 @@ object kfPathDialog: TkfPathDialog
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
-  object lbl1: TLabel
+  object lblDescriptionHelp: TLabel
     Left = 6
     Top = 18
     Width = 233
@@ -29,7 +30,7 @@ object kfPathDialog: TkfPathDialog
       'rver or install a new one. '#13#10'What do you want to do?'
     WordWrap = True
   end
-  object btn1: TButton
+  object btnConfigurePath: TButton
     Left = 77
     Top = 78
     Width = 99
@@ -40,9 +41,9 @@ object kfPathDialog: TkfPathDialog
     Margins.Bottom = 2
     Caption = 'Configure the path'
     TabOrder = 0
-    OnClick = btn1Click
+    OnClick = btnConfigurePathClick
   end
-  object btn2: TButton
+  object btnInstallServer: TButton
     Left = 180
     Top = 78
     Width = 93
@@ -53,7 +54,7 @@ object kfPathDialog: TkfPathDialog
     Margins.Bottom = 2
     Caption = 'Install a new server'
     TabOrder = 1
-    OnClick = btn2Click
+    OnClick = btnInstallServerClick
   end
   object dlgServerBrowser: TJvBrowseForFolderDialog
     RootDirectory = fdMyComputer

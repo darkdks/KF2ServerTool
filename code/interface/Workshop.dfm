@@ -143,8 +143,6 @@ object FormWorkshop: TFormWorkshop
       ParentFont = False
       TabOrder = 2
       OnClick = btnAddClick
-      ExplicitLeft = 824
-      ExplicitTop = 4
     end
   end
 end

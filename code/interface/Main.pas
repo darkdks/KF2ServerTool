@@ -18,7 +18,8 @@ uses
   downloaderTool,
   Registry,
   System.Types, KFTypes, Jpeg,
-  TypInfo, IOUtils, CommCtrl, System.ImageList, JvExStdCtrls, JvExComCtrls;
+  TypInfo, IOUtils, CommCtrl, System.ImageList, JvExStdCtrls, JvExComCtrls,
+  toolLanguage;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -163,6 +164,8 @@ type
     lblMapCycleOptions: TLabel;
     chkGrouMapCycle: TCheckBox;
     chkIncludeSepratorsMapCycle: TCheckBox;
+    btnGenerateCurrentStrings: TButton;
+    btnGenerateNewTranslation: TButton;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -198,7 +201,6 @@ type
     procedure edtGmPassChange(Sender: TObject);
     procedure RealignUIItems(Sender: TObject);
     procedure btnCheckForUpdateClick(Sender: TObject);
-    procedure cbb1Change(Sender: TObject);
     procedure cbWorkshopDMStatusChange(Sender: TObject);
     procedure cbStatusWebChange(Sender: TObject);
     procedure edtPortExit(Sender: TObject);
@@ -243,12 +245,14 @@ type
     procedure sortCycleChange(Sender: TObject);
     procedure chkGrouMapCycleClick(Sender: TObject);
     procedure chkIncludeSepratorsMapCycleClick(Sender: TObject);
-
+    function _s(text: String): String;
+    function _p(text: String): PWideChar;
+    procedure btnGenerateCurrentStringsClick(Sender: TObject);
+    procedure btnGenerateNewTranslationClick(Sender: TObject);
   private
     function loadConfig: Boolean;
     function saveconfig: Boolean;
     procedure LoadItensToLv(Filter: String);
-    procedure TranslateToBR;
     procedure LoadServerProfile;
     procedure LoadUIConfig;
     procedure InstallServer(Path: String);
@@ -265,6 +269,7 @@ type
     procedure InstallRegBrowserKey;
     procedure CheckDependencies;
     procedure LoadFolderToImageList(Path: String);
+    procedure translateUIElements;
 
   var
     ActiveLV: TListView;
@@ -284,7 +289,6 @@ type
     useCustomServerPath, AutoConnectWeb, appMaximized, GroupMapCycle,
       GroupMapCycleSeparators: Boolean;
     onlyFromConfigItems: Boolean;
-    appLanguage: string;
     appWidth: Integer;
     appHeight: Integer;
     fontSize: Integer;
@@ -299,6 +303,8 @@ type
     imgListIDIndex: TStringList;
     LVStyle: TListViewDisplayStyle;
     UILoaded: Boolean;
+    tlTool: TKFTranslation;
+    languageInitial: String;
   end;
 
 var
@@ -317,22 +323,12 @@ var
   textToFind: string;
   itemID: string;
   isMod: Boolean;
-  lgFindAItemWksp, lgSearchFor: string;
   mdResult: Integer;
   progressForm: TformPB;
 
 begin
-  if appLanguage = 'BR' then
-  begin
-    lgFindAItemWksp := 'Buscar na workshop';
-    lgSearchFor := 'Buscar por';
-  end
-  else
-  begin
-    lgFindAItemWksp := 'Find an item in workshop';
-    lgSearchFor := 'Search for';
-  end;
-  if InputQuery(lgFindAItemWksp, lgSearchFor, textToFind) then
+  if InputQuery(_s('Find an item in workshop'), _s('Search for'), textToFind)
+  then
   begin
 
     frmWksp := TFormWorkshop.Create(Self);
@@ -362,24 +358,25 @@ begin
           begin
             frmAdd.SetAddType(TKFItemType.WorkshopMap);
           end;
-          frmAdd.edtID.Text := itemID;
+          frmAdd.edtID.text := itemID;
           mdResult := frmAdd.ShowModal;
           if mdResult = mrOk then
           begin
             progressForm := TformPB.Create(Self);
             try
-              progressForm.NextPBValue('Installing item ' + itemID);
+              progressForm.NextPBValue(_s('Installing item ') + itemID);
               progressForm.tmrUndeterminedPB.Enabled := True;
               progressForm.Show;
               Application.ProcessMessages;
-              if serverTool.InstallWorkshopItem(frmAdd.edtID.Text,
+              if serverTool.InstallWorkshopItem(frmAdd.edtID.text,
                 frmAdd.ItemName, frmAdd.addWkspRedirect, frmAdd.downloadNow,
                 True { dlImg } , frmAdd.addMapCycle, frmAdd.addMapENtry) = false
               then
               begin
                 Application.MessageBox
-                  (PWideChar('One o more steps for item ' + frmAdd.edtID.Text +
-                  ' falied!'), '', MB_OK + MB_ICONEXCLAMATION);
+                  (PWideChar(_s('One o more steps for item ') +
+                  frmAdd.edtID.text + _s(' failed!')), '',
+                  MB_OK + MB_ICONEXCLAMATION);
 
               end;
               progressForm.Close;
@@ -407,25 +404,12 @@ var
   frmAdd: TFormAdd;
   inputText: String;
   itemID: string;
-  lgAddWkspItem, lgWkspIdUrl, lgInvalidUrlID: string;
   mdResult: Integer;
   progressForm: TformPB;
 begin
 
-  if appLanguage = 'BR' then
-  begin
-    lgAddWkspItem := 'Adicionar item da Workshop';
-    lgWkspIdUrl := 'ID ou URL da Workshop:';
-    lgInvalidUrlID := 'ID/URL inválidos';
-  end
-  else
-  begin
-    lgAddWkspItem := 'Add Workshop item';
-    lgWkspIdUrl := 'Workshop ID or URL:';
-    lgInvalidUrlID := 'Invalid ID/URL';
-  end;
-
-  if InputQuery(lgAddWkspItem, lgWkspIdUrl, inputText) then
+  if InputQuery(_s('Add Workshop item'), _s('Workshop ID or URL'), inputText)
+  then
   begin
     if Length(inputText) <= 11 then
     begin
@@ -441,7 +425,7 @@ begin
 
       frmAdd := TFormAdd.Create(Self);
       try
-        frmAdd.edtID.Text := itemID;
+        frmAdd.edtID.text := itemID;
         if ActiveLV = lvMaps then
         begin
           frmAdd.SetAddType(TKFItemType.WorkshopMap);
@@ -458,17 +442,17 @@ begin
           progressForm := TformPB.Create(Self);
           CheckIfTheServerIsRuning;
           try
-            progressForm.NextPBValue('Installing item ' + itemID);
+            progressForm.NextPBValue(_p('Installing item ') + itemID);
             progressForm.Show;
             progressForm.tmrUndeterminedPB.Enabled := True;
-            if serverTool.InstallWorkshopItem(frmAdd.edtID.Text,
+            if serverTool.InstallWorkshopItem(frmAdd.edtID.text,
               frmAdd.ItemName, frmAdd.addWkspRedirect, frmAdd.downloadNow,
               True { dlImg } , frmAdd.addMapCycle, frmAdd.addMapENtry) = false
             then
             begin
-              Application.MessageBox
-                (PWideChar('One o more steps for item ' + frmAdd.edtID.Text +
-                ' falied!'), '', MB_OK + MB_ICONEXCLAMATION);
+              Application.MessageBox(PWideChar(_p('One o more steps for item ')
+                + frmAdd.edtID.text + _p(' failed!')), '',
+                MB_OK + MB_ICONEXCLAMATION);
 
             end;
           finally
@@ -484,7 +468,7 @@ begin
     else
     begin
 
-      Application.MessageBox(PWideChar(lgInvalidUrlID), 'Error',
+      Application.MessageBox(_p('Invalid ID/URL'), 'Error',
         MB_OK + MB_ICONWARNING);
 
     end;
@@ -497,27 +481,15 @@ procedure TFormMain.btnStartServerClick(Sender: TObject);
 var
   svPath: string;
   argCmd: string;
-  lgAInstaceIsRun, lgBeforeSelect: string;
 begin
   saveconfig;
-  if appLanguage = 'BR' then
-  begin
-    lgAInstaceIsRun := 'Um processo do servidor já está em execução' + #13#10 +
-      'Deseja fechar este antes';
-    lgBeforeSelect := 'Antes de iniciar o servidor selecione um mapa';
-  end
-  else
-  begin
-    lgAInstaceIsRun := 'An instace of server is already running.' + #13#10 +
-      'Do you wanna kill this process before?';
-    lgBeforeSelect := 'Select a map before start the server';
-  end;
 
   if ProcessExists(ExtractFileName(pathServerEXE)) then
   begin
 
-    case Application.MessageBox(PWideChar(lgAInstaceIsRun), 'Server',
-      MB_YESNOCANCEL + MB_ICONINFORMATION) of
+    case Application.MessageBox
+      (_p('An instace of server is already running.\nDo you wanna kill this process before?'),
+      'Server', MB_YESNOCANCEL + MB_ICONINFORMATION) of
       IDCANCEL:
         begin
           Exit;
@@ -535,7 +507,7 @@ begin
 
   end;
 
-  if cbbMap.Text <> '' then
+  if cbbMap.text <> '' then
   begin
 
     if useCustomServerPath then
@@ -546,13 +518,13 @@ begin
     begin
       svPath := ExtractFilePath(Application.ExeName);
     end;
-    argCmd := cbbMap.Text;
+    argCmd := cbbMap.text;
     argCmd := argCmd + '?Difficulty=' + IntToStr(cbbDifficulty.ItemIndex);
     argCmd := argCmd + '?GameLength=' + IntToStr(cbbLength.ItemIndex);
-    if edtGmPass.Text <> '' then
-      argCmd := argCmd + '?GamePassword=' + edtGmPass.Text;
-    if edtExtra.Text <> '' then
-      argCmd := argCmd + edtExtra.Text;
+    if edtGmPass.text <> '' then
+      argCmd := argCmd + '?GamePassword=' + edtGmPass.text;
+    if edtExtra.text <> '' then
+      argCmd := argCmd + edtExtra.text;
     case cbbGameMode.ItemIndex of
       0:
         argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Endless';
@@ -564,11 +536,10 @@ begin
         argCmd := argCmd + '?game=KFGameContent.KFGameInfo_WeeklySurvival';
       4:
         begin
-          if (Pos('GAME=', UpperCase(edtExtra.Text)) <= 0) then
+          if (Pos('GAME=', UpperCase(edtExtra.text)) <= 0) then
             Application.MessageBox
-              ('You have set the game mode to custom but you won''t ' + #13 +
-              'specified the custom game in additional parameters',
-              'Invalid custom game mod', MB_OK + MB_ICONWARNING);
+              (_p('You have set the game mode to custom but you won''t \nspecified the custom game in additional parameters'),
+              _p('Invalid custom game mod'), MB_OK + MB_ICONWARNING);
 
         end;
     end;
@@ -582,7 +553,7 @@ begin
   end
   else
   begin
-    Application.MessageBox(PWideChar(lgBeforeSelect), 'Map',
+    Application.MessageBox(_p('Select a map before start the server'), 'Map',
       MB_OK + MB_ICONINFORMATION);
 
   end;
@@ -694,7 +665,7 @@ begin
     FreeAndNil(frmProgress);
   frmProgress := TformPB.Create(Self);
   frmProgress.Show;
-  frmProgress.lblTitle.Caption := 'Preparing to start';
+  frmProgress.lblTitle.Caption := _s('Preparing to start');
   frmProgress.SetPBMax(Length(seletectItems));
   Application.ProcessMessages;
 
@@ -712,7 +683,8 @@ begin
         dlManager.OnFinished := RedirectDownloadFinished;
         dlManager.FileDAbort := @frmProgress.cancel;
         frmProgress.btncancel.Visible := True;
-        frmProgress.lblTitle.Caption := 'Download Thrumnail of item ' + itemID;
+        frmProgress.lblTitle.Caption :=
+          _s('Downloading Thumbnail of item ') + itemID;
         frmProgress.lblStatus.Caption := '[' + IntToStr(i + 1) + '/' +
           IntToStr(Length(seletectItems)) + '] item ' + itemID;
         frmProgress.SetPBValue(i + 1);
@@ -746,27 +718,7 @@ begin
     imgListIDIndex.Clear;
     LoadFolderToImageList(serverTool.GetKFApplicationPath + IMGCACHEFOLDER);
     // Official maps imgs
-    LoadFolderToImageList(serverTool.GetKFApplicationPath +
-      IMGWEBFOLDER);
-    { for i := 0 to High(KF_OFFICIALMAPS) do
-      begin
-
-
-      if i > ilOfficialMaps.Count - 1 then
-      break;
-      BmpIMG := TBitmap.Create;
-      try
-      fileImgIdx := KF_OFFICIALMAPS[i, 1];
-      filename := KF_OFFICIALMAPS[i, 0];
-      ilOfficialMaps.GetBitmap(StrToInt(fileImgIdx), BmpIMG);
-      imgIdx := imgListItems.Add(BmpIMG, nil);
-      imgListIDIndex.AddPair
-      (UpperCase(TPath.GetFileNameWithoutExtension(filename)),
-      IntToStr(imgIdx));
-      finally
-      FreeAndNil(BmpIMG);
-      end;
-      end; }
+    LoadFolderToImageList(serverTool.GetKFApplicationPath + IMGWEBFOLDER);
     // Default Redirect img
     BmpIMG := TBitmap.Create;
     try
@@ -836,6 +788,7 @@ begin
     FreeAndNil(imgsPathList);
   end;
 end;
+
 procedure TFormMain.btnAddNewClick(Sender: TObject);
 begin
   try
@@ -863,37 +816,33 @@ begin
   begin
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 +exit';
-    dlgMsg := 'This will check for a server update.' + #13 +
-      ' If it''s avaliable the server will be updated.' + #13#10 +
-      'Are you sure?';
-    dlgType := 'Update server';
+    dlgMsg := _s
+      ('This will check for a server update.\nIf it''s avaliable the server will be updated.\nAre you sure?');
+    dlgType := _s('Update server');
   end;
   if Sender = btnSvIntegrityCurrent then
   begin
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 validate +exit';
-    dlgMsg := 'This will force verify the integrity of server, if some file is missing/corrupted will be reapaired'
-      + #13 + 'Also if it''s avaliable the server will be updated.' + #13#10 +
-      'Are you sure?';
-    dlgType := 'Server Integrity';
+    dlgMsg := _s
+      ('This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it''s avaliable the server will be updated.\nAre you sure?');
+    dlgType := _s('Server Integrity');
   end;
 
   if Sender = btnCheckForPreview then
   begin
-    dlgMsg := 'This will check for a BETA PREVIEW server update.' + #13 +
-      ' If it''s avaliable the server will be updated.' + #13#10 +
-      'Are you sure?';
-    dlgType := 'Update server to BETA/PREVIEW';
+    dlgMsg := _s
+      ('This will check for a BETA PREVIEW server update.\nIf it''s avaliable the server will be updated.\nAre you sure?');
+    dlgType := _s('Update server to BETA/PREVIEW');
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 -beta +exit';
 
   end;
   if Sender = btnSvIntegrityBeta then
   begin
-    dlgMsg := 'This will force verify the integrity of server BETA/PREVIEW state, if some file is missing/corrupted will be reapaired'
-      + #13 + 'Also if it''s avaliable the server will be updated.' + #13#10 +
-      'Are you sure?';
-    dlgType := 'Update server to BETA/PREVIEW';
+    dlgMsg := _s
+      ('This will force verify the integrity of server BETA/PREVIEW state, if some file is missing/corrupted will be reapaired\nAlso if it''s avaliable the server will be updated.\nAre you sure?');
+    dlgType := _s('Update server to BETA/PREVIEW');
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 validate -beta preview +exit';
 
@@ -906,7 +855,7 @@ begin
   begin
     cmdToolFullPath := serverpath + pathCmdTool;
     ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
-    Application.MessageBox('Finished', PWideChar(dlgType),
+    Application.MessageBox(_p('Finished'), PWideChar(dlgType),
       MB_OK + MB_ICONINFORMATION);
   end;
 
@@ -919,9 +868,9 @@ var
   DeleteFolder: TStringList;
   serverpath: String;
 begin
-  i := Application.MessageBox('This will erase all data in cache folder.' +
-    #13#10 + 'Are you sure?', 'Clean download cache',
-    MB_OKCANCEL + MB_ICONEXCLAMATION);
+  i := Application.MessageBox
+    (_p('This will erase all data in cache folder.\nAre you sure?'),
+    _p('Clean download cache'), MB_OKCANCEL + MB_ICONEXCLAMATION);
   if i = IDOK then
   begin
 
@@ -936,7 +885,7 @@ begin
     finally
       FreeAndNil(DeleteFolder);
     end;
-    Application.MessageBox('Finished', 'Clear cache',
+    Application.MessageBox(_p('Finished'), _p('Clear cache'),
       MB_OK + MB_ICONINFORMATION);
 
   end;
@@ -950,9 +899,9 @@ var
   wkspacf: TStringList;
   serverpath: String;
 begin
-  i := Application.MessageBox('This will erase the workshop data base file.' +
-    #13#10 + 'Are you sure?', 'Clean download cache',
-    MB_OKCANCEL + MB_ICONEXCLAMATION);
+  i := Application.MessageBox
+    (_p('This will erase the workshop data base file.\nAre you sure?'),
+    _p('Clean download cache'), MB_OKCANCEL + MB_ICONEXCLAMATION);
   if i = IDOK then
   begin
     DeleteFolder := TStringList.Create;
@@ -970,7 +919,7 @@ begin
       FreeAndNil(DeleteFolder);
       FreeAndNil(wkspacf);
     end;
-    Application.MessageBox('Finished', 'Clear cache',
+    Application.MessageBox(_p('Finished'), _p('Clear cache'),
       MB_OK + MB_ICONINFORMATION);
   end;
 end;
@@ -982,10 +931,10 @@ begin
   steamcmdpath := ExtractFilePath(Application.ExeName) + pathCmdTool;
   if not FileExists(steamcmdpath) then
   begin
-    raise Exception.Create('SteamCmd tool not found. ' + #13 + #13 +
-      'Your installation of kf2servertool is incomplete.' + #13 +
-      'The steamcmd tool is missing in the path ' + #13 + steamcmdpath + #13 +
-      'Reinstall the tool and start the application again.');
+    raise Exception.Create
+      (_p('SteamCmd tool not found.\nYour installation of kf2servertool is incomplete.\nThe steamcmd tool is missing in the path ')
+      + steamcmdpath +
+      _p(' Reinstall the tool and start the application again.'));
     Exit;
   end;
 
@@ -993,22 +942,10 @@ end;
 
 procedure TFormMain.btnDeleteProfileClick(Sender: TObject);
 var
-  TitleDelete, TextDelete: String;
   i: Integer;
 begin
-  if appLanguage = 'BR' then
-  begin
-    TitleDelete := 'Remover perfil';
-    TextDelete := 'Você tem certeza que deseja remover este perfil?';
-  end
-  else
-  begin
-    TitleDelete := 'Remove profile';
-    TextDelete := 'Are you sure you want to delete this profile?';
-  end;
-
-  if Application.MessageBox(Pchar(TextDelete), Pchar(TitleDelete),
-    MB_OKCANCEL + MB_ICONWARNING) = IDOK then
+  if Application.MessageBox(_p('Are you sure you want to delete this profile?'),
+    _p('Remove profile'), MB_OKCANCEL + MB_ICONWARNING) = IDOK then
   begin
     kfprofiles[cbbProfile.ItemIndex].Free;
     for i := cbbProfile.ItemIndex to High(kfprofiles) - 1 do
@@ -1018,6 +955,66 @@ begin
     LoadServerProfile;
   end;
 
+end;
+
+procedure TFormMain.btnGenerateCurrentStringsClick(Sender: TObject);
+var
+  listOut: TStringList;
+  currentList: TStringList;
+  i: Integer;
+begin
+  listOut := TStringList.Create;
+  currentList := tlTool.getCurrentLanguage.tlsource;
+  for i := 0 to currentList.Count - 1 do
+  begin
+    listOut.Add(currentList.ValueFromIndex[i])
+  end;
+  with TSaveDialog.Create(Self) do
+  begin
+    if Execute() then
+      listOut.SaveToFile(filename);
+    Destroy;
+  end;
+  FreeAndNil(listOut);
+end;
+
+procedure TFormMain.btnGenerateNewTranslationClick(Sender: TObject);
+var
+  listOut: TStringList;
+  lisSrc: TStringList;
+  currentList: TStringList;
+  i: Integer;
+begin
+  listOut := TStringList.Create;
+  lisSrc := TStringList.Create;
+
+  currentList := tlTool.getCurrentLanguage.tlsource;
+  with TOpenDialog.Create(Self) do
+  begin
+    if Execute() then
+      lisSrc.LoadFromFile(filename);
+    Destroy;
+  end;
+  if currentList.Count = lisSrc.Count then
+  begin
+
+    for i := 0 to currentList.Count - 1 do
+    begin
+      listOut.AddPair(currentList.Names[i], lisSrc[i])
+    end;
+    with TSaveDialog.Create(Self) do
+    begin
+      if Execute() then
+        listOut.SaveToFile(filename);
+      Destroy;
+    end;
+  end
+  else
+  begin
+    ShowMessage('Lists with diferent lines');
+  end;
+  FreeAndNil(listOut);
+  FreeAndNil(lisSrc);
 end;
 
 procedure TFormMain.InstallServer(Path: String);
@@ -1032,33 +1029,19 @@ end;
 
 procedure TFormMain.btnNewProfileClick(Sender: TObject);
 var
-  newItemTitle, newItemText, newItemError, newItemError1, newName: String;
+  newName: String;
   inputResult: Boolean;
 begin
-  if appLanguage = 'BR' then
-  begin
-    newItemTitle := 'Adicionar novo perfil';
-    newItemText := 'Nome do perfil';
-    newItemError := 'Você precisa informar um nome para o perfil';
-    newItemError1 := 'Erro';
-  end
-  else
-  begin
-    newItemTitle := 'Add new profile';
-    newItemText := 'Profile name';
-    newItemError := 'You must type in a name for the profile';
-    newItemError1 := 'Error';
-
-  end;
 
   repeat
-    inputResult := InputQuery(newItemTitle, newItemText, newName);
+    inputResult := InputQuery(_s('Add new profile'),
+      _s('Profile name'), newName);
     if inputResult then
     begin
       if newName = '' then
       begin
-        Application.MessageBox(Pchar(newItemError), Pchar(newItemError1),
-          MB_OK + MB_ICONSTOP);
+        Application.MessageBox(_p('You must type in a name for the profile'),
+          _p('Error'), MB_OK + MB_ICONSTOP);
 
       end
       else
@@ -1101,7 +1084,7 @@ begin
 
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage('Select an item first.');
+    ShowMessage(_s('Select an item first.'));
     Exit;
   end
   else
@@ -1115,7 +1098,7 @@ begin
       if IsDiffCategory(selectedItems) then
       begin
         ShowMessage
-          ('You can not reinstall multiple items of different types. Select items of only one type.');
+          ('You cannot reinstall multiple items of different types. Select items of only one type.');
         Exit
       end;
       progressForm := TformPB.Create(Self);
@@ -1179,24 +1162,17 @@ begin
 
             end;
 
-            frmReinstall.edtID.Text := itemID;
+            frmReinstall.edtID.text := itemID;
             frmReinstall.ItemName := ItemName;
             frmReinstall.edtID.Enabled := false;
-            frmReinstall.Caption := 'Reinstall ' + ItemName;
+            frmReinstall.Caption := _s('Reinstall ') + ItemName;
             if slItemsCount > 1 then
             begin
               frmReinstall.chkDoForAll.Visible := True;
-              if appLanguage = 'BR' then
-              begin
-                frmReinstall.chkDoForAll.Caption :=
-                  'Fazer isso para os próximos ' +
-                  IntToStr(slItemsCount - itemsDone) + ' itens';
-              end
-              else
-              begin
-                frmReinstall.chkDoForAll.Caption := 'Do the same for the next '
-                  + IntToStr(slItemsCount - itemsDone) + ' items';
-              end;
+
+              frmReinstall.chkDoForAll.Caption :=
+                _s('Do the same for the next ') +
+                IntToStr(slItemsCount - itemsDone) + _s(' items');
 
               if modalResult <> mrAll then
               begin
@@ -1212,17 +1188,17 @@ begin
                   break;
 
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
-                  IntToStr(High(selectedItems) + 1) + ' Installing item '
+                  IntToStr(High(selectedItems) + 1) + _s(' Installing item ')
                   + itemID);
-                if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
+                if serverTool.InstallWorkshopItem(frmReinstall.edtID.text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
                   frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
                   frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
                 then
                 begin
                   Application.MessageBox
-                    (PWideChar('One o more steps for item ' +
-                    frmReinstall.edtID.Text + ' falied!'), '',
+                    (PWideChar(_s('One o more steps for item ') +
+                    frmReinstall.edtID.text + _s(' failed!')), '',
                     MB_OK + MB_ICONEXCLAMATION);
 
                 end;
@@ -1241,17 +1217,17 @@ begin
               if (modalResult = mrOk) then
               begin
 
-                progressForm.NextPBValue('Installing item ' + itemID);
+                progressForm.NextPBValue(_s('Installing item ') + itemID);
 
-                if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
+                if serverTool.InstallWorkshopItem(frmReinstall.edtID.text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
                   frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
                   frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
                 then
                 begin
                   Application.MessageBox
-                    (PWideChar('One o more steps for item ' +
-                    frmReinstall.edtID.Text + ' falied!'), '',
+                    (PWideChar(_s('One o more steps for item ') +
+                    frmReinstall.edtID.text + _s(' failed!')), '',
                     MB_OK + MB_ICONEXCLAMATION);
 
                 end;
@@ -1275,7 +1251,7 @@ begin
         progressForm.Free;
       end;
       LoadItensToLv('');
-      Application.MessageBox('Finished!', '', MB_OK + MB_ICONINFORMATION)
+      Application.MessageBox(_p('Finished!'), '', MB_OK + MB_ICONINFORMATION)
     finally
       frmReinstall.Free;
     end;
@@ -1296,32 +1272,17 @@ end;
 
 procedure TFormMain.btnRenameProfileClick(Sender: TObject);
 var
-  renameItemTitle, renameItemText, newName, renameItemError,
-    renameItemError1: String;
+  newName: String;
   inputResult: Boolean;
 begin
-  if appLanguage = 'BR' then
-  begin
-    renameItemTitle := 'Renomear perfil';
-    renameItemText := 'Novo nome';
-    renameItemError := 'Você precisa informar um novo item para o perfil';
-    renameItemError1 := 'Erro';
-  end
-  else
-  begin
-    renameItemTitle := 'Rename profile';
-    renameItemText := 'New name';
-    renameItemError := 'You must type in a name for the profile';
-    renameItemError1 := 'Error';
-  end;
   repeat
-    inputResult := InputQuery(renameItemTitle, renameItemText, newName);
+    inputResult := InputQuery(_s('Rename profile'), _s('New name'), newName);
     if inputResult then
     begin
       if newName = '' then
       begin
-        Application.MessageBox(Pchar(renameItemError), Pchar(renameItemError1),
-          MB_OK + MB_ICONSTOP);
+        Application.MessageBox(_p('You must type in a name for the profile'),
+          _p('Error'), MB_OK + MB_ICONSTOP);
 
       end
       else
@@ -1355,7 +1316,7 @@ begin
     end;
   except
     SetLength(Result, 0);
-    raise Exception.Create('Falied to generate Seletec itens array');
+    raise Exception.Create('Failed to generate Seletec itens array');
   end;
 end;
 
@@ -1394,7 +1355,7 @@ var
 begin
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage('Select na item first.');
+    ShowMessage(_s('Select an item first.'));
     Exit;
   end
   else
@@ -1404,9 +1365,10 @@ begin
     selectedItems := GetLVSelectedItems(ActiveLV);
     try
       if slItems = 1 then
-        dlgText := 'Force update?'
+        dlgText := _s('Force update?')
       else
-        dlgText := 'Force update to ' + IntToStr(slItems) + ' selected items?';
+        dlgText := _s('Force update to ') + IntToStr(slItems) +
+          _s(' selected items?');
 
       if messagedlg(dlgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
       begin
@@ -1422,11 +1384,11 @@ begin
             ItemName := selectedItems[i].Caption;
             itemID := selectedItems[i].SubItems[0];
             if slItems = 1 then
-              progressForm.NextPBValue(' Updating item ' + itemID + ' '
+              progressForm.NextPBValue(_s(' Updating item ') + itemID + ' '
                 + ItemName)
             else
               progressForm.NextPBValue(IntToStr(i + 1) + '/' + IntToStr(slItems)
-                + ' Updating item ' + itemID);
+                + _s(' Updating item ') + itemID);
             progressForm.Show;
             CheckIfTheServerIsRuning;
             serverTool.ForceUpdate(itemID, false);
@@ -1436,7 +1398,7 @@ begin
         finally
           progressForm.Free;
         end;
-        ShowMessage('Finished!');
+        ShowMessage(_s('Finished!'));
         LoadItensToLv('');
       end;
 
@@ -1454,12 +1416,6 @@ begin
   AutoCheckForUpdates := chkAutoCheckForUpdates.Checked;
 end;
 
-procedure TFormMain.cbb1Change(Sender: TObject);
-begin
-
-  // sknmngr1.SkinName := cbb1.Text;
-end;
-
 procedure TFormMain.cbbDifficultyChange(Sender: TObject);
 begin
   kfprofiles[defaultProfile].DefaultDifficulty := cbbDifficulty.ItemIndex;
@@ -1470,40 +1426,35 @@ begin
   kfprofiles[defaultProfile].DefaultGameMode := cbbGameMode.ItemIndex;
   if (cbbGameMode.ItemIndex = 4) then
   begin
-    if (Pos('?GAME=', UpperCase(edtExtra.Text)) <= 0) then
+    if (Pos('?GAME=', UpperCase(edtExtra.text)) <= 0) then
     begin
       Application.MessageBox
-        ('Specify the gamemod param in additional paramenters.' + #13 + #13 +
-        'Example: ?Game=CustomModGame.MyGame', 'Custom game mode set',
+        (PWideChar
+        (_s('Specify the gamemod param in additional paramenters.\nExample: ') +
+        '?Game=CustomModGame.MyGame'), _p('Custom game mode set'),
         MB_OK + MB_ICONINFORMATION);
       edtExtra.SetFocus;
     end;
   end
   else
   begin
-
-    if Pos('?GAME=', UpperCase(edtExtra.Text)) > 0 then
+    if Pos('?GAME=', UpperCase(edtExtra.text)) > 0 then
       Application.MessageBox
-        (PWideChar('You specified a custom game mode in additional parameters.'
-        + #13 + 'Configuring ' + cbbGameMode.Text +
-        ' as a game mode will cause the server to ignore' + #13 +
-        'the custom game that you specified in Additional parameters box.'),
-        'Custom game mode set', MB_OK + MB_ICONWARNING);
-
-    ;
+        (PWideChar
+        (_s('You specified a custom game mode in additional parameters.\nConfiguring ')
+        + cbbGameMode.text +
+        _s(' as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box.')
+        ), 'Custom game mode set', MB_OK + MB_ICONWARNING);
   end;
-
 end;
 
 procedure TFormMain.cbbLanguageChange(Sender: TObject);
 begin
-  if cbbLanguage.ItemIndex = 0 then
-    appLanguage := 'EG'
-  else
-    appLanguage := 'BR';
+
+  languageInitial := tlTool.getLanguageByName(cbbLanguage.text).initial;
+
   // ShowMessage('The application will be restarted');
   Application.Terminate;
-
   ShellExecute(Application.handle, 'Open', Pchar(Application.ExeName), nil, nil,
     SW_NORMAL);
 end;
@@ -1545,7 +1496,7 @@ procedure TFormMain.cbbRedirectEnabledCloseUp(Sender: TObject);
 begin
   if cbbRedirectEnabled.ItemIndex = 0 then
   begin
-    edtRedirectURL.Text := '';
+    edtRedirectURL.text := '';
     try
       serverTool.SetCustomRedirect('');
     except
@@ -1566,7 +1517,7 @@ end;
 
 procedure TFormMain.cbbThemeChange(Sender: TObject);
 begin
-  fdefaultStyleName := cbbTheme.Text;
+  fdefaultStyleName := cbbTheme.text;
   if Assigned(TStyleManager.ActiveStyle) then
   begin
     TStyleManager.TrySetStyle(fdefaultStyleName);
@@ -1576,28 +1527,14 @@ begin
 end;
 
 function TFormMain.CheckForServerRunningAndClose: Boolean;
-var
-  lgAInstaceIsRun: String;
 begin
   Result := false;
   if ProcessExists(ExtractFileName(pathServerEXE)) then
   begin
     Result := True;
-    if appLanguage = 'BR' then
-    begin
-
-      lgAInstaceIsRun :=
-        'Servidor está está em execução, você precisa fecha-lo para poder fazer este tipo de modificação.'
-        + #13#10 + 'Deseja fechar o server agora?';
-    end
-    else
-    begin
-      lgAInstaceIsRun :=
-        'An instace of server is running, you need close it to make this kind of change.'
-        + #13#10 + 'Do you wanna close the server now??';
-    end;
-    case Application.MessageBox(PWideChar(lgAInstaceIsRun), 'Server',
-      MB_YESNOCANCEL + MB_ICONINFORMATION) of
+    case Application.MessageBox
+      (_p('An instace of server is running, you need close it to make this kind of change.\nDo you wanna close the server now?'),
+      'Server', MB_YESNOCANCEL + MB_ICONINFORMATION) of
       IDCANCEL:
         begin
           Result := True;
@@ -1649,7 +1586,7 @@ procedure TFormMain.sortCycleChange(Sender: TObject);
 begin
   serverTool.SetMapCycleOptions(GroupMapCycle, GroupMapCycleSeparators);
   serverTool.ResortMapCycle();
-  LoadItensToLv(edtSearch.Text);
+  LoadItensToLv(edtSearch.text);
 end;
 
 procedure TFormMain.cbStatusWebChange(Sender: TObject);
@@ -1687,8 +1624,8 @@ end;
 
 procedure TFormMain.edtExtraChange(Sender: TObject);
 begin
-  kfprofiles[defaultProfile].AdditionalParam := edtExtra.Text;
-  if Pos('GAME=', UpperCase(edtExtra.Text)) > 0 then
+  kfprofiles[defaultProfile].AdditionalParam := edtExtra.text;
+  if Pos('GAME=', UpperCase(edtExtra.text)) > 0 then
     cbbGameMode.ItemIndex := 4;
 
 end;
@@ -1700,7 +1637,7 @@ end;
 
 procedure TFormMain.edtGmPassChange(Sender: TObject);
 begin
-  kfprofiles[defaultProfile].DefaultPass := edtGmPass.Text;
+  kfprofiles[defaultProfile].DefaultPass := edtGmPass.text;
 end;
 
 procedure TFormMain.lostFocusSave(Sender: TObject);
@@ -1716,12 +1653,12 @@ begin
   if CheckForServerRunningAndClose = false then
   begin
     try
-      edtPort.Text := cleanInt(edtPort.Text);
-      Port := StrToInt(edtPort.Text);
+      edtPort.text := cleanInt(edtPort.text);
+      Port := StrToInt(edtPort.text);
 
     except
-      ShowMessage('Invalid port number');
-      edtPort.Text := '8080';
+      ShowMessage(_s('Invalid port number'));
+      edtPort.text := '8080';
       Exit;
     end;
     try
@@ -1737,7 +1674,7 @@ end;
 procedure TFormMain.edtRedirectURLExit(Sender: TObject);
 begin
   try
-    serverTool.SetCustomRedirect(Trim(edtRedirectURL.Text));
+    serverTool.SetCustomRedirect(Trim(edtRedirectURL.text));
   except
     on E: Exception do
       ShowMessage(E.Message);
@@ -1746,13 +1683,13 @@ end;
 
 procedure TFormMain.edtSearchChange(Sender: TObject);
 begin
-  LoadItensToLv(edtSearch.Text);
+  LoadItensToLv(edtSearch.text);
 end;
 
 procedure TFormMain.edtWebPassExit(Sender: TObject);
 begin
   try
-    serverTool.SetWebPass(edtWebPass.Text);
+    serverTool.SetWebPass(edtWebPass.text);
     checkAutoWebLoginRequirements();
   except
     on E: Exception do
@@ -1762,7 +1699,7 @@ end;
 
 procedure TFormMain.checkAutoWebLoginRequirements;
 begin
-  if edtWebPass.Text = '' then
+  if edtWebPass.text = '' then
   begin
     chkAutoLoginAdmin.Checked := false;
     chkAutoLoginAdmin.Enabled := false;
@@ -1784,7 +1721,8 @@ begin
   for i := 0 to High(slItems) do
   begin
     case slItems[i].GroupID of
-      0: // workshop
+      0:
+        // workshop
         itemPath := serverTool.GetKFApplicationPath + WKP_CACHEFOLDER +
           slItems[i].SubItems[0];
       1, 2: // redirect or official
@@ -1808,22 +1746,14 @@ var
   warningText, serverRunning: string;
 begin
 
-  warningText := 'You should close the server before make changes. ' + #13#10 +
-    'Do you wanna close it now?';
-  serverRunning := 'Server is running';
+  warningText := '';
+  serverRunning := '';
 
   if serverTool.IsServerRunning then
   begin
-
-    if serverTool.GetKFAppLanguage = KFL_PORTUGUESE then
-    begin
-      warningText := 'Você precisa fechar o server antes de fazer alterações. '
-        + #13#10 + 'Fecha-lo agora??';
-      serverRunning := 'Server em execução';
-    end;
-
-    if Application.MessageBox(PWideChar(warningText), PWideChar(serverRunning),
-      MB_YESNO + MB_ICONWARNING) = IDYES then
+    if Application.MessageBox
+      (_p('You should close the server before make changes.\nDo you wanna close it now?'),
+      _p('Server is running'), MB_YESNO + MB_ICONWARNING) = IDYES then
     begin
       serverTool.KillKFServer();
     end;
@@ -1852,7 +1782,7 @@ begin
       selectedItems := GetLVSelectedItems(ActiveLV);
       if IsDiffCategory(selectedItems) then
       begin
-        ShowMessage('Select just one category of items and try again.');
+        ShowMessage(_s('Select just one category of items and try again.'));
         Exit;
       end;
 
@@ -1874,7 +1804,7 @@ begin
         if itemsExported > 0 then
         begin
           ShowMessage(IntToStr(itemsExported) +
-            ' items exported successfully.');
+            _s(' items exported successfully.'));
         end;
       end;
     finally
@@ -2063,7 +1993,7 @@ begin
           Item.Caption := serverTool.Items[i].filename;
           Item.SubItems.Add(serverTool.Items[i].ID);
           if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-            Item.Caption := Item.Caption + #13 + #13 + 'Workshop ID: ' +
+            Item.Caption := Item.Caption + #13 + #13 + _s('Workshop ID: ') +
               serverTool.Items[i].ID;
           // ServerSubscription
           if serverTool.Items[i].ServerSubscribe then
@@ -2071,7 +2001,7 @@ begin
             Item.SubItems.Add(textYes);
             Item.SubItemImages[1] := 0;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-              Item.Caption := Item.Caption + #13 + 'Server subscribed: '
+              Item.Caption := Item.Caption + #13 + _s('Server subscribed: ')
                 + textYes;
           end
           else
@@ -2086,7 +2016,7 @@ begin
                 Item.SubItemImages[1] := 1;
               if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
                 Item.Caption := Item.Caption + #13 +
-                  'Server subscribed: ' + textNo;
+                  _s('Server subscribed: ') + textNo;
             end;
 
           end;
@@ -2096,7 +2026,8 @@ begin
             Item.SubItems.Add(textYes);
             Item.SubItemImages[2] := 0;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-              Item.Caption := Item.Caption + #13 + 'In map entrys: ' + textYes;
+              Item.Caption := Item.Caption + #13 + _s('In map entrys: ')
+                + textYes;
           end
           else
           begin
@@ -2106,7 +2037,8 @@ begin
             else
               Item.SubItemImages[2] := 1;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-              Item.Caption := Item.Caption + #13 + 'In map entrys: ' + textNo;
+              Item.Caption := Item.Caption + #13 +
+                _s('In map entrys: ') + textNo;
           end;
           // MapEntry
           if serverTool.Items[i].MapCycleEntry then
@@ -2114,7 +2046,8 @@ begin
             Item.SubItems.Add(textYes);
             Item.SubItemImages[3] := 0;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-              Item.Caption := Item.Caption + #13 + 'In map cycle: ' + textYes;
+              Item.Caption := Item.Caption + #13 + _s('In map cycle: ')
+                + textYes;
           end
           else
           begin
@@ -2124,7 +2057,8 @@ begin
             else
               Item.SubItemImages[3] := 1;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-              Item.Caption := Item.Caption + #13 + 'In map cycle: ' + textNo;
+              Item.Caption := Item.Caption + #13 + _s('In map cycle: ')
+                + textNo;
           end;
           // ServerCache
           if serverTool.Items[i].ServerCache then
@@ -2132,7 +2066,7 @@ begin
             Item.SubItems.Add(textYes);
             Item.SubItemImages[4] := 0;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-              Item.Caption := Item.Caption + #13 + 'In server Cache: '
+              Item.Caption := Item.Caption + #13 + _s('In server Cache: ')
                 + textYes;
           end
           else
@@ -2143,7 +2077,8 @@ begin
             else
               Item.SubItemImages[4] := 1;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-              Item.Caption := Item.Caption + #13 + 'In server Cache: ' + textNo;
+              Item.Caption := Item.Caption + #13 +
+                _s('In server Cache: ') + textNo;
 
           end;
           // Item group
@@ -2263,14 +2198,14 @@ begin
 
     if kfitem.SourceFrom = KFSteamWorkshop then
     begin
-      InfoTip := InfoTip + 'Workshop ID: ' + kfitem.ID + #13;
-      InfoTip := InfoTip + 'Subcribed: ' +
+      InfoTip := InfoTip + _s('Workshop ID: ') + kfitem.ID + #13;
+      InfoTip := InfoTip + _s('Subcribed: ') +
         BoolToWord(kfitem.ServerSubscribe) + #13;
     end;
-    InfoTip := InfoTip + 'Map Entry: ' + BoolToWord(kfitem.MapEntry) + #13;
-    InfoTip := InfoTip + 'Map in cycle: ' +
+    InfoTip := InfoTip + _s('Map Entry: ') + BoolToWord(kfitem.MapEntry) + #13;
+    InfoTip := InfoTip + _s('Map in cycle: ') +
       BoolToWord(kfitem.MapCycleEntry) + #13;
-    InfoTip := InfoTip + 'In Cache: ' + BoolToWord(kfitem.ServerCache);
+    InfoTip := InfoTip + _s('In Cache: ') + BoolToWord(kfitem.ServerCache);
 
   end;
 end;
@@ -2592,40 +2527,17 @@ var
 begin
   if ActiveLV = lvMaps then
   begin
-    if appLanguage = 'BR' then
-    begin
-      Removeall1.Caption := 'Remover completamente';
-      RemoveGameSteamCache1.Caption := 'Remover cache do mapa';
-      RemoveServerSubcribe1.Caption := 'Remover inscrição do mapa';
-
-    end
-    else
-    begin
-
-      Removeall1.Caption := 'Remove full map';
-      RemoveGameSteamCache1.Caption := 'Remove map cache';
-      RemoveServerSubcribe1.Caption := 'Remove map subcribe';
-
-    end;
+    Removeall1.Caption := _s('Remove full map');
+    RemoveGameSteamCache1.Caption := _s('Remove map cache');
+    RemoveServerSubcribe1.Caption := _s('Remove map subcribe');
     RemoveMapEntry1.Visible := True;
     RemovefromCycle1.Visible := True;
   end
   else
   begin
-    if appLanguage = 'BR' then
-    begin
-      Removeall1.Caption := 'Remover completamente';
-      RemoveGameSteamCache1.Caption := 'Remover cache do item';
-      RemoveServerSubcribe1.Caption := 'Remover inscrição do item';
-
-    end
-    else
-    begin
-      Removeall1.Caption := 'Remove full item';
-      RemoveGameSteamCache1.Caption := 'Remove item cache';
-      RemoveServerSubcribe1.Caption := 'Remove item subcribe';
-
-    end;
+    Removeall1.Caption := _s('Remove full item');
+    RemoveGameSteamCache1.Caption := _s('Remove item cache');
+    RemoveServerSubcribe1.Caption := _s('Remove item subcribe');
     RemoveMapEntry1.Visible := false;
     RemovefromCycle1.Visible := false;
   end;
@@ -2675,6 +2587,9 @@ var
 
 begin
   UILoaded := false;
+
+  tlTool := TKFTranslation.Create(ExtractFilePath(Application.ExeName));
+
   // ---- Configname path
   ExeName := ExtractFileName(Application.ExeName);
   configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
@@ -2690,7 +2605,7 @@ begin
           break;
         end
         else
-          ShowMessage('Config is not valid');
+          ShowMessage(_s('Config is not valid'));
         break;
       end;
     end;
@@ -2698,14 +2613,24 @@ begin
 
   // ---- Config load
   loadConfig;
+  // ---Loader language source
+  try
+    tlTool.loadSource('KF2ServerTool.lc');
+    tlTool.setLanguage(languageInitial);
 
+  except
+    on E: Exception do
+      Application.MessageBox(PWideChar(E.Message), 'Error',
+        MB_OK + MB_ICONSTOP);
+
+  end;
   // ----- Verify for dependencies
   try
     CheckDependencies;
   except
     on E: Exception do
     begin
-      Application.MessageBox(PWideChar(E.Message), 'Dependencie not found',
+      Application.MessageBox(PWideChar(E.Message), _p('Dependencie not found'),
         MB_OK + MB_ICONSTOP);
       Application.Terminate;
       Exit;
@@ -2725,7 +2650,8 @@ begin
       try
         pathDialogResult := kfPathDialog.ShowModal;
         case pathDialogResult of
-          2: // Cancel
+          2:
+            // Cancel
             begin
               Application.Terminate;
               Exit;
@@ -2764,13 +2690,12 @@ begin
   except
     on E: Exception do
     begin
-      Application.MessageBox(PWideChar(E.Message), 'Error',
+      Application.MessageBox(PWideChar(E.Message), _p('Error'),
         MB_OK + MB_ICONSTOP);
       Application.Terminate;
       Exit
     end;
   end;
-
 
   // ---- Load UI Config
   LoadUIConfig;
@@ -2787,43 +2712,26 @@ var
 
   webPort: String;
   customRedirect: string;
+  avaliableLanguages: TKFLanguages;
 begin
   Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
 
   imgListIDIndex := TStringList.Create;
   // Language
+  cbbLanguage.ItemIndex := 0;
+  lvMaps.Groups[0].TitleImage := 0;
+  lvMaps.Groups[1].TitleImage := 1;
+  lvMaps.Groups[2].TitleImage := 3;
+  lvMaps.Groups[3].TitleImage := 5;
+  lvMods.Groups[0].TitleImage := 0;
+  lvMods.Groups[1].TitleImage := 1;
+  lvMods.Groups[2].TitleImage := 3;
+  lvMods.Groups[3].TitleImage := 5;
 
-  if appLanguage = 'EG' then
-  begin
-    cbbLanguage.ItemIndex := 0;
-    lvMaps.Groups[0].TitleImage := 0;
-    lvMaps.Groups[1].TitleImage := 1;
-    lvMaps.Groups[2].TitleImage := 3;
-    lvMaps.Groups[3].TitleImage := 5;
-    lvMods.Groups[0].TitleImage := 0;
-    lvMods.Groups[1].TitleImage := 1;
-    lvMods.Groups[2].TitleImage := 3;
-    lvMods.Groups[3].TitleImage := 5;
-  end
-  else
-  begin
-    cbbLanguage.ItemIndex := 1;
-    lvMaps.Groups[0].TitleImage := 0;
-    lvMaps.Groups[1].TitleImage := 2;
-    lvMaps.Groups[2].TitleImage := 4;
-    lvMaps.Groups[3].TitleImage := 6;
-    lvMods.Groups[0].TitleImage := 0;
-    lvMods.Groups[1].TitleImage := 2;
-    lvMods.Groups[2].TitleImage := 4;
-    lvMods.Groups[3].TitleImage := 6;
-
-  end;
-
-   LoadOfficialMapList(serverTool.GetKFApplicationPath);
+  LoadOfficialMapList(serverTool.GetKFApplicationPath);
   LoadItensToLv('');
 
-  if appLanguage = 'BR' then
-    TranslateToBR;
+  translateUIElements;
 
   // ------------------------------- all component changes after language set
   jvpgcntrl1.ActivePageIndex := 0;
@@ -2849,13 +2757,13 @@ begin
   if customRedirect = '' then
   begin
     cbbRedirectEnabled.ItemIndex := 0;
-    edtRedirectURL.Text := '';
+    edtRedirectURL.text := '';
     edtRedirectURL.Enabled := false;
   end
   else
   begin
     cbbRedirectEnabled.ItemIndex := 1;
-    edtRedirectURL.Text := customRedirect;
+    edtRedirectURL.text := customRedirect;
     edtRedirectURL.Enabled := True;
   end;
 
@@ -2889,7 +2797,7 @@ begin
       ShowMessage(E.Message);
     end;
   end;
-  edtPort.Text := webPort;
+  edtPort.text := webPort;
   // Web Status
   try
     if serverTool.GetWebStatus then
@@ -2913,10 +2821,10 @@ begin
   end;
   // Web pass
   try
-    edtWebPass.Text := serverTool.GetWebPass;
+    edtWebPass.text := serverTool.GetWebPass;
   except
     on E: Exception do
-      ShowMessage('Falied to get webPass ' + E.Message);
+      ShowMessage('Failed to get webPass ' + E.Message);
   end;
 
   chkAutoLoginAdmin.Checked := autoLoginWebAdmin;
@@ -2927,6 +2835,18 @@ begin
     for i := 0 to High(TStyleManager.StyleNames) do
       cbbTheme.Items.Add(TStyleManager.StyleNames[i]);
   end;
+
+  // Language combobox
+  avaliableLanguages := tlTool.getLanguages;
+  for i := 0 to High(avaliableLanguages) do
+  begin
+    cbbLanguage.Items.Add(avaliableLanguages[i].name);
+  end;
+
+  if tlTool.getCurrentLanguage <> nil then
+  cbbLanguage.ItemIndex := cbbLanguage.Items.IndexOf
+    (tlTool.getCurrentLanguage.name);
+
   // Auto check for updates checkbox
   chkAutoCheckForUpdates.Checked := AutoCheckForUpdates;
 
@@ -2960,11 +2880,11 @@ begin
       begin
         DefaultDifficulty := cbbDifficulty.ItemIndex;
         DefaultLength := cbbLength.ItemIndex;
-        DefaultPass := edtGmPass.Text;
-        AdditionalParam := edtExtra.Text;
-        if (cbbMap.Text <> KF_CYCLE_CUSTOM_SEPARATOR) and
-          (cbbMap.Text <> KF_CYCLE_OFFICIAL_SEPARATOR) then
-          DefaultMap := cbbMap.Text
+        DefaultPass := edtGmPass.text;
+        AdditionalParam := edtExtra.text;
+        if (cbbMap.text <> KF_CYCLE_CUSTOM_SEPARATOR) and
+          (cbbMap.text <> KF_CYCLE_OFFICIAL_SEPARATOR) then
+          DefaultMap := cbbMap.text
         else
           DefaultMap := '';
       end;
@@ -2980,6 +2900,9 @@ begin
       FreeAndNil(kfprofiles[i]);
     if Assigned(imgListIDIndex) then
       FreeAndNil(imgListIDIndex);
+    if Assigned(tlTool) then
+      FreeAndNil(tlTool);
+
   except
 
   end;
@@ -3011,7 +2934,7 @@ begin
 
   if bkpFilePath = '' then
   begin
-    ShowMessage('No item selected');
+    ShowMessage(_s('No item selected'));
     Exit;
   end
   else
@@ -3044,24 +2967,17 @@ begin
             begin
               frmReinstall.SetAddType(TKFItemType.ReinstallWorkshopMap);
             end;
-            frmReinstall.edtID.Text := itemID;
+            frmReinstall.edtID.text := itemID;
             frmReinstall.ItemName := ItemName;
             frmReinstall.edtID.Enabled := false;
-            frmReinstall.Caption := 'Reinstall ' + ItemName;
+            frmReinstall.Caption := _s('Reinstall ') + ItemName;
             if bkpFile.Count > 1 then
             begin
               frmReinstall.chkDoForAll.Visible := True;
-              if appLanguage = 'BR' then
-              begin
-                frmReinstall.chkDoForAll.Caption :=
-                  'Fazer isso para os próximos ' +
-                  IntToStr(ItemsCount - 1 - itemsDone) + ' itens';
-              end
-              else
-              begin
-                frmReinstall.chkDoForAll.Caption := 'Do the same for the next '
-                  + IntToStr(ItemsCount - 1 - itemsDone) + ' items';
-              end;
+
+              frmReinstall.chkDoForAll.Caption :=
+                _s('Do the same for the next ') +
+                IntToStr(ItemsCount - 1 - itemsDone) + _s(' items');
 
               if modalResult <> mrAll then
               begin
@@ -3076,16 +2992,16 @@ begin
                 if progressForm.cancel then
                   break;
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
-                  IntToStr(bkpFile.Count) + ' Installing item ' + itemID);
-                if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
+                  IntToStr(bkpFile.Count) + _s(' Installing item ') + itemID);
+                if serverTool.InstallWorkshopItem(frmReinstall.edtID.text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
                   frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
                   frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
                 then
                 begin
                   Application.MessageBox
-                    (PWideChar('One o more steps for item ' +
-                    frmReinstall.edtID.Text + ' falied!'), '',
+                    (PWideChar(_s('One o more steps for item ') +
+                    frmReinstall.edtID.text + _s(' fialed!')), '',
                     MB_OK + MB_ICONEXCLAMATION);
 
                 end;
@@ -3104,16 +3020,16 @@ begin
               modalResult := frmReinstall.ShowModal;
               if (modalResult = mrOk) then
               begin
-                progressForm.NextPBValue('Installing item ' + itemID);
-                if serverTool.InstallWorkshopItem(frmReinstall.edtID.Text,
+                progressForm.NextPBValue(_s('Installing item ') + itemID);
+                if serverTool.InstallWorkshopItem(frmReinstall.edtID.text,
                   frmReinstall.ItemName, frmReinstall.addWkspRedirect,
                   frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
                   frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
                 then
                 begin
                   Application.MessageBox
-                    (PWideChar('One o more steps for item ' +
-                    frmReinstall.edtID.Text + ' falied!'), '',
+                    (PWideChar(_s('One o more steps for item ') +
+                    frmReinstall.edtID.text + _s(' failed!')), '',
                     MB_OK + MB_ICONEXCLAMATION);
 
                 end;
@@ -3135,7 +3051,7 @@ begin
 
       end;
       LoadItensToLv('');
-      Application.MessageBox('Finished!', '', MB_OK + MB_ICONINFORMATION)
+      Application.MessageBox(_p('Finished!'), '', MB_OK + MB_ICONINFORMATION)
     finally
       FreeAndNil(progressForm);
       FreeAndNil(frmReinstall);
@@ -3174,28 +3090,29 @@ begin
       end;
       redirectURL := serverTool.GetCustomRedirect();
       if redirectURL <> '' then
-        frmAdd.edtRedirectURL.Text := redirectURL
+        frmAdd.edtRedirectURL.text := redirectURL
       else
         ShowMessage
-          ('Warning: The redirect URL is not set. Go to the options tab to set it up.');
+          (_s('Warning: The redirect URL is not set. Go to the options tab to set it up.')
+          );
 
       mdResult := frmAdd.ShowModal;
-      if (mdResult = mrOk) and (Trim(frmAdd.edtItemName.Text) <> '') then
+      if (mdResult = mrOk) and (Trim(frmAdd.edtItemName.text) <> '') then
       begin
         itemsList := TStringList.Create;
         try
           if Assigned(frmProgress) then
             FreeAndNil(frmProgress);
           frmProgress := TformPB.Create(Self);
-          if Pos(',', frmAdd.edtItemName.Text) > 0 then
-            ExtractStrings([','], [], Pchar(frmAdd.edtItemName.Text), itemsList)
+          if Pos(',', frmAdd.edtItemName.text) > 0 then
+            ExtractStrings([','], [], Pchar(frmAdd.edtItemName.text), itemsList)
           else
-            itemsList.Add(Trim(frmAdd.edtItemName.Text));
+            itemsList.Add(Trim(frmAdd.edtItemName.text));
 
           for i := 0 to itemsList.Count - 1 do
           begin
 
-            redirectURL := frmAdd.edtRedirectURL.Text;
+            redirectURL := frmAdd.edtRedirectURL.text;
             filename := itemsList.Strings[i];
             if redirectURL[Length(redirectURL)] <> '/' then
               redirectURL := Trim(redirectURL) + '/';
@@ -3235,7 +3152,7 @@ begin
 
   except
     on E: Exception do
-      ShowMessage('Falied to add item: ' + E.Message);
+      ShowMessage(_s('Failed to add item: ' + E.Message));
   end;
 
 end;
@@ -3249,7 +3166,7 @@ begin
       if currentPosition < pb1.Max then
         pb1.Position := currentPosition;
 
-      frmProgress.lblStatus.Caption := 'Downloading  ' +
+      frmProgress.lblStatus.Caption := _s('Downloading ') +
         FormatFloat('0%', ((currentPosition * 100) / frmProgress.pb1.Max)) +
         ' - ' + FormatByteSize(currentPosition);
     end;
@@ -3294,8 +3211,8 @@ begin
   begin
     cbbDifficulty.ItemIndex := DefaultDifficulty;
     cbbLength.ItemIndex := DefaultLength;
-    edtGmPass.Text := DefaultPass;
-    edtExtra.Text := AdditionalParam;
+    edtGmPass.text := DefaultPass;
+    edtExtra.text := AdditionalParam;
     if (cbbMap.Items.IndexOf(DefaultMap) > 0) and
       (DefaultMap <> KF_CYCLE_CUSTOM_SEPARATOR) and
       (DefaultMap <> KF_CYCLE_OFFICIAL_SEPARATOR) then
@@ -3360,16 +3277,13 @@ begin
     if ProcessExists(ExtractFileName(pathServerEXE)) then
     begin
 
-      wb1.Navigate('http://127.0.0.1:' + edtPort.Text);
+      wb1.Navigate('http://127.0.0.1:' + edtPort.text);
     end
     else
     begin
-      if appLanguage = 'BR' then
-        Application.MessageBox('O Web server não está sendo executado',
-          'Server', MB_OK + MB_ICONINFORMATION)
-      else
-        Application.MessageBox('Web server is not running', 'Server',
-          MB_OK + MB_ICONINFORMATION)
+
+      Application.MessageBox(_p('Web server is not running'), _p('Server'),
+        MB_OK + MB_ICONINFORMATION)
     end;
   end;
 
@@ -3400,28 +3314,17 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage('Select na item first.');
+    ShowMessage(_s('Select na item first.'));
     Exit;
   end
   else
   begin
     try
-      if appLanguage = 'BR' then
-      begin
-        if slCount = 1 then
-          lgText := 'Você tem certeza que deseja apagar completamente o item?'
-        else
-          lgText := 'Você tem certeza que deseja apagar completamente os ' +
-            IntToStr(slCount) + ' itens selecionados?';
-      end
+      if slCount = 1 then
+        lgText := _s('Are you sure you want to full delete the item?')
       else
-      begin
-        if slCount = 1 then
-          lgText := 'Are you sure you want to full delete the item?'
-        else
-          lgText := 'Are you sure you want to full delete the ' +
-            IntToStr(slCount) + ' selected items?';
-      end;
+        lgText := _s('Are you sure you want to full delete the ') +
+          IntToStr(slCount) + _s(' selected items?');
 
       if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
       begin
@@ -3440,7 +3343,7 @@ begin
             if ActiveLV = lvMaps then
             begin
               progressForm.NextPBValue(IntToStr(i + 1) + '/' + IntToStr(slCount)
-                + ' Removing map ' + ItemName + ' ' + itemID);
+                + _s(' Removing map ') + ItemName + ' ' + itemID);
               serverTool.RemoveItem(ItemName, itemID, (ItemName <> ''),
                 (ItemName <> ''), (itemID <> ''), (ItemName <> ''),
                 itemSource, KFMap);
@@ -3451,7 +3354,7 @@ begin
               if ActiveLV = lvMods then
               begin
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
-                  IntToStr(slCount) + ' Removing mod ' + ItemName + ' '
+                  IntToStr(slCount) + _s(' Removing mod ') + ItemName + ' '
                   + itemID);
                 serverTool.RemoveItem(ItemName, itemID, false, false,
                   itemSource = KFSteamWorkshop, True, itemSource, KFMod);
@@ -3460,7 +3363,7 @@ begin
               else
               begin
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
-                  IntToStr(slCount) + ' Removing item ' + ItemName + ' '
+                  IntToStr(slCount) + _s(' Removing item ') + ItemName + ' '
                   + itemID);
                 if ActiveLV = lvUnknowed then
                   serverTool.RemoveItem(ItemName, itemID, True, True, True,
@@ -3498,30 +3401,19 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage('Select na item first.');
+    ShowMessage(_s('Select na item first.'));
     Exit;
   end
   else
   begin
     try
-      if appLanguage = 'BR' then
-      begin
-        if slCount = 1 then
-          lgText := 'Remover ' + ActiveLV.Selected.Caption +
-            ' do ciclo de mapas?'
-        else
-          lgText := 'Remover os ' + IntToStr(slCount) +
-            ' mapas selecionados do ciclo de mapas?';
-      end
-      else
-      begin
-        if slCount = 1 then
-          lgText := 'Remove ' + ActiveLV.Selected.Caption + ' from map cycle?'
-        else
-          lgText := 'Remove the ' + IntToStr(slCount) +
-            ' selected maps from map cycle?';
 
-      end;
+      if slCount = 1 then
+        lgText := _s('Remove ') + ActiveLV.Selected.Caption +
+          _s(' from map cycle?')
+      else
+        lgText := _s('Remove the ') + IntToStr(slCount) +
+          _s(' selected maps from map cycle?');
 
       if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
       begin
@@ -3537,8 +3429,8 @@ begin
             ItemName := slItems[i].Caption;
             itemID := slItems[i].SubItems[0];
             itemSource := TKFSource(slItems[i].GroupID);
-            progressForm.NextPBValue('Removing map ' + ItemName +
-              ' from map cycle');
+            progressForm.NextPBValue(_s('Removing map ') + ItemName +
+              _s(' from map cycle'));
             serverTool.RemoveItem(ItemName, itemID, false, True, false, false,
               itemSource, KFMap);
             progressForm.Close;
@@ -3570,29 +3462,18 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage('Select na item first.');
+    ShowMessage(_s('Select na item first.'));
     Exit;
   end
   else
   begin
 
-    if appLanguage = 'BR' then
-    begin
-      if slCount = 1 then
-
-        lgText := 'Apagar cache do ' + ActiveLV.Selected.Caption + '?'
-      else
-        lgText := 'Apagar cache dos ' + IntToStr(slCount) +
-          ' itens selecionados?';
-    end
+    if slCount = 1 then
+      lgText := _s('Delete cache for ') + ActiveLV.Selected.Caption + '?'
     else
-    begin
-      if slCount = 1 then
-        lgText := 'Delete cache for ' + ActiveLV.Selected.Caption + '?'
-      else
-        lgText := 'Delete cache for the ' + IntToStr(slCount) +
-          ' selected itens?';
-    end;
+      lgText := _s('Delete cache for the ') + IntToStr(slCount) +
+        _s(' selected itens?');
+
     try
 
       if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
@@ -3608,8 +3489,8 @@ begin
             ItemName := slItems[i].Caption;
             itemID := slItems[i].SubItems[0];
             itemSource := TKFSource(slItems[i].GroupID);
-            progressForm.NextPBValue('Removing cache for item ' + ItemName + ' '
-              + itemID);
+            progressForm.NextPBValue(_s('Removing cache for item ') + ItemName +
+              ' ' + itemID);
             if ActiveLV = lvMods then
             begin
               serverTool.RemoveItem(ItemName, itemID, false, false, false, True,
@@ -3655,31 +3536,18 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage('Select na item first.');
+    ShowMessage(_s('Select na item first.'));
     Exit;
   end
   else
   begin
     try
-      if appLanguage = 'BR' then
-      begin
-        if slCount = 1 then
-          lgText := 'Remover a entrada de mapa do ' +
-            ActiveLV.Selected.Caption + '?'
-        else
-          lgText := 'Remover as entradas de mapas dos ' + IntToStr(slCount) +
-            ' mapas selecionados?';
-      end
+      if slCount = 1 then
+        lgText := _s('Remove the map entry of ') +
+          ActiveLV.Selected.Caption + '?'
       else
-      begin
-        if slCount = 1 then
-          lgText := 'Remove the map entry of  ' +
-            ActiveLV.Selected.Caption + '?'
-        else
-          lgText := 'Remove the map entrys from the ' + IntToStr(slCount) +
-            ' selected maps?';
-
-      end;
+        lgText := _s('Remove the map entrys from the ') + IntToStr(slCount) +
+          _s(' selected maps?');
 
       if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
       begin
@@ -3693,8 +3561,8 @@ begin
             ItemName := slItems[i].Caption;
             itemID := slItems[i].SubItems[0];
             itemSource := TKFSource(slItems[i].GroupID);
-            progressForm.NextPBValue('Removing map entry of  ' + ItemName + ' '
-              + itemID);
+            progressForm.NextPBValue(_s('Removing map entry of ') + ItemName +
+              ' ' + itemID);
             serverTool.RemoveItem(ItemName, itemID, True, false, false, false,
               itemSource, KFMap);
             progressForm.Close;
@@ -3726,32 +3594,18 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage('Select na item first.');
+    ShowMessage(_s('Select na item first.'));
     Exit;
   end
   else
   begin
     try
-      if appLanguage = 'BR' then
-      begin
-        if slCount = 1 then
-          lgText := 'Remover inscrição da workshop do ' +
-            ActiveLV.Selected.Caption + '?'
-        else
-          lgText := 'Remover as iscrições da workshop para os ' +
-            IntToStr(slCount) + ' items selecionados?';
-      end
+      if slCount = 1 then
+        lgText := _s('Remove workshop server subcribe for ') +
+          ActiveLV.Selected.Caption + ' ?'
       else
-      begin
-        if slCount = 1 then
-          lgText := 'Remove workshop server subcribe for ' +
-            ActiveLV.Selected.Caption + ' ?'
-        else
-          lgText := 'Remove the ' + IntToStr(slCount) +
-            ' selected items from workshop server subscribe?';
-
-      end;
-
+        lgText := _s('Remove the ') + IntToStr(slCount) +
+          _s(' selected items from workshop server subscribe?');
       if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
       begin
         progressForm := TformPB.Create(Self);
@@ -3761,7 +3615,8 @@ begin
           CheckIfTheServerIsRuning;
           for i := 0 to High(slItems) do
           begin
-            progressForm.NextPBValue('Removing subcribe for item ' + itemID);
+            progressForm.NextPBValue('Removing subscription for item '
+              + itemID);
             ItemName := slItems[i].Caption;
             itemID := slItems[i].SubItems[0];
             itemSource := TKFSource(slItems[i].GroupID);
@@ -3797,7 +3652,7 @@ begin
     except
       on E: Exception do
       begin
-        ShowMessage('Falied to check for updates' + #13 + E.Message);
+        ShowMessage(_s('Failed to check for updates') + #13 + E.Message);
         Exit
       end;
     end;
@@ -3815,11 +3670,12 @@ begin
       if latestVCode > currentVCode then
       begin
 
-        if Application.MessageBox(PWideChar('A new version is avaliable.' +
-          #13#13 + 'Your current version is: ' + serverTool.SERVERTOOLVERSION +
-          #13 + 'The newer version is: ' + latestRelease.version + #13 + #13 +
-          'Change log: ' + #13 + latestRelease.change_log + #13 + #13 +
-          'Do you wanna update it now?'), 'Update aviable',
+        if Application.MessageBox(PWideChar(_p('A new version is avaliable.') +
+          #13#13 + _p('Your current version is: ') +
+          serverTool.SERVERTOOLVERSION + #13 + _p('The newer version is: ') +
+          latestRelease.version + #13 + #13 + _p('Change log: ') + #13 +
+          latestRelease.change_log + #13 + #13 +
+          _p('Do you wanna update it now?')), _p('Update aviable'),
           MB_YESNO + MB_ICONQUESTION) = mrYes then
         begin
           { ShellExecute(0, 'open', Pchar(latestRelease.download_url), nil, nil,
@@ -3834,21 +3690,22 @@ begin
           dlManager.OnFinished := RedirectDownloadFinished;
           dlManager.FileDAbort := @frmProgress.cancel;
           frmProgress.btncancel.Visible := True;
-          frmProgress.lblStatus.Caption := 'Downloading the update, please wait...';
+          frmProgress.lblStatus.Caption :=
+            _s('Downloading the update, please wait...');
           frmProgress.Show;
           try
             if gitUpdate.DownloadAndExtractUpdate(latestRelease.download_url,
               dlManager, 'KF2ServerTool.exe', True) then
             begin
               ShowMessage
-                ('The application will restart to complete the update');
+                (_s('The application will restart to complete the update'));
               KillProcessByName(gitUpdate.TEMUPDATEFILE);
               gitUpdate.executeUpdateInstall(gitUpdate.TEMUPDATEFILE,
                 UPDATEPARAM + ' "' + Application.ExeName + '"');
               Application.Terminate;
             end
             else
-              ShowMessage('Error to update');
+              ShowMessage(_s('Error to update'));
           finally
             FreeAndNil(dlManager);
             FreeAndNil(frmProgress);
@@ -3861,13 +3718,13 @@ begin
       begin
         if Assigned(Sender) then
           if (Sender is TLabel) then
-            ShowMessage('The current version is updated.');
+            ShowMessage(_s('The current version is updated.'));
 
       end;
 
     except
       on E: Exception do
-        ShowMessage('Falied to download update' + #13 + E.Message);
+        ShowMessage(_s('Failed to download update') + #13 + E.Message);
     end;
 
   finally
@@ -3960,7 +3817,8 @@ begin
         // App
         onlyFromConfigItems := ReadBool('GENERAL',
           'OnlyShowItemsFromConfig', false);
-        appLanguage := ReadString('GENERAL', 'Language', 'EG');
+        languageInitial := (ReadString('GENERAL', 'Language', 'EN'));
+
         fdefaultStyleName := ReadString('GENERAL', 'Theme', 'Windows');
         autoLoginWebAdmin := ReadBool('GENERAL', 'AutoWebAdminLogin', True);
         appHeight := ReadInteger('GENERAL', 'WindowHeight', Self.Height);
@@ -3980,7 +3838,7 @@ begin
       IniConfig.Free;
     end;
   except
-    ShowMessage('Falied to load config file');
+    ShowMessage('Failed to load config file');
 
   end;
 end;
@@ -4028,7 +3886,7 @@ begin
               GroupMapCycleSeparators);
           end;
           WriteBool('GENERAL', 'OnlyShowItemsFromConfig', onlyFromConfigItems);
-          WriteString('GENERAL', 'Language', appLanguage);
+          WriteString('GENERAL', 'Language', languageInitial);
           WriteString('GENERAL', 'Theme', fdefaultStyleName);
           WriteBool('GENERAL', 'AutoWebAdminLogin', autoLoginWebAdmin);
           WriteInteger('GENERAL', 'WindowHeight', appHeight);
@@ -4048,7 +3906,7 @@ begin
           WriteBool('GENERAL', 'AutoCheckForUpdates', AutoCheckForUpdates);
         end;
       end;
-      if mmoNotepad.Text <> '' then
+      if mmoNotepad.text <> '' then
       begin
         mmoNotepad.Lines.SaveToFile(ExtractFilePath(Application.ExeName) +
           MEMONAME);
@@ -4064,7 +3922,7 @@ begin
       IniConfig.Free;
     end;
   except
-    ShowMessage('Falied to save config. Admin rights?');
+    ShowMessage(_s('Failed to save config. Admin rights?'));
   end;
 
 end;
@@ -4077,13 +3935,13 @@ begin
   try
     try
       tcpResponse.Host := '127.0.0.1';
-      tcpResponse.Port := StrToInt(edtPort.Text);
+      tcpResponse.Port := StrToInt(edtPort.text);
       tcpResponse.ConnectTimeout := 200;
       tcpResponse.Connect;
       if tcpResponse.Connected then
       begin
 
-        wb1.Navigate('http://127.0.0.1:' + edtPort.Text);
+        wb1.Navigate('http://127.0.0.1:' + edtPort.text);
         jvpgcntrl1.ActivePage := tswebadmin;
         tmrWebAdmin.Enabled := false;
         // autoLoginWb;
@@ -4133,110 +3991,130 @@ begin
   end;
 end;
 
-procedure TFormMain.TranslateToBR();
+procedure TFormMain.translateUIElements();
 begin
-  btnRemove.Caption := 'Remover';
-  btnAddNew.Caption := 'Adicionar';
-  btnReinstall.Caption := 'Reinstalar';
-  btnUpdate.Caption := 'Atualizar';
-  lblDonate.Caption := 'Contribuir';
-  with lvMaps do
+  with tlTool do
   begin
-    Columns.Items[0].Caption := 'Mapa';
-    Columns.Items[2].Caption := 'Inscrito';
-    Columns.Items[3].Caption := 'Entrada';
-    Columns.Items[4].Caption := 'No ciclo';
-    Columns.Items[5].Caption := 'Em cache';
+    btnRemove.Caption := _s(btnRemove.Caption);
+    btnAddNew.Caption := _s(btnAddNew.Caption);
+    btnReinstall.Caption := _s(btnReinstall.Caption);
+    btnUpdate.Caption := _s(btnUpdate.Caption);
+    lblDonate.Caption := _s(lblDonate.Caption);
+    with lvMaps do
+    begin
+      Columns.Items[0].Caption := _s(Columns.Items[0].Caption);
+      Columns.Items[2].Caption := _s(Columns.Items[2].Caption);
+      Columns.Items[3].Caption := _s(Columns.Items[3].Caption);
+      Columns.Items[4].Caption := _s(Columns.Items[4].Caption);
+      Columns.Items[5].Caption := _s(Columns.Items[5].Caption);
+    end;
+    with lvMods do
+    begin
+      Columns.Items[0].Caption := _s(Columns.Items[0].Caption);
+      Columns.Items[2].Caption := _s(Columns.Items[2].Caption);
+      Columns.Items[3].Caption := _s(Columns.Items[3].Caption);
+    end;
+    AddWorkshopMap.Caption := _s(AddWorkshopMap.Caption);
+    AddWorkshopIDorURL.Caption := _s(AddWorkshopIDorURL.Caption);
+    tsMaps.Caption := _s(tsMaps.Caption);
+    lblMap.Caption := _s(lblMap.Caption);
+    lblDifficulty.Caption := _s(lblDifficulty.Caption);
+    lblGameLength.Caption := _s(lblGameLength.Caption);
+    lblGamePass.Caption := _s(lblGamePass.Caption);
+    btnStartServer.Caption := _s(btnStartServer.Caption);
+    grpEnableDisable.Caption := _s(grpEnableDisable.Caption);
+    grpStartServer.Caption := _s(grpStartServer.Caption);
+    cbbDifficulty.Items[1] := _s(cbbDifficulty.Items[1]);
+    cbbDifficulty.Items[2] := _s(cbbDifficulty.Items[2]);
+    cbbDifficulty.Items[3] := _s(cbbDifficulty.Items[3]);
+    cbbLength.Items[0] := _s(cbbLength.Items[0]);
+    cbbLength.Items[1] := _s(cbbLength.Items[1]);
+    cbbLength.Items[2] := _s(cbbLength.Items[2]);
+    add1.Caption := _s(add1.Caption);
+    Remove1.Caption := _s(Remove1.Caption);
+    lblMapCycleOptions.Caption := _s(lblMapCycleOptions.Caption);
+    Forceupdate1.Caption := _s(Forceupdate1.Caption);
+    Reinstall1.Caption := _s(Reinstall1.Caption);
+    Browserworkshop1.Caption := _s(Browserworkshop1.Caption);
+    AddbyID1.Caption := _s(AddbyID1.Caption);
+    allfilesandentry1.Caption := _s(allfilesandentry1.Caption);
+    Mapentry1.Caption := _s(Mapentry1.Caption);
+    MapCycle1.Caption := _s(MapCycle1.Caption);
+    Subcribe1.Caption := _s(Subcribe1.Caption);
+    mniShowitempage1.Caption := _s(mniShowitempage1.Caption);
+    mniCopyID1.Caption := _s(mniCopyID1.Caption);
+    lblAddParam.Caption := _s(lblAddParam.Caption);
+    lblSearch.Caption := _s(lblSearch.Caption);
+    btnNewProfile.Caption := _s(btnNewProfile.Caption);
+    btnRenameProfile.Caption := _s(btnRenameProfile.Caption);
+    btnDeleteProfile.Caption := _s(btnDeleteProfile.Caption);
+    lblProfile.Caption := _s(lblProfile.Caption);
+    chkAutoConnectWeb.Caption := _s(chkAutoConnectWeb.Caption);
+    Multipleitems1.Caption := _s(Multipleitems1.Caption);
+    lblDescWebPort.Caption := _s(lblDescWebPort.Caption);
+    cbWorkshopDMStatus.Items[0] := _s(cbWorkshopDMStatus.Items[0]);
+    cbWorkshopDMStatus.Items[1] := _s(cbWorkshopDMStatus.Items[1]);
+    cbStatusWeb.Items[0] := _s(cbStatusWeb.Items[0]);
+    cbStatusWeb.Items[1] := _s(cbStatusWeb.Items[1]);
+    cbbRedirectEnabled.Items[0] := _s(cbbRedirectEnabled.Items[0]);
+    cbbRedirectEnabled.Items[1] := _s(cbbRedirectEnabled.Items[1]);
+    tsExtra.Caption := _s(tsExtra.Caption);
+    btnCheckForUpdate.Caption := _s(btnCheckForUpdate.Caption);
+    btnCleanDownloadCache.Caption := _s(btnCleanDownloadCache.Caption);
+    btnCleanWorkshopData.Caption := _s(btnCleanWorkshopData.Caption);
+    grpmaintenance.Caption := _s(grpmaintenance.Caption);
+    grpapplication.Caption := _s(grpapplication.Caption);
+    lblFontSize.Caption := _s(lblFontSize.Caption);
+    lblGameMode.Caption := _s(lblGameMode.Caption);
+    FromRedirect1.Caption := _s(FromRedirect1.Caption);
+    FromList1.Caption := _s(FromList1.Caption);
+    tsNotes.Caption := _s(tsNotes.Caption);
+    Export1.Caption := _s(Export1.Caption);
+    RemoveMapEntry1.Caption := _s(RemoveMapEntry1.Caption);
+    lblTheme.Caption := _s(lblTheme.Caption);
+    Explorerlocalfolder1.Caption := _s(Explorerlocalfolder1.Caption);
+    lblLanguage.Caption := _s(lblLanguage.Caption);
+    chkAutoLoginAdmin.Caption := _s(chkAutoLoginAdmin.Caption);
+    chkOnlyFromConfigItems.Caption := _s(chkOnlyFromConfigItems.Caption);
+    chkAutoCheckForUpdates.Caption := _s(chkAutoCheckForUpdates.Caption);
+    chkAutoCheckForUpdates.hint := _s(chkAutoCheckForUpdates.hint);
+    chkOnlyFromConfigItems.hint := _s(chkOnlyFromConfigItems.hint);
+    lblAllChangesWillbe.Caption := _s(lblAllChangesWillbe.Caption);
+    cbbListViewDisplayStyle.Items[0] := _s(cbbListViewDisplayStyle.Items[0]);
+    cbbListViewDisplayStyle.Items[1] := _s(cbbListViewDisplayStyle.Items[1]);
+    cbbListViewDisplayStyle.Items[2] := _s(cbbListViewDisplayStyle.Items[2]);
+    chkGrouMapCycle.Caption := _s(chkGrouMapCycle.Caption);
+    chkIncludeSepratorsMapCycle.Caption :=
+      _s(chkIncludeSepratorsMapCycle.Caption);
+    lblHelpAdditionParam.Caption := _s('Example: ') +
+      '?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15?MaxMonsters=64' +
+      #10#13 + _s('Example: ') +
+      '?Game=MyCustoGameMode.GameMode?Mutator=MyMutator.Mutator'
   end;
-  with lvMods do
-  begin
-    Columns.Items[0].Caption := 'Arquivo';
-    Columns.Items[2].Caption := 'Inscrito';
-    Columns.Items[3].Caption := 'Em cache';
-  end;
-  AddWorkshopMap.Caption := 'Procurar na Workshop';
-  AddWorkshopIDorURL.Caption := 'ID ou URL da Workshop';
-  tsMaps.Caption := 'Mapas';
-  lblMap.Caption := 'Mapa';
-  lblDifficulty.Caption := 'Dificuldade';
-  lblGameLength.Caption := 'Duração';
-  lblGamePass.Caption := 'Senha';
-  btnStartServer.Caption := 'Iniciar servidor';
-  grpEnableDisable.Caption := 'Ativar / Desativar';
-  grpStartServer.Caption := 'Iniciar servidor';
-  cbbDifficulty.Items[1] := 'Difícil';
-  cbbDifficulty.Items[2] := 'Suicida';
-  cbbDifficulty.Items[3] := 'Inferno na terra';
-  cbbLength.Items[0] := 'Curto';
-  cbbLength.Items[1] := 'Médio';
-  cbbLength.Items[2] := 'Longo';
-  add1.Caption := 'Adicionar';
-  Remove1.Caption := 'Remover';
-  Forceupdate1.Caption := 'Forçar atualização';
-  Reinstall1.Caption := 'Reinstalar';
-  Browserworkshop1.Caption := 'Procurar na Workshop';
-  AddbyID1.Caption := 'ID ou URL da Workshop';
-  allfilesandentry1.Caption := 'Completamente';
-  Mapentry1.Caption := 'Entrada';
-  MapCycle1.Caption := 'Do ciclo';
-  Subcribe1.Caption := 'Inscrição';
-  mniShowitempage1.Caption := 'Abrir página da workshop';
-  mniCopyID1.Caption := 'Copiar ID';
-  lblAddParam.Caption := 'Parâmetros adicionais';
-  lblSearch.Caption := 'Filtro';
-  btnNewProfile.Caption := 'Novo';
-  btnRenameProfile.Caption := 'Renomear';
-  btnDeleteProfile.Caption := 'Remover';
-  lblProfile.Caption := 'Perfil';
-  chkAutoConnectWeb.Caption := 'Auto conectar ao WebServer';
-  Multipleitems1.Caption := 'Multiplos items da workshop';
-  lblDescWebPort.Caption := 'Porta do Web admin:';
-  cbWorkshopDMStatus.Items[0] := 'Desativado';
-  cbWorkshopDMStatus.Items[1] := 'Ativado';
-  cbStatusWeb.Items[0] := 'Desativado';
-  cbStatusWeb.Items[1] := 'Ativado';
-  cbbRedirectEnabled.Items[0] := 'Desativado';
-  cbbRedirectEnabled.Items[1] := 'Ativado';
-  tsExtra.Caption := 'Opções';
-  btnCheckForUpdate.Caption := 'Versão atual';
-  btnCleanDownloadCache.Caption := 'Limpar chache de download';
-  btnCleanWorkshopData.Caption := 'Limpar dados da workshop';
-  grpmaintenance.Caption := 'Manutenção';
-  grpapplication.Caption := 'Aplicação';
-  lblFontSize.Caption := 'Tamanho da fonte: ';
-  lblGameMode.Caption := 'Modo de jogo';
-  FromRedirect1.Caption := 'Do Redirect';
-  FromList1.Caption := 'De uma lista de backup';
-  tsNotes.Caption := 'Notas';
-  Export1.Caption := 'Exportar';
-  RemoveMapEntry1.Caption := 'Entrada';
-  RemoveMapEntry1.Caption := 'Do cíclo';
-  lblTheme.Caption := 'Tema:';
-  Explorerlocalfolder1.Caption := 'Abrir a pasta do item';
-  lblWebPass.Caption := 'Senha do Web admin:';
-  chkAutoLoginAdmin.Caption := 'Auto logar no web admin';
-  chkOnlyFromConfigItems.Caption :=
-    'Apenas monstrar itens que estão no arquivo configuração';
-  chkAutoCheckForUpdates.Caption :=
-    'Verificar automaticamente por atualizações';
-  chkAutoCheckForUpdates.hint :=
-    'Verificar automaticamente se há atualizações disponíveis para' + #13 +
-    ' a ferramenta no repositório oficial do KF2ServerTool';
-  chkOnlyFromConfigItems.hint :=
-    'Ative esta opção para ver apenas itens que estão no PCServer-KFGame e no PCServer-KFEngine.'
-    + #13 + 'A pasta cache e maps serão ignorados. Isso é útil quando você tem vários servidores'
-    + #13 + 'com várias configurações e não quer ver mapas de outro servidor na ferramenta.';
+  btnCheckForUpdate.hint := _s(btnCheckForUpdate.hint);
+  btnCheckForPreview.hint := _s(btnCheckForPreview.hint);
+  btnSvIntegrityCurrent.hint := _s(btnSvIntegrityCurrent.hint);
+  btnSvIntegrityBeta.hint := _s(btnSvIntegrityBeta.hint);
+  btnCleanDownloadCache.hint := _s(btnCleanDownloadCache.hint);
+  btnCleanWorkshopData.hint := _s(btnCleanWorkshopData.hint);
+  chkAutoLoginAdmin.hint := _s(chkAutoLoginAdmin.hint);
+  cbWorkshopDMStatus.hint := _s(cbWorkshopDMStatus.hint);
+  cbStatusWeb.hint := _s(cbStatusWeb.hint);
+  edtPort.hint := _s(edtPort.hint);
+  edtWebPass.hint := _s(edtWebPass.hint);
+  cbbRedirectEnabled.hint := _s(cbbRedirectEnabled.hint);
+  edtRedirectURL.hint := _s(edtRedirectURL.hint);
+  chkAutoConnectWeb.hint := _s(chkAutoConnectWeb.hint);
+  chkIncludeSepratorsMapCycle.hint := _s(chkIncludeSepratorsMapCycle.hint);
+  chkGrouMapCycle.hint := _s(chkGrouMapCycle.hint);
+  btnNewProfile.hint := _s(btnNewProfile.hint);
+  btnRenameProfile.hint := _s(btnRenameProfile.hint);
+  btnDeleteProfile.hint := _s(btnDeleteProfile.hint);
+  btnAddNew.hint := _s(btnAddNew.hint);
+  btnRemove.hint := _s(btnRemove.hint);
+  btnReinstall.hint := _s(btnReinstall.hint);
+  btnUpdate.hint := _s(btnUpdate.hint);
 
-  chkAutoLoginAdmin.hint :=
-    'Habilitar esta opção fará com que o WebAdmin efetue login automaticamente usando o nome de usuário'
-    + #13 + ' do "Admin" e a senha especificada. Esta opção só entra em vigor se a conexão automática ao webadmin'
-    + #13 + 'estiver ativada na aba server.';
-
-  lblAllChangesWillbe.Caption :=
-    'Todas alterações serão salvas automaticamente';
-  cbbListViewDisplayStyle.Items[0] := 'Lista simples';
-  cbbListViewDisplayStyle.Items[1] := 'Miniaturas';
-  cbbListViewDisplayStyle.Items[2] := 'Ícones';
 end;
 
 procedure TFormMain.RealignUIItems(Sender: TObject);
@@ -4260,11 +4138,37 @@ begin
   if autoLoginWebAdmin then
   begin
 
-    if URL = 'http://127.0.0.1:' + edtPort.Text + '/ServerAdmin/' then
+    if URL = 'http://127.0.0.1:' + edtPort.text + '/ServerAdmin/' then
       autoLoginWb;
 
   end;
 
+end;
+
+function TFormMain._p(text: String): PWideChar;
+begin
+  try
+    Result := PWideChar(tlTool.tlStr(text))
+  except
+    on E: Exception do
+    begin
+      Result := PWideChar(text);
+      serverTool.LogEvent('Error: ', E.Message);
+    end;
+  end;
+end;
+
+function TFormMain._s(text: String): String;
+begin
+  try
+    Result := tlTool.tlStr(text)
+  except
+      on E: Exception do
+    begin
+      Result := text;
+      serverTool.LogEvent('Error: ', E.Message);
+    end;
+  end;
 end;
 
 procedure TFormMain.alignControlAtoControlB(elementA, elementB: TControl);
@@ -4284,6 +4188,7 @@ procedure TFormMain.InstallRegBrowserKey();
 var
   R: TRegistry;
 begin
+
   try
     R := TRegistry.Create(KEY_WRITE);
     R.RootKey := HKEY_LOCAL_MACHINE;
