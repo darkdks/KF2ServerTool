@@ -281,6 +281,7 @@ type
 
     MEMONAME = 'KF2ServerTool.text';
     UPDATEPARAM = '-installupdate';
+    LOCALIZATIONFILE ='KF2ServerTool.lc';
     { Private declarations }
   public
   var
@@ -2615,7 +2616,7 @@ begin
   loadConfig;
   // ---Loader language source
   try
-    tlTool.loadSource('KF2ServerTool.lc');
+    tlTool.loadSource(LOCALIZATIONFILE);
     tlTool.setLanguage(languageInitial);
 
   except

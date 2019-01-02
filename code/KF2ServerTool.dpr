@@ -27,6 +27,7 @@ uses
 
 const
   UPDATEPARAM = '-installupdate';
+  LOCALIZATIONFILE ='KF2ServerTool.lc';
 {$R *.res}
 {$R 'Manifest.res' 'Manifest.rc'}
 
@@ -65,11 +66,15 @@ begin
             Sleep(500);
 
             fSource.Add(exePath);
+            fSource.Add(ExtractFilePath(exePath) + LOCALIZATIONFILE);  //Delete old localization file
             FileOperation(fSource, '', 3); // deleteOldExe
             Sleep(100);
             fSource.Clear;
             fSource.Add(Application.ExeName);
             FileOperation(fSource, exePath, 2); // copyNewExe
+            fSource.Clear;
+            fSource.Add( ExtractFilePath(Application.ExeName)+LOCALIZATIONFILE);
+            FileOperation(fSource,ExtractFilePath(exePath) +LOCALIZATIONFILE, 2); // copyLocalizationFile
             Sleep(100);
             ExecuteFile(0, exePath, '', 1);
             Result := True;

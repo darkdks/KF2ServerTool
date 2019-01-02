@@ -134,8 +134,11 @@ type
 
 
 
-    SERVERTOOLVERSION = '1.3.1';
+    SERVERTOOLVERSION = '1.3.2';
     {
+    CHANGE LOG VERSION 1.3.2
+    - New translation system, now the tool is easy translatable for any language
+    - Some spelling errors fixed
 
     CHANGE LOG VERSION 1.3.1 For Gui
      - Automatic detection of new official maps(Now new maps will be added as official automatically as soon the webadmin is updated by tripwire)
