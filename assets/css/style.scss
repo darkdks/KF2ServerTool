@@ -8,14 +8,17 @@ $section-headings-color: #fff;
 
 @import "{{ site.theme }}";
 
+h1.project-name {
+    margin-top: 161px;
+}
+
 .page-header {
   color: $header-heading-color;
   text-align: center;
   background-color: $header-bg-color;
-  background-size: 100%;
-  background-position-y: -311px;
-  background-image: url("https://vignette.wikia.nocookie.net/steamtradingcards/images/7/78/Killing_Floor_2_Background_Perks.jpg/revision/latest?cb=20151209060730");
-/*linear-gradient(120deg, $header-bg-color-secondary, $header-bg-color);*/
+  background-size: cover;
+  background-image: url(https://steamuserimages-a.akamaihd.net/ugc/39747379219899085/A35F08AAFF4A225210E505678FA3AD27A889880A/);
+  color: #ffe8b9;
 
   @include large {
     padding: 5rem 6rem;
@@ -29,18 +32,23 @@ $section-headings-color: #fff;
     padding: 2rem 1rem;
   }
 }
-body {
-  
-  /*  background: radial-gradient(#000, #270000, #000000);
-  background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(45,1,6,1) 50%, rgba(0,0,0,1) 100%);
-  color: #b7b7b7;*/
-   background-color: #000;
-  color: #d6d6d6;
- 
-}
 
+section.main-content {
+    background-color: #000000d6;
+}
 .main-content h2 {
-    font-weight: bold;
     color: #ffffff;
     background-color: black;
+}
+section.page-header {
+    border-bottom: 9px solid #420000;
+}
+.main-content h2 {
+    color: white;
+}
+body {
+    background-color: #000;
+    color: #d6d6d6;
+    background-image: url(https://steamuserimages-a.akamaihd.net/ugc/39747379219899085/A35F08AAFF4A225210E505678FA3AD27A889880A/);
+    background-attachment: fixed;
 }
