@@ -19,7 +19,7 @@ uses
   Registry,
   System.Types, KFTypes, Jpeg,
   TypInfo, IOUtils, CommCtrl, System.ImageList, JvExStdCtrls, JvExComCtrls,
-  toolLanguage;
+  toolLanguage, JvComponentBase, JvBalloonHint;
 
 type
   TLvSelectedItems = Array of TListItem;
@@ -97,8 +97,8 @@ type
     btnCheckForUpdate: TButton;
     btnCleanDownloadCache: TButton;
     btnCheckForPreview: TButton;
-    lbl6: TLabel;
-    lbl7: TLabel;
+    lblServerUpdate: TLabel;
+    lblWorkshop: TLabel;
     btnCleanWorkshopData: TButton;
     tswebadmin: TTabSheet;
     wb1: TWebBrowser;
@@ -156,7 +156,7 @@ type
     Image1: TImage;
     ilMiscImgs: TImageList;
     btnSvIntegrityCurrent: TButton;
-    Label1: TLabel;
+    lblVerifyServInt: TLabel;
     btnSvIntegrityBeta: TButton;
     mniRedownloadThumbnail: TMenuItem;
     pb1: TPaintBox;
@@ -166,6 +166,7 @@ type
     chkIncludeSepratorsMapCycle: TCheckBox;
     btnGenerateCurrentStrings: TButton;
     btnGenerateNewTranslation: TButton;
+    blhintHelp: TBalloonHint;
     procedure AddWorkshopClick(Sender: TObject);
     procedure Removeall1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -270,6 +271,7 @@ type
     procedure CheckDependencies;
     procedure LoadFolderToImageList(Path: String);
     procedure translateUIElements;
+    function _h(text: String): String;
 
   var
     ActiveLV: TListView;
@@ -281,7 +283,7 @@ type
 
     MEMONAME = 'KF2ServerTool.text';
     UPDATEPARAM = '-installupdate';
-    LOCALIZATIONFILE ='KF2ServerTool.lc';
+    LOCALIZATIONFILE = 'KF2ServerTool.lc';
     { Private declarations }
   public
   var
@@ -2845,8 +2847,8 @@ begin
   end;
 
   if tlTool.getCurrentLanguage <> nil then
-  cbbLanguage.ItemIndex := cbbLanguage.Items.IndexOf
-    (tlTool.getCurrentLanguage.name);
+    cbbLanguage.ItemIndex := cbbLanguage.Items.IndexOf
+      (tlTool.getCurrentLanguage.name);
 
   // Auto check for updates checkbox
   chkAutoCheckForUpdates.Checked := AutoCheckForUpdates;
@@ -3994,8 +3996,6 @@ end;
 
 procedure TFormMain.translateUIElements();
 begin
-  with tlTool do
-  begin
     btnRemove.Caption := _s(btnRemove.Caption);
     btnAddNew.Caption := _s(btnAddNew.Caption);
     btnReinstall.Caption := _s(btnReinstall.Caption);
@@ -4063,6 +4063,9 @@ begin
     btnCheckForUpdate.Caption := _s(btnCheckForUpdate.Caption);
     btnCleanDownloadCache.Caption := _s(btnCleanDownloadCache.Caption);
     btnCleanWorkshopData.Caption := _s(btnCleanWorkshopData.Caption);
+    btnSvIntegrityCurrent.Caption := _s(btnSvIntegrityCurrent.Caption);
+    btnSvIntegrityBeta.Caption := _s(btnSvIntegrityBeta.Caption);
+    btnCheckForPreview.Caption := _s(btnCheckForPreview.Caption);
     grpmaintenance.Caption := _s(grpmaintenance.Caption);
     grpapplication.Caption := _s(grpapplication.Caption);
     lblFontSize.Caption := _s(lblFontSize.Caption);
@@ -4078,8 +4081,9 @@ begin
     chkAutoLoginAdmin.Caption := _s(chkAutoLoginAdmin.Caption);
     chkOnlyFromConfigItems.Caption := _s(chkOnlyFromConfigItems.Caption);
     chkAutoCheckForUpdates.Caption := _s(chkAutoCheckForUpdates.Caption);
-    chkAutoCheckForUpdates.hint := _s(chkAutoCheckForUpdates.hint);
-    chkOnlyFromConfigItems.hint := _s(chkOnlyFromConfigItems.hint);
+    lblServerUpdate.Caption := _s(lblServerUpdate.Caption);
+    lblVerifyServInt.Caption := _s(lblVerifyServInt.Caption);
+    lblWorkshop.Caption := _s(lblWorkshop.Caption);
     lblAllChangesWillbe.Caption := _s(lblAllChangesWillbe.Caption);
     cbbListViewDisplayStyle.Items[0] := _s(cbbListViewDisplayStyle.Items[0]);
     cbbListViewDisplayStyle.Items[1] := _s(cbbListViewDisplayStyle.Items[1]);
@@ -4090,31 +4094,44 @@ begin
     lblHelpAdditionParam.Caption := _s('Example: ') +
       '?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15?MaxMonsters=64' +
       #10#13 + _s('Example: ') +
-      '?Game=MyCustoGameMode.GameMode?Mutator=MyMutator.Mutator'
-  end;
-  btnCheckForUpdate.hint := _s(btnCheckForUpdate.hint);
-  btnCheckForPreview.hint := _s(btnCheckForPreview.hint);
-  btnSvIntegrityCurrent.hint := _s(btnSvIntegrityCurrent.hint);
-  btnSvIntegrityBeta.hint := _s(btnSvIntegrityBeta.hint);
-  btnCleanDownloadCache.hint := _s(btnCleanDownloadCache.hint);
-  btnCleanWorkshopData.hint := _s(btnCleanWorkshopData.hint);
-  chkAutoLoginAdmin.hint := _s(chkAutoLoginAdmin.hint);
-  cbWorkshopDMStatus.hint := _s(cbWorkshopDMStatus.hint);
-  cbStatusWeb.hint := _s(cbStatusWeb.hint);
-  edtPort.hint := _s(edtPort.hint);
-  edtWebPass.hint := _s(edtWebPass.hint);
-  cbbRedirectEnabled.hint := _s(cbbRedirectEnabled.hint);
-  edtRedirectURL.hint := _s(edtRedirectURL.hint);
-  chkAutoConnectWeb.hint := _s(chkAutoConnectWeb.hint);
-  chkIncludeSepratorsMapCycle.hint := _s(chkIncludeSepratorsMapCycle.hint);
-  chkGrouMapCycle.hint := _s(chkGrouMapCycle.hint);
-  btnNewProfile.hint := _s(btnNewProfile.hint);
-  btnRenameProfile.hint := _s(btnRenameProfile.hint);
-  btnDeleteProfile.hint := _s(btnDeleteProfile.hint);
-  btnAddNew.hint := _s(btnAddNew.hint);
-  btnRemove.hint := _s(btnRemove.hint);
-  btnReinstall.hint := _s(btnReinstall.hint);
-  btnUpdate.hint := _s(btnUpdate.hint);
+      '?Game=MyCustoGameMode.GameMode?Mutator=MyMutator.Mutator';
+
+
+
+  cbbMap.hint := _h(cbbMap.hint);
+  cbbLength.hint := _h(cbbLength.hint);
+  cbbDifficulty.hint := _h(cbbDifficulty.hint);
+  cbbGameMode.hint := _h(cbbGameMode.hint);
+  edtGmPass.hint := _h(edtGmPass.hint);
+  edtExtra.hint := _h(edtExtra.hint);
+  btnStartServer.hint := _h(btnStartServer.hint);
+  cbStatusWeb.hint := _h(cbStatusWeb.hint);
+  cbbProfile.hint := _h(cbbProfile.hint);
+  btnCheckForPreview.hint := _h(btnCheckForPreview.hint);
+  btnSvIntegrityCurrent.hint := _h(btnSvIntegrityCurrent.hint);
+  btnSvIntegrityBeta.hint := _h(btnSvIntegrityBeta.hint);
+  btnCleanDownloadCache.hint := _h(btnCleanDownloadCache.hint);
+  btnCleanWorkshopData.hint := _h(btnCleanWorkshopData.hint);
+  chkAutoLoginAdmin.hint := _h(chkAutoLoginAdmin.hint);
+  cbWorkshopDMStatus.hint := _h(cbWorkshopDMStatus.hint);
+  edtPort.hint := _h(edtPort.hint);
+  edtWebPass.hint := _h(edtWebPass.hint);
+  cbbRedirectEnabled.hint := _h(cbbRedirectEnabled.hint);
+  edtRedirectURL.hint := _h(edtRedirectURL.hint);
+  chkAutoConnectWeb.hint := _h(chkAutoConnectWeb.hint);
+  chkIncludeSepratorsMapCycle.hint := _h(chkIncludeSepratorsMapCycle.hint);
+  chkGrouMapCycle.hint := _h(chkGrouMapCycle.hint);
+  btnNewProfile.hint := _h(btnNewProfile.hint);
+  btnRenameProfile.hint := _h(btnRenameProfile.hint);
+  btnDeleteProfile.hint := _h(btnDeleteProfile.hint);
+  btnAddNew.hint := _h(btnAddNew.hint);
+  btnRemove.hint := _h(btnRemove.hint);
+  btnReinstall.hint := _h(btnReinstall.hint);
+  btnUpdate.hint := _h(btnUpdate.hint);
+  chkAutoCheckForUpdates.hint := _h(chkAutoCheckForUpdates.hint);
+  chkOnlyFromConfigItems.hint := _h(chkOnlyFromConfigItems.hint);
+
+
 
 end;
 
@@ -4159,12 +4176,25 @@ begin
   end;
 end;
 
+function TFormMain._h(text: String): String;
+begin
+  try
+    Result := (tlTool.tlStr(text))
+  except
+    on E: Exception do
+    begin
+      Result := PWideChar(text);
+      serverTool.LogEvent('Error: ', E.Message);
+    end;
+  end;
+end;
+
 function TFormMain._s(text: String): String;
 begin
   try
     Result := tlTool.tlStr(text)
   except
-      on E: Exception do
+    on E: Exception do
     begin
       Result := text;
       serverTool.LogEvent('Error: ', E.Message);

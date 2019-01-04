@@ -136,6 +136,10 @@ type
 
     SERVERTOOLVERSION = '1.3.2';
     {
+    CHANGE LOG VERSION 1.3.3
+    - New help tip for fields
+    - Small corrections in text formation of translated strings
+
     CHANGE LOG VERSION 1.3.2
     - New translation system, now the tool is easy translatable for any language
     - Some spelling errors fixed

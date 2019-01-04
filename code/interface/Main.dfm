@@ -411,7 +411,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsDebug
+    ActivePage = tsServer
     Align = alClient
     TabOrder = 1
     OnChange = jvpgcntrl1Change
@@ -483,6 +483,7 @@ object FormMain: TFormMain
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
+            CustomHint = blhintHelp
             Caption = 'New'
             ParentShowHint = False
             ShowHint = True
@@ -499,6 +500,7 @@ object FormMain: TFormMain
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
+            CustomHint = blhintHelp
             Caption = 'Rename'
             ParentShowHint = False
             ShowHint = True
@@ -515,6 +517,7 @@ object FormMain: TFormMain
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
+            CustomHint = blhintHelp
             Caption = 'Delete'
             ParentShowHint = False
             ShowHint = True
@@ -532,11 +535,14 @@ object FormMain: TFormMain
             Margins.Top = 2
             Margins.Right = 162
             Margins.Bottom = 2
+            CustomHint = blhintHelp
             Align = alClient
             Style = csDropDownList
             Color = clWhite
             Constraints.MaxWidth = 486
             DropDownCount = 20
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 3
             OnChange = cbbProfileChange
           end
@@ -574,8 +580,8 @@ object FormMain: TFormMain
             ShowHint = False
           end
           object lblMapCycleOptions: TLabel
-            Left = 6
-            Top = 29
+            Left = 5
+            Top = 45
             Width = 67
             Height = 18
             Caption = 'Map Cycle'
@@ -592,12 +598,20 @@ object FormMain: TFormMain
             Top = 157
             Width = 616
             Height = 44
+            Hint = 
+              'Start the KF2 server with selected options.'#13#10'After some time a c' +
+              'onsole will open with the server running. '
             Margins.Left = 20
             Margins.Top = 2
             Margins.Right = 20
             Margins.Bottom = 20
+            CustomHint = blhintHelp
             Align = alBottom
+            BiDiMode = bdLeftToRight
             Caption = 'Start server'
+            ParentBiDiMode = False
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 0
             OnClick = btnStartServerClick
           end
@@ -613,21 +627,24 @@ object FormMain: TFormMain
               'his option to work correctly you must enable WebAdmin in options' +
               ' tab.'
             Margins.Left = 20
+            CustomHint = blhintHelp
             Align = alBottom
             Caption = 'Auto connect to web admin'
             ParentShowHint = False
             ShowHint = True
             TabOrder = 1
             OnClick = chkAutoConnectWebClick
+            ExplicitTop = 137
           end
           object chkGrouMapCycle: TCheckBox
             Left = 12
-            Top = 53
+            Top = 69
             Width = 624
             Height = 24
             Hint = 
               'Enabling this option will sort map list cycle by type (official ' +
               'or custom)'
+            CustomHint = blhintHelp
             Align = alCustom
             Caption = 'Group and sort map cycle list by type (Official/Custom)'
             ParentShowHint = False
@@ -637,12 +654,13 @@ object FormMain: TFormMain
           end
           object chkIncludeSepratorsMapCycle: TCheckBox
             Left = 12
-            Top = 76
+            Top = 92
             Width = 429
             Height = 24
             Hint = 
               'Add separators in the list for the section official and custom m' +
               'aps'
+            CustomHint = blhintHelp
             Align = alCustom
             Caption = 'Add type separator'
             ParentShowHint = False
@@ -697,15 +715,19 @@ object FormMain: TFormMain
               Top = 24
               Width = 290
               Height = 25
+              Hint = 'Specify the map that the server starts by default'
               Margins.Left = 6
               Margins.Top = 0
               Margins.Right = 2
               Margins.Bottom = 2
+              CustomHint = blhintHelp
               Align = alBottom
               Style = csDropDownList
               Color = clWhite
               Constraints.MaxWidth = 486
               DropDownCount = 20
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 0
               OnChange = cbbMapChange
               OnExit = lostFocusSave
@@ -745,13 +767,17 @@ object FormMain: TFormMain
               Top = 24
               Width = 161
               Height = 25
+              Hint = 'The default difficulty of the game'
               Margins.Left = 6
               Margins.Top = 0
               Margins.Right = 8
               Margins.Bottom = 2
+              CustomHint = blhintHelp
               Align = alBottom
               Style = csDropDownList
               Color = clWhite
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 0
               OnChange = cbbDifficultyChange
               OnExit = lostFocusSave
@@ -796,13 +822,19 @@ object FormMain: TFormMain
               Top = 24
               Width = 175
               Height = 25
+              Hint = 
+                'Specify the duration of the game'#13#10'Short: 4 Waves'#13#10'Normal: 7 Wave' +
+                's'#13#10'Long: 10 Waves'
               Margins.Left = 6
               Margins.Top = 0
               Margins.Right = 2
               Margins.Bottom = 2
+              CustomHint = blhintHelp
               Align = alBottom
               Style = csDropDownList
               Color = clWhite
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 0
               OnChange = cbbLengthChange
               OnExit = lostFocusSave
@@ -847,13 +879,18 @@ object FormMain: TFormMain
             Top = 25
             Width = 648
             Height = 25
+            Hint = 
+              'Specify here custom parameters that will be used to start the se' +
+              'rver.'#13#10'This is very useful if you want to start the server by de' +
+              'fault with a mod or a  game mode.'
             Margins.Left = 6
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
+            CustomHint = blhintHelp
             Align = alBottom
             ParentShowHint = False
-            ShowHint = False
+            ShowHint = True
             TabOrder = 0
             OnChange = edtExtraChange
             OnEnter = edtExtraEnter
@@ -904,10 +941,14 @@ object FormMain: TFormMain
             Top = 30
             Width = 180
             Height = 25
+            Hint = 
+              'The password that clients must enter to enter in the server.'#13#10'Le' +
+              'ave this field blank for no password.'
             Margins.Left = 2
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
+            CustomHint = blhintHelp
             Color = clWhite
             TabOrder = 0
             OnChange = edtGmPassChange
@@ -918,13 +959,21 @@ object FormMain: TFormMain
             Top = 30
             Width = 193
             Height = 25
+            Hint = 
+              'Specifies the type of server game'#13#10'Endless: Endless waves mode'#13#10 +
+              'Survival: Standard and most played game mode'#13#10'VersusSurvival: Su' +
+              'rvival versus'#13#10'Weekly: Weekly mode, when available'#13#10'Custom: Use ' +
+              'command line to specify a mod'
             Margins.Left = 6
             Margins.Top = 0
             Margins.Right = 8
             Margins.Bottom = 2
+            CustomHint = blhintHelp
             Align = alCustom
             Style = csDropDownList
             Color = clWhite
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 1
             OnChange = cbbGameModeChange
             OnExit = lostFocusSave
@@ -1362,6 +1411,10 @@ object FormMain: TFormMain
             Top = 67
             Width = 89
             Height = 25
+            Hint = 'The default port to access the web admin, by default port 8080'
+            CustomHint = blhintHelp
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 2
             Text = ''
             OnExit = edtPortExit
@@ -1371,7 +1424,14 @@ object FormMain: TFormMain
             Top = 36
             Width = 101
             Height = 25
+            Hint = 
+              'If enabled you can manage the additional server settings for a w' +
+              'eb page or'#13#10'through the tool itself as soon as the server comes ' +
+              'online.'
+            CustomHint = blhintHelp
             Style = csDropDownList
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 1
             Text = ''
             OnChange = cbStatusWebChange
@@ -1388,6 +1448,7 @@ object FormMain: TFormMain
               'This will enable redirect clients to download items from Worksho' +
               'p. You must enable this option if you install maps and mods from' +
               ' steam workshop.'
+            CustomHint = blhintHelp
             Style = csDropDownList
             ParentShowHint = False
             ShowHint = True
@@ -1403,6 +1464,10 @@ object FormMain: TFormMain
             Top = 98
             Width = 138
             Height = 25
+            Hint = 'Specify a password that will be used to login to webadmin'
+            CustomHint = blhintHelp
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 3
             Text = ''
             OnExit = edtWebPassExit
@@ -1417,6 +1482,7 @@ object FormMain: TFormMain
               ' using the Admin'#39's username and the specified password. '#13#10'This o' +
               'ption only takes effect if the * Auto connect to webadmin * is e' +
               'nabled on the server profile tab.'
+            CustomHint = blhintHelp
             Align = alCustom
             Caption = 'Auto web admin login using specified pass'
             ParentShowHint = False
@@ -1460,11 +1526,15 @@ object FormMain: TFormMain
             Top = 61
             Width = 260
             Height = 25
+            Hint = 'The redirect URL used for clients to download files'
             Margins.Left = 5
             Margins.Right = 10
             Margins.Bottom = 20
+            CustomHint = blhintHelp
             Align = alCustom
             Constraints.MaxWidth = 700
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 1
             Text = ''
             OnExit = edtRedirectURLExit
@@ -1477,6 +1547,7 @@ object FormMain: TFormMain
             Hint = 
               'Enable this option to setup a custom URL for redirect clients to' +
               ' download items from the specified Redirect URL '
+            CustomHint = blhintHelp
             Style = csDropDownList
             ParentShowHint = False
             ShowHint = True
@@ -1547,6 +1618,7 @@ object FormMain: TFormMain
           Margins.Top = 2
           Margins.Right = 2
           Margins.Bottom = 2
+          CustomHint = blhintHelp
           Max = 12
           Min = 7
           Position = 7
@@ -1560,6 +1632,7 @@ object FormMain: TFormMain
           Top = 53
           Width = 125
           Height = 25
+          CustomHint = blhintHelp
           Style = csDropDownList
           TabOrder = 1
           Text = ''
@@ -1576,6 +1649,7 @@ object FormMain: TFormMain
             'ored.'#13#10'This is useful when you have multiple servers with multip' +
             'le settings'#13#10' and you dont wanna see maps from another server in' +
             'to the tool.'
+          CustomHint = blhintHelp
           Align = alCustom
           Caption = 'Only display items that are into the current configuration file'
           ParentShowHint = False
@@ -1588,6 +1662,7 @@ object FormMain: TFormMain
           Top = 24
           Width = 173
           Height = 25
+          CustomHint = blhintHelp
           Style = csDropDownList
           TabOrder = 3
           Text = ''
@@ -1601,6 +1676,7 @@ object FormMain: TFormMain
           Hint = 
             'Automatically check if updates are available for'#13#10'the tool in th' +
             'e official KF2ServerTool repository.'
+          CustomHint = blhintHelp
           Align = alCustom
           Caption = 'Automatically check for updates'
           ParentShowHint = False
@@ -1625,7 +1701,7 @@ object FormMain: TFormMain
         ParentBackground = False
         ParentColor = False
         TabOrder = 2
-        object lbl6: TLabel
+        object lblServerUpdate: TLabel
           Left = 17
           Top = 24
           Width = 88
@@ -1636,7 +1712,7 @@ object FormMain: TFormMain
           Margins.Bottom = 2
           Caption = 'Server Update'
         end
-        object lbl7: TLabel
+        object lblWorkshop: TLabel
           Left = 421
           Top = 25
           Width = 64
@@ -1647,7 +1723,7 @@ object FormMain: TFormMain
           Margins.Bottom = 2
           Caption = 'Workshop'
         end
-        object Label1: TLabel
+        object lblVerifyServInt: TLabel
           Left = 221
           Top = 24
           Width = 130
@@ -1665,7 +1741,8 @@ object FormMain: TFormMain
           Height = 25
           Hint = 
             'This will update the server to Current Version [no beta or previ' +
-            'ew version]'
+            'ew version]|'
+          CustomHint = blhintHelp
           Caption = 'Current version'
           ParentShowHint = False
           ShowHint = True
@@ -1678,6 +1755,7 @@ object FormMain: TFormMain
           Width = 175
           Height = 25
           Hint = 'This will clean all downloaded items cache (KFGame/cache)'
+          CustomHint = blhintHelp
           Caption = 'Clean download cache'
           ParentShowHint = False
           ShowHint = True
@@ -1690,6 +1768,7 @@ object FormMain: TFormMain
           Width = 175
           Height = 25
           Hint = 'This will update the server to Beta Preview version'
+          CustomHint = blhintHelp
           Caption = 'Beta/Preview'
           ParentShowHint = False
           ShowHint = True
@@ -1705,6 +1784,7 @@ object FormMain: TFormMain
             'This will clean workshop data (Binaries\Win64\steamapps\workshop' +
             '\content\232090)'#13#10'This is helpful to force update in all maps an' +
             'd auto repair some broken items.'
+          CustomHint = blhintHelp
           Caption = 'Clean workshop data '
           ParentShowHint = False
           ShowHint = True
@@ -1717,6 +1797,7 @@ object FormMain: TFormMain
           Width = 175
           Height = 25
           Hint = 'This will validate the files of the server in current version'
+          CustomHint = blhintHelp
           Caption = 'Current version'
           ParentShowHint = False
           ShowHint = True
@@ -1729,6 +1810,7 @@ object FormMain: TFormMain
           Width = 175
           Height = 25
           Hint = 'This will validate the files of the server in BETA version'
+          CustomHint = blhintHelp
           Caption = 'Beta/Preview'
           ParentShowHint = False
           ShowHint = True
@@ -1864,7 +1946,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C0101060008005C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101060008006C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2274,7 +2356,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C010102000800A800DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800B800DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -16814,5 +16896,11 @@ object FormMain: TFormMain
     Width = 151
     Left = 636
     Top = 269
+  end
+  object blhintHelp: TBalloonHint
+    Images = ilSmallIcons
+    Delay = 300
+    Left = 632
+    Top = 320
   end
 end

@@ -1,6 +1,6 @@
 #
 # This is the KF2ServerTool translation file
-# Revision 0.2
+# Revision 0.3
 #
 # ------ To include a new language
 #
@@ -290,6 +290,27 @@
 "Note: If the map requires an upk(package) file you should add\n this file as mod file in mod tab"="Note: If the map requires an upk(package) file you should add\n this file as mod file in mod tab"
 "Item(s) name"="Item(s) name"
 "Redirect URL"="Redirect URL"
+# ADDED IN REVISION 0.3:
+"This will update the server to Current Version [no beta or preview version]|"="This will update the server to Current Version [no beta or preview version]"
+"This will check for a server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="This will check for a server update.\nIf it's avaliable the server will be updated.\nAre you sure?"
+"This will check for a BETA PREVIEW server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="This will check for a BETA PREVIEW server update.\nIf it's avaliable the server will be updated.\nAre you sure?"
+"This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it's avaliable the server will be updated.\nAre you sure?"="This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it's avaliable the server will be updated.\nAre you sure?"
+"Beta/Preview"="Beta/Preview"
+"Server Update"="Server Update"
+"Verify server integrity"="Verify server integrity"
+"Workshop"="Workshop"
+"Specify the map that the server starts by default"="Specify the map that the server starts by default"
+"Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Waves\nLong: 10 Waves"="Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Waves\nLong: 10 Waves"
+"The default difficulty of the game"="The default difficulty of the game"
+"Specifies the type of server game\nEndless: Endless waves mode\nSurvival: Standard and most played game mode\nVersusSurvival: Survival versus\nWeekly: Weekly mode, when available\nCustom: Use command line to specify a mod"="Specifies the type of server game\nEndless: Endless waves mode\nSurvival: Standard and most played game mode\nVersusSurvival: Survival versus\nWeekly: Weekly mode, when available\nCustom: Use command line to specify a mod"
+"The password that clients must enter to enter in the server.\nLeave this field blank for no password."="The password that clients must enter to enter in the server.\nLeave this field blank for no password."
+"Specify here custom parameters that will be used to start the server.\nThis is very useful if you want to start the server by default with a mod or a  game mode."="Specify here custom parameters that will be used to start the server.\nThis is very useful if you want to start the server by default with a mod or a  game mode."
+"Start the KF2 server with selected options.\nAfter some time a console will open with the server running. "="Start the KF2 server with selected options.\nAfter some time a console will open with the server running. "
+"If enabled you can manage the additional server settings for a web page or\nthrough the tool itself as soon as the server comes online."="If enabled you can manage the additional server settings for a web page or\nthrough the tool itself as soon as the server comes online."
+"The default port to access the web admin, by default port 8080"="The default port to access the web admin, by default port 8080"
+"Specify a password that will be used to login to webadmin"="Specify a password that will be used to login to webadmin"
+"The redirect URL used for clients to download files"="The redirect URL used for clients to download files"
+"Choose a profile with different options"="Choose a profile with different options"
 
 ["Português-BR", "BR"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" como um modo de jogo fará com que o servidor ignore\no jogo personalizado que você especificou na caixa Parâmetros adicionais."
@@ -550,6 +571,27 @@
 "Note: If the map requires an upk(package) file you should add\n this file as mod file in mod tab"="Nota: Se o mapa requer um arquivo upk (pacote) você deve adicionar\neste arquivo na aba mod"
 "Item(s) name"="Nome(s) dos arquivos"
 "Redirect URL"="Redirect URL"
+"This will update the server to Current Version [no beta or preview version]|"="Isso atualizará o servidor para a versão atual [sem ser a versão beta ou preview]"
+"This will check for a server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="Isso verificará se há uma atualização do servidor.\nSe estiver disponível, o servidor será atualizado.\nTem certeza?"
+"This will check for a BETA PREVIEW server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="Isso verificará se há uma atualização do servidor BETA PREVIEW.\nSe estiver disponível, o servidor será atualizado.\nTem certeza?"
+"This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it's avaliable the server will be updated.\nAre you sure?"="Isto irá forçar a verificação da integridade do servidor, se algum arquivo estiver faltando ou corrompido será reparado.\nTambém se estiver disponível o servidor será atualizado.\nTem certeza?"
+"Beta/Preview"="Beta/Preview"
+"Server Update"="Atualizar servidor"
+"Verify server integrity"="Integridade do servidor"
+"Workshop"="Workshop"
+# ADDED IN REVISION 0.3
+"Specify the map that the server starts by default"="Especifique o mapa que o servidor inicia por padrão"
+"Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Waves\nLong: 10 Waves"="Especifique a duração do jogo\nCurto: 4 ondas\nNormal: 7 ondas\nLong: 10 ondas"
+"The default difficulty of the game"="A dificuldade padrão do jogo"
+"Specifies the type of server game\nEndless: Endless waves mode\nSurvival: Standard and most played game mode\nVersusSurvival: Survival versus\nWeekly: Weekly mode, when available\nCustom: Use command line to specify a mod"="Especifica o tipo de jogo do servidor\nEndeless: Modo com waves infinitas\nSurvival: Modo padrão e mais jogado do jogo\nVersusSurvival: Modo de sobrevivencia versus\nWeekly: Modo semanal, quando disponível\nCustom: Uso de linha de comando para especificar um mod"
+"The password that clients must enter to enter in the server.\nLeave this field blank for no password."="A senha que os clientes devem inserir para entrar no servidor.\nDeixe este campo em branco para nenhuma senha."
+"Specify here custom parameters that will be used to start the server.\nThis is very useful if you want to start the server by default with a mod or a  game mode."="Especifique aqui parametros personalizados que serão usados para iniciar o servidor.\nIsto é muito util se você deseja inicializar o servidor já com um mod ou modo de jogo setado."
+"Start the KF2 server with selected options.\nAfter some time a console will open with the server running. "="Inicie o servidor KF2 com as opções selecionadas.\nDepois de algum tempo, um console será aberto com o servidor em execução."
+"If enabled you can manage the additional server settings for a web page or\nthrough the tool itself as soon as the server comes online."="Se ativado você poderá gerenciar as configurações adicionais do servidor por uma página da web ou mesmo através da própria ferramenta assim que o servidor ficar online."
+"The default port to access the web admin, by default port 8080"="A porta padrão para acessar o administrador da web, por padrão, a porta 8080"
+"Specify a password that will be used to login to webadmin"="Especifique uma senha que será usada para efetuar login no webadmin"
+"The redirect URL used for clients to download files"="A URL de redirecionamento usada para clientes para baixar arquivos"
+"Choose a profile with different options"="Escolha um perfil com diferentes opções"
 
 ["Spanish", "ES"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" como un modo de juego hará que el servidor ignore \n el juego personalizado que especificó en el cuadro Parámetros adicionales."
@@ -810,3 +852,24 @@
 "Note: If the map requires an upk(package) file you should add\n this file as mod file in mod tab"="Nota: Si el mapa requiere un archivo upk (paquete),\ndebe agregar este archivo en la pestaña mod"
 "Item(s) name"="Nombre(s) de los archivos"
 "Redirect URL"="Redirect URL"
+#ADDED IN REVISION 0.3
+"This will update the server to Current Version [no beta or preview version]|"="Esto actualizará el servidor a la versión actual [sin ser la versión beta o vista previa]"
+"This will check for a server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="Esto comprobará si hay una actualización del servidor.\nSi está disponible, el servidor se actualizará.\nTiene certeza?"
+"This will check for a BETA PREVIEW server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="Esto comprobará si hay una actualización del servidor BETA PREVIEW.\n Si está disponible, el servidor se actualizará.\nTiene certeza?"
+"This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it's avaliable the server will be updated.\nAre you sure?"="Esto va a forzar la comprobación de la integridad del servidor, si algún archivo falta o dañado se reparará.\nTambién si está disponible el servidor se actualizará.\NTiene certeza?"
+"Beta/Preview"="Beta/Preview"
+"Server Update"="Actualizar servidor"
+"Verify server integrity"="Integridad del servidor"
+"Workshop"="Workshop"
+"Specify the map that the server starts by default"="Specify the map that the server starts by default"
+"Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Waves\nLong: 10 Waves"="Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Waves\nLong: 10 Waves"
+"The default difficulty of the game"="The default difficulty of the game"
+"Specifies the type of server game\nEndless: Endless waves mode\nSurvival: Standard and most played game mode\nVersusSurvival: Survival versus\nWeekly: Weekly mode, when available\nCustom: Use command line to specify a mod"="Specifies the type of server game\nEndless: Endless waves mode\nSurvival: Standard and most played game mode\nVersusSurvival: Survival versus\nWeekly: Weekly mode, when available\nCustom: Use command line to specify a mod"
+"The password that clients must enter to enter in the server.\nLeave this field blank for no password."="The password that clients must enter to enter in the server.\nLeave this field blank for no password."
+"Specify here custom parameters that will be used to start the server.\nThis is very useful if you want to start the server by default with a mod or a  game mode."="Specify here custom parameters that will be used to start the server.\nThis is very useful if you want to start the server by default with a mod or a  game mode."
+"Start the KF2 server with selected options.\nAfter some time a console will open with the server running. "="Start the KF2 server with selected options.\nAfter some time a console will open with the server running. "
+"If enabled you can manage the additional server settings for a web page or\nthrough the tool itself as soon as the server comes online."="If enabled you can manage the additional server settings for a web page or\nthrough the tool itself as soon as the server comes online."
+"The default port to access the web admin, by default port 8080"="The default port to access the web admin, by default port 8080"
+"Specify a password that will be used to login to webadmin"="Specify a password that will be used to login to webadmin"
+"The redirect URL used for clients to download files"="The redirect URL used for clients to download files"
+"Choose a profile with different options"="Choose a profile with different options"

@@ -220,7 +220,7 @@ begin
     Result := StringReplace(Result, '\n', #10 + #13, [rfReplaceAll]);
     if Result = '' then
     begin
-      Result := text;
+      Result := StringReplace(text, '\n', #10 + #13, [rfReplaceAll]);
       // Generate missing string in file
       if missingStrings.IndexOfName(srcKey) = -1 then
         missingStrings.AddPair(srcKey, srcKey);

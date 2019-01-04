@@ -200,9 +200,6 @@ Coordinates=170,682,40,36
 [Subcribe1]
 Coordinates=1257,551,72,36
 
-[lbl7]
-Coordinates=218,546,49,58
-
 [lblAllChangesWillbe]
 Coordinates=1123,10,129,58
 
@@ -332,9 +329,6 @@ Coordinates=503,546,159,58
 [N2]
 Coordinates=248,1086,40,36
 
-[lbl6]
-Coordinates=521,410,49,58
-
 [cbbDifficulty]
 Coordinates=833,10,101,124
 
@@ -388,4 +382,10 @@ Coordinates=352,614,49,58
 
 [ilSmallIcons]
 Coordinates=1257,826,40,36
+
+[lblServerUpdate]
+Coordinates=521,410,49,58
+
+[lblWorkshop]
+Coordinates=218,546,49,58
 
