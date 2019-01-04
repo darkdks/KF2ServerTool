@@ -139,6 +139,7 @@ type
     CHANGE LOG VERSION 1.3.3
     - New help tip for fields
     - Small corrections in text formation of translated strings
+    - Strings Encoding changed to UTF8
 
     CHANGE LOG VERSION 1.3.2
     - New translation system, now the tool is easy translatable for any language

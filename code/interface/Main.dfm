@@ -2,10 +2,10 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Killing Floor 2 Server Tool'
-  ClientHeight = 587
+  ClientHeight = 591
   ClientWidth = 684
   Color = clGray
-  Constraints.MinHeight = 600
+  Constraints.MinHeight = 630
   Constraints.MinWidth = 700
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -45,7 +45,7 @@ object FormMain: TFormMain
   end
   object pnl1: TPanel
     Left = 0
-    Top = 554
+    Top = 558
     Width = 684
     Height = 33
     Margins.Left = 2
@@ -57,6 +57,7 @@ object FormMain: TFormMain
     Color = clCream
     ParentBackground = False
     TabOrder = 0
+    ExplicitTop = 554
     object lblDonate: TLabel
       AlignWithMargins = True
       Left = 628
@@ -406,7 +407,7 @@ object FormMain: TFormMain
     Left = 0
     Top = 17
     Width = 684
-    Height = 537
+    Height = 541
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
@@ -417,6 +418,7 @@ object FormMain: TFormMain
     OnChange = jvpgcntrl1Change
     ParentColor = False
     Color = clWhite
+    ExplicitHeight = 537
     object tsServer: TTabSheet
       Margins.Left = 2
       Margins.Top = 2
@@ -424,11 +426,12 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Server'
       ImageIndex = 2
+      ExplicitHeight = 505
       object pb1: TPaintBox
         Left = 0
         Top = 0
         Width = 676
-        Height = 505
+        Height = 509
         Align = alClient
         ExplicitLeft = 47
         ExplicitWidth = 637
@@ -439,7 +442,7 @@ object FormMain: TFormMain
         Left = 8
         Top = 8
         Width = 660
-        Height = 489
+        Height = 493
         Margins.Left = 8
         Margins.Top = 8
         Margins.Right = 8
@@ -447,6 +450,7 @@ object FormMain: TFormMain
         Align = alClient
         Caption = 'Start server'
         TabOrder = 0
+        ExplicitHeight = 489
         object pnl3: TPanel
           Left = 2
           Top = 19
@@ -551,7 +555,7 @@ object FormMain: TFormMain
           Left = 2
           Top = 266
           Width = 656
-          Height = 221
+          Height = 225
           Margins.Left = 2
           Margins.Top = 2
           Margins.Right = 2
@@ -559,6 +563,7 @@ object FormMain: TFormMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitHeight = 221
           object lblHelpAdditionParam: TLabel
             Left = 12
             Top = 3
@@ -595,7 +600,7 @@ object FormMain: TFormMain
           object btnStartServer: TButton
             AlignWithMargins = True
             Left = 20
-            Top = 157
+            Top = 161
             Width = 616
             Height = 44
             Hint = 
@@ -614,11 +619,12 @@ object FormMain: TFormMain
             ShowHint = True
             TabOrder = 0
             OnClick = btnStartServerClick
+            ExplicitTop = 157
           end
           object chkAutoConnectWeb: TCheckBox
             AlignWithMargins = True
             Left = 20
-            Top = 135
+            Top = 139
             Width = 633
             Height = 17
             Hint = 
@@ -634,7 +640,8 @@ object FormMain: TFormMain
             ShowHint = True
             TabOrder = 1
             OnClick = chkAutoConnectWebClick
-            ExplicitTop = 137
+            ExplicitLeft = 12
+            ExplicitTop = 99
           end
           object chkGrouMapCycle: TCheckBox
             Left = 12
@@ -990,6 +997,7 @@ object FormMain: TFormMain
     object tsMaps: TTabSheet
       Caption = 'Maps'
       ImageIndex = 8
+      ExplicitHeight = 505
       object Image1: TImage
         Left = 336
         Top = 296
@@ -1077,7 +1085,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 32
         Width = 676
-        Height = 473
+        Height = 477
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1171,6 +1179,7 @@ object FormMain: TFormMain
         OnCustomDrawItem = lvMapsCustomDrawItem
         OnDblClick = lvMapsDblClick
         OnInfoTip = lvMapsInfoTip
+        ExplicitHeight = 473
       end
     end
     object tsMods: TTabSheet
@@ -1180,11 +1189,12 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Mods'
       ImageIndex = 1
+      ExplicitHeight = 505
       object lvMods: TListView
         Left = 0
         Top = 0
         Width = 676
-        Height = 505
+        Height = 509
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1245,6 +1255,7 @@ object FormMain: TFormMain
         TabOrder = 0
         ViewStyle = vsReport
         OnClick = lvClick
+        ExplicitHeight = 505
       end
     end
     object tsUnknowed: TTabSheet
@@ -1253,11 +1264,12 @@ object FormMain: TFormMain
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Unknown'
+      ExplicitHeight = 505
       object lvUnknowed: TListView
         Left = 0
         Top = 0
         Width = 676
-        Height = 505
+        Height = 509
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1330,6 +1342,7 @@ object FormMain: TFormMain
         OnClick = lvClick
         OnColumnClick = lvMapsColumnClick
         OnCompare = lvCompare
+        ExplicitHeight = 505
       end
     end
     object tsExtra: TTabSheet
@@ -1339,6 +1352,7 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Options'
       ImageIndex = 3
+      ExplicitHeight = 505
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1822,18 +1836,19 @@ object FormMain: TFormMain
     object tswebadmin: TTabSheet
       Caption = 'WebAdmin'
       ImageIndex = 6
+      ExplicitHeight = 505
       object wb1: TWebBrowser
         Left = 0
         Top = 0
         Width = 676
-        Height = 505
+        Height = 509
         Align = alClient
         TabOrder = 0
         OnDocumentComplete = wb1DocumentComplete
         ExplicitWidth = 661
         ExplicitHeight = 439
         ControlData = {
-          4C000000DE450000313400000000000000000000000000000000000000000000
+          4C000000DE4500009B3400000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
@@ -1843,6 +1858,7 @@ object FormMain: TFormMain
     object tsNotes: TTabSheet
       Caption = 'Notes'
       ImageIndex = 5
+      ExplicitHeight = 505
       object lbl1: TLabel
         AlignWithMargins = True
         Left = 8
@@ -1860,7 +1876,7 @@ object FormMain: TFormMain
       object lblAllChangesWillbe: TLabel
         AlignWithMargins = True
         Left = 3
-        Top = 488
+        Top = 492
         Width = 664
         Height = 14
         Margins.Right = 9
@@ -1875,6 +1891,7 @@ object FormMain: TFormMain
         Font.Style = [fsBold]
         ParentFont = False
         ExplicitLeft = 430
+        ExplicitTop = 488
         ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
@@ -1882,7 +1899,7 @@ object FormMain: TFormMain
         Left = 8
         Top = 33
         Width = 660
-        Height = 452
+        Height = 456
         Margins.Left = 8
         Margins.Top = 8
         Margins.Right = 8
@@ -1891,11 +1908,13 @@ object FormMain: TFormMain
         MaxLength = -1
         ParentColor = True
         TabOrder = 0
+        ExplicitHeight = 452
       end
     end
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
+      ExplicitHeight = 505
       object btnGenerateCurrentStrings: TButton
         Left = 24
         Top = 40
@@ -1946,7 +1965,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C0101060008006C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800700010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2356,7 +2375,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C010102000800B800DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800BC00DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -142,7 +142,7 @@ begin
       #10#13 + 'Download the files again and put the ' + filename +
       ' in the same folder of the tool executable');
 
-  srcFile.LoadFromFile(workingPath + filename);
+  srcFile.LoadFromFile(workingPath + filename, TEncoding.UTF8);
   if srcFile.Count > 0 then
   begin
     i := 0;
