@@ -872,4 +872,8 @@
 "The default port to access the web admin, by default port 8080"="The default port to access the web admin, by default port 8080"
 "Specify a password that will be used to login to webadmin"="Specify a password that will be used to login to webadmin"
 "The redirect URL used for clients to download files"="The redirect URL used for clients to download files"
+<<<<<<< HEAD
 "Choose a profile with different options"="Choose a profile with different options"
+=======
+"Choose a profile with different options"="Choose a profile with different options"
+>>>>>>> 5785c8c3bb8ec3f6ffd4ad9b86286884681124f5
