@@ -134,7 +134,7 @@ type
 
 
 
-    SERVERTOOLVERSION = '1.3.2';
+    SERVERTOOLVERSION = '1.3.3';
     {
     CHANGE LOG VERSION 1.3.3
     - New help tip for fields

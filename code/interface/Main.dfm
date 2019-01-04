@@ -412,7 +412,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsServer
+    ActivePage = tsExtra
     Align = alClient
     TabOrder = 1
     OnChange = jvpgcntrl1Change
@@ -1755,7 +1755,7 @@ object FormMain: TFormMain
           Height = 25
           Hint = 
             'This will update the server to Current Version [no beta or previ' +
-            'ew version]|'
+            'ew version]'
           CustomHint = blhintHelp
           Caption = 'Current version'
           ParentShowHint = False
