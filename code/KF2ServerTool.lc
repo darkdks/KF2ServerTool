@@ -1,6 +1,6 @@
 #
 # This is the KF2ServerTool translation file
-# Revision 0.3
+# Revision 0.4
 #
 # ------ To include a new language
 #
@@ -30,7 +30,8 @@
 # ------ Credits------ 
 #
 #	darkdks - Portuguese - Brazilian 
-#
+#   darkdks - English (Global)
+#	cesar-rgon - Spanish
 
 ["English", "EN"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."
@@ -851,26 +852,22 @@
 "Item(s) name"="Nombre(s) de los archivos"
 "Redirect URL"="Redirect URL"
 #ADDED IN REVISION 0.3
-"This will check for a server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="Esto comprobará si hay una actualización del servidor.\nSi está disponible, el servidor se actualizará.\nTiene certeza?"
-"This will check for a BETA PREVIEW server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="Esto comprobará si hay una actualización del servidor BETA PREVIEW.\n Si está disponible, el servidor se actualizará.\nTiene certeza?"
-"This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it's avaliable the server will be updated.\nAre you sure?"="Esto va a forzar la comprobación de la integridad del servidor, si algún archivo falta o dañado se reparará.\nTambién si está disponible el servidor se actualizará.\NTiene certeza?"
+"This will check for a server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="Se comprobará si hay una actualización del servidor.\nSi está disponible, el servidor se actualizará.\n¿Está seguro?"
+"This will check for a BETA PREVIEW server update.\nIf it's avaliable the server will be updated.\nAre you sure?"="Se comprobará si hay una actualización del servidor BETA PREVIEW.\n Si está disponible, el servidor se actualizará.\n¿Está seguro?"
+"This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it's avaliable the server will be updated.\nAre you sure?"="Se va a forzar la comprobación de la integridad del servidor, si algún archivo falta o está dañado se reparará.\nAdemás si está disponible el servidor se actualizará.\N¿Está seguro?"
 "Beta/Preview"="Beta/Preview"
 "Server Update"="Actualizar servidor"
-"Verify server integrity"="Integridad del servidor"
+"Verify server integrity"="Verificar integridad del servidor"
 "Workshop"="Workshop"
-"Specify the map that the server starts by default"="Specify the map that the server starts by default"
-"Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Waves\nLong: 10 Waves"="Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Waves\nLong: 10 Waves"
-"The default difficulty of the game"="The default difficulty of the game"
-"Specifies the type of server game\nEndless: Endless waves mode\nSurvival: Standard and most played game mode\nVersusSurvival: Survival versus\nWeekly: Weekly mode, when available\nCustom: Use command line to specify a mod"="Specifies the type of server game\nEndless: Endless waves mode\nSurvival: Standard and most played game mode\nVersusSurvival: Survival versus\nWeekly: Weekly mode, when available\nCustom: Use command line to specify a mod"
-"The password that clients must enter to enter in the server.\nLeave this field blank for no password."="The password that clients must enter to enter in the server.\nLeave this field blank for no password."
-"Specify here custom parameters that will be used to start the server.\nThis is very useful if you want to start the server by default with a mod or a  game mode."="Specify here custom parameters that will be used to start the server.\nThis is very useful if you want to start the server by default with a mod or a  game mode."
-"Start the KF2 server with selected options.\nAfter some time a console will open with the server running. "="Start the KF2 server with selected options.\nAfter some time a console will open with the server running. "
-"If enabled you can manage the additional server settings for a web page or\nthrough the tool itself as soon as the server comes online."="If enabled you can manage the additional server settings for a web page or\nthrough the tool itself as soon as the server comes online."
-"The default port to access the web admin, by default port 8080"="The default port to access the web admin, by default port 8080"
-"Specify a password that will be used to login to webadmin"="Specify a password that will be used to login to webadmin"
-"The redirect URL used for clients to download files"="The redirect URL used for clients to download files"
-<<<<<<< HEAD
-"Choose a profile with different options"="Choose a profile with different options"
-=======
-"Choose a profile with different options"="Choose a profile with different options"
->>>>>>> 5785c8c3bb8ec3f6ffd4ad9b86286884681124f5
+"Specify the map that the server starts by default"="Especifica el mapa que el servidor inicia por defecto"
+"Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Waves\nLong: 10 Waves"="Especifica la duración del juego\nCorto: 4 Oleadas\nNormal: 7 Oleadas\nLargo: 10 Oleadas"
+"The default difficulty of the game"="La dificultad por defecto del juego"
+"Specifies the type of server game\nEndless: Endless waves mode\nSurvival: Standard and most played game mode\nVersusSurvival: Survival versus\nWeekly: Weekly mode, when available\nCustom: Use command line to specify a mod"="Especifica el tipo de juego del servidor\nSin fin: Modo de oleadas sin fin\nSupervivencia: Modo de juego estándar y más jugado\nVersus: Modo de juego Versus\nSemanal: Modo de juego semanala, cuando esté disponible\nPersonalizado: Debe usar líneas de comando para especificar algún mod"
+"The password that clients must enter to enter in the server.\nLeave this field blank for no password."="Especifica la contraseña para que los clientes entren al servidor.\nDejar en blanco para que no exista contraseña."
+"Specify here custom parameters that will be used to start the server.\nThis is very useful if you want to start the server by default with a mod or a  game mode."="Especifica aquí los parámetros personalizados que serán usados para iniciar el servidor.\nEsto es muy útil si quiere iniciar el servidor por defecto con un mod o modo de juego."
+"Start the KF2 server with selected options.\nAfter some time a console will open with the server running. "="Inicia el servidor KF2 con las opciones seleccionadas.\nDespués de un breve periodo de tiempo, una consola se abrirá con la ejecución del servidor. "
+"If enabled you can manage the additional server settings for a web page or\nthrough the tool itself as soon as the server comes online."="Si está activo, puedes gestionar las configuraciones adicionales del servidor para la página web o\nmediante la propia herramienta tan pronto como el servidor esté en línea."
+"The default port to access the web admin, by default port 8080"="El puerto por defecto para acceder a web admin es 8080"
+"Specify a password that will be used to login to webadmin"="Especifica una contraseña que será usada para autenticarte en webadmin"
+"The redirect URL used for clients to download files"="La dirección URL usado por clientes para descargar ficheros"
+"Choose a profile with different options"="Escoger un perfil con diferentes opciones"

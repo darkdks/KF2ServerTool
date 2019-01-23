@@ -65,7 +65,6 @@ type
     function IsIgnoredFile(FileName: String): Boolean;
     function DownloadWorkshopItemImage(ID: String): Boolean;
 
-
   public
   var
     Items: array of TKFItem;
@@ -105,7 +104,8 @@ type
     function NewRedirectItem(downURL, ItemName: String;
       DownloadNow, MapCycle, MapEntry: Boolean; var dlManager: TDownloadManager;
       ItemType: TKFRedirectItemType): Boolean;
-
+    Procedure InstallLocalItem(FilePath: String;
+      MapCycle, MapEntry: Boolean);
     function RemoveItem(ItemName: string; itemID: string;
       rmvMapEntry, rmvMapCycle, rmvSubcribe, rmvLocalFile: Boolean;
       ItemSource: TKFSource; ItemType: TKFItemType): Boolean;
@@ -131,32 +131,29 @@ type
 
   const
 
-
-
-
     SERVERTOOLVERSION = '1.3.3';
     {
-    CHANGE LOG VERSION 1.3.3
-    - New help tip for fields
-    - Small corrections in text formation of translated strings
-    - Strings Encoding changed to UTF8
+      CHANGE LOG VERSION 1.3.3
+      - New help tip for fields
+      - Small corrections in text formation of translated strings
+      - Strings Encoding changed to UTF8
 
-    CHANGE LOG VERSION 1.3.2
-    - New translation system, now the tool is easy translatable for any language
-    - Some spelling errors fixed
+      CHANGE LOG VERSION 1.3.2
+      - New translation system, now the tool is easy translatable for any language
+      - Some spelling errors fixed
 
-    CHANGE LOG VERSION 1.3.1 For Gui
-     - Automatic detection of new official maps(Now new maps will be added as official automatically as soon the webadmin is updated by tripwire)
-     - Image cache for Official maps removed from executable (reduced the size of executable)
-     - Some spelling errors fixed
+      CHANGE LOG VERSION 1.3.1 For Gui
+      - Automatic detection of new official maps(Now new maps will be added as official automatically as soon the webadmin is updated by tripwire)
+      - Image cache for Official maps removed from executable (reduced the size of executable)
+      - Some spelling errors fixed
 
-    CHANGE LOG VERSION 1.3.0 For Gui
-     Fixed duplicate item in map cycle when an item is reinstalled
+      CHANGE LOG VERSION 1.3.0 For Gui
+      Fixed duplicate item in map cycle when an item is reinstalled
 
       CHANGE LOG VERSION 1.2.9 For Gui and cmd
-		Added new map from update as official
-		Added map cycle group and separator option
-		Beta Server Update command updated
+      Added new map from update as official
+      Added map cycle group and separator option
+      Beta Server Update command updated
 
       CHANGE LOG VERSION 1.2.8 For Gui
 
@@ -551,6 +548,33 @@ begin
   end;
 end;
 
+Procedure TKFServerTool.InstallLocalItem(FilePath: String;
+  MapCycle, MapEntry: Boolean);
+var
+  FileName: string;
+  ItemName: string;
+  filesL: TStringList;
+begin
+
+  FileName := ExtractFileName(FilePath);
+  ItemName := TPath.GetFileNameWithoutExtension(FilePath);
+  if (FileName = '') or (FilePath = '') then
+    raise Exception.Create('Invalid File');
+  filesL := TStringList.Create;
+  try
+    filesL.Add(FilePath);
+    FileOperation(filesL, IncludeTrailingBackslash(kfApplicationPath) +
+      KF_LOCALMAPSSUBFOLDER + FileName, 2 { FO_COPY } );
+    if MapCycle then
+      AddMapCycle(ItemName, CycleSortType, CycleSortSeparators);
+    if MapEntry then
+      AddMapEntry(ItemName);
+  finally
+    FreeAndNil(filesL);
+  end;
+
+end;
+
 function TKFServerTool.InstallWorkshopItem(ID, name: String;
   WorkshopSubscribe, DownloadNow, DownloadImg, MapCycle,
   MapEntry: Boolean): Boolean;
@@ -886,7 +910,9 @@ begin
         ItemName := cycleList[I];
         //
         if (GetItemIndexByName(ItemName, true) = -1) and
-          (IsIgnoredMap(ItemName) = False) and (ItemName <> KF_CYCLE_OFFICIAL_SEPARATOR) and (ItemName <> KF_CYCLE_CUSTOM_SEPARATOR) then
+          (IsIgnoredMap(ItemName) = False) and
+          (ItemName <> KF_CYCLE_OFFICIAL_SEPARATOR) and
+          (ItemName <> KF_CYCLE_CUSTOM_SEPARATOR) then
         begin
           aItem := TKFItem.Create;
           aItem.ID := '';

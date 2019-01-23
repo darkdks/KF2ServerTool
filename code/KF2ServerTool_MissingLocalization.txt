@@ -1,0 +1,2 @@
+"Local item"="Local item"
+"Map File:"="Map File:"

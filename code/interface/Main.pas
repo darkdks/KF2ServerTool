@@ -250,6 +250,7 @@ type
     function _p(text: String): PWideChar;
     procedure btnGenerateCurrentStringsClick(Sender: TObject);
     procedure btnGenerateNewTranslationClick(Sender: TObject);
+    procedure AddManualEntryClick(Sender: TObject);
   private
     function loadConfig: Boolean;
     function saveconfig: Boolean;
@@ -318,6 +319,53 @@ implementation
 uses
   AddItem, PathDialog, Queue;
 {$R *.dfm}
+
+procedure TFormMain.AddManualEntryClick(Sender: TObject);
+var
+  frmAdd: TFormAdd;
+  mdResult: Integer;
+  progressForm: TformPB;
+begin
+  if ActiveLV = lvMaps then
+  begin
+    try
+      frmAdd := TFormAdd.Create(Self);
+      try
+        CheckIfTheServerIsRuning;
+        frmAdd.SetAddType(TKFItemType.LocalItem);
+        mdResult := frmAdd.ShowModal;
+        if (mdResult = mrOk) and (frmAdd.edtItemName.text <> '') then
+        begin
+          progressForm := TformPB.Create(Self);
+          try
+            progressForm.NextPBValue(_s('Installing item '));
+            progressForm.tmrUndeterminedPB.Enabled := True;
+            progressForm.Show;
+            Application.ProcessMessages;
+            try
+
+              serverTool.InstallLocalItem(frmAdd.edtItemName.text,
+                frmAdd.addMapCycle, frmAdd.addMapENtry)
+            except
+              on E: Exception do
+                Application.MessageBox(PWideChar(_s(E.Message)), '',
+                  MB_OK + MB_ICONEXCLAMATION);
+            end;
+            progressForm.Close;
+            ShowMessage(_s('Finished!'));
+          finally
+            progressForm.Free;
+          end;
+        end;
+      finally
+        frmAdd.Free;
+      end;
+    finally
+      LoadItensToLv('');
+    end;
+  end;
+
+end;
 
 procedure TFormMain.AddWorkshopClick(Sender: TObject);
 var
@@ -2270,7 +2318,8 @@ begin
         RemoveServerSubcribe1.Visible := false;
       end
       else if ActiveLV.Selected.GroupID = 2 then
-      begin // Redirect or local
+      begin
+        // Redirect or local
         if ActiveLV = lvMaps then
         begin
 
@@ -2478,7 +2527,8 @@ begin
 
       end
       else if ActiveLV.Selected.GroupID = 2 then
-      begin // Redirect or local
+      begin
+        // Redirect or local
 
         Browserworkshop1.Enabled := false;
         Browserworkshop1.Visible := false;
@@ -3996,107 +4046,105 @@ end;
 
 procedure TFormMain.translateUIElements();
 begin
-    btnRemove.Caption := _s(btnRemove.Caption);
-    btnAddNew.Caption := _s(btnAddNew.Caption);
-    btnReinstall.Caption := _s(btnReinstall.Caption);
-    btnUpdate.Caption := _s(btnUpdate.Caption);
-    lblDonate.Caption := _s(lblDonate.Caption);
-    with lvMaps do
-    begin
-      Columns.Items[0].Caption := _s(Columns.Items[0].Caption);
-      Columns.Items[2].Caption := _s(Columns.Items[2].Caption);
-      Columns.Items[3].Caption := _s(Columns.Items[3].Caption);
-      Columns.Items[4].Caption := _s(Columns.Items[4].Caption);
-      Columns.Items[5].Caption := _s(Columns.Items[5].Caption);
-    end;
-    with lvMods do
-    begin
-      Columns.Items[0].Caption := _s(Columns.Items[0].Caption);
-      Columns.Items[2].Caption := _s(Columns.Items[2].Caption);
-      Columns.Items[3].Caption := _s(Columns.Items[3].Caption);
-    end;
-    AddWorkshopMap.Caption := _s(AddWorkshopMap.Caption);
-    AddWorkshopIDorURL.Caption := _s(AddWorkshopIDorURL.Caption);
-    tsMaps.Caption := _s(tsMaps.Caption);
-    lblMap.Caption := _s(lblMap.Caption);
-    lblDifficulty.Caption := _s(lblDifficulty.Caption);
-    lblGameLength.Caption := _s(lblGameLength.Caption);
-    lblGamePass.Caption := _s(lblGamePass.Caption);
-    btnStartServer.Caption := _s(btnStartServer.Caption);
-    grpEnableDisable.Caption := _s(grpEnableDisable.Caption);
-    grpStartServer.Caption := _s(grpStartServer.Caption);
-    cbbDifficulty.Items[1] := _s(cbbDifficulty.Items[1]);
-    cbbDifficulty.Items[2] := _s(cbbDifficulty.Items[2]);
-    cbbDifficulty.Items[3] := _s(cbbDifficulty.Items[3]);
-    cbbLength.Items[0] := _s(cbbLength.Items[0]);
-    cbbLength.Items[1] := _s(cbbLength.Items[1]);
-    cbbLength.Items[2] := _s(cbbLength.Items[2]);
-    add1.Caption := _s(add1.Caption);
-    Remove1.Caption := _s(Remove1.Caption);
-    lblMapCycleOptions.Caption := _s(lblMapCycleOptions.Caption);
-    Forceupdate1.Caption := _s(Forceupdate1.Caption);
-    Reinstall1.Caption := _s(Reinstall1.Caption);
-    Browserworkshop1.Caption := _s(Browserworkshop1.Caption);
-    AddbyID1.Caption := _s(AddbyID1.Caption);
-    allfilesandentry1.Caption := _s(allfilesandentry1.Caption);
-    Mapentry1.Caption := _s(Mapentry1.Caption);
-    MapCycle1.Caption := _s(MapCycle1.Caption);
-    Subcribe1.Caption := _s(Subcribe1.Caption);
-    mniShowitempage1.Caption := _s(mniShowitempage1.Caption);
-    mniCopyID1.Caption := _s(mniCopyID1.Caption);
-    lblAddParam.Caption := _s(lblAddParam.Caption);
-    lblSearch.Caption := _s(lblSearch.Caption);
-    btnNewProfile.Caption := _s(btnNewProfile.Caption);
-    btnRenameProfile.Caption := _s(btnRenameProfile.Caption);
-    btnDeleteProfile.Caption := _s(btnDeleteProfile.Caption);
-    lblProfile.Caption := _s(lblProfile.Caption);
-    chkAutoConnectWeb.Caption := _s(chkAutoConnectWeb.Caption);
-    Multipleitems1.Caption := _s(Multipleitems1.Caption);
-    lblDescWebPort.Caption := _s(lblDescWebPort.Caption);
-    cbWorkshopDMStatus.Items[0] := _s(cbWorkshopDMStatus.Items[0]);
-    cbWorkshopDMStatus.Items[1] := _s(cbWorkshopDMStatus.Items[1]);
-    cbStatusWeb.Items[0] := _s(cbStatusWeb.Items[0]);
-    cbStatusWeb.Items[1] := _s(cbStatusWeb.Items[1]);
-    cbbRedirectEnabled.Items[0] := _s(cbbRedirectEnabled.Items[0]);
-    cbbRedirectEnabled.Items[1] := _s(cbbRedirectEnabled.Items[1]);
-    tsExtra.Caption := _s(tsExtra.Caption);
-    btnCheckForUpdate.Caption := _s(btnCheckForUpdate.Caption);
-    btnCleanDownloadCache.Caption := _s(btnCleanDownloadCache.Caption);
-    btnCleanWorkshopData.Caption := _s(btnCleanWorkshopData.Caption);
-    btnSvIntegrityCurrent.Caption := _s(btnSvIntegrityCurrent.Caption);
-    btnSvIntegrityBeta.Caption := _s(btnSvIntegrityBeta.Caption);
-    btnCheckForPreview.Caption := _s(btnCheckForPreview.Caption);
-    grpmaintenance.Caption := _s(grpmaintenance.Caption);
-    grpapplication.Caption := _s(grpapplication.Caption);
-    lblFontSize.Caption := _s(lblFontSize.Caption);
-    lblGameMode.Caption := _s(lblGameMode.Caption);
-    FromRedirect1.Caption := _s(FromRedirect1.Caption);
-    FromList1.Caption := _s(FromList1.Caption);
-    tsNotes.Caption := _s(tsNotes.Caption);
-    Export1.Caption := _s(Export1.Caption);
-    RemoveMapEntry1.Caption := _s(RemoveMapEntry1.Caption);
-    lblTheme.Caption := _s(lblTheme.Caption);
-    Explorerlocalfolder1.Caption := _s(Explorerlocalfolder1.Caption);
-    lblLanguage.Caption := _s(lblLanguage.Caption);
-    chkAutoLoginAdmin.Caption := _s(chkAutoLoginAdmin.Caption);
-    chkOnlyFromConfigItems.Caption := _s(chkOnlyFromConfigItems.Caption);
-    chkAutoCheckForUpdates.Caption := _s(chkAutoCheckForUpdates.Caption);
-    lblServerUpdate.Caption := _s(lblServerUpdate.Caption);
-    lblVerifyServInt.Caption := _s(lblVerifyServInt.Caption);
-    lblWorkshop.Caption := _s(lblWorkshop.Caption);
-    lblAllChangesWillbe.Caption := _s(lblAllChangesWillbe.Caption);
-    cbbListViewDisplayStyle.Items[0] := _s(cbbListViewDisplayStyle.Items[0]);
-    cbbListViewDisplayStyle.Items[1] := _s(cbbListViewDisplayStyle.Items[1]);
-    cbbListViewDisplayStyle.Items[2] := _s(cbbListViewDisplayStyle.Items[2]);
-    chkGrouMapCycle.Caption := _s(chkGrouMapCycle.Caption);
-    chkIncludeSepratorsMapCycle.Caption :=
-      _s(chkIncludeSepratorsMapCycle.Caption);
-    lblHelpAdditionParam.Caption := _s('Example: ') +
-      '?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15?MaxMonsters=64' +
-      #10#13 + _s('Example: ') +
-      '?Game=MyCustoGameMode.GameMode?Mutator=MyMutator.Mutator';
-
-
+  btnRemove.Caption := _s(btnRemove.Caption);
+  btnAddNew.Caption := _s(btnAddNew.Caption);
+  btnReinstall.Caption := _s(btnReinstall.Caption);
+  btnUpdate.Caption := _s(btnUpdate.Caption);
+  lblDonate.Caption := _s(lblDonate.Caption);
+  with lvMaps do
+  begin
+    Columns.Items[0].Caption := _s(Columns.Items[0].Caption);
+    Columns.Items[2].Caption := _s(Columns.Items[2].Caption);
+    Columns.Items[3].Caption := _s(Columns.Items[3].Caption);
+    Columns.Items[4].Caption := _s(Columns.Items[4].Caption);
+    Columns.Items[5].Caption := _s(Columns.Items[5].Caption);
+  end;
+  with lvMods do
+  begin
+    Columns.Items[0].Caption := _s(Columns.Items[0].Caption);
+    Columns.Items[2].Caption := _s(Columns.Items[2].Caption);
+    Columns.Items[3].Caption := _s(Columns.Items[3].Caption);
+  end;
+  AddWorkshopMap.Caption := _s(AddWorkshopMap.Caption);
+  AddWorkshopIDorURL.Caption := _s(AddWorkshopIDorURL.Caption);
+  tsMaps.Caption := _s(tsMaps.Caption);
+  lblMap.Caption := _s(lblMap.Caption);
+  lblDifficulty.Caption := _s(lblDifficulty.Caption);
+  lblGameLength.Caption := _s(lblGameLength.Caption);
+  lblGamePass.Caption := _s(lblGamePass.Caption);
+  btnStartServer.Caption := _s(btnStartServer.Caption);
+  grpEnableDisable.Caption := _s(grpEnableDisable.Caption);
+  grpStartServer.Caption := _s(grpStartServer.Caption);
+  cbbDifficulty.Items[1] := _s(cbbDifficulty.Items[1]);
+  cbbDifficulty.Items[2] := _s(cbbDifficulty.Items[2]);
+  cbbDifficulty.Items[3] := _s(cbbDifficulty.Items[3]);
+  cbbLength.Items[0] := _s(cbbLength.Items[0]);
+  cbbLength.Items[1] := _s(cbbLength.Items[1]);
+  cbbLength.Items[2] := _s(cbbLength.Items[2]);
+  add1.Caption := _s(add1.Caption);
+  Remove1.Caption := _s(Remove1.Caption);
+  lblMapCycleOptions.Caption := _s(lblMapCycleOptions.Caption);
+  Forceupdate1.Caption := _s(Forceupdate1.Caption);
+  Reinstall1.Caption := _s(Reinstall1.Caption);
+  Browserworkshop1.Caption := _s(Browserworkshop1.Caption);
+  AddbyID1.Caption := _s(AddbyID1.Caption);
+  allfilesandentry1.Caption := _s(allfilesandentry1.Caption);
+  Mapentry1.Caption := _s(Mapentry1.Caption);
+  MapCycle1.Caption := _s(MapCycle1.Caption);
+  Subcribe1.Caption := _s(Subcribe1.Caption);
+  mniShowitempage1.Caption := _s(mniShowitempage1.Caption);
+  mniCopyID1.Caption := _s(mniCopyID1.Caption);
+  lblAddParam.Caption := _s(lblAddParam.Caption);
+  lblSearch.Caption := _s(lblSearch.Caption);
+  btnNewProfile.Caption := _s(btnNewProfile.Caption);
+  btnRenameProfile.Caption := _s(btnRenameProfile.Caption);
+  btnDeleteProfile.Caption := _s(btnDeleteProfile.Caption);
+  lblProfile.Caption := _s(lblProfile.Caption);
+  chkAutoConnectWeb.Caption := _s(chkAutoConnectWeb.Caption);
+  Multipleitems1.Caption := _s(Multipleitems1.Caption);
+  lblDescWebPort.Caption := _s(lblDescWebPort.Caption);
+  cbWorkshopDMStatus.Items[0] := _s(cbWorkshopDMStatus.Items[0]);
+  cbWorkshopDMStatus.Items[1] := _s(cbWorkshopDMStatus.Items[1]);
+  cbStatusWeb.Items[0] := _s(cbStatusWeb.Items[0]);
+  cbStatusWeb.Items[1] := _s(cbStatusWeb.Items[1]);
+  cbbRedirectEnabled.Items[0] := _s(cbbRedirectEnabled.Items[0]);
+  cbbRedirectEnabled.Items[1] := _s(cbbRedirectEnabled.Items[1]);
+  tsExtra.Caption := _s(tsExtra.Caption);
+  btnCheckForUpdate.Caption := _s(btnCheckForUpdate.Caption);
+  btnCleanDownloadCache.Caption := _s(btnCleanDownloadCache.Caption);
+  btnCleanWorkshopData.Caption := _s(btnCleanWorkshopData.Caption);
+  btnSvIntegrityCurrent.Caption := _s(btnSvIntegrityCurrent.Caption);
+  btnSvIntegrityBeta.Caption := _s(btnSvIntegrityBeta.Caption);
+  btnCheckForPreview.Caption := _s(btnCheckForPreview.Caption);
+  grpmaintenance.Caption := _s(grpmaintenance.Caption);
+  grpapplication.Caption := _s(grpapplication.Caption);
+  lblFontSize.Caption := _s(lblFontSize.Caption);
+  lblGameMode.Caption := _s(lblGameMode.Caption);
+  FromRedirect1.Caption := _s(FromRedirect1.Caption);
+  FromList1.Caption := _s(FromList1.Caption);
+  tsNotes.Caption := _s(tsNotes.Caption);
+  Export1.Caption := _s(Export1.Caption);
+  RemoveMapEntry1.Caption := _s(RemoveMapEntry1.Caption);
+  lblTheme.Caption := _s(lblTheme.Caption);
+  Explorerlocalfolder1.Caption := _s(Explorerlocalfolder1.Caption);
+  lblLanguage.Caption := _s(lblLanguage.Caption);
+  chkAutoLoginAdmin.Caption := _s(chkAutoLoginAdmin.Caption);
+  chkOnlyFromConfigItems.Caption := _s(chkOnlyFromConfigItems.Caption);
+  chkAutoCheckForUpdates.Caption := _s(chkAutoCheckForUpdates.Caption);
+  lblServerUpdate.Caption := _s(lblServerUpdate.Caption);
+  lblVerifyServInt.Caption := _s(lblVerifyServInt.Caption);
+  lblWorkshop.Caption := _s(lblWorkshop.Caption);
+  lblAllChangesWillbe.Caption := _s(lblAllChangesWillbe.Caption);
+  cbbListViewDisplayStyle.Items[0] := _s(cbbListViewDisplayStyle.Items[0]);
+  cbbListViewDisplayStyle.Items[1] := _s(cbbListViewDisplayStyle.Items[1]);
+  cbbListViewDisplayStyle.Items[2] := _s(cbbListViewDisplayStyle.Items[2]);
+  chkGrouMapCycle.Caption := _s(chkGrouMapCycle.Caption);
+  chkIncludeSepratorsMapCycle.Caption :=
+    _s(chkIncludeSepratorsMapCycle.Caption);
+  lblHelpAdditionParam.Caption := _s('Example: ') +
+    '?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15?MaxMonsters=64' +
+    #10#13 + _s('Example: ') +
+    '?Game=MyCustoGameMode.GameMode?Mutator=MyMutator.Mutator';
 
   cbbMap.hint := _h(cbbMap.hint);
   cbbLength.hint := _h(cbbLength.hint);
@@ -4130,8 +4178,6 @@ begin
   btnUpdate.hint := _h(btnUpdate.hint);
   chkAutoCheckForUpdates.hint := _h(chkAutoCheckForUpdates.hint);
   chkOnlyFromConfigItems.hint := _h(chkOnlyFromConfigItems.hint);
-
-
 
 end;
 
