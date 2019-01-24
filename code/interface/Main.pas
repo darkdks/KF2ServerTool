@@ -354,11 +354,11 @@ begin
             progressForm.Close;
             ShowMessage(_s('Finished!'));
           finally
-            progressForm.Free;
+            FreeAndNil(progressForm);
           end;
         end;
       finally
-        frmAdd.Free;
+        FreeAndNil(frmAdd);
       end;
     finally
       LoadItensToLv('');
@@ -3291,6 +3291,7 @@ begin
     btnReinstall.Visible := True;
     btnUpdate.Visible := True;
     lvClick(Sender);
+    AddManualEntry.Visible := True;
   end;
   if jvpgcntrl1.ActivePage = tsMods then
   begin
@@ -3299,6 +3300,7 @@ begin
     btnAddNew.Visible := True;
     btnReinstall.Visible := True;
     btnUpdate.Visible := True;
+    AddManualEntry.Visible := False;
     lvClick(Sender);
   end;
   if jvpgcntrl1.ActivePage = tsUnknowed then

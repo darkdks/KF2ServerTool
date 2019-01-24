@@ -104,8 +104,7 @@ type
     function NewRedirectItem(downURL, ItemName: String;
       DownloadNow, MapCycle, MapEntry: Boolean; var dlManager: TDownloadManager;
       ItemType: TKFRedirectItemType): Boolean;
-    Procedure InstallLocalItem(FilePath: String;
-      MapCycle, MapEntry: Boolean);
+    Procedure InstallLocalItem(FilePath: String; MapCycle, MapEntry: Boolean);
     function RemoveItem(ItemName: string; itemID: string;
       rmvMapEntry, rmvMapCycle, rmvSubcribe, rmvLocalFile: Boolean;
       ItemSource: TKFSource; ItemType: TKFItemType): Boolean;
@@ -131,8 +130,14 @@ type
 
   const
 
-    SERVERTOOLVERSION = '1.3.3';
+    SERVERTOOLVERSION = '1.3.4';
+
     {
+      CHANGE LOG VERSION 1.3.4
+      - Added manual item installation (Local kfm files)
+      - Spanish language updated
+
+
       CHANGE LOG VERSION 1.3.3
       - New help tip for fields
       - Small corrections in text formation of translated strings
@@ -554,6 +559,7 @@ var
   FileName: string;
   ItemName: string;
   filesL: TStringList;
+  dstFilePath: String;
 begin
 
   FileName := ExtractFileName(FilePath);
@@ -562,9 +568,16 @@ begin
     raise Exception.Create('Invalid File');
   filesL := TStringList.Create;
   try
+    dstFilePath := IncludeTrailingPathDelimiter(kfApplicationPath) +
+      KF_LOCALMAPSSUBFOLDER + FileName;
+    if FileExists(dstFilePath) then
+    begin
+      filesL.Add(dstFilePath);
+      FileOperation(filesL, '', 3 { FO_DELETE } );
+    end;
+    filesL.Clear;
     filesL.Add(FilePath);
-    FileOperation(filesL, IncludeTrailingBackslash(kfApplicationPath) +
-      KF_LOCALMAPSSUBFOLDER + FileName, 2 { FO_COPY } );
+    FileOperation(filesL, dstFilePath, 2 { FO_COPY } );
     if MapCycle then
       AddMapCycle(ItemName, CycleSortType, CycleSortSeparators);
     if MapEntry then

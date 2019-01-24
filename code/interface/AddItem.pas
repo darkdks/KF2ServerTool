@@ -103,12 +103,17 @@ begin
       begin
         with TOpenDialog.Create(Self) do
         begin
+          Filter := 'Killing Floor 2 Map file (*.kfm)|*.kfm';
           if Execute() then
-            edtItemName.Text := FileName;
+          begin
+            if Pos('KF', UpperCase(ExtractFileName(FileName))) <> 1 then
+              raise Exception.Create
+                (FormMain._s
+                ('Invalid prefix name in the file map. Must be KF*.kfm'))
+            else
+              edtItemName.Text := FileName;
+          end;
           Destroy;
-          DefaultExt := '.kfm';
-          Filter := '*.kfm';
-
         end;
       end;
   end;
@@ -172,8 +177,17 @@ begin
       end
       else
       begin
-        addMapCycle := chkAddMapCycle.Checked and chkDownloadItem.Checked;
-        addMapENtry := chkAddMapEntry.Checked and chkDownloadItem.Checked;
+        if FrmItemType = LocalItem then
+        begin
+          addMapCycle := chkAddMapCycle.Checked;
+          addMapENtry := chkAddMapEntry.Checked;
+        end
+        else
+        begin
+          addMapCycle := chkAddMapCycle.Checked and chkDownloadItem.Checked;
+          addMapENtry := chkAddMapEntry.Checked and chkDownloadItem.Checked;
+
+        end;
 
       end;
       ItemID := edtID.Text;
@@ -413,12 +427,12 @@ begin
       begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := True;
+        pnl3.Visible := true;
         Self.Caption := FormMain._s('Local item');
         chkDownloadItem.Checked := false;
         chkDownloadItem.Visible := false;
 
-        lblPn3.Caption :=  FormMain._s('Map File:');
+        lblPn3.Caption := FormMain._s('Map File:');
         chkAddWorkshopRedirect.Checked := false;
         chkAddWorkshopRedirect.Visible := false;
 

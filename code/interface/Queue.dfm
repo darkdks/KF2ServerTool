@@ -56,7 +56,6 @@ object frmQueue: TfrmQueue
         AutoSize = True
         Caption = 'Status'
       end>
-    GridLines = True
     IconOptions.Arrangement = iaLeft
     MultiSelect = True
     ReadOnly = True
