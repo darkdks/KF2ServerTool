@@ -1,15 +1,19 @@
 
 
 ## KF2ServerTool for Windows and KF2ServerToolCMD for Windows and Linux
-Easy way to add/remove/update maps in your Killing Floor 2 Dedicated Server
+Easy way to install the server and add/remove/update maps in your Killing Floor 2 Dedicated Server
 
 ## What is this?
 With this tool you can easily install and configure your Killing Floor 2 dedicated server. You can easily install or update maps and mods from workshop or a custom redirect, perform server maintenance (updates and verify server integrity), start the server with custom mutators and also have diferent profiles with different settings. All this without wasting time editing lines of config files.
+The tool is constantly updated and tested by several people who use it to host, the actual state is fully functional and stable.
 
 ## How easy is that?
+###### To install the server and configure?
+Just download the app and open it, the tool will install the server and show a easy GUI to help you to configurate basic steps like maps, options, webadmin, etc.
+###### And about install custom maps?
 You will just browse the workshop inside the app or paste a URL of an workshop item and click on a button. The application will do everything for you (download the map, add the server subscription, add the map entry, add the map to the cycle of maps and add the server redirect if needed). For update an outdated workshop item just right click on the item and choose update.
 
-KF2ServerTool
+
 <p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img1.jpg"/></p>
 
 The app includes some extra features too, like a server launcher, web admin configuration, workshop download manager configuration, access to webadmin inside the application, and some tools to clean the cache and workshop files. I spent good weeks developing this tool to make it as simple as possible for the end user.
@@ -31,12 +35,12 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2Serv
 
 # Install KF2ServerTool for Windows
 
-### Use in an existing server
+##### Use in an existing server
 
 - Extract all files from the zip to the server folder (the same folder where you have a .bat to start the server).
 - Use the KF2ServerTool.exe to add a map/mod by browsing the workshop or pasting an ID or URL of an item.
 .
-### Use in a new server installation
+##### Use in a new server installation
 
 - Extract all files in the same folder that the server will be installed
 - Open KF2ServerTool.exe and choose the option to install a new server in the same path of the tool folder
