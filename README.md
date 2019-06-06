@@ -74,5 +74,5 @@ Example: KF2ServerToolCMD -config KFServerTool_sv2.ini
 Optional for windows gui only
 - Go to the section GENERAL in the config file and set the flag "OnlyShowItemsFromConfig" to true. This will filtrate maps and mods from another servers.
 
-
-
+# How to contribute
+See [CONTRIBUTING.md](CONTRIBUTING.md)
