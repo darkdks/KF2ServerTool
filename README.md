@@ -75,4 +75,4 @@ Optional for windows gui only
 - Go to the section GENERAL in the config file and set the flag "OnlyShowItemsFromConfig" to true. This will filtrate maps and mods from another servers.
 
 # How to contribute
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+See [CONTRIBUTING.md](https://github.com/darkdks/KF2ServerTool/blob/master/CONTRIBUTING.md)
