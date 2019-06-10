@@ -3,8 +3,14 @@ unit GitAutoUpdate;
 interface
 
 uses
-  REST.Client, json, SysUtils, IPPeerClient, MiscFunc, classes,
-  System.zip, downloaderTool;
+  REST.Client,
+  json,
+  SysUtils,
+  IPPeerClient,
+  MiscFunc,
+  classes,
+  System.zip,
+  downloaderTool;
 
 type
   TLatestRelease = class(TObject)
@@ -24,9 +30,9 @@ type
 
   public
   var
-    function DownloadAndExtractUpdate(updateURL: String; dlManager: TDownloadManager;
-      setupExe: string;  GenerateTempSetup: Boolean)
-      : Boolean;
+    function DownloadAndExtractUpdate(updateURL: String;
+      dlManager: TDownloadManager; setupExe: string;
+      GenerateTempSetup: Boolean): Boolean;
     function GetLatestRelease(resource: String): TLatestRelease;
     procedure PrepareUpdateFolder();
     procedure DeleteUpdateFolder();
@@ -51,8 +57,6 @@ begin
   workingPath := IncludeTrailingPathDelimiter(Path);
 end;
 
-
-
 destructor TGitAutoUpdate.Destroy;
 begin
 
@@ -75,8 +79,7 @@ begin
   updateFilePath := updateFolderPath + UPDATEFILE;
   Result := False;
 
-
-  //Prepare Update Folder
+  // Prepare Update Folder
   PrepareUpdateFolder;
 
   // Download
@@ -113,7 +116,7 @@ begin
 
   if FileExists(updateFolderPath + setupExe) then
   begin
-    //GenerateTempSetup
+    // GenerateTempSetup
     if GenerateTempSetup then
     begin
       fSource := TStringlist.Create;
@@ -134,10 +137,11 @@ begin
 end;
 
 procedure TGitAutoUpdate.executeUpdateInstall(exeName, exeParam: String);
-var updateFolderPath: String;
+var
+  updateFolderPath: String;
 begin
   updateFolderPath := workingPath + UPDATEFOLDER + PathDelim;
-ExecuteFile(0, updateFolderPath + exeName, exeParam, 1);
+  ExecuteFile(0, updateFolderPath + exeName, exeParam, 1);
 end;
 
 function TGitAutoUpdate.GetLatestRelease(resource: String): TLatestRelease;
@@ -195,14 +199,15 @@ begin
 end;
 
 procedure TGitAutoUpdate.PrepareUpdateFolder;
- var fSource: TStringList;
- updateFolderPath : String;
+var
+  fSource: TStringlist;
+  updateFolderPath: String;
 begin
- updateFolderPath := workingPath + UPDATEFOLDER + PathDelim;
+  updateFolderPath := workingPath + UPDATEFOLDER + PathDelim;
   try
     if DirectoryExists(updateFolderPath) then
     begin
-       fSource := GetAllFilesSubDirectory(updateFolderPath, '*');
+      fSource := GetAllFilesSubDirectory(updateFolderPath, '*');
       try
         if fSource.Count > 0 then
           FileOperation(fSource, '', 3 { FO_DELETE } );
@@ -220,15 +225,16 @@ begin
 end;
 
 procedure TGitAutoUpdate.DeleteUpdateFolder;
- var fSource: TStringList;
- updateFolderPath : String;
+var
+  fSource: TStringlist;
+  updateFolderPath: String;
 begin
- updateFolderPath := workingPath + UPDATEFOLDER + PathDelim;
+  updateFolderPath := workingPath + UPDATEFOLDER + PathDelim;
 
   try
     if DirectoryExists(updateFolderPath) then
     begin
-     fSource := TStringList.Create;
+      fSource := TStringlist.Create;
       try
         fSource.Add(updateFolderPath);
         FileOperation(fSource, '', 3 { FO_DELETE } );

@@ -4,16 +4,20 @@ interface
 
 uses
   Classes,
-  SysUtils, MiscFunc,
+  SysUtils,
+  MiscFunc,
 {$IFDEF WIN32}
   Forms,
-  MSHTML, ComObj, ActiveX,
+  MSHTML,
+  ComObj,
+  ActiveX,
 {$ELSE}
 {$ENDIF}
-  IDHttp, Variants, KFTypes;
+  IDHttp,
+  Variants,
+  KFTypes;
 
 type
-
 
   TKFRedirect = class(TObject)
 
@@ -87,13 +91,13 @@ var
   i, y: integer;
   lineC: string;
   KFtagPos, extTagPos, spaceTagPos: integer;
-  tagSize: Integer;
+  tagSize: integer;
   RDtagName: String;
   itemName: string;
 const
   // KF2 File types prefix
   KF_MAPPREFIX = '.KFM';
-  KF_MODPREFIX: array [0 .. 3] of string = ( '.UPX', '.UPK' , '.UC', '.U');
+  KF_MODPREFIX: array [0 .. 3] of string = ('.UPX', '.UPK', '.UC', '.U');
 
 begin
   itemsText := getUrlText(URL);
@@ -111,7 +115,7 @@ begin
           begin
             itemName := Copy(lineC, KFtagPos, extTagPos - KFtagPos + 4);
             spaceTagPos := Pos(' ', itemName);
-            if (spaceTagPos > 0) and (spaceTagPos < KFtagPos)then
+            if (spaceTagPos > 0) and (spaceTagPos < KFtagPos) then
               itemName := Copy(itemName, spaceTagPos,
                 length(itemName) - spaceTagPos);
             Result.Add(itemName);
@@ -130,7 +134,7 @@ begin
             if (extTagPos > 0) then
             begin
               tagSize := length(RDtagName);
-              itemName := Copy(lineC, 0, extTagPos + tagSize-1);
+              itemName := Copy(lineC, 0, extTagPos + tagSize - 1);
               spaceTagPos := Pos(' ', itemName);
               if (spaceTagPos > 0) and (spaceTagPos < extTagPos) then
                 itemName := Copy(itemName, spaceTagPos,

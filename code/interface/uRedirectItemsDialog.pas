@@ -3,8 +3,20 @@ unit uRedirectItemsDialog;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ComCtrls, KFRedirect, ExtCtrls, KFTypes;
+  Windows,
+  Messages,
+  SysUtils,
+  Variants,
+  Classes,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  StdCtrls,
+  ComCtrls,
+  KFRedirect,
+  ExtCtrls,
+  KFTypes;
 
 type
   TfrmRedirectItemsDialog = class(TForm)
@@ -21,7 +33,8 @@ type
     { Private declarations }
   public
     selectedItems: String;
-    function loadListFromRedirect(URL: String;itemType: TKFRedirectItemType): Boolean;
+    function loadListFromRedirect(URL: String;
+      itemType: TKFRedirectItemType): Boolean;
     { Public declarations }
   end;
 
@@ -64,7 +77,8 @@ begin
   selectedItems := '';
 end;
 
-function TfrmRedirectItemsDialog.loadListFromRedirect(URL: String;itemType: TKFRedirectItemType): Boolean;
+function TfrmRedirectItemsDialog.loadListFromRedirect(URL: String;
+  itemType: TKFRedirectItemType): Boolean;
 var
   lItem: TListItem;
   i: Integer;

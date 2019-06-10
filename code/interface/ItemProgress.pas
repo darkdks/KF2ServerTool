@@ -9,11 +9,11 @@ uses
 type
   TformPB = class(TForm)
     lblStatus: TLabel;
-    btncancel: TButton;
-    pb1: TProgressBar;
+    btnCancel: TButton;
+    pbStatus: TProgressBar;
     tmrUndeterminedPB: TTimer;
     lblTitle: TLabel;
-    procedure btncancelClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure tmrUndeterminedPBTimer(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -40,10 +40,10 @@ implementation
 uses main;
 {$R *.dfm}
 
-procedure TformPB.btncancelClick(Sender: TObject);
+procedure TformPB.btnCancelClick(Sender: TObject);
 begin
   cancel := True;
-  btncancel.Enabled := False;
+  btnCancel.Enabled := False;
   lblStatus.Caption :=
     FormMain._s('Canceling, please wait this item finish...');
 end;
@@ -56,42 +56,42 @@ end;
 procedure TformPB.FormCreate(Sender: TObject);
 begin
   cancel := False;
-  btncancel.Enabled := True;
+  btnCancel.Enabled := True;
   lblTitle.Caption := '';
 end;
 
 function TformPB.GetPBMax: Integer;
 begin
-  Result := pb1.Max;
+  Result := pbStatus.Max;
 end;
 
 procedure TformPB.NextPBValue(status: String);
 begin
-  if pb1.Position < pb1.Max then
-    pb1.Position := pb1.Position + 1;
+  if pbStatus.Position < pbStatus.Max then
+    pbStatus.Position := pbStatus.Position + 1;
   if status <> '' then
     UpdateStatus(status);
 end;
 
 procedure TformPB.SetPBMax(value: Integer);
 begin
-  pb1.Max := value;
+  pbStatus.Max := value;
   Application.ProcessMessages;
 end;
 
 procedure TformPB.SetPBValue(value: Integer);
 begin
 
-  pb1.Position := value;
+  pbStatus.Position := value;
   Application.ProcessMessages;
 end;
 
 procedure TformPB.tmrUndeterminedPBTimer(Sender: TObject);
 begin
-  if pb1.Position < pb1.Max then
-    pb1.Position := pb1.Position + 1
+  if pbStatus.Position < pbStatus.Max then
+    pbStatus.Position := pbStatus.Position + 1
   else
-    pb1.Position := 0;
+    pbStatus.Position := 0;
   Application.ProcessMessages;
 end;
 

@@ -26,253 +26,256 @@ type
   TListViewDisplayStyle = (LVDS_Simple, LVDS_Thumbnail, LVDS_Icon);
 
   TFormMain = class(TForm)
-    pmRemove: TPopupMenu;
-    RemoveGameSteamCache1: TMenuItem;
-    RemovefromCycle1: TMenuItem;
-    RemoveMapEntry1: TMenuItem;
-    Removeall1: TMenuItem;
-    ilSmallIcons: TImageList;
-    RemoveServerSubcribe1: TMenuItem;
-    pmLV: TPopupMenu;
     add1: TMenuItem;
-    Remove1: TMenuItem;
-    Browserworkshop1: TMenuItem;
     AddbyID1: TMenuItem;
-    Manual1: TMenuItem;
-    allfilesandentry1: TMenuItem;
-    cache1: TMenuItem;
-    Mapentry1: TMenuItem;
-    MapCycle1: TMenuItem;
-    Subcribe1: TMenuItem;
-    Forceupdate1: TMenuItem;
-    Reinstall1: TMenuItem;
-    N1: TMenuItem;
-    lblCredits: TLabel;
-    pnl1: TPanel;
-    lblDonate: TLabel;
-    btnReinstall: TBitBtn;
-    btnUpdate: TBitBtn;
-    mniCopyID1: TMenuItem;
-    mniShowitempage1: TMenuItem;
-    mniN2: TMenuItem;
-    jvpgcntrl1: TJvPageControl;
-    tsMods: TTabSheet;
-    lvMods: TListView;
-    tsServer: TTabSheet;
-    grpStartServer: TGroupBox;
-    tsExtra: TTabSheet;
-    grpEnableDisable: TGroupBox;
-    tsUnknowed: TTabSheet;
-    lvUnknowed: TListView;
-    grpapplication: TGroupBox;
-    lblFontSize: TLabel;
-    trckbrFontSize: TTrackBar;
-    pnl3: TPanel;
-    btnNewProfile: TButton;
-    btnRenameProfile: TButton;
-    btnDeleteProfile: TButton;
-    cbbProfile: TComboBox;
-    lblProfile: TLabel;
-    pnl4: TPanel;
-    pnl5: TPanel;
-    pnl6: TPanel;
-    pnlmap: TPanel;
-    pnldifficulty: TPanel;
-    cbbMap: TComboBox;
-    lblMap: TLabel;
-    cbbDifficulty: TComboBox;
-    lblDifficulty: TLabel;
-    pnlgamelenght: TPanel;
-    cbbLength: TComboBox;
-    lblGameLength: TLabel;
-    pnl10: TPanel;
-    lblAddParam: TLabel;
-    edtExtra: TEdit;
-    edtGmPass: TEdit;
-    lblGamePass: TLabel;
-    btnStartServer: TButton;
-    tsNotes: TTabSheet;
-    mmoNotepad: TMemo;
-    grpmaintenance: TGroupBox;
-    btnCheckForUpdate: TButton;
-    btnCleanDownloadCache: TButton;
-    btnCheckForPreview: TButton;
-    lblServerUpdate: TLabel;
-    lblWorkshop: TLabel;
-    btnCleanWorkshopData: TButton;
-    tswebadmin: TTabSheet;
-    wb1: TWebBrowser;
-    tmrWebAdmin: TTimer;
-    chkAutoConnectWeb: TCheckBox;
-    lblAllChangesWillbe: TLabel;
-    pmAdd: TPopupMenu;
-    AddWorkshopMap: TMenuItem;
-    AddWorkshopIDorURL: TMenuItem;
-    Multipleitems1: TMenuItem;
     AddManualEntry: TMenuItem;
-    lblGameMode: TLabel;
-    cbbGameMode: TComboBox;
-    lblLanguage: TLabel;
-    cbbLanguage: TJvComboBox;
-    tsDebug: TTabSheet;
-    lblUpdate: TLabel;
-    chkOnlyFromConfigItems: TCheckBox;
-    Redirect1: TMenuItem;
-    ManualEntry1: TMenuItem;
-    pnl7: TPanel;
-    edtPort: TJvEdit;
-    lblDescWebPort: TLabel;
-    lblDescWebAdmin: TLabel;
-    cbStatusWeb: TJvComboBox;
-    lblWkspDownMan: TLabel;
-    cbWorkshopDMStatus: TJvComboBox;
-    Panel1: TPanel;
-    lblRedirectURL: TLabel;
-    lblCustomRedirect: TLabel;
-    edtRedirectURL: TJvEdit;
-    cbbRedirectEnabled: TJvComboBox;
-    FromRedirect1: TMenuItem;
-    N2: TMenuItem;
-    lblHelpAdditionParam: TLabel;
-    Export1: TMenuItem;
-    Explorerlocalfolder1: TMenuItem;
-    FromList1: TMenuItem;
-    edtWebPass: TJvEdit;
-    lblWebPass: TLabel;
-    chkAutoLoginAdmin: TCheckBox;
-    lblTheme: TLabel;
-    cbbTheme: TJvComboBox;
+    AddWorkshopIDorURL: TMenuItem;
+    AddWorkshopMap: TMenuItem;
+    allfilesandentry1: TMenuItem;
+    blhintHelp: TBalloonHint;
+    Browserworkshop1: TMenuItem;
     btnAddNew: TBitBtn;
-    btnRemove: TBitBtn;
-    chkAutoCheckForUpdates: TCheckBox;
-    tsMaps: TTabSheet;
-    pnl2: TPanel;
-    lblSearch: TLabel;
-    edtSearch: TEdit;
-    lvMaps: TListView;
-    imgListItems: TImageList;
-    cbbListViewDisplayStyle: TJvComboBox;
-    lbl2: TLabel;
-    Image1: TImage;
-    ilMiscImgs: TImageList;
-    btnSvIntegrityCurrent: TButton;
-    lblVerifyServInt: TLabel;
-    btnSvIntegrityBeta: TButton;
-    mniRedownloadThumbnail: TMenuItem;
-    pb1: TPaintBox;
-    ilLVGroups: TImageList;
-    lblMapCycleOptions: TLabel;
-    chkGrouMapCycle: TCheckBox;
-    chkIncludeSepratorsMapCycle: TCheckBox;
+    btnCleanDownloadCache: TButton;
+    btnCleanWorkshopData: TButton;
+    btnDeleteProfile: TButton;
     btnGenerateCurrentStrings: TButton;
     btnGenerateNewTranslation: TButton;
-    blhintHelp: TBalloonHint;
-    procedure AddWorkshopClick(Sender: TObject);
-    procedure Removeall1Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure AddWorkshopIDorURLClick(Sender: TObject);
-    procedure pmRemovePopup(Sender: TObject);
-    procedure RemoveGameSteamCache1Click(Sender: TObject);
-    procedure RemovefromCycle1Click(Sender: TObject);
-    procedure RemoveMapEntry1Click(Sender: TObject);
-    procedure RemoveServerSubcribe1Click(Sender: TObject);
-    procedure btnReinstallClick(Sender: TObject);
-    procedure pmLVPopup(Sender: TObject);
-    procedure lvClick(Sender: TObject);
-    procedure btnUpdateClick(Sender: TObject);
-    procedure lblDonateClick(Sender: TObject);
-    procedure jvpgcntrl1Change(Sender: TObject);
-    procedure btnStartServerClick(Sender: TObject);
-    procedure lblsasdadClick(Sender: TObject);
-    procedure mniShowitempage1Click(Sender: TObject);
-    procedure mniCopyID1Click(Sender: TObject);
-    procedure lvMapsColumnClick(Sender: TObject; Column: TListColumn);
-    procedure lvCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer;
-      var Compare: Integer);
-    procedure edtSearchChange(Sender: TObject);
-    procedure cbbProfileChange(Sender: TObject);
-    procedure btnNewProfileClick(Sender: TObject);
-    procedure btnDeleteProfileClick(Sender: TObject);
-    procedure btnRenameProfileClick(Sender: TObject);
-    procedure cbbMapChange(Sender: TObject);
-    procedure cbbDifficultyChange(Sender: TObject);
-    procedure cbbLengthChange(Sender: TObject);
-    procedure edtExtraChange(Sender: TObject);
-    procedure edtGmPassChange(Sender: TObject);
-    procedure RealignUIItems(Sender: TObject);
-    procedure btnCheckForUpdateClick(Sender: TObject);
-    procedure cbWorkshopDMStatusChange(Sender: TObject);
-    procedure cbStatusWebChange(Sender: TObject);
-    procedure edtPortExit(Sender: TObject);
-    procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
-      var Resize: Boolean);
-    procedure btnCleanDownloadCacheClick(Sender: TObject);
-    procedure btnCleanWorkshopDataClick(Sender: TObject);
-    procedure tmrWebAdminTimer(Sender: TObject);
-    procedure chkAutoConnectWebClick(Sender: TObject);
-    procedure Multipleitems1Click(Sender: TObject);
-    function getSelectedCount(ListView: TListView): Integer;
-    procedure lvMapsCustomDrawItem(Sender: TCustomListView; Item: TListItem;
-      State: TCustomDrawState; var DefaultDraw: Boolean);
-    procedure cbbGameModeChange(Sender: TObject);
-    procedure cbbLanguageChange(Sender: TObject);
-    procedure checkForUpdates(Sender: TObject);
-    procedure lostFocusSave(Sender: TObject);
-    procedure chkOnlyFromConfigItemsClick(Sender: TObject);
-    procedure edtRedirectURLExit(Sender: TObject);
-    procedure cbbRedirectEnabledCloseUp(Sender: TObject);
-    procedure FromRedirect1Click(Sender: TObject);
-    procedure btnAddNewClick(Sender: TObject);
-    procedure edtExtraEnter(Sender: TObject);
+    btnNewProfile: TButton;
+    btnReinstall: TBitBtn;
+    btnRemove: TBitBtn;
+    btnRenameProfile: TButton;
+    btnStartServer: TButton;
+    btnUpdate: TBitBtn;
+    btnUpdateBeta: TButton;
+    btnUpdateCurrent: TButton;
+    btnVerifyBeta: TButton;
+    btnVerifyCurrent: TButton;
+    cache1: TMenuItem;
+    cbbCustomRedirect: TJvComboBox;
+    cbbDifficulty: TComboBox;
+    cbbDownloadManager: TJvComboBox;
+    cbbGameLength: TComboBox;
+    cbbGameMode: TComboBox;
+    cbbLanguage: TJvComboBox;
+    cbbMap: TComboBox;
+    cbbProfile: TComboBox;
+    cbbTheme: TJvComboBox;
+    cbbViewMode: TJvComboBox;
+    cbbWebInterface: TJvComboBox;
+    chkAdminAutoLogin: TCheckBox;
+    chkAutoConnectWeb: TCheckBox;
+    chkAutoUpdates: TCheckBox;
+    chkGrouMapCycle: TCheckBox;
+    chkOnlyItemsFromConfig: TCheckBox;
+    chkSeparateMapTypes: TCheckBox;
+    edtAddParam: TEdit;
+    edtAdminPass: TJvEdit;
+    edtFilter: TEdit;
+    edtGamePass: TEdit;
+    edtPort: TJvEdit;
+    edtRedirectURL: TJvEdit;
+    Explorerlocalfolder1: TMenuItem;
+    Export1: TMenuItem;
+    Forceupdate1: TMenuItem;
+    FromList1: TMenuItem;
+    FromRedirect1: TMenuItem;
+    grpApplication: TGroupBox;
+    grpEnableDisable: TGroupBox;
+    grpMaintenance: TGroupBox;
+    grpStartServer: TGroupBox;
+    ilLVGroups: TImageList;
+    ilMiscImgs: TImageList;
+    ilSmallIcons: TImageList;
+    imgListItems: TImageList;
+    imgMapsPlaceholder: TImage;
+    lblAddParam: TLabel;
+    lblAdminPass: TLabel;
+    lblAutosaveChanges: TLabel;
+    lblCredits: TLabel;
+    lblCustomRedirect: TLabel;
+    lblDifficulty: TLabel;
+    lblDonate: TLabel;
+    lblDownloadManager: TLabel;
+    lblFilter: TLabel;
+    lblFontSize: TLabel;
+    lblGameLength: TLabel;
+    lblGameMode: TLabel;
+    lblGamePass: TLabel;
+    lblHelpAddParam: TLabel;
+    lblLanguage: TLabel;
+    lblMap: TLabel;
+    lblMapCycleOptions: TLabel;
+    lblPort: TLabel;
+    lblProfile: TLabel;
+    lblRedirectURL: TLabel;
+    lblServerUpdate: TLabel;
+    lblServerVerify: TLabel;
+    lblTheme: TLabel;
+    lblUpdate: TLabel;
+    lblViewMode: TLabel;
+    lblWebInterface: TLabel;
+    lblWorkshop: TLabel;
+    lvMaps: TListView;
+    lvMods: TListView;
+    lvUnknown: TListView;
+    Manual1: TMenuItem;
+    ManualEntry1: TMenuItem;
+    MapCycle1: TMenuItem;
+    Mapentry1: TMenuItem;
+    mmoNotepad: TMemo;
+    mniCopyID1: TMenuItem;
+    mniN2: TMenuItem;
+    mniRedownloadThumbnail: TMenuItem;
+    mniShowitempage1: TMenuItem;
+    Multipleitems1: TMenuItem;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    pboxServer: TPaintBox;
+    pgcntrlTabs: TJvPageControl;
+    pmAdd: TPopupMenu;
+    pmLV: TPopupMenu;
+    pmRemove: TPopupMenu;
+    pnlBottom: TPanel;
+    pnlDifficulty: TPanel;
+    pnlGameLength: TPanel;
+    pnlLeft: TPanel;
+    pnlMap: TPanel;
+    pnlRight: TPanel;
+    pnlStartBottom: TPanel;
+    pnlStartMiddle1: TPanel;
+    pnlStartMiddle2: TPanel;
+    pnlStartMiddle3: TPanel;
+    pnlStartTop: TPanel;
+    pnlTop: TPanel;
+    Redirect1: TMenuItem;
+    Reinstall1: TMenuItem;
+    Remove1: TMenuItem;
+    Removeall1: TMenuItem;
+    RemovefromCycle1: TMenuItem;
+    RemoveGameSteamCache1: TMenuItem;
+    RemoveMapEntry1: TMenuItem;
+    RemoveServerSubcribe1: TMenuItem;
+    Subcribe1: TMenuItem;
+    tmrWebAdmin: TTimer;
+    trckbrFontSize: TTrackBar;
+    tsDebug: TTabSheet;
+    tsMaps: TTabSheet;
+    tsMods: TTabSheet;
+    tsNotes: TTabSheet;
+    tsOptions: TTabSheet;
+    tsServer: TTabSheet;
+    tsUnknown: TTabSheet;
+    tsWebAdmin: TTabSheet;
+    wbWebAdmin: TWebBrowser;
 
-    procedure Export1Click(Sender: TObject);
-    procedure FromList1Click(Sender: TObject);
-    procedure Explorerlocalfolder1Click(Sender: TObject);
-    procedure edtWebPassExit(Sender: TObject);
-    procedure chkAutoLoginAdminClick(Sender: TObject);
-    procedure wb1DocumentComplete(ASender: TObject; const pDisp: IDispatch;
-      const URL: OleVariant);
-    procedure cbbThemeChange(Sender: TObject);
-    procedure btnRemoveClick(Sender: TObject);
-    procedure chkAutoCheckForUpdatesClick(Sender: TObject);
-    procedure RedownloadSelectedThumbnails(Sender: TObject);
-    procedure loadIMGFolder(Sender: TObject);
-    procedure cbbListViewDisplayStyleChange(Sender: TObject);
-    procedure lvMapsDblClick(Sender: TObject);
-    procedure lvMapsInfoTip(Sender: TObject; Item: TListItem;
-      var InfoTip: string);
-    procedure GenerateGroupTitleImages(Sender: TObject);
-    procedure sortCycleChange(Sender: TObject);
-    procedure chkGrouMapCycleClick(Sender: TObject);
-    procedure chkIncludeSepratorsMapCycleClick(Sender: TObject);
+    // Strings and translation
+    function _h(text: String): String;
     function _s(text: String): String;
     function _p(text: String): PWideChar;
-    procedure btnGenerateCurrentStringsClick(Sender: TObject);
-    procedure btnGenerateNewTranslationClick(Sender: TObject);
-    procedure AddManualEntryClick(Sender: TObject);
-  private
+    procedure translateUIElements;
+
+    function CheckForServerRunningAndClose: Boolean;
+    function GetLVSelectedItems(ListView: TListView): TLvSelectedItems;
+    function getSelectedCount(ListView: TListView): Integer;
+    function IsDiffCategory(lvitems: TLvSelectedItems): Boolean;
     function loadConfig: Boolean;
     function saveconfig: Boolean;
+    procedure AddManualEntryClick(Sender: TObject);
+    procedure AddWorkshopClick(Sender: TObject);
+    procedure AddWorkshopIDorURLClick(Sender: TObject);
+    procedure alignControlAtoControlB(elementA, elementB: TControl);
+    procedure autoLoginWb;
+    procedure btnAddNewClick(Sender: TObject);
+    procedure btnCleanDownloadCacheClick(Sender: TObject);
+    procedure btnCleanWorkshopDataClick(Sender: TObject);
+    procedure btnDeleteProfileClick(Sender: TObject);
+    procedure btnGenerateCurrentStringsClick(Sender: TObject);
+    procedure btnGenerateNewTranslationClick(Sender: TObject);
+    procedure btnNewProfileClick(Sender: TObject);
+    procedure btnReinstallClick(Sender: TObject);
+    procedure btnRemoveClick(Sender: TObject);
+    procedure btnRenameProfileClick(Sender: TObject);
+    procedure btnStartServerClick(Sender: TObject);
+    procedure btnUpdateClick(Sender: TObject);
+    procedure btnUpdateCurrentClick(Sender: TObject);
+    procedure cbbCustomRedirectCloseUp(Sender: TObject);
+    procedure cbbDifficultyChange(Sender: TObject);
+    procedure cbbDownloadManagerChange(Sender: TObject);
+    procedure cbbGameLengthChange(Sender: TObject);
+    procedure cbbGameModeChange(Sender: TObject);
+    procedure cbbLanguageChange(Sender: TObject);
+    procedure cbbMapChange(Sender: TObject);
+    procedure cbbProfileChange(Sender: TObject);
+    procedure cbbThemeChange(Sender: TObject);
+    procedure cbbViewModeChange(Sender: TObject);
+    procedure cbbWebInterfaceChange(Sender: TObject);
+    procedure checkAutoWebLoginRequirements;
+    procedure CheckDependencies;
+    procedure checkForUpdates(Sender: TObject);
+    procedure CheckIfTheServerIsRuning;
+    procedure chkAdminAutoLoginClick(Sender: TObject);
+    procedure chkAutoConnectWebClick(Sender: TObject);
+    procedure chkAutoUpdatesClick(Sender: TObject);
+    procedure chkGrouMapCycleClick(Sender: TObject);
+    procedure chkOnlyItemsFromConfigClick(Sender: TObject);
+    procedure chkSeparateMapTypesClick(Sender: TObject);
+    procedure edtAddParamChange(Sender: TObject);
+    procedure edtAddParamEnter(Sender: TObject);
+    procedure edtAdminPassExit(Sender: TObject);
+    procedure edtFilterChange(Sender: TObject);
+    procedure edtGamePassChange(Sender: TObject);
+    procedure edtPortExit(Sender: TObject);
+    procedure edtRedirectURLExit(Sender: TObject);
+    procedure Explorerlocalfolder1Click(Sender: TObject);
+    procedure Export1Click(Sender: TObject);
+    procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
+      var Resize: Boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FromList1Click(Sender: TObject);
+    procedure FromRedirect1Click(Sender: TObject);
+    procedure GenerateGroupTitleImages(Sender: TObject);
+    procedure InstallRegBrowserKey;
+    procedure InstallServer(Path: String);
+    procedure lblDonateClick(Sender: TObject);
+    procedure lblsasdadClick(Sender: TObject);
+    procedure LoadFolderToImageList(Path: String);
+    procedure loadIMGFolder(Sender: TObject);
     procedure LoadItensToLv(Filter: String);
     procedure LoadServerProfile;
     procedure LoadUIConfig;
-    procedure InstallServer(Path: String);
-    function CheckForServerRunningAndClose: Boolean;
-    function GetLVSelectedItems(ListView: TListView): TLvSelectedItems;
-    function IsDiffCategory(lvitems: TLvSelectedItems): Boolean;
-    procedure autoLoginWb;
+    procedure lostFocusSave(Sender: TObject);
+    procedure lvClick(Sender: TObject);
+    procedure lvCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer;
+      var Compare: Integer);
+    procedure lvMapsColumnClick(Sender: TObject; Column: TListColumn);
+    procedure lvMapsCustomDrawItem(Sender: TCustomListView; Item: TListItem;
+      State: TCustomDrawState; var DefaultDraw: Boolean);
+    procedure lvMapsDblClick(Sender: TObject);
+    procedure lvMapsInfoTip(Sender: TObject; Item: TListItem;
+      var InfoTip: string);
+    procedure mniCopyID1Click(Sender: TObject);
+    procedure mniShowitempage1Click(Sender: TObject);
+    procedure Multipleitems1Click(Sender: TObject);
+    procedure pgcntrlTabsChange(Sender: TObject);
+    procedure pmLVPopup(Sender: TObject);
+    procedure pmRemovePopup(Sender: TObject);
+    procedure RealignUIItems(Sender: TObject);
+    procedure RedirectDownloadFinished();
     procedure RedirectDownloadProgress(currentPosition: Int64);
     procedure RedirectDownloadStarted(fileSize: Int64);
-    procedure RedirectDownloadFinished();
-    procedure alignControlAtoControlB(elementA, elementB: TControl);
-    procedure checkAutoWebLoginRequirements;
-    procedure CheckIfTheServerIsRuning;
-    procedure InstallRegBrowserKey;
-    procedure CheckDependencies;
-    procedure LoadFolderToImageList(Path: String);
-    procedure translateUIElements;
-    function _h(text: String): String;
+    procedure RedownloadSelectedThumbnails(Sender: TObject);
+    procedure Removeall1Click(Sender: TObject);
+    procedure RemovefromCycle1Click(Sender: TObject);
+    procedure RemoveGameSteamCache1Click(Sender: TObject);
+    procedure RemoveMapEntry1Click(Sender: TObject);
+    procedure RemoveServerSubcribe1Click(Sender: TObject);
+    procedure sortCycleChange(Sender: TObject);
+    procedure tmrWebAdminTimer(Sender: TObject);
+    procedure wbWebAdminDocumentComplete(ASender: TObject;
+      const pDisp: IDispatch; const URL: OleVariant);
+
+  private
 
   var
     ActiveLV: TListView;
@@ -378,7 +381,7 @@ var
   progressForm: TformPB;
 
 begin
-  if InputQuery(_s('Find an item in workshop'), _s('Search for'), textToFind)
+  if InputQuery(_s('Find an item in the workshop'), _s('Search for'), textToFind)
   then
   begin
 
@@ -409,7 +412,7 @@ begin
           begin
             frmAdd.SetAddType(TKFItemType.WorkshopMap);
           end;
-          frmAdd.edtID.text := itemID;
+          frmAdd.edtWorkshopID.text := itemID;
           mdResult := frmAdd.ShowModal;
           if mdResult = mrOk then
           begin
@@ -419,14 +422,14 @@ begin
               progressForm.tmrUndeterminedPB.Enabled := True;
               progressForm.Show;
               Application.ProcessMessages;
-              if serverTool.InstallWorkshopItem(frmAdd.edtID.text,
+              if serverTool.InstallWorkshopItem(frmAdd.edtWorkshopID.text,
                 frmAdd.ItemName, frmAdd.addWkspRedirect, frmAdd.downloadNow,
                 True { dlImg } , frmAdd.addMapCycle, frmAdd.addMapENtry) = false
               then
               begin
                 Application.MessageBox
-                  (PWideChar(_s('One o more steps for item ') +
-                  frmAdd.edtID.text + _s(' failed!')), '',
+                  (PWideChar(_s('One or more steps for item ') +
+                  frmAdd.edtWorkshopID.text + _s(' failed!')), '',
                   MB_OK + MB_ICONEXCLAMATION);
 
               end;
@@ -476,7 +479,7 @@ begin
 
       frmAdd := TFormAdd.Create(Self);
       try
-        frmAdd.edtID.text := itemID;
+        frmAdd.edtWorkshopID.text := itemID;
         if ActiveLV = lvMaps then
         begin
           frmAdd.SetAddType(TKFItemType.WorkshopMap);
@@ -496,13 +499,13 @@ begin
             progressForm.NextPBValue(_p('Installing item ') + itemID);
             progressForm.Show;
             progressForm.tmrUndeterminedPB.Enabled := True;
-            if serverTool.InstallWorkshopItem(frmAdd.edtID.text,
+            if serverTool.InstallWorkshopItem(frmAdd.edtWorkshopID.text,
               frmAdd.ItemName, frmAdd.addWkspRedirect, frmAdd.downloadNow,
               True { dlImg } , frmAdd.addMapCycle, frmAdd.addMapENtry) = false
             then
             begin
-              Application.MessageBox(PWideChar(_p('One o more steps for item ')
-                + frmAdd.edtID.text + _p(' failed!')), '',
+              Application.MessageBox(PWideChar(_p('One or more steps for item ')
+                + frmAdd.edtWorkshopID.text + _p(' failed!')), '',
                 MB_OK + MB_ICONEXCLAMATION);
 
             end;
@@ -571,11 +574,11 @@ begin
     end;
     argCmd := cbbMap.text;
     argCmd := argCmd + '?Difficulty=' + IntToStr(cbbDifficulty.ItemIndex);
-    argCmd := argCmd + '?GameLength=' + IntToStr(cbbLength.ItemIndex);
-    if edtGmPass.text <> '' then
-      argCmd := argCmd + '?GamePassword=' + edtGmPass.text;
-    if edtExtra.text <> '' then
-      argCmd := argCmd + edtExtra.text;
+    argCmd := argCmd + '?GameLength=' + IntToStr(cbbGameLength.ItemIndex);
+    if edtGamePass.text <> '' then
+      argCmd := argCmd + '?GamePassword=' + edtGamePass.text;
+    if edtAddParam.text <> '' then
+      argCmd := argCmd + edtAddParam.text;
     case cbbGameMode.ItemIndex of
       0:
         argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Endless';
@@ -587,7 +590,7 @@ begin
         argCmd := argCmd + '?game=KFGameContent.KFGameInfo_WeeklySurvival';
       4:
         begin
-          if (Pos('GAME=', UpperCase(edtExtra.text)) <= 0) then
+          if (Pos('GAME=', UpperCase(edtAddParam.text)) <= 0) then
             Application.MessageBox
               (_p('You have set the game mode to custom but you won''t \nspecified the custom game in additional parameters'),
               _p('Invalid custom game mod'), MB_OK + MB_ICONWARNING);
@@ -599,7 +602,7 @@ begin
     ShellExecute(handle, 'open', Pchar(pathServerEXE), Pchar(argCmd),
       Pchar(svPath), SW_SHOWNORMAL);
 
-    if (chkAutoConnectWeb.Checked) and (cbStatusWeb.ItemIndex = 1) then
+    if (chkAutoConnectWeb.Checked) and (cbbWebInterface.ItemIndex = 1) then
       tmrWebAdmin.Enabled := True;
   end
   else
@@ -851,7 +854,7 @@ begin
   end;
 end;
 
-procedure TFormMain.btnCheckForUpdateClick(Sender: TObject);
+procedure TFormMain.btnUpdateCurrentClick(Sender: TObject);
 var
   i: Integer;
   cmdToolFullPath, cmdToolArgs: string;
@@ -863,7 +866,7 @@ begin
     serverpath := IncludeTrailingPathDelimiter(customServerPath)
   else
     serverpath := ExtractFilePath(Application.ExeName);
-  if Sender = btnCheckForUpdate then
+  if Sender = btnUpdateCurrent then
   begin
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 +exit';
@@ -871,7 +874,7 @@ begin
       ('This will check for a server update.\nIf it''s avaliable the server will be updated.\nAre you sure?');
     dlgType := _s('Update server');
   end;
-  if Sender = btnSvIntegrityCurrent then
+  if Sender = btnVerifyCurrent then
   begin
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 validate +exit';
@@ -880,7 +883,7 @@ begin
     dlgType := _s('Server Integrity');
   end;
 
-  if Sender = btnCheckForPreview then
+  if Sender = btnUpdateBeta then
   begin
     dlgMsg := _s
       ('This will check for a BETA PREVIEW server update.\nIf it''s avaliable the server will be updated.\nAre you sure?');
@@ -889,7 +892,7 @@ begin
       ' +app_update 232130 -beta +exit';
 
   end;
-  if Sender = btnSvIntegrityBeta then
+  if Sender = btnVerifyBeta then
   begin
     dlgMsg := _s
       ('This will force verify the integrity of server BETA/PREVIEW state, if some file is missing/corrupted will be reapaired\nAlso if it''s avaliable the server will be updated.\nAre you sure?');
@@ -1183,7 +1186,7 @@ begin
                   2:
                     frmReinstall.SetAddType(TKFItemType.LocalOrRedirectItem);
                 else
-                  raise Exception.Create('Unknowed Group ID');
+                  raise Exception.Create('Unknown Group ID');
                 end;
 
               end;
@@ -1202,20 +1205,20 @@ begin
                   2:
                     frmReinstall.SetAddType(TKFItemType.RedirectMod);
                 else
-                  raise Exception.Create('Unknowed Group ID unsuported');
+                  raise Exception.Create('Unknown Group ID not supported');
                 end;
 
               end;
             end
-            else if ActiveLV = lvUnknowed then
+            else if ActiveLV = lvUnknown then
             begin
               frmReinstall.SetAddType(TKFItemType.UnknowedWorkshopItem)
 
             end;
 
-            frmReinstall.edtID.text := itemID;
+            frmReinstall.edtWorkshopID.text := itemID;
             frmReinstall.ItemName := ItemName;
-            frmReinstall.edtID.Enabled := false;
+            frmReinstall.edtWorkshopID.Enabled := false;
             frmReinstall.Caption := _s('Reinstall ') + ItemName;
             if slItemsCount > 1 then
             begin
@@ -1241,15 +1244,15 @@ begin
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
                   IntToStr(High(selectedItems) + 1) + _s(' Installing item ')
                   + itemID);
-                if serverTool.InstallWorkshopItem(frmReinstall.edtID.text,
-                  frmReinstall.ItemName, frmReinstall.addWkspRedirect,
-                  frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
-                  frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
-                then
+                if serverTool.InstallWorkshopItem
+                  (frmReinstall.edtWorkshopID.text, frmReinstall.ItemName,
+                  frmReinstall.addWkspRedirect, frmReinstall.downloadNow,
+                  frmReinstall.downloadNow { dlImg } , frmReinstall.addMapCycle,
+                  frmReinstall.addMapENtry) = false then
                 begin
                   Application.MessageBox
-                    (PWideChar(_s('One o more steps for item ') +
-                    frmReinstall.edtID.text + _s(' failed!')), '',
+                    (PWideChar(_s('One or more steps for item ') +
+                    frmReinstall.edtWorkshopID.text + _s(' failed!')), '',
                     MB_OK + MB_ICONEXCLAMATION);
 
                 end;
@@ -1270,15 +1273,15 @@ begin
 
                 progressForm.NextPBValue(_s('Installing item ') + itemID);
 
-                if serverTool.InstallWorkshopItem(frmReinstall.edtID.text,
-                  frmReinstall.ItemName, frmReinstall.addWkspRedirect,
-                  frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
-                  frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
-                then
+                if serverTool.InstallWorkshopItem
+                  (frmReinstall.edtWorkshopID.text, frmReinstall.ItemName,
+                  frmReinstall.addWkspRedirect, frmReinstall.downloadNow,
+                  frmReinstall.downloadNow { dlImg } , frmReinstall.addMapCycle,
+                  frmReinstall.addMapENtry) = false then
                 begin
                   Application.MessageBox
-                    (PWideChar(_s('One o more steps for item ') +
-                    frmReinstall.edtID.text + _s(' failed!')), '',
+                    (PWideChar(_s('One or more steps for item ') +
+                    frmReinstall.edtWorkshopID.text + _s(' failed!')), '',
                     MB_OK + MB_ICONEXCLAMATION);
 
                 end;
@@ -1462,9 +1465,9 @@ begin
 
 end;
 
-procedure TFormMain.chkAutoCheckForUpdatesClick(Sender: TObject);
+procedure TFormMain.chkAutoUpdatesClick(Sender: TObject);
 begin
-  AutoCheckForUpdates := chkAutoCheckForUpdates.Checked;
+  AutoCheckForUpdates := chkAutoUpdates.Checked;
 end;
 
 procedure TFormMain.cbbDifficultyChange(Sender: TObject);
@@ -1477,19 +1480,19 @@ begin
   kfprofiles[defaultProfile].DefaultGameMode := cbbGameMode.ItemIndex;
   if (cbbGameMode.ItemIndex = 4) then
   begin
-    if (Pos('?GAME=', UpperCase(edtExtra.text)) <= 0) then
+    if (Pos('?GAME=', UpperCase(edtAddParam.text)) <= 0) then
     begin
       Application.MessageBox
         (PWideChar
         (_s('Specify the gamemod param in additional paramenters.\nExample: ') +
         '?Game=CustomModGame.MyGame'), _p('Custom game mode set'),
         MB_OK + MB_ICONINFORMATION);
-      edtExtra.SetFocus;
+      edtAddParam.SetFocus;
     end;
   end
   else
   begin
-    if Pos('?GAME=', UpperCase(edtExtra.text)) > 0 then
+    if Pos('?GAME=', UpperCase(edtAddParam.text)) > 0 then
       Application.MessageBox
         (PWideChar
         (_s('You specified a custom game mode in additional parameters.\nConfiguring ')
@@ -1510,14 +1513,14 @@ begin
     SW_NORMAL);
 end;
 
-procedure TFormMain.cbbLengthChange(Sender: TObject);
+procedure TFormMain.cbbGameLengthChange(Sender: TObject);
 begin
-  kfprofiles[defaultProfile].DefaultLength := cbbLength.ItemIndex;
+  kfprofiles[defaultProfile].DefaultLength := cbbGameLength.ItemIndex;
 end;
 
-procedure TFormMain.cbbListViewDisplayStyleChange(Sender: TObject);
+procedure TFormMain.cbbViewModeChange(Sender: TObject);
 begin
-  LVStyle := TListViewDisplayStyle(cbbListViewDisplayStyle.ItemIndex);
+  LVStyle := TListViewDisplayStyle(cbbViewMode.ItemIndex);
   LoadItensToLv('');
   // force update column size
   Self.Height := Self.Height + 1;
@@ -1543,9 +1546,9 @@ begin
   saveconfig();
 end;
 
-procedure TFormMain.cbbRedirectEnabledCloseUp(Sender: TObject);
+procedure TFormMain.cbbCustomRedirectCloseUp(Sender: TObject);
 begin
-  if cbbRedirectEnabled.ItemIndex = 0 then
+  if cbbCustomRedirect.ItemIndex = 0 then
   begin
     edtRedirectURL.text := '';
     try
@@ -1602,9 +1605,9 @@ begin
   end;
 end;
 
-procedure TFormMain.chkOnlyFromConfigItemsClick(Sender: TObject);
+procedure TFormMain.chkOnlyItemsFromConfigClick(Sender: TObject);
 begin
-  onlyFromConfigItems := chkOnlyFromConfigItems.Checked;
+  onlyFromConfigItems := chkOnlyItemsFromConfig.Checked;
   LoadItensToLv('');
 end;
 
@@ -1613,22 +1616,22 @@ begin
   AutoConnectWeb := chkAutoConnectWeb.Checked;
 end;
 
-procedure TFormMain.chkAutoLoginAdminClick(Sender: TObject);
+procedure TFormMain.chkAdminAutoLoginClick(Sender: TObject);
 begin
-  autoLoginWebAdmin := chkAutoLoginAdmin.Checked;
+  autoLoginWebAdmin := chkAdminAutoLogin.Checked;
 end;
 
 procedure TFormMain.chkGrouMapCycleClick(Sender: TObject);
 begin
-  chkIncludeSepratorsMapCycle.Enabled := chkGrouMapCycle.Checked;
+  chkSeparateMapTypes.Enabled := chkGrouMapCycle.Checked;
   GroupMapCycle := chkGrouMapCycle.Checked;
   if UILoaded then
     sortCycleChange(Sender);
 end;
 
-procedure TFormMain.chkIncludeSepratorsMapCycleClick(Sender: TObject);
+procedure TFormMain.chkSeparateMapTypesClick(Sender: TObject);
 begin
-  GroupMapCycleSeparators := chkIncludeSepratorsMapCycle.Checked;
+  GroupMapCycleSeparators := chkSeparateMapTypes.Checked;
   if UILoaded then
     sortCycleChange(Sender);
 end;
@@ -1637,16 +1640,16 @@ procedure TFormMain.sortCycleChange(Sender: TObject);
 begin
   serverTool.SetMapCycleOptions(GroupMapCycle, GroupMapCycleSeparators);
   serverTool.ResortMapCycle();
-  LoadItensToLv(edtSearch.text);
+  LoadItensToLv(edtFilter.text);
 end;
 
-procedure TFormMain.cbStatusWebChange(Sender: TObject);
+procedure TFormMain.cbbWebInterfaceChange(Sender: TObject);
 
 begin
   try
     if CheckForServerRunningAndClose = false then
     begin
-      if cbStatusWeb.ItemIndex = 0 then
+      if cbbWebInterface.ItemIndex = 0 then
         serverTool.SetWebStatus(false)
       else
         serverTool.SetWebStatus(True);
@@ -1658,10 +1661,10 @@ begin
   end;
 end;
 
-procedure TFormMain.cbWorkshopDMStatusChange(Sender: TObject);
+procedure TFormMain.cbbDownloadManagerChange(Sender: TObject);
 begin
   try
-    if cbWorkshopDMStatus.ItemIndex = 0 then
+    if cbbDownloadManager.ItemIndex = 0 then
       serverTool.RemoveWorkshopManager
     else
       serverTool.InstallWorkshopManager;
@@ -1673,27 +1676,27 @@ begin
 
 end;
 
-procedure TFormMain.edtExtraChange(Sender: TObject);
+procedure TFormMain.edtAddParamChange(Sender: TObject);
 begin
-  kfprofiles[defaultProfile].AdditionalParam := edtExtra.text;
-  if Pos('GAME=', UpperCase(edtExtra.text)) > 0 then
+  kfprofiles[defaultProfile].AdditionalParam := edtAddParam.text;
+  if Pos('GAME=', UpperCase(edtAddParam.text)) > 0 then
     cbbGameMode.ItemIndex := 4;
 
 end;
 
-procedure TFormMain.edtExtraEnter(Sender: TObject);
+procedure TFormMain.edtAddParamEnter(Sender: TObject);
 begin
-  lblHelpAdditionParam.Visible := True;
+  lblHelpAddParam.Visible := True;
 end;
 
-procedure TFormMain.edtGmPassChange(Sender: TObject);
+procedure TFormMain.edtGamePassChange(Sender: TObject);
 begin
-  kfprofiles[defaultProfile].DefaultPass := edtGmPass.text;
+  kfprofiles[defaultProfile].DefaultPass := edtGamePass.text;
 end;
 
 procedure TFormMain.lostFocusSave(Sender: TObject);
 begin
-  lblHelpAdditionParam.Visible := false;
+  lblHelpAddParam.Visible := false;
   saveconfig();
 end;
 
@@ -1732,15 +1735,15 @@ begin
   end;
 end;
 
-procedure TFormMain.edtSearchChange(Sender: TObject);
+procedure TFormMain.edtFilterChange(Sender: TObject);
 begin
-  LoadItensToLv(edtSearch.text);
+  LoadItensToLv(edtFilter.text);
 end;
 
-procedure TFormMain.edtWebPassExit(Sender: TObject);
+procedure TFormMain.edtAdminPassExit(Sender: TObject);
 begin
   try
-    serverTool.SetWebPass(edtWebPass.text);
+    serverTool.SetWebPass(edtAdminPass.text);
     checkAutoWebLoginRequirements();
   except
     on E: Exception do
@@ -1750,14 +1753,14 @@ end;
 
 procedure TFormMain.checkAutoWebLoginRequirements;
 begin
-  if edtWebPass.text = '' then
+  if edtAdminPass.text = '' then
   begin
-    chkAutoLoginAdmin.Checked := false;
-    chkAutoLoginAdmin.Enabled := false;
+    chkAdminAutoLogin.Checked := false;
+    chkAdminAutoLogin.Enabled := false;
   end
   else
   begin
-    chkAutoLoginAdmin.Enabled := True;
+    chkAdminAutoLogin.Enabled := True;
   end;
 end;
 
@@ -1883,7 +1886,7 @@ begin
 
   lvMaps.Items.Clear;
   lvMods.Clear;
-  lvUnknowed.Items.Clear;
+  lvUnknown.Items.Clear;
   if (LVStyle = LVDS_Thumbnail) or (LVStyle = LVDS_Icon) then
     loadIMGFolder(nil);
   lvMaps.Items.BeginUpdate;
@@ -1957,7 +1960,7 @@ begin
                 Item.GroupID := 2;
                 Item.SubItems.Add('');
               end;
-            KFUnknowedSource:
+            KFUnknownSource:
               begin
                 Item.GroupID := 3;
                 Item.SubItems.Add('');
@@ -1971,7 +1974,7 @@ begin
           if itemType = KFMap then
             Item := lvMaps.Items.Add
           else
-            Item := lvUnknowed.Items.Add;
+            Item := lvUnknown.Items.Add;
           Item.Data := @serverTool.Items[i];
           case LVStyle of
             LVDS_Simple:
@@ -2061,7 +2064,7 @@ begin
             if serverTool.Items[i].SourceFrom = KFSteamWorkshop then
             begin
 
-              if itemType = KFUnknowed then
+              if itemType = KFUnknown then
                 Item.SubItemImages[1] := 4
               else
                 Item.SubItemImages[1] := 1;
@@ -2083,7 +2086,7 @@ begin
           else
           begin
             Item.SubItems.Add(textNo);
-            if itemType = KFUnknowed then
+            if itemType = KFUnknown then
               Item.SubItemImages[2] := 4
             else
               Item.SubItemImages[2] := 1;
@@ -2103,7 +2106,7 @@ begin
           else
           begin
             Item.SubItems.Add(textNo);
-            if itemType = KFUnknowed then
+            if itemType = KFUnknown then
               Item.SubItemImages[3] := 4
             else
               Item.SubItemImages[3] := 1;
@@ -2123,7 +2126,7 @@ begin
           else
           begin
             Item.SubItems.Add(textNo);
-            if itemType = KFUnknowed then
+            if itemType = KFUnknown then
               Item.SubItemImages[4] := 4
             else
               Item.SubItemImages[4] := 1;
@@ -2140,7 +2143,7 @@ begin
               Item.GroupID := 1;
             KFRedirectOrLocal:
               Item.GroupID := 2;
-            KFUnknowedSource:
+            KFUnknownSource:
               Item.GroupID := 3;
           end;
 
@@ -2149,10 +2152,10 @@ begin
 
     end;
 
-    if lvUnknowed.Items.Count > 0 then
-      tsUnknowed.TabVisible := True
+    if lvUnknown.Items.Count > 0 then
+      tsUnknown.TabVisible := True
     else
-      tsUnknowed.TabVisible := false;
+      tsUnknown.TabVisible := false;
     // Map Cycle to combo box
 
     cbbMap.Clear;
@@ -2432,7 +2435,7 @@ begin
 
   selectedItems := GetLVSelectedItems(ActiveLV);
   try
-    if (ActiveLV = lvMaps) or (ActiveLV = lvUnknowed) then
+    if (ActiveLV = lvMaps) or (ActiveLV = lvUnknown) then
     begin
       Mapentry1.Visible := True;
       MapCycle1.Visible := True;
@@ -2612,17 +2615,17 @@ procedure TFormMain.FormCanResize(Sender: TObject;
   var NewWidth, NewHeight: Integer; var Resize: Boolean);
 begin
   try
-    edtRedirectURL.Width := Panel1.Width - 15;
+    edtRedirectURL.Width := pnlRight.Width - 15;
     if NewWidth > 950 then
     begin
-      pnlgamelenght.Align := alLeft;
-      pnldifficulty.Align := alLeft;
+      pnlGameLength.Align := alLeft;
+      pnlDifficulty.Align := alLeft;
     end
     else
     begin
 
-      pnlgamelenght.Align := alRight;
-      pnldifficulty.Align := alRight;
+      pnlGameLength.Align := alRight;
+      pnlDifficulty.Align := alRight;
     end;
   except
 
@@ -2683,7 +2686,7 @@ begin
   except
     on E: Exception do
     begin
-      Application.MessageBox(PWideChar(E.Message), _p('Dependencie not found'),
+      Application.MessageBox(PWideChar(E.Message), _p('Dependency not found'),
         MB_OK + MB_ICONSTOP);
       Application.Terminate;
       Exit;
@@ -2787,19 +2790,19 @@ begin
   translateUIElements;
 
   // ------------------------------- all component changes after language set
-  jvpgcntrl1.ActivePageIndex := 0;
+  pgcntrlTabs.ActivePageIndex := 0;
   // pgcMaps.ActivePageIndex := 0;
-  jvpgcntrl1Change(Self);
+  pgcntrlTabsChange(Self);
 
   btnRemove.Enabled := false;
-  if jvpgcntrl1.ActivePage = tsMaps then
+  if pgcntrlTabs.ActivePage = tsMaps then
 
     ActiveLV := lvMaps
   else
     ActiveLV := lvMods;
   btnReinstall.Enabled := false;
   btnUpdate.Enabled := false;
-  chkOnlyFromConfigItems.Checked := onlyFromConfigItems;
+  chkOnlyItemsFromConfig.Checked := onlyFromConfigItems;
   customRedirect := serverTool.GetCustomRedirect;
   // ShowMessage(configName);
 {$IFDEF DEBUG}
@@ -2809,18 +2812,18 @@ begin
 {$ENDIF}
   if customRedirect = '' then
   begin
-    cbbRedirectEnabled.ItemIndex := 0;
+    cbbCustomRedirect.ItemIndex := 0;
     edtRedirectURL.text := '';
     edtRedirectURL.Enabled := false;
   end
   else
   begin
-    cbbRedirectEnabled.ItemIndex := 1;
+    cbbCustomRedirect.ItemIndex := 1;
     edtRedirectURL.text := customRedirect;
     edtRedirectURL.Enabled := True;
   end;
 
-  lblHelpAdditionParam.Visible := false;
+  lblHelpAddParam.Visible := false;
   // Windows size
   Self.Width := appWidth;
   Self.Height := appHeight;
@@ -2833,13 +2836,14 @@ begin
   // Workshop redirect installed
 
   if serverTool.IsWorkshopManagerInstalled then
-    cbWorkshopDMStatus.ItemIndex := 1
+    cbbDownloadManager.ItemIndex := 1
   else
-    cbWorkshopDMStatus.ItemIndex := 0;
+    cbbDownloadManager.ItemIndex := 0;
   chkAutoConnectWeb.Checked := AutoConnectWeb;
-  cbWorkshopDMStatus.Font.Size := fontSize;
-  cbWorkshopDMStatus.Top := lblWkspDownMan.Top;
-  cbWorkshopDMStatus.Left := lblWkspDownMan.Left + lblWkspDownMan.Width + 5;
+  cbbDownloadManager.Font.Size := fontSize;
+  cbbDownloadManager.Top := lblDownloadManager.Top;
+  cbbDownloadManager.Left := lblDownloadManager.Left +
+    lblDownloadManager.Width + 5;
   // Web port
   try
     webPort := IntToStr(serverTool.GetWebPort);
@@ -2854,33 +2858,33 @@ begin
   // Web Status
   try
     if serverTool.GetWebStatus then
-      cbStatusWeb.ItemIndex := 1
+      cbbWebInterface.ItemIndex := 1
     else
-      cbStatusWeb.ItemIndex := 0;
+      cbbWebInterface.ItemIndex := 0;
   except
     on E: Exception do
     begin
-      cbStatusWeb.ItemIndex := -1;
+      cbbWebInterface.ItemIndex := -1;
       ShowMessage(E.Message);
     end;
   end;
   case LVStyle of
     LVDS_Simple:
-      cbbListViewDisplayStyle.ItemIndex := 0;
+      cbbViewMode.ItemIndex := 0;
     LVDS_Thumbnail:
-      cbbListViewDisplayStyle.ItemIndex := 1;
+      cbbViewMode.ItemIndex := 1;
     LVDS_Icon:
-      cbbListViewDisplayStyle.ItemIndex := 2;
+      cbbViewMode.ItemIndex := 2;
   end;
   // Web pass
   try
-    edtWebPass.text := serverTool.GetWebPass;
+    edtAdminPass.text := serverTool.GetWebPass;
   except
     on E: Exception do
       ShowMessage('Failed to get webPass ' + E.Message);
   end;
 
-  chkAutoLoginAdmin.Checked := autoLoginWebAdmin;
+  chkAdminAutoLogin.Checked := autoLoginWebAdmin;
   checkAutoWebLoginRequirements();
 
   if Assigned(TStyleManager.ActiveStyle) then
@@ -2901,14 +2905,14 @@ begin
       (tlTool.getCurrentLanguage.name);
 
   // Auto check for updates checkbox
-  chkAutoCheckForUpdates.Checked := AutoCheckForUpdates;
+  chkAutoUpdates.Checked := AutoCheckForUpdates;
 
   cbbTheme.ItemIndex := cbbTheme.Items.IndexOf(fdefaultStyleName);
   TStyleManager.TrySetStyle(fdefaultStyleName);
   // Map cycle group
   chkGrouMapCycle.Checked := GroupMapCycle;
-  chkIncludeSepratorsMapCycle.Checked := GroupMapCycleSeparators;
-  chkIncludeSepratorsMapCycle.Enabled := chkGrouMapCycle.Checked;
+  chkSeparateMapTypes.Checked := GroupMapCycleSeparators;
+  chkSeparateMapTypes.Enabled := chkGrouMapCycle.Checked;
   // whatever was in the project settings.
   Application.HintHidePause := 15000; // 15 Sec
 
@@ -2932,9 +2936,9 @@ begin
       with kfprofiles[defaultProfile] do
       begin
         DefaultDifficulty := cbbDifficulty.ItemIndex;
-        DefaultLength := cbbLength.ItemIndex;
-        DefaultPass := edtGmPass.text;
-        AdditionalParam := edtExtra.text;
+        DefaultLength := cbbGameLength.ItemIndex;
+        DefaultPass := edtGamePass.text;
+        AdditionalParam := edtAddParam.text;
         if (cbbMap.text <> KF_CYCLE_CUSTOM_SEPARATOR) and
           (cbbMap.text <> KF_CYCLE_OFFICIAL_SEPARATOR) then
           DefaultMap := cbbMap.text
@@ -3020,9 +3024,9 @@ begin
             begin
               frmReinstall.SetAddType(TKFItemType.ReinstallWorkshopMap);
             end;
-            frmReinstall.edtID.text := itemID;
+            frmReinstall.edtWorkshopID.text := itemID;
             frmReinstall.ItemName := ItemName;
-            frmReinstall.edtID.Enabled := false;
+            frmReinstall.edtWorkshopID.Enabled := false;
             frmReinstall.Caption := _s('Reinstall ') + ItemName;
             if bkpFile.Count > 1 then
             begin
@@ -3046,15 +3050,15 @@ begin
                   break;
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
                   IntToStr(bkpFile.Count) + _s(' Installing item ') + itemID);
-                if serverTool.InstallWorkshopItem(frmReinstall.edtID.text,
-                  frmReinstall.ItemName, frmReinstall.addWkspRedirect,
-                  frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
-                  frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
-                then
+                if serverTool.InstallWorkshopItem
+                  (frmReinstall.edtWorkshopID.text, frmReinstall.ItemName,
+                  frmReinstall.addWkspRedirect, frmReinstall.downloadNow,
+                  frmReinstall.downloadNow { dlImg } , frmReinstall.addMapCycle,
+                  frmReinstall.addMapENtry) = false then
                 begin
                   Application.MessageBox
-                    (PWideChar(_s('One o more steps for item ') +
-                    frmReinstall.edtID.text + _s(' fialed!')), '',
+                    (PWideChar(_s('One or more steps for item ') +
+                    frmReinstall.edtWorkshopID.text + _s(' fialed!')), '',
                     MB_OK + MB_ICONEXCLAMATION);
 
                 end;
@@ -3074,15 +3078,15 @@ begin
               if (modalResult = mrOk) then
               begin
                 progressForm.NextPBValue(_s('Installing item ') + itemID);
-                if serverTool.InstallWorkshopItem(frmReinstall.edtID.text,
-                  frmReinstall.ItemName, frmReinstall.addWkspRedirect,
-                  frmReinstall.downloadNow, frmReinstall.downloadNow { dlImg } ,
-                  frmReinstall.addMapCycle, frmReinstall.addMapENtry) = false
-                then
+                if serverTool.InstallWorkshopItem
+                  (frmReinstall.edtWorkshopID.text, frmReinstall.ItemName,
+                  frmReinstall.addWkspRedirect, frmReinstall.downloadNow,
+                  frmReinstall.downloadNow { dlImg } , frmReinstall.addMapCycle,
+                  frmReinstall.addMapENtry) = false then
                 begin
                   Application.MessageBox
-                    (PWideChar(_s('One o more steps for item ') +
-                    frmReinstall.edtID.text + _s(' failed!')), '',
+                    (PWideChar(_s('One or more steps for item ') +
+                    frmReinstall.edtWorkshopID.text + _s(' failed!')), '',
                     MB_OK + MB_ICONEXCLAMATION);
 
                 end;
@@ -3216,12 +3220,12 @@ begin
   begin
     with frmProgress do
     begin
-      if currentPosition < pb1.Max then
-        pb1.Position := currentPosition;
+      if currentPosition < frmProgress.pbStatus.Max then
+        frmProgress.pbStatus.Position := currentPosition;
 
       frmProgress.lblStatus.Caption := _s('Downloading ') +
-        FormatFloat('0%', ((currentPosition * 100) / frmProgress.pb1.Max)) +
-        ' - ' + FormatByteSize(currentPosition);
+        FormatFloat('0%', ((currentPosition * 100) / frmProgress.pbStatus.Max))
+        + ' - ' + FormatByteSize(currentPosition);
     end;
     Application.ProcessMessages;
 
@@ -3232,7 +3236,7 @@ procedure TFormMain.RedirectDownloadStarted(fileSize: Int64);
 begin
   if Assigned(frmProgress) then
   begin
-    frmProgress.pb1.Max := fileSize;
+    frmProgress.pbStatus.Max := fileSize;
 
   end;
   Application.ProcessMessages;
@@ -3242,7 +3246,7 @@ procedure TFormMain.RedirectDownloadFinished();
 begin
   if Assigned(frmProgress) then
   begin
-    frmProgress.pb1.Position := 0;
+    frmProgress.pbStatus.Position := 0;
   end;
   Application.ProcessMessages;
 end;
@@ -3263,9 +3267,9 @@ begin
   with kfprofiles[defaultProfile] do
   begin
     cbbDifficulty.ItemIndex := DefaultDifficulty;
-    cbbLength.ItemIndex := DefaultLength;
-    edtGmPass.text := DefaultPass;
-    edtExtra.text := AdditionalParam;
+    cbbGameLength.ItemIndex := DefaultLength;
+    edtGamePass.text := DefaultPass;
+    edtAddParam.text := AdditionalParam;
     if (cbbMap.Items.IndexOf(DefaultMap) > 0) and
       (DefaultMap <> KF_CYCLE_CUSTOM_SEPARATOR) and
       (DefaultMap <> KF_CYCLE_OFFICIAL_SEPARATOR) then
@@ -3281,9 +3285,9 @@ begin
 
 end;
 
-procedure TFormMain.jvpgcntrl1Change(Sender: TObject);
+procedure TFormMain.pgcntrlTabsChange(Sender: TObject);
 begin
-  if jvpgcntrl1.ActivePage = tsMaps then
+  if pgcntrlTabs.ActivePage = tsMaps then
   begin
     ActiveLV := lvMaps;
     btnRemove.Visible := True;
@@ -3293,26 +3297,26 @@ begin
     lvClick(Sender);
     AddManualEntry.Visible := True;
   end;
-  if jvpgcntrl1.ActivePage = tsMods then
+  if pgcntrlTabs.ActivePage = tsMods then
   begin
     ActiveLV := lvMods;
     btnRemove.Visible := True;
     btnAddNew.Visible := True;
     btnReinstall.Visible := True;
     btnUpdate.Visible := True;
-    AddManualEntry.Visible := False;
+    AddManualEntry.Visible := false;
     lvClick(Sender);
   end;
-  if jvpgcntrl1.ActivePage = tsUnknowed then
+  if pgcntrlTabs.ActivePage = tsUnknown then
   begin
-    ActiveLV := lvUnknowed;
+    ActiveLV := lvUnknown;
     btnRemove.Visible := True;
     btnAddNew.Visible := false;
     btnReinstall.Visible := True;
     btnUpdate.Visible := True;
     lvClick(Sender);
   end;
-  if (jvpgcntrl1.ActivePage = tsServer) or (jvpgcntrl1.ActivePage = tsExtra)
+  if (pgcntrlTabs.ActivePage = tsServer) or (pgcntrlTabs.ActivePage = tsOptions)
   then
   begin
     ActiveLV := nil;
@@ -3322,7 +3326,7 @@ begin
     btnUpdate.Visible := false;
   end;
 
-  if jvpgcntrl1.ActivePage = tswebadmin then
+  if pgcntrlTabs.ActivePage = tsWebAdmin then
   begin
     ActiveLV := nil;
     btnRemove.Visible := false;
@@ -3332,7 +3336,7 @@ begin
     if ProcessExists(ExtractFileName(pathServerEXE)) then
     begin
 
-      wb1.Navigate('http://127.0.0.1:' + edtPort.text);
+      wbWebAdmin.Navigate('http://127.0.0.1:' + edtPort.text);
     end
     else
     begin
@@ -3420,9 +3424,9 @@ begin
                 progressForm.NextPBValue(IntToStr(i + 1) + '/' +
                   IntToStr(slCount) + _s(' Removing item ') + ItemName + ' '
                   + itemID);
-                if ActiveLV = lvUnknowed then
+                if ActiveLV = lvUnknown then
                   serverTool.RemoveItem(ItemName, itemID, True, True, True,
-                    True, itemSource, KFUnknowed);
+                    True, itemSource, KFUnknown);
               end;
             end;
             progressForm.Close;
@@ -3557,10 +3561,10 @@ begin
                 itemSource, KFMap);
             end;
 
-            if ActiveLV = lvUnknowed then
+            if ActiveLV = lvUnknown then
             begin
               serverTool.RemoveItem(ItemName, itemID, false, false, false, True,
-                itemSource, KFUnknowed);
+                itemSource, KFUnknown);
             end;
           end;
           progressForm.Close;
@@ -3676,7 +3680,7 @@ begin
             itemID := slItems[i].SubItems[0];
             itemSource := TKFSource(slItems[i].GroupID);
             serverTool.RemoveItem(ItemName, itemID, false, false, True, false,
-              itemSource, KFUnknowed);
+              itemSource, KFUnknown);
 
           end;
           progressForm.Close;
@@ -3996,8 +4000,8 @@ begin
       if tcpResponse.Connected then
       begin
 
-        wb1.Navigate('http://127.0.0.1:' + edtPort.text);
-        jvpgcntrl1.ActivePage := tswebadmin;
+        wbWebAdmin.Navigate('http://127.0.0.1:' + edtPort.text);
+        pgcntrlTabs.ActivePage := tsWebAdmin;
         tmrWebAdmin.Enabled := false;
         // autoLoginWb;
       end;
@@ -4019,7 +4023,7 @@ var
   form: IHTMLFormElement;
 begin
   try
-    Doc := wb1.Document as IHTMLDocument2;
+    Doc := wbWebAdmin.Document as IHTMLDocument2;
     Elements := Doc.All;
     for i := 0 to Elements.Length - 1 do
     begin
@@ -4042,7 +4046,7 @@ begin
         form.submit;
     end;
   except
-    // silent discart
+    // silent discard
   end;
 end;
 
@@ -4055,131 +4059,49 @@ begin
   lblDonate.Caption := _s(lblDonate.Caption);
   with lvMaps do
   begin
+    // ['Map File', 'Workshop ID', 'Subscription', 'Map Entry', 'Cycle Entry', 'Map cache']
     Columns.Items[0].Caption := _s(Columns.Items[0].Caption);
     Columns.Items[2].Caption := _s(Columns.Items[2].Caption);
     Columns.Items[3].Caption := _s(Columns.Items[3].Caption);
     Columns.Items[4].Caption := _s(Columns.Items[4].Caption);
     Columns.Items[5].Caption := _s(Columns.Items[5].Caption);
   end;
+
   with lvMods do
   begin
+    // ['Mod File', 'Workshop ID', 'Subscription', 'In cache']
     Columns.Items[0].Caption := _s(Columns.Items[0].Caption);
     Columns.Items[2].Caption := _s(Columns.Items[2].Caption);
     Columns.Items[3].Caption := _s(Columns.Items[3].Caption);
   end;
-  AddWorkshopMap.Caption := _s(AddWorkshopMap.Caption);
-  AddWorkshopIDorURL.Caption := _s(AddWorkshopIDorURL.Caption);
-  tsMaps.Caption := _s(tsMaps.Caption);
-  lblMap.Caption := _s(lblMap.Caption);
-  lblDifficulty.Caption := _s(lblDifficulty.Caption);
-  lblGameLength.Caption := _s(lblGameLength.Caption);
-  lblGamePass.Caption := _s(lblGamePass.Caption);
-  btnStartServer.Caption := _s(btnStartServer.Caption);
-  grpEnableDisable.Caption := _s(grpEnableDisable.Caption);
-  grpStartServer.Caption := _s(grpStartServer.Caption);
+
+  // ['Normal', 'Hard', 'Suicidal', 'Hell on earth']
+  cbbDifficulty.Items[0] := _s(cbbDifficulty.Items[0]);
   cbbDifficulty.Items[1] := _s(cbbDifficulty.Items[1]);
   cbbDifficulty.Items[2] := _s(cbbDifficulty.Items[2]);
   cbbDifficulty.Items[3] := _s(cbbDifficulty.Items[3]);
-  cbbLength.Items[0] := _s(cbbLength.Items[0]);
-  cbbLength.Items[1] := _s(cbbLength.Items[1]);
-  cbbLength.Items[2] := _s(cbbLength.Items[2]);
-  add1.Caption := _s(add1.Caption);
-  Remove1.Caption := _s(Remove1.Caption);
-  lblMapCycleOptions.Caption := _s(lblMapCycleOptions.Caption);
-  Forceupdate1.Caption := _s(Forceupdate1.Caption);
-  Reinstall1.Caption := _s(Reinstall1.Caption);
-  Browserworkshop1.Caption := _s(Browserworkshop1.Caption);
-  AddbyID1.Caption := _s(AddbyID1.Caption);
-  allfilesandentry1.Caption := _s(allfilesandentry1.Caption);
-  Mapentry1.Caption := _s(Mapentry1.Caption);
-  MapCycle1.Caption := _s(MapCycle1.Caption);
-  Subcribe1.Caption := _s(Subcribe1.Caption);
-  mniShowitempage1.Caption := _s(mniShowitempage1.Caption);
-  mniCopyID1.Caption := _s(mniCopyID1.Caption);
-  lblAddParam.Caption := _s(lblAddParam.Caption);
-  lblSearch.Caption := _s(lblSearch.Caption);
-  btnNewProfile.Caption := _s(btnNewProfile.Caption);
-  btnRenameProfile.Caption := _s(btnRenameProfile.Caption);
-  btnDeleteProfile.Caption := _s(btnDeleteProfile.Caption);
-  lblProfile.Caption := _s(lblProfile.Caption);
-  chkAutoConnectWeb.Caption := _s(chkAutoConnectWeb.Caption);
-  Multipleitems1.Caption := _s(Multipleitems1.Caption);
-  lblDescWebPort.Caption := _s(lblDescWebPort.Caption);
-  cbWorkshopDMStatus.Items[0] := _s(cbWorkshopDMStatus.Items[0]);
-  cbWorkshopDMStatus.Items[1] := _s(cbWorkshopDMStatus.Items[1]);
-  cbStatusWeb.Items[0] := _s(cbStatusWeb.Items[0]);
-  cbStatusWeb.Items[1] := _s(cbStatusWeb.Items[1]);
-  cbbRedirectEnabled.Items[0] := _s(cbbRedirectEnabled.Items[0]);
-  cbbRedirectEnabled.Items[1] := _s(cbbRedirectEnabled.Items[1]);
-  tsExtra.Caption := _s(tsExtra.Caption);
-  btnCheckForUpdate.Caption := _s(btnCheckForUpdate.Caption);
-  btnCleanDownloadCache.Caption := _s(btnCleanDownloadCache.Caption);
-  btnCleanWorkshopData.Caption := _s(btnCleanWorkshopData.Caption);
-  btnSvIntegrityCurrent.Caption := _s(btnSvIntegrityCurrent.Caption);
-  btnSvIntegrityBeta.Caption := _s(btnSvIntegrityBeta.Caption);
-  btnCheckForPreview.Caption := _s(btnCheckForPreview.Caption);
-  grpmaintenance.Caption := _s(grpmaintenance.Caption);
-  grpapplication.Caption := _s(grpapplication.Caption);
-  lblFontSize.Caption := _s(lblFontSize.Caption);
-  lblGameMode.Caption := _s(lblGameMode.Caption);
-  FromRedirect1.Caption := _s(FromRedirect1.Caption);
-  FromList1.Caption := _s(FromList1.Caption);
-  tsNotes.Caption := _s(tsNotes.Caption);
-  Export1.Caption := _s(Export1.Caption);
-  RemoveMapEntry1.Caption := _s(RemoveMapEntry1.Caption);
-  lblTheme.Caption := _s(lblTheme.Caption);
-  Explorerlocalfolder1.Caption := _s(Explorerlocalfolder1.Caption);
-  lblLanguage.Caption := _s(lblLanguage.Caption);
-  chkAutoLoginAdmin.Caption := _s(chkAutoLoginAdmin.Caption);
-  chkOnlyFromConfigItems.Caption := _s(chkOnlyFromConfigItems.Caption);
-  chkAutoCheckForUpdates.Caption := _s(chkAutoCheckForUpdates.Caption);
-  lblServerUpdate.Caption := _s(lblServerUpdate.Caption);
-  lblVerifyServInt.Caption := _s(lblVerifyServInt.Caption);
-  lblWorkshop.Caption := _s(lblWorkshop.Caption);
-  lblAllChangesWillbe.Caption := _s(lblAllChangesWillbe.Caption);
-  cbbListViewDisplayStyle.Items[0] := _s(cbbListViewDisplayStyle.Items[0]);
-  cbbListViewDisplayStyle.Items[1] := _s(cbbListViewDisplayStyle.Items[1]);
-  cbbListViewDisplayStyle.Items[2] := _s(cbbListViewDisplayStyle.Items[2]);
-  chkGrouMapCycle.Caption := _s(chkGrouMapCycle.Caption);
-  chkIncludeSepratorsMapCycle.Caption :=
-    _s(chkIncludeSepratorsMapCycle.Caption);
-  lblHelpAdditionParam.Caption := _s('Example: ') +
-    '?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15?MaxMonsters=64' +
-    #10#13 + _s('Example: ') +
-    '?Game=MyCustoGameMode.GameMode?Mutator=MyMutator.Mutator';
 
-  cbbMap.hint := _h(cbbMap.hint);
-  cbbLength.hint := _h(cbbLength.hint);
-  cbbDifficulty.hint := _h(cbbDifficulty.hint);
-  cbbGameMode.hint := _h(cbbGameMode.hint);
-  edtGmPass.hint := _h(edtGmPass.hint);
-  edtExtra.hint := _h(edtExtra.hint);
-  btnStartServer.hint := _h(btnStartServer.hint);
-  cbStatusWeb.hint := _h(cbStatusWeb.hint);
-  cbbProfile.hint := _h(cbbProfile.hint);
-  btnCheckForPreview.hint := _h(btnCheckForPreview.hint);
-  btnSvIntegrityCurrent.hint := _h(btnSvIntegrityCurrent.hint);
-  btnSvIntegrityBeta.hint := _h(btnSvIntegrityBeta.hint);
-  btnCleanDownloadCache.hint := _h(btnCleanDownloadCache.hint);
-  btnCleanWorkshopData.hint := _h(btnCleanWorkshopData.hint);
-  chkAutoLoginAdmin.hint := _h(chkAutoLoginAdmin.hint);
-  cbWorkshopDMStatus.hint := _h(cbWorkshopDMStatus.hint);
-  edtPort.hint := _h(edtPort.hint);
-  edtWebPass.hint := _h(edtWebPass.hint);
-  cbbRedirectEnabled.hint := _h(cbbRedirectEnabled.hint);
-  edtRedirectURL.hint := _h(edtRedirectURL.hint);
-  chkAutoConnectWeb.hint := _h(chkAutoConnectWeb.hint);
-  chkIncludeSepratorsMapCycle.hint := _h(chkIncludeSepratorsMapCycle.hint);
-  chkGrouMapCycle.hint := _h(chkGrouMapCycle.hint);
-  btnNewProfile.hint := _h(btnNewProfile.hint);
-  btnRenameProfile.hint := _h(btnRenameProfile.hint);
-  btnDeleteProfile.hint := _h(btnDeleteProfile.hint);
-  btnAddNew.hint := _h(btnAddNew.hint);
-  btnRemove.hint := _h(btnRemove.hint);
-  btnReinstall.hint := _h(btnReinstall.hint);
-  btnUpdate.hint := _h(btnUpdate.hint);
-  chkAutoCheckForUpdates.hint := _h(chkAutoCheckForUpdates.hint);
-  chkOnlyFromConfigItems.hint := _h(chkOnlyFromConfigItems.hint);
+  // ['Short', 'Medium', 'Long']
+  cbbGameLength.Items[0] := _s(cbbGameLength.Items[0]);
+  cbbGameLength.Items[1] := _s(cbbGameLength.Items[1]);
+  cbbGameLength.Items[2] := _s(cbbGameLength.Items[2]);
+
+  // ['', '']
+  cbbDownloadManager.Items[0] := _s(cbbDownloadManager.Items[0]);
+  cbbDownloadManager.Items[1] := _s(cbbDownloadManager.Items[1]);
+
+  // ['', '']
+  cbbWebInterface.Items[0] := _s(cbbWebInterface.Items[0]);
+  cbbWebInterface.Items[1] := _s(cbbWebInterface.Items[1]);
+
+  // ['', '']
+  cbbCustomRedirect.Items[0] := _s(cbbCustomRedirect.Items[0]);
+  cbbCustomRedirect.Items[1] := _s(cbbCustomRedirect.Items[1]);
+
+  // ['', '', '']
+  cbbViewMode.Items[0] := _s(cbbViewMode.Items[0]);
+  cbbViewMode.Items[1] := _s(cbbViewMode.Items[1]);
+  cbbViewMode.Items[2] := _s(cbbViewMode.Items[2]);
 
 end;
 
@@ -4187,18 +4109,18 @@ procedure TFormMain.RealignUIItems(Sender: TObject);
 begin
   fontSize := trckbrFontSize.Position;
   Self.Font.Size := fontSize;
-  alignControlAtoControlB(cbbRedirectEnabled, lblCustomRedirect);
-  alignControlAtoControlB(cbWorkshopDMStatus, lblWkspDownMan);
+  alignControlAtoControlB(cbbCustomRedirect, lblCustomRedirect);
+  alignControlAtoControlB(cbbDownloadManager, lblDownloadManager);
   alignControlAtoControlB(trckbrFontSize, lblFontSize);
   alignControlAtoControlB(cbbLanguage, lblLanguage);
-  alignControlAtoControlB(cbStatusWeb, lblDescWebAdmin);
-  alignControlAtoControlB(edtPort, lblDescWebPort);
-  alignControlAtoControlB(edtWebPass, lblWebPass);
+  alignControlAtoControlB(cbbWebInterface, lblWebInterface);
+  alignControlAtoControlB(edtPort, lblPort);
+  alignControlAtoControlB(edtAdminPass, lblAdminPass);
   alignControlAtoControlB(cbbTheme, lblTheme);
 
 end;
 
-procedure TFormMain.wb1DocumentComplete(ASender: TObject;
+procedure TFormMain.wbWebAdminDocumentComplete(ASender: TObject;
   const pDisp: IDispatch; const URL: OleVariant);
 begin
   if autoLoginWebAdmin then

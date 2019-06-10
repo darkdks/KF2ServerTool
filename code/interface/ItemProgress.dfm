@@ -40,7 +40,7 @@ object formPB: TformPB
     Margins.Bottom = 2
     Caption = '<title>'
   end
-  object btncancel: TButton
+  object btnCancel: TButton
     Left = 207
     Top = 49
     Width = 56
@@ -52,9 +52,9 @@ object formPB: TformPB
     Caption = 'Cancel'
     TabOrder = 0
     Visible = False
-    OnClick = btncancelClick
+    OnClick = btnCancelClick
   end
-  object pb1: TProgressBar
+  object pbStatus: TProgressBar
     Left = 8
     Top = 19
     Width = 254

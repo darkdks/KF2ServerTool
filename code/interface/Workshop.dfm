@@ -15,7 +15,7 @@ object FormWorkshop: TFormWorkshop
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
-  object wb1: TWebBrowser
+  object wbWorkshop: TWebBrowser
     Left = 0
     Top = 31
     Width = 880
@@ -26,8 +26,8 @@ object FormWorkshop: TFormWorkshop
     Margins.Bottom = 2
     Align = alClient
     TabOrder = 0
-    OnBeforeNavigate2 = wb1BeforeNavigate2
-    OnDocumentComplete = wb1DocumentComplete
+    OnBeforeNavigate2 = wbWorkshopBeforeNavigate2
+    OnDocumentComplete = wbWorkshopDocumentComplete
     ExplicitWidth = 938
     ExplicitHeight = 595
     ControlData = {
@@ -37,7 +37,7 @@ object FormWorkshop: TFormWorkshop
       8000000000000000000000000000000000000000000000000000000000000000
       00000000000000000100000000000000000000000000000000000000}
   end
-  object pnl2: TPanel
+  object pnlTop: TPanel
     Left = 0
     Top = 0
     Width = 880
@@ -76,7 +76,7 @@ object FormWorkshop: TFormWorkshop
       Left = 798
       Top = 3
       Width = 15
-      Height = 25
+      Height = 12
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
@@ -90,7 +90,6 @@ object FormWorkshop: TFormWorkshop
       Font.Style = []
       ParentFont = False
       Visible = False
-      ExplicitHeight = 12
     end
     object btnForward: TButton
       AlignWithMargins = True

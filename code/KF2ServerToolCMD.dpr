@@ -16,6 +16,7 @@ uses
   MiscFunc in 'units\MiscFunc.pas',
   DownloaderTool in 'units\DownloaderTool.pas',
   KFTypes in 'units\KFTypes.pas';
+
 type
   TDisplayInfoType = (DIT_all, DIT_path, DIT_web, DIT_redirect, DIT_items);
 
@@ -169,9 +170,9 @@ begin
   writeln('');
   writeln('');
   writeln('Options:');
-  writeln('-addmap <WorkshopID>   : Download and add entrys to map');
+  writeln('-addmap <WorkshopID>   : Download and add map to entries');
   writeln('');
-  writeln('-addmod <WorkshopID>   : Download and add entrys to mod');
+  writeln('-addmod <WorkshopID>   : Download and add mod to entries');
   writeln('');
   writeln('-config <FileName.ini>  : Specify a custom  KF2ServerToolCMD.ini, if dont exists');
   writeln('    a new one will be created. Then the tool will work only with the configured KF2Game ');
@@ -397,7 +398,7 @@ begin
               writeln('[KFMap]');
             KFmod:
               writeln('[KFMod]');
-            KFUnknowed:
+            KFUnknown:
               writeln('[KFUnknowed]');
           end;
           case SourceFrom of
@@ -430,7 +431,7 @@ procedure addmod(itemID: string);
 begin
   writeln('Adding mod...');
   writeln('Item ID: ' + itemID);
-  serverTool.InstallWorkshopItem(itemID, '', True, True,False, False, False);
+  serverTool.InstallWorkshopItem(itemID, '', True, True, False, False, False);
   writeln('Done');
 end;
 
@@ -438,7 +439,7 @@ procedure addMap(itemID: String);
 begin
   writeln('Adding Map...');
   writeln('Item ID: ' + itemID);
-  serverTool.InstallWorkshopItem(itemID, '', True, True, False,True, True);
+  serverTool.InstallWorkshopItem(itemID, '', True, True, False, True, True);
   writeln('Done');
 end;
 
@@ -469,7 +470,7 @@ begin
         begin
           Inc(localMapsCount, 1);
         end;
-      KFUnknowedSource:
+      KFUnknownSource:
         begin
           Inc(unknowedCount, 1);
         end;
@@ -526,7 +527,7 @@ procedure addWorkshopSubscribe(itemID: String);
 begin
   writeln('Adding Subscribe...');
   writeln('Item ID: ' + itemID);
-  serverTool.InstallWorkshopItem(itemID, '', True, False, False,False, False);
+  serverTool.InstallWorkshopItem(itemID, '', True, False, False, False, False);
   writeln('Done');
 end;
 
@@ -543,7 +544,8 @@ procedure addMapEntry(ItemName: String);
 begin
   writeln('Adding map entry...');
   writeln('Item Name: ' + ItemName);
-  serverTool.InstallWorkshopItem('', ItemName, False, False,False, False, True);
+  serverTool.InstallWorkshopItem('', ItemName, False, False, False,
+    False, True);
   writeln('Done');
 end;
 
@@ -560,7 +562,8 @@ procedure addMapCycle(ItemName: String);
 begin
   writeln('Adding map cycle...');
   writeln('Item Name: ' + ItemName);
-  serverTool.InstallWorkshopItem('', ItemName, False, False, False,True, False);
+  serverTool.InstallWorkshopItem('', ItemName, False, False, False,
+    True, False);
   writeln('Done');
 end;
 
@@ -577,7 +580,7 @@ procedure downloadItem(itemID: String);
 begin
   writeln('Downloading item...');
   writeln('Item ID: ' + itemID);
-  serverTool.InstallWorkshopItem(itemID, '', False, True,False, False, False);
+  serverTool.InstallWorkshopItem(itemID, '', False, True, False, False, False);
   writeln('Done');
 end;
 
@@ -638,8 +641,8 @@ begin
           writeln('In Map Entry:    ' + BoolToWord(MapEntry));
           writeln('In Map Cycle:    ' + BoolToWord(MapCycleEntry));
           writeln('In Server cache: ' + BoolToWord(ServerCache));
-          serverTool.InstallWorkshopItem(ID, FileName, ServerSubscribe, True,False,
-            MapCycleEntry, MapEntry);
+          serverTool.InstallWorkshopItem(ID, FileName, ServerSubscribe, True,
+            False, MapCycleEntry, MapEntry);
         end;
       end;
     end;
@@ -657,8 +660,8 @@ begin
 
   if serverTool.IsServerRunning then
   begin
-    writeln('Is strongly recommended close the server before make changes. ');
-    writeln('Do you wanna close it close it now?');
+    writeln('It is strongly recommended to close the server before making changes. ');
+    writeln('Do you want to close it now?');
     writeln('yes/no');
     // cmdAnswer := 'yes';
     Readln(cmdAnswer);
@@ -756,7 +759,7 @@ begin
         end;
     else
       begin
-          actions.Add(LowerCase(Trim(ParamStr(I)))); // add action param
+        actions.Add(LowerCase(Trim(ParamStr(I)))); // add action param
       end;
     end;
 
@@ -920,7 +923,7 @@ begin
           if (argument = 'off') then
             serverTool.SetCustomRedirect('')
           else if (argument = 'on') then
-          serverTool.SetCustomRedirect(argument);
+            serverTool.SetCustomRedirect(argument);
           DisplayInfo(DIT_redirect);
           Exit;
         end;
@@ -995,7 +998,8 @@ begin
 
     end;
   except
-    on E: Exception do begin
+    on E: Exception do
+    begin
       writeln('Error: ' + E.Message);
       writeln('Use -help to show help');
     end;

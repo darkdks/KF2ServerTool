@@ -43,7 +43,7 @@ object FormMain: TFormMain
     ExplicitLeft = 592
     ExplicitWidth = 90
   end
-  object pnl1: TPanel
+  object pnlBottom: TPanel
     Left = 0
     Top = 558
     Width = 684
@@ -62,7 +62,7 @@ object FormMain: TFormMain
       Left = 628
       Top = 2
       Width = 48
-      Height = 29
+      Height = 13
       Cursor = crHandPoint
       Margins.Left = 10
       Margins.Top = 2
@@ -78,14 +78,13 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = lblDonateClick
-      ExplicitHeight = 13
     end
     object lblUpdate: TLabel
       AlignWithMargins = True
       Left = 572
       Top = 2
       Width = 46
-      Height = 21
+      Height = 13
       Cursor = crHandPoint
       Margins.Left = 10
       Margins.Top = 2
@@ -101,14 +100,15 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = checkForUpdates
-      ExplicitHeight = 13
     end
     object btnReinstall: TBitBtn
       Left = 272
       Top = 2
       Width = 130
       Height = 29
-      Hint = 'Reinstall an item, helpfull fix broken item or add some entrys'
+      Hint = 
+        'Reinstall an item, helpful to fix a broken item or add some entr' +
+        'ies'
       Margins.Left = 2
       Margins.Top = 4
       Margins.Right = 2
@@ -402,7 +402,7 @@ object FormMain: TFormMain
       OnClick = btnRemoveClick
     end
   end
-  object jvpgcntrl1: TJvPageControl
+  object pgcntrlTabs: TJvPageControl
     Left = 0
     Top = 17
     Width = 684
@@ -411,10 +411,10 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsServer
+    ActivePage = tsOptions
     Align = alClient
     TabOrder = 1
-    OnChange = jvpgcntrl1Change
+    OnChange = pgcntrlTabsChange
     ParentColor = False
     Color = clWhite
     object tsServer: TTabSheet
@@ -424,7 +424,11 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Server'
       ImageIndex = 2
-      object pb1: TPaintBox
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object pboxServer: TPaintBox
         Left = 0
         Top = 0
         Width = 676
@@ -447,7 +451,7 @@ object FormMain: TFormMain
         Align = alClient
         Caption = 'Start server'
         TabOrder = 0
-        object pnl3: TPanel
+        object pnlStartTop: TPanel
           Left = 2
           Top = 19
           Width = 656
@@ -464,14 +468,13 @@ object FormMain: TFormMain
             Left = 6
             Top = 2
             Width = 41
-            Height = 69
+            Height = 17
             Margins.Left = 6
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
             Align = alLeft
             Caption = 'Profile:'
-            ExplicitHeight = 17
           end
           object btnNewProfile: TButton
             Left = 49
@@ -547,7 +550,7 @@ object FormMain: TFormMain
             OnChange = cbbProfileChange
           end
         end
-        object pnl4: TPanel
+        object pnlStartBottom: TPanel
           Left = 2
           Top = 266
           Width = 656
@@ -559,15 +562,15 @@ object FormMain: TFormMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
-          object lblHelpAdditionParam: TLabel
+          object lblHelpAddParam: TLabel
             Left = 12
             Top = 3
             Width = 493
             Height = 28
             Caption = 
               'Example: ?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15' +
-              '?MaxMonsters=64'#13#10'Example: ?Game=MyCustoGameMode.GameMode?Mutator' +
-              '=MyMutator.Mutator'
+              '?MaxMonsters=64'#13#10'Example: ?Game=MyCustomGameMode.GameMode?Mutato' +
+              'r=MyMutator.Mutator'
             Color = clBtnFace
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowFrame
@@ -651,7 +654,7 @@ object FormMain: TFormMain
             TabOrder = 2
             OnClick = chkGrouMapCycleClick
           end
-          object chkIncludeSepratorsMapCycle: TCheckBox
+          object chkSeparateMapTypes: TCheckBox
             Left = 12
             Top = 92
             Width = 429
@@ -665,10 +668,10 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 3
-            OnClick = chkIncludeSepratorsMapCycleClick
+            OnClick = chkSeparateMapTypesClick
           end
         end
-        object pnl5: TPanel
+        object pnlStartMiddle1: TPanel
           Left = 2
           Top = 92
           Width = 656
@@ -680,7 +683,7 @@ object FormMain: TFormMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 2
-          object pnlmap: TPanel
+          object pnlMap: TPanel
             Left = 0
             Top = 0
             Width = 298
@@ -696,7 +699,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 6
               Top = 2
-              Width = 290
+              Width = 25
               Height = 17
               Margins.Left = 6
               Margins.Top = 2
@@ -706,7 +709,6 @@ object FormMain: TFormMain
               Caption = 'Map'
               Color = clBlack
               ParentColor = False
-              ExplicitWidth = 25
             end
             object cbbMap: TComboBox
               AlignWithMargins = True
@@ -732,7 +734,7 @@ object FormMain: TFormMain
               OnExit = lostFocusSave
             end
           end
-          object pnldifficulty: TPanel
+          object pnlDifficulty: TPanel
             Left = 481
             Top = 0
             Width = 175
@@ -787,7 +789,7 @@ object FormMain: TFormMain
                 'Hell on earth')
             end
           end
-          object pnlgamelenght: TPanel
+          object pnlGameLength: TPanel
             Left = 298
             Top = 0
             Width = 183
@@ -815,7 +817,7 @@ object FormMain: TFormMain
               ParentColor = False
               ExplicitWidth = 82
             end
-            object cbbLength: TComboBox
+            object cbbGameLength: TComboBox
               AlignWithMargins = True
               Left = 6
               Top = 24
@@ -835,7 +837,7 @@ object FormMain: TFormMain
               ParentShowHint = False
               ShowHint = True
               TabOrder = 0
-              OnChange = cbbLengthChange
+              OnChange = cbbGameLengthChange
               OnExit = lostFocusSave
               Items.Strings = (
                 'Short'
@@ -844,7 +846,7 @@ object FormMain: TFormMain
             end
           end
         end
-        object pnl6: TPanel
+        object pnlStartMiddle3: TPanel
           Left = 2
           Top = 214
           Width = 656
@@ -860,7 +862,7 @@ object FormMain: TFormMain
             AlignWithMargins = True
             Left = 6
             Top = 2
-            Width = 648
+            Width = 131
             Height = 17
             Margins.Left = 6
             Margins.Top = 2
@@ -870,9 +872,8 @@ object FormMain: TFormMain
             Caption = 'Additional parameters'
             Color = clBlack
             ParentColor = False
-            ExplicitWidth = 131
           end
-          object edtExtra: TEdit
+          object edtAddParam: TEdit
             AlignWithMargins = True
             Left = 6
             Top = 25
@@ -891,12 +892,12 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
-            OnChange = edtExtraChange
-            OnEnter = edtExtraEnter
+            OnChange = edtAddParamChange
+            OnEnter = edtAddParamEnter
             OnExit = lostFocusSave
           end
         end
-        object pnl10: TPanel
+        object pnlStartMiddle2: TPanel
           Left = 2
           Top = 143
           Width = 656
@@ -935,7 +936,7 @@ object FormMain: TFormMain
             Color = clBlack
             ParentColor = False
           end
-          object edtGmPass: TEdit
+          object edtGamePass: TEdit
             Left = 208
             Top = 30
             Width = 180
@@ -950,7 +951,7 @@ object FormMain: TFormMain
             CustomHint = blhintHelp
             Color = clWhite
             TabOrder = 0
-            OnChange = edtGmPassChange
+            OnChange = edtGamePassChange
             OnExit = lostFocusSave
           end
           object cbbGameMode: TComboBox
@@ -989,13 +990,17 @@ object FormMain: TFormMain
     object tsMaps: TTabSheet
       Caption = 'Maps'
       ImageIndex = 8
-      object Image1: TImage
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object imgMapsPlaceholder: TImage
         Left = 336
         Top = 296
         Width = 105
         Height = 105
       end
-      object pnl2: TPanel
+      object pnlTop: TPanel
         Left = 0
         Top = 0
         Width = 676
@@ -1007,7 +1012,7 @@ object FormMain: TFormMain
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        object lblSearch: TLabel
+        object lblFilter: TLabel
           AlignWithMargins = True
           Left = 2
           Top = 6
@@ -1022,7 +1027,7 @@ object FormMain: TFormMain
           Caption = 'Filter'
           ExplicitHeight = 17
         end
-        object lbl2: TLabel
+        object lblViewMode: TLabel
           AlignWithMargins = True
           Left = 428
           Top = 6
@@ -1037,7 +1042,7 @@ object FormMain: TFormMain
           Caption = 'View mode:'
           ExplicitHeight = 17
         end
-        object edtSearch: TEdit
+        object edtFilter: TEdit
           AlignWithMargins = True
           Left = 34
           Top = 2
@@ -1048,15 +1053,15 @@ object FormMain: TFormMain
           Margins.Right = 2
           Align = alLeft
           TabOrder = 0
-          OnChange = edtSearchChange
+          OnChange = edtFilterChange
           ExplicitHeight = 25
         end
-        object cbbListViewDisplayStyle: TJvComboBox
+        object cbbViewMode: TJvComboBox
           AlignWithMargins = True
           Left = 504
           Top = 3
           Width = 162
-          Height = 25
+          Height = 26
           Hint = 'Change view mode'
           Margins.Right = 10
           Align = alRight
@@ -1065,7 +1070,7 @@ object FormMain: TFormMain
           ShowHint = True
           TabOrder = 1
           Text = ''
-          OnChange = cbbListViewDisplayStyleChange
+          OnChange = cbbViewModeChange
           Items.Strings = (
             'Simple report List'
             'Thumbnail mode'
@@ -1179,6 +1184,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Mods'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvMods: TListView
         Left = 0
         Top = 0
@@ -1246,13 +1255,17 @@ object FormMain: TFormMain
         OnClick = lvClick
       end
     end
-    object tsUnknowed: TTabSheet
+    object tsUnknown: TTabSheet
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Unknown'
-      object lvUnknowed: TListView
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object lvUnknown: TListView
         Left = 0
         Top = 0
         Width = 676
@@ -1331,13 +1344,17 @@ object FormMain: TFormMain
         OnCompare = lvCompare
       end
     end
-    object tsExtra: TTabSheet
+    object tsOptions: TTabSheet
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Options'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1353,7 +1370,7 @@ object FormMain: TFormMain
         Color = clWhite
         ParentColor = False
         TabOrder = 0
-        object pnl7: TPanel
+        object pnlLeft: TPanel
           Left = 2
           Top = 19
           Width = 343
@@ -1361,7 +1378,7 @@ object FormMain: TFormMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          object lblDescWebPort: TLabel
+          object lblPort: TLabel
             Left = 24
             Top = 70
             Width = 64
@@ -1372,7 +1389,7 @@ object FormMain: TFormMain
             Margins.Bottom = 2
             Caption = 'Web Port:'
           end
-          object lblDescWebAdmin: TLabel
+          object lblWebInterface: TLabel
             Left = 24
             Top = 40
             Width = 76
@@ -1383,7 +1400,7 @@ object FormMain: TFormMain
             Margins.Bottom = 2
             Caption = 'Web Admin:'
           end
-          object lblWkspDownMan: TLabel
+          object lblDownloadManager: TLabel
             Left = 24
             Top = 10
             Width = 190
@@ -1394,7 +1411,7 @@ object FormMain: TFormMain
             Margins.Bottom = 2
             Caption = 'Workshop Download Manager:'
           end
-          object lblWebPass: TLabel
+          object lblAdminPass: TLabel
             Left = 24
             Top = 100
             Width = 106
@@ -1418,7 +1435,7 @@ object FormMain: TFormMain
             Text = ''
             OnExit = edtPortExit
           end
-          object cbStatusWeb: TJvComboBox
+          object cbbWebInterface: TJvComboBox
             Left = 105
             Top = 36
             Width = 101
@@ -1433,12 +1450,12 @@ object FormMain: TFormMain
             ShowHint = True
             TabOrder = 1
             Text = ''
-            OnChange = cbStatusWebChange
+            OnChange = cbbWebInterfaceChange
             Items.Strings = (
               'Disabled'
               'Enabled')
           end
-          object cbWorkshopDMStatus: TJvComboBox
+          object cbbDownloadManager: TJvComboBox
             Left = 219
             Top = 7
             Width = 89
@@ -1453,12 +1470,12 @@ object FormMain: TFormMain
             ShowHint = True
             TabOrder = 0
             Text = ''
-            OnChange = cbWorkshopDMStatusChange
+            OnChange = cbbDownloadManagerChange
             Items.Strings = (
               'Disabled'
               'Enabled')
           end
-          object edtWebPass: TJvEdit
+          object edtAdminPass: TJvEdit
             Left = 135
             Top = 98
             Width = 138
@@ -1469,9 +1486,9 @@ object FormMain: TFormMain
             ShowHint = True
             TabOrder = 3
             Text = ''
-            OnExit = edtWebPassExit
+            OnExit = edtAdminPassExit
           end
-          object chkAutoLoginAdmin: TCheckBox
+          object chkAdminAutoLogin: TCheckBox
             Left = 24
             Top = 129
             Width = 429
@@ -1487,10 +1504,10 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 4
-            OnClick = chkAutoLoginAdminClick
+            OnClick = chkAdminAutoLoginClick
           end
         end
-        object Panel1: TPanel
+        object pnlRight: TPanel
           Left = 345
           Top = 19
           Width = 293
@@ -1538,7 +1555,7 @@ object FormMain: TFormMain
             Text = ''
             OnExit = edtRedirectURLExit
           end
-          object cbbRedirectEnabled: TJvComboBox
+          object cbbCustomRedirect: TJvComboBox
             Left = 113
             Top = 7
             Width = 88
@@ -1552,14 +1569,14 @@ object FormMain: TFormMain
             ShowHint = True
             TabOrder = 0
             Text = ''
-            OnCloseUp = cbbRedirectEnabledCloseUp
+            OnCloseUp = cbbCustomRedirectCloseUp
             Items.Strings = (
               'Disabled'
               'Enabled')
           end
         end
       end
-      object grpapplication: TGroupBox
+      object grpApplication: TGroupBox
         AlignWithMargins = True
         Left = 8
         Top = 334
@@ -1637,7 +1654,7 @@ object FormMain: TFormMain
           Text = ''
           OnChange = cbbLanguageChange
         end
-        object chkOnlyFromConfigItems: TCheckBox
+        object chkOnlyItemsFromConfig: TCheckBox
           Left = 26
           Top = 89
           Width = 429
@@ -1650,11 +1667,11 @@ object FormMain: TFormMain
             'to the tool.'
           CustomHint = blhintHelp
           Align = alCustom
-          Caption = 'Only display items that are into the current configuration file'
+          Caption = 'Only display items that are in the current configuration file'
           ParentShowHint = False
           ShowHint = True
           TabOrder = 2
-          OnClick = chkOnlyFromConfigItemsClick
+          OnClick = chkOnlyItemsFromConfigClick
         end
         object cbbTheme: TJvComboBox
           Left = 402
@@ -1667,7 +1684,7 @@ object FormMain: TFormMain
           Text = ''
           OnChange = cbbThemeChange
         end
-        object chkAutoCheckForUpdates: TCheckBox
+        object chkAutoUpdates: TCheckBox
           Left = 350
           Top = 55
           Width = 287
@@ -1681,10 +1698,10 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 4
-          OnClick = chkAutoCheckForUpdatesClick
+          OnClick = chkAutoUpdatesClick
         end
       end
-      object grpmaintenance: TGroupBox
+      object grpMaintenance: TGroupBox
         AlignWithMargins = True
         Left = 8
         Top = 195
@@ -1722,7 +1739,7 @@ object FormMain: TFormMain
           Margins.Bottom = 2
           Caption = 'Workshop'
         end
-        object lblVerifyServInt: TLabel
+        object lblServerVerify: TLabel
           Left = 221
           Top = 24
           Width = 130
@@ -1733,7 +1750,7 @@ object FormMain: TFormMain
           Margins.Bottom = 2
           Caption = 'Verify server integrity'
         end
-        object btnCheckForUpdate: TButton
+        object btnUpdateCurrent: TButton
           Left = 19
           Top = 46
           Width = 175
@@ -1746,7 +1763,7 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
-          OnClick = btnCheckForUpdateClick
+          OnClick = btnUpdateCurrentClick
         end
         object btnCleanDownloadCache: TButton
           Left = 421
@@ -1761,7 +1778,7 @@ object FormMain: TFormMain
           TabOrder = 4
           OnClick = btnCleanDownloadCacheClick
         end
-        object btnCheckForPreview: TButton
+        object btnUpdateBeta: TButton
           Left = 19
           Top = 77
           Width = 175
@@ -1772,7 +1789,7 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
-          OnClick = btnCheckForUpdateClick
+          OnClick = btnUpdateCurrentClick
         end
         object btnCleanWorkshopData: TButton
           Left = 421
@@ -1790,7 +1807,7 @@ object FormMain: TFormMain
           TabOrder = 5
           OnClick = btnCleanWorkshopDataClick
         end
-        object btnSvIntegrityCurrent: TButton
+        object btnVerifyCurrent: TButton
           Left = 221
           Top = 46
           Width = 175
@@ -1801,9 +1818,9 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 2
-          OnClick = btnCheckForUpdateClick
+          OnClick = btnUpdateCurrentClick
         end
-        object btnSvIntegrityBeta: TButton
+        object btnVerifyBeta: TButton
           Left = 221
           Top = 77
           Width = 175
@@ -1814,21 +1831,25 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 3
-          OnClick = btnCheckForUpdateClick
+          OnClick = btnUpdateCurrentClick
         end
       end
     end
-    object tswebadmin: TTabSheet
+    object tsWebAdmin: TTabSheet
       Caption = 'WebAdmin'
       ImageIndex = 6
-      object wb1: TWebBrowser
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object wbWebAdmin: TWebBrowser
         Left = 0
         Top = 0
         Width = 676
         Height = 509
         Align = alClient
         TabOrder = 0
-        OnDocumentComplete = wb1DocumentComplete
+        OnDocumentComplete = wbWebAdminDocumentComplete
         ExplicitWidth = 661
         ExplicitHeight = 439
         ControlData = {
@@ -1842,11 +1863,15 @@ object FormMain: TFormMain
     object tsNotes: TTabSheet
       Caption = 'Notes'
       ImageIndex = 5
-      object lbl1: TLabel
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object lblNotepad: TLabel
         AlignWithMargins = True
         Left = 8
         Top = 8
-        Width = 666
+        Width = 52
         Height = 17
         Margins.Left = 8
         Margins.Top = 8
@@ -1854,13 +1879,12 @@ object FormMain: TFormMain
         Margins.Bottom = 0
         Align = alTop
         Caption = 'Notepad'
-        ExplicitWidth = 52
       end
-      object lblAllChangesWillbe: TLabel
+      object lblAutosaveChanges: TLabel
         AlignWithMargins = True
-        Left = 3
+        Left = 430
         Top = 492
-        Width = 664
+        Width = 237
         Height = 14
         Margins.Right = 9
         Align = alBottom
@@ -1873,8 +1897,6 @@ object FormMain: TFormMain
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitLeft = 430
-        ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
         AlignWithMargins = True
@@ -1895,6 +1917,10 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object btnGenerateCurrentStrings: TButton
         Left = 24
         Top = 40
@@ -1945,7 +1971,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800780010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2355,7 +2381,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C010102000800C400DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008000400DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
