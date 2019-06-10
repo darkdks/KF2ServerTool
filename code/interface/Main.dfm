@@ -602,8 +602,8 @@ object FormMain: TFormMain
             Width = 616
             Height = 44
             Hint = 
-              'Start the KF2 server with selected options.'#13#10'After some time a c' +
-              'onsole will open with the server running. '
+              'Start the KF2 server with the selected options.\nAfter some time' +
+              ' a console will open with the server running. '
             Margins.Left = 20
             Margins.Top = 2
             Margins.Right = 20
@@ -626,7 +626,7 @@ object FormMain: TFormMain
             Height = 17
             Hint = 
               'Activating this option will make the webadmin open inside the to' +
-              'ol itself '#13#10'as soon as the server goes online. '#13#10'Note that for t' +
+              'ol itself \nas soon as the server goes online. \nNote that for t' +
               'his option to work correctly you must enable WebAdmin in options' +
               ' tab.'
             Margins.Left = 20
@@ -768,7 +768,7 @@ object FormMain: TFormMain
               Top = 24
               Width = 161
               Height = 25
-              Hint = 'The default difficulty of the game'
+              Hint = 'The default difficulty for the game'
               Margins.Left = 6
               Margins.Top = 0
               Margins.Right = 8
@@ -824,8 +824,8 @@ object FormMain: TFormMain
               Width = 175
               Height = 25
               Hint = 
-                'Specify the duration of the game'#13#10'Short: 4 Waves'#13#10'Normal: 7 Wave' +
-                's'#13#10'Long: 10 Waves'
+                'Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Wave' +
+                's\nLong: 10 Waves'
               Margins.Left = 6
               Margins.Top = 0
               Margins.Right = 2
@@ -880,9 +880,9 @@ object FormMain: TFormMain
             Width = 648
             Height = 25
             Hint = 
-              'Specify here custom parameters that will be used to start the se' +
-              'rver.'#13#10'This is very useful if you want to start the server by de' +
-              'fault with a mod or a  game mode.'
+              'Specify custom parameters here that will be used to start the se' +
+              'rver.\nThis is very useful if you want to start the server with ' +
+              'a mod or game mode by default.'
             Margins.Left = 6
             Margins.Top = 2
             Margins.Right = 2
@@ -942,8 +942,8 @@ object FormMain: TFormMain
             Width = 180
             Height = 25
             Hint = 
-              'The password that clients must enter to enter in the server.'#13#10'Le' +
-              'ave this field blank for no password.'
+              'The password clients must use to join the server.\nLeave this fi' +
+              'eld blank for no password.'
             Margins.Left = 2
             Margins.Top = 2
             Margins.Right = 2
@@ -960,9 +960,9 @@ object FormMain: TFormMain
             Width = 193
             Height = 25
             Hint = 
-              'Specifies the type of server game'#13#10'Endless: Endless waves mode'#13#10 +
-              'Survival: Standard and most played game mode'#13#10'VersusSurvival: Su' +
-              'rvival versus'#13#10'Weekly: Weekly mode, when available'#13#10'Custom: Use ' +
+              'Specifies the type of server game\nEndless: Endless waves mode\n' +
+              'Survival: Standard and most played game mode\nVersusSurvival: Su' +
+              'rvival versus\nWeekly: Weekly mode, when available\nCustom: Use ' +
               'command line to specify a mod'
             Margins.Left = 6
             Margins.Top = 0
@@ -1278,7 +1278,7 @@ object FormMain: TFormMain
         Columns = <
           item
             AutoSize = True
-            Caption = 'Item File'
+            Caption = 'Item'
           end
           item
             Alignment = taCenter
@@ -1427,7 +1427,7 @@ object FormMain: TFormMain
             Top = 67
             Width = 89
             Height = 25
-            Hint = 'The default port to access the web admin, by default port 8080'
+            Hint = 'The port to access the web admin, by default the port is 8080'
             CustomHint = blhintHelp
             ParentShowHint = False
             ShowHint = True
@@ -1441,9 +1441,9 @@ object FormMain: TFormMain
             Width = 101
             Height = 25
             Hint = 
-              'If enabled you can manage the additional server settings for a w' +
-              'eb page or'#13#10'through the tool itself as soon as the server comes ' +
-              'online.'
+              'If enabled you can manage additional server settings for a web p' +
+              'age or\nthrough the tool itself as soon as the server comes onli' +
+              'ne.'
             CustomHint = blhintHelp
             Style = csDropDownList
             ParentShowHint = False
@@ -1480,7 +1480,7 @@ object FormMain: TFormMain
             Top = 98
             Width = 138
             Height = 25
-            Hint = 'Specify a password that will be used to login to webadmin'
+            Hint = 'Specify a password that will be used to log in to webadmin'
             CustomHint = blhintHelp
             ParentShowHint = False
             ShowHint = True
@@ -1495,12 +1495,12 @@ object FormMain: TFormMain
             Height = 24
             Hint = 
               'Enabling this option will cause WebAdmin to automatically log in' +
-              ' using the Admin'#39's username and the specified password. '#13#10'This o' +
-              'ption only takes effect if the * Auto connect to webadmin * is e' +
-              'nabled on the server profile tab.'
+              ' using the Admin username and the specified password. \nThis opt' +
+              'ion only takes effect if the * Auto connect to webadmin * is ena' +
+              'bled on the server profile tab.'
             CustomHint = blhintHelp
             Align = alCustom
-            Caption = 'Auto web admin login using specified pass'
+            Caption = 'Auto login web admin using specified pass'
             ParentShowHint = False
             ShowHint = True
             TabOrder = 4
@@ -1561,8 +1561,8 @@ object FormMain: TFormMain
             Width = 88
             Height = 25
             Hint = 
-              'Enable this option to setup a custom URL for redirect clients to' +
-              ' download items from the specified Redirect URL '
+              'Enable this option to set up a custom URL clients will be redire' +
+              'cted to when downloading items from the server '
             CustomHint = blhintHelp
             Style = csDropDownList
             ParentShowHint = False
@@ -1661,10 +1661,10 @@ object FormMain: TFormMain
           Height = 28
           Hint = 
             'Enable this option to only see items that are in PCServer-KFGame' +
-            ' and PCServer-KFEngine.'#13#10'Cache and local maps folder will be ign' +
-            'ored.'#13#10'This is useful when you have multiple servers with multip' +
-            'le settings'#13#10' and you dont wanna see maps from another server in' +
-            'to the tool.'
+            ' and PCServer-KFEngine.\nCache and local maps folder will be ign' +
+            'ored.\nThis is useful when you have multiple servers with multip' +
+            'le settings\n and you dont want to see maps from another server ' +
+            'in the tool.'
           CustomHint = blhintHelp
           Align = alCustom
           Caption = 'Only display items that are in the current configuration file'
@@ -1690,7 +1690,7 @@ object FormMain: TFormMain
           Width = 287
           Height = 28
           Hint = 
-            'Automatically check if updates are available for'#13#10'the tool in th' +
+            'Automatically check if updates are available for\nthe tool in th' +
             'e official KF2ServerTool repository.'
           CustomHint = blhintHelp
           Align = alCustom
@@ -1798,7 +1798,7 @@ object FormMain: TFormMain
           Height = 25
           Hint = 
             'This will clean workshop data (Binaries\Win64\steamapps\workshop' +
-            '\content\232090)'#13#10'This is helpful to force update in all maps an' +
+            '\content\232090)\nThis is helpful to force update in all maps an' +
             'd auto repair some broken items.'
           CustomHint = blhintHelp
           Caption = 'Clean workshop data '
@@ -1946,7 +1946,7 @@ object FormMain: TFormMain
     Left = 480
     Top = 16
     object Removeall1: TMenuItem
-      Caption = 'Remove full item'
+      Caption = 'Fully remove item'
       OnClick = Removeall1Click
     end
     object RemoveGameSteamCache1: TMenuItem
@@ -1962,7 +1962,7 @@ object FormMain: TFormMain
       OnClick = RemovefromCycle1Click
     end
     object RemoveServerSubcribe1: TMenuItem
-      Caption = 'Workshop Subcription'
+      Caption = 'Workshop Subscription'
       OnClick = RemoveServerSubcribe1Click
     end
   end
@@ -2249,11 +2249,11 @@ object FormMain: TFormMain
     object add1: TMenuItem
       Caption = 'Add'
       object Browserworkshop1: TMenuItem
-        Caption = 'From workshop browser'
+        Caption = 'From Workshop browser'
         OnClick = AddWorkshopClick
       end
       object AddbyID1: TMenuItem
-        Caption = 'From workshop by ID or URL'
+        Caption = 'From Workshop by ID or URL'
         OnClick = AddWorkshopClick
       end
       object Redirect1: TMenuItem
@@ -2287,7 +2287,7 @@ object FormMain: TFormMain
         OnClick = RemovefromCycle1Click
       end
       object Subcribe1: TMenuItem
-        Caption = 'Workshop Subcription'
+        Caption = 'Workshop Subscription'
         OnClick = RemoveServerSubcribe1Click
       end
     end
@@ -2311,11 +2311,11 @@ object FormMain: TFormMain
       Caption = '-'
     end
     object mniShowitempage1: TMenuItem
-      Caption = 'Browser item page'
+      Caption = 'Browse item page'
       OnClick = mniShowitempage1Click
     end
     object Explorerlocalfolder1: TMenuItem
-      Caption = 'Browser item folder'
+      Caption = 'Browse item folder'
       OnClick = Explorerlocalfolder1Click
     end
     object mniCopyID1: TMenuItem
@@ -2340,8 +2340,8 @@ object FormMain: TFormMain
     object AddWorkshopMap: TMenuItem
       Caption = 'From Workshop Browser'
       Hint = 
-        'Will open a workshop webbrowser that you can search a map or mod' +
-        ' to add'
+        'Will open a workshop webbrowser that you can use to add maps or ' +
+        'mods'
       OnClick = AddWorkshopClick
     end
     object AddWorkshopIDorURL: TMenuItem

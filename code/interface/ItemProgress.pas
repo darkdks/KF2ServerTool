@@ -45,7 +45,7 @@ begin
   cancel := True;
   btnCancel.Enabled := False;
   lblStatus.Caption :=
-    FormMain._s('Canceling, please wait this item finish...');
+    FormMain._s('Cancelling, please wait for this item to finish...');
 end;
 
 procedure TformPB.FormClose(Sender: TObject; var Action: TCloseAction);

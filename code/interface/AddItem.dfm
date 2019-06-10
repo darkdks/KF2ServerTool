@@ -168,7 +168,7 @@ object FormAdd: TFormAdd
       Margins.Right = 2
       Margins.Bottom = 0
       Align = alTop
-      Caption = 'Subcribe the server'
+      Caption = 'Subscribe with server'
       TabOrder = 4
     end
   end

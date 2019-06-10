@@ -17,6 +17,7 @@ uses
   Vcl.Themes, GitAutoUpdate, System.uitypes,
   downloaderTool,
   Registry,
+  System.Generics.Collections,
   System.Types, KFTypes, Jpeg,
   TypInfo, IOUtils, CommCtrl, System.ImageList, JvExStdCtrls, JvExComCtrls,
   toolLanguage, JvComponentBase, JvBalloonHint;
@@ -542,7 +543,7 @@ begin
   begin
 
     case Application.MessageBox
-      (_p('An instace of server is already running.\nDo you wanna kill this process before?'),
+      (_p('An instance of the server is already running.\nDo you want to kill this process first?'),
       'Server', MB_YESNOCANCEL + MB_ICONINFORMATION) of
       IDCANCEL:
         begin
@@ -592,7 +593,7 @@ begin
         begin
           if (Pos('GAME=', UpperCase(edtAddParam.text)) <= 0) then
             Application.MessageBox
-              (_p('You have set the game mode to custom but you won''t \nspecified the custom game in additional parameters'),
+              (_p('You have set the game mode to custom but you did not \nspecify the custom game in additional parameters'),
               _p('Invalid custom game mod'), MB_OK + MB_ICONWARNING);
 
         end;
@@ -607,7 +608,7 @@ begin
   end
   else
   begin
-    Application.MessageBox(_p('Select a map before start the server'), 'Map',
+    Application.MessageBox(_p('Select a map before starting the server'), 'Map',
       MB_OK + MB_ICONINFORMATION);
 
   end;
@@ -1094,7 +1095,7 @@ begin
     begin
       if newName = '' then
       begin
-        Application.MessageBox(_p('You must type in a name for the profile'),
+        Application.MessageBox(_p('You must enter a name for the profile'),
           _p('Error'), MB_OK + MB_ICONSTOP);
 
       end
@@ -1335,7 +1336,7 @@ begin
     begin
       if newName = '' then
       begin
-        Application.MessageBox(_p('You must type in a name for the profile'),
+        Application.MessageBox(_p('You must enter a name for the profile'),
           _p('Error'), MB_OK + MB_ICONSTOP);
 
       end
@@ -1587,7 +1588,7 @@ begin
   begin
     Result := True;
     case Application.MessageBox
-      (_p('An instace of server is running, you need close it to make this kind of change.\nDo you wanna close the server now?'),
+      (_p('An instance of the server is running, you need close it to make this kind of change.\nDo you want to close the server now?'),
       'Server', MB_YESNOCANCEL + MB_ICONINFORMATION) of
       IDCANCEL:
         begin
@@ -1806,7 +1807,7 @@ begin
   if serverTool.IsServerRunning then
   begin
     if Application.MessageBox
-      (_p('You should close the server before make changes.\nDo you wanna close it now?'),
+      (_p('You should close the server before making changes.\nDo you want to close it now?'),
       _p('Server is running'), MB_YESNO + MB_ICONWARNING) = IDYES then
     begin
       serverTool.KillKFServer();
@@ -2080,7 +2081,7 @@ begin
             Item.SubItems.Add(textYes);
             Item.SubItemImages[2] := 0;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
-              Item.Caption := Item.Caption + #13 + _s('In map entrys: ')
+              Item.Caption := Item.Caption + #13 + _s('In map entries: ')
                 + textYes;
           end
           else
@@ -2092,7 +2093,7 @@ begin
               Item.SubItemImages[2] := 1;
             if (LVStyle = LVDS_Thumbnail) and (itemType = KFMap) then
               Item.Caption := Item.Caption + #13 +
-                _s('In map entrys: ') + textNo;
+                _s('In map entries: ') + textNo;
           end;
           // MapEntry
           if serverTool.Items[i].MapCycleEntry then
@@ -2253,7 +2254,7 @@ begin
     if kfitem.SourceFrom = KFSteamWorkshop then
     begin
       InfoTip := InfoTip + _s('Workshop ID: ') + kfitem.ID + #13;
-      InfoTip := InfoTip + _s('Subcribed: ') +
+      InfoTip := InfoTip + _s('Subscribed: ') +
         BoolToWord(kfitem.ServerSubscribe) + #13;
     end;
     InfoTip := InfoTip + _s('Map Entry: ') + BoolToWord(kfitem.MapEntry) + #13;
@@ -2583,17 +2584,17 @@ var
 begin
   if ActiveLV = lvMaps then
   begin
-    Removeall1.Caption := _s('Remove full map');
+    Removeall1.Caption := _s('Fully remove map');
     RemoveGameSteamCache1.Caption := _s('Remove map cache');
-    RemoveServerSubcribe1.Caption := _s('Remove map subcribe');
+    RemoveServerSubcribe1.Caption := _s('Remove map subscription');
     RemoveMapEntry1.Visible := True;
     RemovefromCycle1.Visible := True;
   end
   else
   begin
-    Removeall1.Caption := _s('Remove full item');
+    Removeall1.Caption := _s('Fully remove item');
     RemoveGameSteamCache1.Caption := _s('Remove item cache');
-    RemoveServerSubcribe1.Caption := _s('Remove item subcribe');
+    RemoveServerSubcribe1.Caption := _s('Remove item subscription');
     RemoveMapEntry1.Visible := false;
     RemovefromCycle1.Visible := false;
   end;
@@ -3373,16 +3374,16 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage(_s('Select na item first.'));
+    ShowMessage(_s('Select an item first.'));
     Exit;
   end
   else
   begin
     try
       if slCount = 1 then
-        lgText := _s('Are you sure you want to full delete the item?')
+        lgText := _s('Are you sure you want to fully delete the item?')
       else
-        lgText := _s('Are you sure you want to full delete the ') +
+        lgText := _s('Are you sure you want to fully delete the ') +
           IntToStr(slCount) + _s(' selected items?');
 
       if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
@@ -3460,7 +3461,7 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage(_s('Select na item first.'));
+    ShowMessage(_s('Select an item first.'));
     Exit;
   end
   else
@@ -3521,7 +3522,7 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage(_s('Select na item first.'));
+    ShowMessage(_s('Select an item first.'));
     Exit;
   end
   else
@@ -3595,7 +3596,7 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage(_s('Select na item first.'));
+    ShowMessage(_s('Select an item first.'));
     Exit;
   end
   else
@@ -3605,7 +3606,7 @@ begin
         lgText := _s('Remove the map entry of ') +
           ActiveLV.Selected.Caption + '?'
       else
-        lgText := _s('Remove the map entrys from the ') + IntToStr(slCount) +
+        lgText := _s('Remove the map entries from the ') + IntToStr(slCount) +
           _s(' selected maps?');
 
       if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
@@ -3653,18 +3654,18 @@ begin
   slItems := GetLVSelectedItems(ActiveLV);
   if ActiveLV.Selected = nil then
   begin
-    ShowMessage(_s('Select na item first.'));
+    ShowMessage(_s('Select an item first.'));
     Exit;
   end
   else
   begin
     try
       if slCount = 1 then
-        lgText := _s('Remove workshop server subcribe for ') +
+        lgText := _s('Remove workshop server subscription for ') +
           ActiveLV.Selected.Caption + ' ?'
       else
         lgText := _s('Remove the ') + IntToStr(slCount) +
-          _s(' selected items from workshop server subscribe?');
+          _s(' selected items from workshop server subscription?');
       if messagedlg(lgText, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then
       begin
         progressForm := TformPB.Create(Self);
@@ -3732,9 +3733,9 @@ begin
         if Application.MessageBox(PWideChar(_p('A new version is avaliable.') +
           #13#13 + _p('Your current version is: ') +
           serverTool.SERVERTOOLVERSION + #13 + _p('The newer version is: ') +
-          latestRelease.version + #13 + #13 + _p('Change log: ') + #13 +
+          latestRelease.version + #13 + #13 + _p('Changelog: ') + #13 +
           latestRelease.change_log + #13 + #13 +
-          _p('Do you wanna update it now?')), _p('Update aviable'),
+          _p('Do you want to update it now?')), _p('Update available'),
           MB_YESNO + MB_ICONQUESTION) = mrYes then
         begin
           { ShellExecute(0, 'open', Pchar(latestRelease.download_url), nil, nil,
@@ -3764,7 +3765,7 @@ begin
               Application.Terminate;
             end
             else
-              ShowMessage(_s('Error to update'));
+              ShowMessage(_s('Error updating'));
           finally
             FreeAndNil(dlManager);
             FreeAndNil(frmProgress);
@@ -3777,7 +3778,7 @@ begin
       begin
         if Assigned(Sender) then
           if (Sender is TLabel) then
-            ShowMessage(_s('The current version is updated.'));
+            ShowMessage(_s('The current version is up to date.'));
 
       end;
 
@@ -4051,12 +4052,55 @@ begin
 end;
 
 procedure TFormMain.translateUIElements();
+var
+  Comp: TComponent;
+  i: Integer;
+  propTxt: string;
+  TPropArray: TArray<String>;
+
 begin
-  btnRemove.Caption := _s(btnRemove.Caption);
-  btnAddNew.Caption := _s(btnAddNew.Caption);
-  btnReinstall.Caption := _s(btnReinstall.Caption);
-  btnUpdate.Caption := _s(btnUpdate.Caption);
-  lblDonate.Caption := _s(lblDonate.Caption);
+
+  // translate all children of MainForm in a loop
+  for i := 0 to (FormMain.ComponentCount - 1) do
+  begin
+    Comp := FormMain.Components[i];
+
+    if Comp = lblHelpAddParam then
+      Continue;
+
+    if Comp = lblCredits then
+      Continue;
+
+    // Names for translatable component properties, set Title manually
+    TPropArray := ['Caption', 'Description', 'Hint', 'Text', 'Header'];
+
+    for propTxt in TPropArray do
+    begin
+      // Check if property exists for current component and value is not empty
+      if (GetPropInfo(Comp.ClassInfo, propTxt) <> nil) And
+        (GetPropValue(Comp, propTxt) <> '') And
+        (GetPropValue(Comp, propTxt) <> '-') then
+      begin
+
+        if propTxt = 'Hint' then
+        begin
+          SetPropValue(Comp, propTxt, _h(GetPropValue(Comp, propTxt)));
+        end
+        else
+        begin
+          SetPropValue(Comp, propTxt, _s(GetPropValue(Comp, propTxt)));
+        end;
+
+      end;
+    end;
+  end;
+
+  // other manual translations / overwrite automatic translation
+  lblHelpAddParam.Caption := _s('Example: ') +
+    '?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15?MaxMonsters=64' +
+    #10#13 + _s('Example: ') +
+    '?Game=MyCustoGameMode.GameMode?Mutator=MyMutator.Mutator';
+
   with lvMaps do
   begin
     // ['Map File', 'Workshop ID', 'Subscription', 'Map Entry', 'Cycle Entry', 'Map cache']

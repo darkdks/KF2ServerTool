@@ -133,7 +133,7 @@ begin
 
   if lvQueue.Items.Count < 0 then
   begin
-    ShowMessage(formMain._s('You need add some items to install'));
+    ShowMessage(FormMain._s('You need to add some items to install'));
     Exit;
   end
   else
@@ -186,7 +186,7 @@ begin
 
   if lvQueue.Selected = nil then
   begin
-    ShowMessage(FormMain._s('Select na item first.'));
+    ShowMessage(FormMain._s('Select an item first.'));
     Exit;
   end
   else
