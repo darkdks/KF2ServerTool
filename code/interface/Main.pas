@@ -242,7 +242,7 @@ type
     procedure lblsasdadClick(Sender: TObject);
     procedure LoadFolderToImageList(Path: String);
     procedure loadIMGFolder(Sender: TObject);
-    procedure LoadItensToLv(Filter: String);
+    procedure LoadItemsToLv(Filter: String);
     procedure LoadServerProfile;
     procedure LoadUIConfig;
     procedure lostFocusSave(Sender: TObject);
@@ -365,7 +365,7 @@ begin
         FreeAndNil(frmAdd);
       end;
     finally
-      LoadItensToLv('');
+      LoadItemsToLv('');
     end;
   end;
 
@@ -447,7 +447,7 @@ begin
       end;
     finally
       frmWksp.Free;
-      LoadItensToLv('');
+      LoadItemsToLv('');
     end;
 
   end;
@@ -517,7 +517,7 @@ begin
 
       finally
         frmAdd.Free;
-        LoadItensToLv('');
+        LoadItemsToLv('');
       end;
     end
     else
@@ -758,7 +758,7 @@ begin
       ShowMessage(E.Message);
 
   end;
-  LoadItensToLv('');
+  LoadItemsToLv('');
 end;
 
 procedure TFormMain.loadIMGFolder(Sender: TObject);
@@ -872,7 +872,7 @@ begin
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 +exit';
     dlgMsg := _s
-      ('This will check for a server update.\nIf it''s avaliable the server will be updated.\nAre you sure?');
+      ('This will check for a server update.\nIf it''s available the server will be updated.\nAre you sure?');
     dlgType := _s('Update server');
   end;
   if Sender = btnVerifyCurrent then
@@ -880,14 +880,14 @@ begin
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 validate +exit';
     dlgMsg := _s
-      ('This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it''s avaliable the server will be updated.\nAre you sure?');
+      ('This will force verify the integrity of server, if some file is missing/corrupted will be reapaired\nAlso if it''s available the server will be updated.\nAre you sure?');
     dlgType := _s('Server Integrity');
   end;
 
   if Sender = btnUpdateBeta then
   begin
     dlgMsg := _s
-      ('This will check for a BETA PREVIEW server update.\nIf it''s avaliable the server will be updated.\nAre you sure?');
+      ('This will check for a BETA PREVIEW server update.\nIf it''s available the server will be updated.\nAre you sure?');
     dlgType := _s('Update server to BETA/PREVIEW');
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 -beta +exit';
@@ -896,7 +896,7 @@ begin
   if Sender = btnVerifyBeta then
   begin
     dlgMsg := _s
-      ('This will force verify the integrity of server BETA/PREVIEW state, if some file is missing/corrupted will be reapaired\nAlso if it''s avaliable the server will be updated.\nAre you sure?');
+      ('This will force verify the integrity of server BETA/PREVIEW state, if some file is missing/corrupted will be reapaired\nAlso if it''s available the server will be updated.\nAre you sure?');
     dlgType := _s('Update server to BETA/PREVIEW');
     cmdToolArgs := '+login anonymous +force_install_dir ' + serverpath +
       ' +app_update 232130 validate -beta preview +exit';
@@ -1290,7 +1290,7 @@ begin
               end
               else
               begin
-                LoadItensToLv('');
+                LoadItemsToLv('');
                 Exit;
               end;
 
@@ -1305,7 +1305,7 @@ begin
       finally
         progressForm.Free;
       end;
-      LoadItensToLv('');
+      LoadItemsToLv('');
       Application.MessageBox(_p('Finished!'), '', MB_OK + MB_ICONINFORMATION)
     finally
       frmReinstall.Free;
@@ -1454,7 +1454,7 @@ begin
           progressForm.Free;
         end;
         ShowMessage(_s('Finished!'));
-        LoadItensToLv('');
+        LoadItemsToLv('');
       end;
 
     except
@@ -1522,7 +1522,7 @@ end;
 procedure TFormMain.cbbViewModeChange(Sender: TObject);
 begin
   LVStyle := TListViewDisplayStyle(cbbViewMode.ItemIndex);
-  LoadItensToLv('');
+  LoadItemsToLv('');
   // force update column size
   Self.Height := Self.Height + 1;
   Self.Height := Self.Height - 1;
@@ -1609,7 +1609,7 @@ end;
 procedure TFormMain.chkOnlyItemsFromConfigClick(Sender: TObject);
 begin
   onlyFromConfigItems := chkOnlyItemsFromConfig.Checked;
-  LoadItensToLv('');
+  LoadItemsToLv('');
 end;
 
 procedure TFormMain.chkAutoConnectWebClick(Sender: TObject);
@@ -1641,7 +1641,7 @@ procedure TFormMain.sortCycleChange(Sender: TObject);
 begin
   serverTool.SetMapCycleOptions(GroupMapCycle, GroupMapCycleSeparators);
   serverTool.ResortMapCycle();
-  LoadItensToLv(edtFilter.text);
+  LoadItemsToLv(edtFilter.text);
 end;
 
 procedure TFormMain.cbbWebInterfaceChange(Sender: TObject);
@@ -1738,7 +1738,7 @@ end;
 
 procedure TFormMain.edtFilterChange(Sender: TObject);
 begin
-  LoadItensToLv(edtFilter.text);
+  LoadItemsToLv(edtFilter.text);
 end;
 
 procedure TFormMain.edtAdminPassExit(Sender: TObject);
@@ -1872,7 +1872,7 @@ begin
   end;
 end;
 
-procedure TFormMain.LoadItensToLv(Filter: String);
+procedure TFormMain.LoadItemsToLv(Filter: String);
 var
   i: Integer;
   Item: TListItem;
@@ -2417,7 +2417,7 @@ begin
       end;
       frmQueue.Font.Size := fontSize;
       frmQueue.ShowModal;
-      LoadItensToLv('');
+      LoadItemsToLv('');
     finally
       frmQueue.Free;
     end;
@@ -2769,7 +2769,7 @@ var
 
   webPort: String;
   customRedirect: string;
-  avaliableLanguages: TKFLanguages;
+  availableLanguages: TKFLanguages;
 begin
   Self.Caption := Self.Caption + ' ' + TKFServerTool.SERVERTOOLVERSION;
 
@@ -2786,7 +2786,7 @@ begin
   lvMods.Groups[3].TitleImage := 5;
 
   LoadOfficialMapList(serverTool.GetKFApplicationPath);
-  LoadItensToLv('');
+  LoadItemsToLv('');
 
   translateUIElements;
 
@@ -2895,10 +2895,10 @@ begin
   end;
 
   // Language combobox
-  avaliableLanguages := tlTool.getLanguages;
-  for i := 0 to High(avaliableLanguages) do
+  availableLanguages := tlTool.getLanguages;
+  for i := 0 to High(availableLanguages) do
   begin
-    cbbLanguage.Items.Add(avaliableLanguages[i].name);
+    cbbLanguage.Items.Add(availableLanguages[i].name);
   end;
 
   if tlTool.getCurrentLanguage <> nil then
@@ -3095,7 +3095,7 @@ begin
               end
               else
               begin
-                LoadItensToLv('');
+                LoadItemsToLv('');
                 Exit;
               end;
               Application.ProcessMessages;
@@ -3108,7 +3108,7 @@ begin
         end;
 
       end;
-      LoadItensToLv('');
+      LoadItemsToLv('');
       Application.MessageBox(_p('Finished!'), '', MB_OK + MB_ICONINFORMATION)
     finally
       FreeAndNil(progressForm);
@@ -3200,7 +3200,7 @@ begin
 
         finally
           FreeAndNil(frmProgress);
-          LoadItensToLv('');
+          LoadItemsToLv('');
         end;
       end;
     finally
@@ -3437,7 +3437,7 @@ begin
         end;
       end;
 
-      LoadItensToLv('');
+      LoadItemsToLv('');
 
     except
       on E: Exception do
@@ -3500,7 +3500,7 @@ begin
         end;
 
       end;
-      LoadItensToLv('');
+      LoadItemsToLv('');
     except
 
     end;
@@ -3573,7 +3573,7 @@ begin
           progressForm.Free;
         end;
       end;
-      LoadItensToLv('');
+      LoadItemsToLv('');
     except
       on E: Exception do
         ShowMessage(E.Message);
@@ -3632,7 +3632,7 @@ begin
         end;
 
       end;
-      LoadItensToLv('');
+      LoadItemsToLv('');
     except
 
     end;
@@ -3690,7 +3690,7 @@ begin
         end;
 
       end;
-      LoadItensToLv('');
+      LoadItemsToLv('');
     except
 
     end;
@@ -3730,7 +3730,7 @@ begin
       if latestVCode > currentVCode then
       begin
 
-        if Application.MessageBox(PWideChar(_p('A new version is avaliable.') +
+        if Application.MessageBox(PWideChar(_p('A new version is available.') +
           #13#13 + _p('Your current version is: ') +
           serverTool.SERVERTOOLVERSION + #13 + _p('The newer version is: ') +
           latestRelease.version + #13 + #13 + _p('Changelog: ') + #13 +

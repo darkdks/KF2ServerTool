@@ -55,6 +55,7 @@ const
 
   // Workshop files paths and names
   WKP_ACFFILENAME = 'appworkshop_232090.acf';
+{$IFDEF LINUX64}
   WKP_ACFFILEFOLDER = 'Binaries/Win64/steamapps/workshop/';
   WKP_CACHEFOLDER = 'Binaries/Win64/steamapps/workshop/content/232090';
   STEAMAPPCACHEFOLDER = 'Binaries/Win64';
@@ -62,9 +63,19 @@ const
   WORKSHOPSUBITEM = 'steamapps/workshop/content/232090';
   IMGCACHEFOLDER = 'imgs/';
   IMGWEBFOLDER = 'KFGame/Web/images/maps/';
-  KF_LOCALMAPSSUBFOLDER = 'KFGame/BrewedPC/Maps/';
-  KF_BREWEDPCSSUBFOLDER = 'KFGame/BrewedPC/';
-  KF_SERVERCACHEFOLDER = 'KFGame/Cache/';
+{$ELSE}
+  WKP_ACFFILEFOLDER = 'Binaries\Win64\steamapps\workshop\';
+  WKP_CACHEFOLDER = 'Binaries\Win64\steamapps\workshop\content\232090';
+  STEAMAPPCACHEFOLDER = 'Binaries\Win64';
+  SERVERCACHEFOLDER = 'KFGame\Cache\';
+  WORKSHOPSUBITEM = 'steamapps\workshop\content\232090';
+  IMGCACHEFOLDER = 'imgs\';
+  IMGWEBFOLDER = 'KFGame\Web\images\maps\';
+{$ENDIF LINUX64}
+  KF_LOCALMAPSSUBFOLDER = 'KFGame' + PathDelim + 'BrewedPC' + PathDelim + 'Maps'
+    + PathDelim;
+  KF_BREWEDPCSSUBFOLDER = 'KFGame' + PathDelim + 'BrewedPC' + PathDelim;
+  KF_SERVERCACHEFOLDER = 'KFGame' + PathDelim + 'Cache' + PathDelim;
 
 var
   KF_OFFICIALMAPS: array of string;

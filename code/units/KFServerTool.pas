@@ -718,7 +718,7 @@ end;
 
 function TKFServerTool.LoadItems: Boolean;
 var
-  directorys: TStringList;
+  directories: TStringList;
   files: TStringList;
   fileExt: string;
   ItemFolder: string;
@@ -757,12 +757,12 @@ begin
     end;
 
     // ----------------------------------------------------- Cache folder load
-    directorys := ListDir(kfApplicationPath + KF_SERVERCACHEFOLDER);
-    for I := 0 to directorys.Count - 1 do
+    directories := ListDir(kfApplicationPath + KF_SERVERCACHEFOLDER);
+    for I := 0 to directories.Count - 1 do
     begin
       try
-        ItemFolder := kfApplicationPath + KF_SERVERCACHEFOLDER + directorys[I] +
-          PathDelim;
+        ItemFolder := kfApplicationPath + KF_SERVERCACHEFOLDER + directories[I]
+          + PathDelim;
         files := GetAllFilesSubDirectory(ItemFolder, '*.*');
 
         try
@@ -772,6 +772,7 @@ begin
             // Check folder type
             for y := 0 to files.Count - 1 do
             begin
+
               ItemName := ExtractFileName(files[y]);
               fileExt := UpperCase(ExtractFileExt(ItemName));
               if (Pos('KF', UpperCase(ItemName)) = 1) and (fileExt = '.KFM')
@@ -797,9 +798,9 @@ begin
               else
                 aItem.FileName := TPath.GetFileNameWithoutExtension(ItemName);
 
-              aItem.ID := directorys[I];
+              aItem.ID := directories[I];
               aItem.ServerSubscribe := egIni.GetWorkshopItemIndex
-                (directorys[I]) >= 0;
+                (directories[I]) >= 0;
               aItem.MapCycleEntry := gmIni.GetMapCycleIndex
                 (TPath.GetFileNameWithoutExtension(ItemName)) >= 0;
               aItem.MapEntry := gmIni.GetMapEntryIndex
@@ -810,14 +811,14 @@ begin
               SetLength(Items, Length(Items) + 1);
               Items[High(Items)] := aItem;
 
-              directorys.Objects[I] := files;
+              directories.Objects[I] := files;
             end;
           end;
         finally
           FreeAndNil(files);
         end;
       except
-        LogEvent('Error loading folder ', directorys[I] + ' of number ' +
+        LogEvent('Error loading folder ', directories[I] + ' of number ' +
           IntToStr(I) + '. Check this folder or delete.');
       end;
     end;
@@ -833,6 +834,8 @@ begin
           begin
             ItemName := ExtractFileName(files[y]);
             fileExt := UpperCase(ExtractFileExt(ItemName));
+
+            // Don't return ignored files
             if (MatchStr(fileExt, KF_MODPREFIX)) and
               (IsIgnoredFile(ItemName) = False) then
             begin
@@ -987,7 +990,7 @@ begin
   finally
     FreeAndNil(egIni);
     FreeAndNil(gmIni);
-    FreeAndNil(directorys);
+    FreeAndNil(directories);
   end;
 
 end;
@@ -1393,6 +1396,7 @@ begin
 
 end;
 
+// ToDo: Move to KFTypes?
 function TKFServerTool.IsIgnoredMap(mapName: String): Boolean;
 var
   I: Integer;
@@ -1408,6 +1412,7 @@ begin
   end;
 end;
 
+// ToDo: Move to KFTypes?
 function TKFServerTool.IsIgnoredFile(FileName: String): Boolean;
 var
   I: Integer;
