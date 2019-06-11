@@ -32,7 +32,7 @@ type
     procedure btnAddClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     function BrowserItem(BrowserType: TWkspType; SearchText: string): string;
-    procedure wbReplaceSubcribe;
+    procedure wbReplaceSubscription;
     procedure wbWorkshopDocumentComplete(ASender: TObject;
       const pDisp: IDispatch; const URL: OleVariant);
     procedure wbWorkshopBeforeNavigate2(ASender: TObject;
@@ -169,7 +169,7 @@ var
 begin
   if Pos('?id=', URL) > 0 then
   begin
-    wbReplaceSubcribe;
+    wbReplaceSubscription;
     URLTemp := Copy(URL, Pos('?id=', URL) + 4, length(URL) - Pos('?id=',
       URL) + 4);
     for I := 1 to length(URLTemp) do
@@ -199,7 +199,7 @@ begin
 
 end;
 
-procedure TFormWorkshop.wbReplaceSubcribe;
+procedure TFormWorkshop.wbReplaceSubscription;
 var
   TextElement: IHTMLElement;
   Element: IHTMLElement;

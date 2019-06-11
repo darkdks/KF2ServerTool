@@ -62,7 +62,7 @@ object FormMain: TFormMain
       Left = 628
       Top = 2
       Width = 48
-      Height = 13
+      Height = 29
       Cursor = crHandPoint
       Margins.Left = 10
       Margins.Top = 2
@@ -78,13 +78,14 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = lblDonateClick
+      ExplicitHeight = 13
     end
     object lblUpdate: TLabel
       AlignWithMargins = True
       Left = 572
       Top = 2
       Width = 46
-      Height = 13
+      Height = 21
       Cursor = crHandPoint
       Margins.Left = 10
       Margins.Top = 2
@@ -100,6 +101,7 @@ object FormMain: TFormMain
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
       OnClick = checkForUpdates
+      ExplicitHeight = 13
     end
     object btnReinstall: TBitBtn
       Left = 272
@@ -424,10 +426,6 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Server'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pboxServer: TPaintBox
         Left = 0
         Top = 0
@@ -468,13 +466,14 @@ object FormMain: TFormMain
             Left = 6
             Top = 2
             Width = 41
-            Height = 17
+            Height = 69
             Margins.Left = 6
             Margins.Top = 2
             Margins.Right = 2
             Margins.Bottom = 2
             Align = alLeft
             Caption = 'Profile:'
+            ExplicitHeight = 17
           end
           object btnNewProfile: TButton
             Left = 49
@@ -699,7 +698,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 6
               Top = 2
-              Width = 25
+              Width = 290
               Height = 17
               Margins.Left = 6
               Margins.Top = 2
@@ -709,6 +708,7 @@ object FormMain: TFormMain
               Caption = 'Map'
               Color = clBlack
               ParentColor = False
+              ExplicitWidth = 25
             end
             object cbbMap: TComboBox
               AlignWithMargins = True
@@ -990,10 +990,6 @@ object FormMain: TFormMain
     object tsMaps: TTabSheet
       Caption = 'Maps'
       ImageIndex = 8
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object imgMapsPlaceholder: TImage
         Left = 336
         Top = 296
@@ -1061,7 +1057,7 @@ object FormMain: TFormMain
           Left = 504
           Top = 3
           Width = 162
-          Height = 26
+          Height = 25
           Hint = 'Change view mode'
           Margins.Right = 10
           Align = alRight
@@ -1351,10 +1347,6 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Options'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1961,9 +1953,9 @@ object FormMain: TFormMain
       Caption = 'Map cycle'
       OnClick = RemovefromCycle1Click
     end
-    object RemoveServerSubcribe1: TMenuItem
+    object RemoveServerSubscription1: TMenuItem
       Caption = 'Workshop Subscription'
-      OnClick = RemoveServerSubcribe1Click
+      OnClick = RemoveServerSubscription1Click
     end
   end
   object ilSmallIcons: TImageList
@@ -2286,9 +2278,9 @@ object FormMain: TFormMain
         Caption = 'Map Cycle'
         OnClick = RemovefromCycle1Click
       end
-      object Subcribe1: TMenuItem
+      object Subscribe1: TMenuItem
         Caption = 'Workshop Subscription'
-        OnClick = RemoveServerSubcribe1Click
+        OnClick = RemoveServerSubscription1Click
       end
     end
     object N1: TMenuItem

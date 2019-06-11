@@ -155,8 +155,8 @@ type
     RemovefromCycle1: TMenuItem;
     RemoveGameSteamCache1: TMenuItem;
     RemoveMapEntry1: TMenuItem;
-    RemoveServerSubcribe1: TMenuItem;
-    Subcribe1: TMenuItem;
+    RemoveServerSubscription1: TMenuItem;
+    Subscribe1: TMenuItem;
     tmrWebAdmin: TTimer;
     trckbrFontSize: TTrackBar;
     tsDebug: TTabSheet;
@@ -270,7 +270,7 @@ type
     procedure RemovefromCycle1Click(Sender: TObject);
     procedure RemoveGameSteamCache1Click(Sender: TObject);
     procedure RemoveMapEntry1Click(Sender: TObject);
-    procedure RemoveServerSubcribe1Click(Sender: TObject);
+    procedure RemoveServerSubscription1Click(Sender: TObject);
     procedure sortCycleChange(Sender: TObject);
     procedure tmrWebAdminTimer(Sender: TObject);
     procedure wbWebAdminDocumentComplete(ASender: TObject;
@@ -2306,7 +2306,7 @@ begin
         RemoveGameSteamCache1.Visible := True;
         RemoveMapEntry1.Visible := True;
         RemovefromCycle1.Visible := True;
-        RemoveServerSubcribe1.Visible := True;
+        RemoveServerSubscription1.Visible := True;
       end
       else if ActiveLV.Selected.GroupID = 1 then
       begin // Official
@@ -2319,7 +2319,7 @@ begin
         RemoveGameSteamCache1.Visible := false;
         RemoveMapEntry1.Visible := false;
         RemovefromCycle1.Visible := True;
-        RemoveServerSubcribe1.Visible := false;
+        RemoveServerSubscription1.Visible := false;
       end
       else if ActiveLV.Selected.GroupID = 2 then
       begin
@@ -2343,7 +2343,7 @@ begin
         RemoveGameSteamCache1.Visible := True;
         RemoveMapEntry1.Visible := True;
         RemovefromCycle1.Visible := True;
-        RemoveServerSubcribe1.Visible := false;
+        RemoveServerSubscription1.Visible := false;
 
       end;
 
@@ -2460,7 +2460,7 @@ begin
       cache1.Enabled := false;
       RemoveMapEntry1.Enabled := false;
       MapCycle1.Enabled := false;
-      Subcribe1.Enabled := false;
+      Subscribe1.Enabled := false;
       Forceupdate1.Enabled := false;
       Reinstall1.Enabled := false;
       mniShowitempage1.Visible := false;
@@ -2478,9 +2478,9 @@ begin
         Remove1.Enabled := True;
         mniShowitempage1.Visible := True;
         mniCopyID1.Visible := True;
-        Subcribe1.Visible := True;
+        Subscribe1.Visible := True;
         Forceupdate1.Visible := True;
-        Subcribe1.Enabled := True;
+        Subscribe1.Enabled := True;
         Forceupdate1.Enabled := True;
         allfilesandentry1.Enabled := True;
         cache1.Enabled := True;
@@ -2508,7 +2508,7 @@ begin
         Browserworkshop1.Visible := false;
         mniShowitempage1.Visible := false;
         mniCopyID1.Visible := false;
-        Subcribe1.Visible := false;
+        Subscribe1.Visible := false;
         Forceupdate1.Visible := false;
         allfilesandentry1.Enabled := false;
         cache1.Enabled := false;
@@ -2538,7 +2538,7 @@ begin
         Browserworkshop1.Visible := false;
         mniShowitempage1.Visible := false;
         mniCopyID1.Visible := false;
-        Subcribe1.Visible := false;
+        Subscribe1.Visible := false;
         Forceupdate1.Visible := false;
         allfilesandentry1.Enabled := True;
         cache1.Enabled := True;
@@ -2586,7 +2586,7 @@ begin
   begin
     Removeall1.Caption := _s('Fully remove map');
     RemoveGameSteamCache1.Caption := _s('Remove map cache');
-    RemoveServerSubcribe1.Caption := _s('Remove map subscription');
+    RemoveServerSubscription1.Caption := _s('Remove map subscription');
     RemoveMapEntry1.Visible := True;
     RemovefromCycle1.Visible := True;
   end
@@ -2594,7 +2594,7 @@ begin
   begin
     Removeall1.Caption := _s('Fully remove item');
     RemoveGameSteamCache1.Caption := _s('Remove item cache');
-    RemoveServerSubcribe1.Caption := _s('Remove item subscription');
+    RemoveServerSubscription1.Caption := _s('Remove item subscription');
     RemoveMapEntry1.Visible := false;
     RemovefromCycle1.Visible := false;
   end;
@@ -3640,7 +3640,7 @@ begin
   end;
 end;
 
-procedure TFormMain.RemoveServerSubcribe1Click(Sender: TObject);
+procedure TFormMain.RemoveServerSubscription1Click(Sender: TObject);
 var
   ItemName: string;
   itemID: string;

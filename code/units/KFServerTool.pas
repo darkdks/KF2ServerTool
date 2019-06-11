@@ -80,7 +80,7 @@ type
     function AddMapCycle(name: String; sortType: TKFCycleSort;
       separators: Boolean): Boolean;
     function AddMapEntry(name: String): Boolean;
-    function AddWorkshopSubcribe(ID: String): Boolean;
+    function AddWorkshopSubscription(ID: String): Boolean;
     function CreateBlankACFFile: Boolean;
     function DownloadWorkshopItem(ID: String): Boolean;
     function ExportItemsList(itemsList: Array of TKFItem;
@@ -106,14 +106,14 @@ type
     function IsWorkshopManagerInstalled: Boolean;
     function LoadItems(): Boolean;
     function InstallWorkshopItem(ID, name: String;
-      WorkshopSubscribe, DownloadNow, DownloadImg, MapCycle,
+      WorkshopSubscribed, DownloadNow, DownloadImg, MapCycle,
       MapEntry: Boolean): Boolean;
     function NewRedirectItem(downURL, ItemName: String;
       DownloadNow, MapCycle, MapEntry: Boolean; var dlManager: TDownloadManager;
       ItemType: TKFRedirectItemType): Boolean;
     Procedure InstallLocalItem(FilePath: String; MapCycle, MapEntry: Boolean);
     function RemoveItem(ItemName: string; itemID: string;
-      rmvMapEntry, rmvMapCycle, rmvSubcribe, rmvLocalFile: Boolean;
+      rmvMapEntry, rmvMapCycle, rmvSubscription, rmvLocalFile: Boolean;
       ItemSource: TKFSource; ItemType: TKFItemType): Boolean;
     function RemoveWorkshopManager: Boolean;
     function SetCustomRedirect(URL: String): Boolean;
@@ -250,7 +250,7 @@ begin
   inherited;
 end;
 
-function TKFServerTool.AddWorkshopSubcribe(ID: String): Boolean;
+function TKFServerTool.AddWorkshopSubscription(ID: String): Boolean;
 var
   egIni: TKFEngineIni;
 begin
@@ -596,7 +596,7 @@ begin
 end;
 
 function TKFServerTool.InstallWorkshopItem(ID, name: String;
-  WorkshopSubscribe, DownloadNow, DownloadImg, MapCycle,
+  WorkshopSubscribed, DownloadNow, DownloadImg, MapCycle,
   MapEntry: Boolean): Boolean;
 var
   ItemDownloaded: Boolean;
@@ -611,11 +611,11 @@ begin
     if (ID <> '') or (Name <> '') then
     begin
       try
-        // AddWorkshopSubcribe
-        if WorkshopSubscribe then
+        // AddWorkshopSubscription
+        if WorkshopSubscribed then
         begin
           LogEvent('Install workshop item', 'Adding workshop subscription...');
-          AddedWkspSub := AddWorkshopSubcribe(ID);
+          AddedWkspSub := AddWorkshopSubscription(ID);
           LogEvent('Install workshop item', 'Workshop subscription added = ' +
             BoolToWord(AddedWkspSub));
         end;
@@ -906,9 +906,9 @@ begin
     end;
 
     // -------------------------------------------  Workshop subscribe load
-    for I := 0 to egIni.GetWorkshopSubcribeCount - 1 do
+    for I := 0 to egIni.GetWorkshopSubscribeCount - 1 do
     begin
-      wkspID := egIni.GetWorkshopSubcribeID(I);
+      wkspID := egIni.GetWorkshopSubscribeID(I);
       if (GetIDIndex(wkspID) < 0) and (wkspID <> '') then
       begin
         aItem := TKFItem.Create;
@@ -1234,7 +1234,7 @@ begin
 end;
 
 function TKFServerTool.RemoveItem(ItemName: string; itemID: string;
-  rmvMapEntry, rmvMapCycle, rmvSubcribe, rmvLocalFile: Boolean;
+  rmvMapEntry, rmvMapCycle, rmvSubscription, rmvLocalFile: Boolean;
   ItemSource: TKFSource; ItemType: TKFItemType): Boolean;
 var
   egIni: TKFEngineIni;
@@ -1262,7 +1262,7 @@ begin
       LogEvent('Remove item', 'Item type is KFUnknown');
   end;
 
-  if rmvSubcribe then
+  if rmvSubscription then
   begin
     if itemID = '' then
     begin
@@ -1276,7 +1276,7 @@ begin
       egIni := TKFEngineIni.Create;
       try
         egIniLoaded := egIni.LoadFile(kfApplicationPath + kfEngineIniSubPath);
-        LogEvent('Remove item', 'Removing Server Subcribe for item id '
+        LogEvent('Remove item', 'Removing Server subscription for item id '
           + itemID);
         if egIniLoaded then
         begin

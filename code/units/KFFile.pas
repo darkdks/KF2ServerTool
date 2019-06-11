@@ -116,8 +116,8 @@ type
     function GetCustomRedirect: string;
     function GetWorkshopItemIndex(ID: string): Integer;
     function GetWorkshopStatus: Boolean;
-    function GetWorkshopSubcribeCount: Integer;
-    function GetWorkshopSubcribeID(itemIndex: Integer): String;
+    function GetWorkshopSubscribeCount: Integer;
+    function GetWorkshopSubscribeID(itemIndex: Integer): String;
 
   const
     CWORKSHOPSUBTITLE = 'OnlineSubsystemSteamworks.KFWorkshopSteamworks';
@@ -1090,7 +1090,7 @@ begin
 
       for i := 0 to Entries[WS_index].items.Count - 1 do
       begin
-        if GetWorkshopSubcribeID(i) = ID then
+        if GetWorkshopSubscribeID(i) = ID then
         begin
           Result := i;
         end;
@@ -1105,7 +1105,7 @@ begin
   end;
 end;
 
-function TKFEngineIni.GetWorkshopSubcribeID(itemIndex: Integer): String;
+function TKFEngineIni.GetWorkshopSubscribeID(itemIndex: Integer): String;
 var
   WS_index: Integer;
   wks_value: string;
@@ -1142,7 +1142,7 @@ begin
   end;
 end;
 
-function TKFEngineIni.GetWorkshopSubcribeCount(): Integer;
+function TKFEngineIni.GetWorkshopSubscribeCount(): Integer;
 var
   WS_index: Integer;
 begin
