@@ -4,8 +4,15 @@ interface
 
 uses
   Classes,
-  SysUtils, KFFile, KFWksp, MiscFunc, IOUtils, KFRedirect, System.StrUtils,
-  DownloaderTool, KFTypes;
+  SysUtils,
+  KFFile,
+  KFWksp,
+  MiscFunc,
+  IOUtils,
+  KFRedirect,
+  System.StrUtils,
+  DownloaderTool,
+  KFTypes;
 
 type
 
@@ -73,7 +80,7 @@ type
     function AddMapCycle(name: String; sortType: TKFCycleSort;
       separators: Boolean): Boolean;
     function AddMapEntry(name: String): Boolean;
-    function AddWorkshopSubcribe(ID: String): Boolean;
+    function AddWorkshopSubscription(ID: String): Boolean;
     function CreateBlankACFFile: Boolean;
     function DownloadWorkshopItem(ID: String): Boolean;
     function ExportItemsList(itemsList: Array of TKFItem;
@@ -99,14 +106,14 @@ type
     function IsWorkshopManagerInstalled: Boolean;
     function LoadItems(): Boolean;
     function InstallWorkshopItem(ID, name: String;
-      WorkshopSubscribe, DownloadNow, DownloadImg, MapCycle,
+      WorkshopSubscribed, DownloadNow, DownloadImg, MapCycle,
       MapEntry: Boolean): Boolean;
     function NewRedirectItem(downURL, ItemName: String;
       DownloadNow, MapCycle, MapEntry: Boolean; var dlManager: TDownloadManager;
       ItemType: TKFRedirectItemType): Boolean;
     Procedure InstallLocalItem(FilePath: String; MapCycle, MapEntry: Boolean);
     function RemoveItem(ItemName: string; itemID: string;
-      rmvMapEntry, rmvMapCycle, rmvSubcribe, rmvLocalFile: Boolean;
+      rmvMapEntry, rmvMapCycle, rmvSubscription, rmvLocalFile: Boolean;
       ItemSource: TKFSource; ItemType: TKFItemType): Boolean;
     function RemoveWorkshopManager: Boolean;
     function SetCustomRedirect(URL: String): Boolean;
@@ -243,7 +250,7 @@ begin
   inherited;
 end;
 
-function TKFServerTool.AddWorkshopSubcribe(ID: String): Boolean;
+function TKFServerTool.AddWorkshopSubscription(ID: String): Boolean;
 var
   egIni: TKFEngineIni;
 begin
@@ -545,7 +552,7 @@ begin
     except
       on E: Exception do
       begin
-        raise Exception.Create('Falied to import list: ' + E.Message);
+        raise Exception.Create('Failed to import list: ' + E.Message);
       end;
     end;
   finally
@@ -589,7 +596,7 @@ begin
 end;
 
 function TKFServerTool.InstallWorkshopItem(ID, name: String;
-  WorkshopSubscribe, DownloadNow, DownloadImg, MapCycle,
+  WorkshopSubscribed, DownloadNow, DownloadImg, MapCycle,
   MapEntry: Boolean): Boolean;
 var
   ItemDownloaded: Boolean;
@@ -604,12 +611,12 @@ begin
     if (ID <> '') or (Name <> '') then
     begin
       try
-        // AddWorkshopSubcribe
-        if WorkshopSubscribe then
+        // AddWorkshopSubscription
+        if WorkshopSubscribed then
         begin
-          LogEvent('Install workshop item', 'Adding workshop subcribe...');
-          AddedWkspSub := AddWorkshopSubcribe(ID);
-          LogEvent('Install workshop item', 'Workshop subscribe added = ' +
+          LogEvent('Install workshop item', 'Adding workshop subscription...');
+          AddedWkspSub := AddWorkshopSubscription(ID);
+          LogEvent('Install workshop item', 'Workshop subscription added = ' +
             BoolToWord(AddedWkspSub));
         end;
 
@@ -636,8 +643,9 @@ begin
 
           except
             on E: Exception do
-              LogEvent('Install workshop item', 'EXEPTION downloading item img '
-                + ID + ' / ERROR : ' + E.Message);
+              LogEvent('Install workshop item',
+                'EXCEPTION downloading item img ' + ID + ' / ERROR : ' +
+                E.Message);
 
           end;
         end;
@@ -710,7 +718,7 @@ end;
 
 function TKFServerTool.LoadItems: Boolean;
 var
-  directorys: TStringList;
+  directories: TStringList;
   files: TStringList;
   fileExt: string;
   ItemFolder: string;
@@ -723,7 +731,7 @@ var
   wkspID: string;
   FileType: TKFItemType;
   cycleList: TStringList;
-  mapEntrysList: TStringList;
+  mapEntriesList: TStringList;
 begin
   result := False;
   if kfApplicationPath = '' then
@@ -743,27 +751,28 @@ begin
     if (gmIniLoaded = False) or (egIniLoaded = False) then
     begin
       raise Exception.Create
-        ('Falied to load PCServer-KFGame and PCServer-KFEngine. ' + #13 +
+        ('Failed to load PCServer-KFGame and PCServer-KFEngine. ' + #13 +
         'Check if the app is in the server folder and if you ran the server at least once');
 
     end;
 
     // ----------------------------------------------------- Cache folder load
-    directorys := ListDir(kfApplicationPath + KF_SERVERCACHEFOLDER);
-    for I := 0 to directorys.Count - 1 do
+    directories := ListDir(kfApplicationPath + KF_SERVERCACHEFOLDER);
+    for I := 0 to directories.Count - 1 do
     begin
       try
-        ItemFolder := kfApplicationPath + KF_SERVERCACHEFOLDER + directorys[I] +
-          PathDelim;
+        ItemFolder := kfApplicationPath + KF_SERVERCACHEFOLDER + directories[I]
+          + PathDelim;
         files := GetAllFilesSubDirectory(ItemFolder, '*.*');
 
         try
-          FileType := KFUnknowed;
+          FileType := KFUnknown;
           if (files.Count > 0) then
           begin
             // Check folder type
             for y := 0 to files.Count - 1 do
             begin
+
               ItemName := ExtractFileName(files[y]);
               fileExt := UpperCase(ExtractFileExt(ItemName));
               if (Pos('KF', UpperCase(ItemName)) = 1) and (fileExt = '.KFM')
@@ -779,7 +788,7 @@ begin
               end;
             end;
 
-            if FileType <> KFUnknowed then
+            if FileType <> KFUnknown then
             begin
 
               aItem := TKFItem.Create;
@@ -789,9 +798,9 @@ begin
               else
                 aItem.FileName := TPath.GetFileNameWithoutExtension(ItemName);
 
-              aItem.ID := directorys[I];
+              aItem.ID := directories[I];
               aItem.ServerSubscribe := egIni.GetWorkshopItemIndex
-                (directorys[I]) >= 0;
+                (directories[I]) >= 0;
               aItem.MapCycleEntry := gmIni.GetMapCycleIndex
                 (TPath.GetFileNameWithoutExtension(ItemName)) >= 0;
               aItem.MapEntry := gmIni.GetMapEntryIndex
@@ -802,14 +811,14 @@ begin
               SetLength(Items, Length(Items) + 1);
               Items[High(Items)] := aItem;
 
-              directorys.Objects[I] := files;
+              directories.Objects[I] := files;
             end;
           end;
         finally
           FreeAndNil(files);
         end;
       except
-        LogEvent('Error loading folder ', directorys[I] + ' of number ' +
+        LogEvent('Error loading folder ', directories[I] + ' of number ' +
           IntToStr(I) + '. Check this folder or delete.');
       end;
     end;
@@ -825,6 +834,8 @@ begin
           begin
             ItemName := ExtractFileName(files[y]);
             fileExt := UpperCase(ExtractFileExt(ItemName));
+
+            // Don't return ignored files
             if (MatchStr(fileExt, KF_MODPREFIX)) and
               (IsIgnoredFile(ItemName) = False) then
             begin
@@ -895,9 +906,9 @@ begin
     end;
 
     // -------------------------------------------  Workshop subscribe load
-    for I := 0 to egIni.GetWorkshopSubcribeCount - 1 do
+    for I := 0 to egIni.GetWorkshopSubscribeCount - 1 do
     begin
-      wkspID := egIni.GetWorkshopSubcribeID(I);
+      wkspID := egIni.GetWorkshopSubscribeID(I);
       if (GetIDIndex(wkspID) < 0) and (wkspID <> '') then
       begin
         aItem := TKFItem.Create;
@@ -906,7 +917,7 @@ begin
         aItem.MapEntry := False;
         aItem.ServerCache := False;
         aItem.MapCycleEntry := False;
-        aItem.ItemType := KFUnknowed;
+        aItem.ItemType := KFUnknown;
         aItem.FileName := '???';
         aItem.SourceFrom := KFSteamWorkshop;
         SetLength(Items, Length(Items) + 1);
@@ -935,7 +946,7 @@ begin
           aItem.MapCycleEntry := true;
           aItem.ItemType := KFMap;
           aItem.FileName := ItemName;
-          aItem.SourceFrom := KFUnknowedSource;
+          aItem.SourceFrom := KFUnknownSource;
           SetLength(Items, Length(Items) + 1);
           Items[High(Items)] := aItem;
         end;
@@ -947,11 +958,11 @@ begin
     end;
 
     // -------------------------------------------  MapEntry list load
-    mapEntrysList := gmIni.GetMapEntrysList;
+    mapEntriesList := gmIni.GetMapEntriesList;
     try
-      for I := 0 to mapEntrysList.Count - 1 do
+      for I := 0 to mapEntriesList.Count - 1 do
       begin
-        ItemName := mapEntrysList[I];
+        ItemName := mapEntriesList[I];
         //
         if (GetItemIndexByName(ItemName, true) = -1) and
           (IsIgnoredMap(ItemName) = False) then
@@ -965,21 +976,21 @@ begin
           // Since it's no already in list there is no cycle entry
           aItem.ItemType := KFMap;
           aItem.FileName := ItemName;
-          aItem.SourceFrom := KFUnknowedSource;
+          aItem.SourceFrom := KFUnknownSource;
           SetLength(Items, Length(Items) + 1);
           Items[High(Items)] := aItem;
         end;
         result := true;
       end;
     finally
-      if Assigned(mapEntrysList) then
-        FreeAndNil(mapEntrysList);
+      if Assigned(mapEntriesList) then
+        FreeAndNil(mapEntriesList);
     end;
 
   finally
     FreeAndNil(egIni);
     FreeAndNil(gmIni);
-    FreeAndNil(directorys);
+    FreeAndNil(directories);
   end;
 
 end;
@@ -1163,7 +1174,7 @@ begin
       result := wksp.CopyItemToCache(itemID);
       LogEvent('Force update', 'Downloading item image...');
       wksp.DownloadWorkshopImage(itemID, nil);
-      LogEvent('Force update', 'Fineshed');
+      LogEvent('Force update', 'Finished');
     finally
       wksp.Free;
     end;
@@ -1223,7 +1234,7 @@ begin
 end;
 
 function TKFServerTool.RemoveItem(ItemName: string; itemID: string;
-  rmvMapEntry, rmvMapCycle, rmvSubcribe, rmvLocalFile: Boolean;
+  rmvMapEntry, rmvMapCycle, rmvSubscription, rmvLocalFile: Boolean;
   ItemSource: TKFSource; ItemType: TKFItemType): Boolean;
 var
   egIni: TKFEngineIni;
@@ -1247,11 +1258,11 @@ begin
       LogEvent('Remove item', 'Item type is KFMap');
     KFmod:
       LogEvent('Remove item', 'Item type is KFmod');
-    KFUnknowed:
-      LogEvent('Remove item', 'Item type is KFUnknowed');
+    KFUnknown:
+      LogEvent('Remove item', 'Item type is KFUnknown');
   end;
 
-  if rmvSubcribe then
+  if rmvSubscription then
   begin
     if itemID = '' then
     begin
@@ -1265,7 +1276,7 @@ begin
       egIni := TKFEngineIni.Create;
       try
         egIniLoaded := egIni.LoadFile(kfApplicationPath + kfEngineIniSubPath);
-        LogEvent('Remove item', 'Removing Server Subcribe for item id '
+        LogEvent('Remove item', 'Removing Server subscription for item id '
           + itemID);
         if egIniLoaded then
         begin
@@ -1366,7 +1377,7 @@ begin
                     redirect.removeFile(ItemName + KF_MODPREFIX[I],
                       kfApplicationPath + KF_BREWEDPCSSUBFOLDER, False);
                 end;
-              KFUnknowed:
+              KFUnknown:
                 raise Exception.Create('Invalid item type for redirect');
             end;
 
@@ -1385,14 +1396,15 @@ begin
 
 end;
 
+// ToDo: Move to KFTypes?
 function TKFServerTool.IsIgnoredMap(mapName: String): Boolean;
 var
   I: Integer;
 begin
   result := False;
-  for I := 1 to High(KF_IGNOREMAPSENTRYS) do
+  for I := 1 to High(KF_IGNOREMAPSENTRIES) do
   begin
-    if UpperCase(mapName) = UpperCase(KF_IGNOREMAPSENTRYS[I]) then
+    if UpperCase(mapName) = UpperCase(KF_IGNOREMAPSENTRIES[I]) then
     begin
       result := true;
       Break;
@@ -1400,6 +1412,7 @@ begin
   end;
 end;
 
+// ToDo: Move to KFTypes?
 function TKFServerTool.IsIgnoredFile(FileName: String): Boolean;
 var
   I: Integer;

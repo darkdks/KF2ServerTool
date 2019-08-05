@@ -1,22 +1,28 @@
-unit MiscFunc;
+ï»¿unit MiscFunc;
 
 interface
 
 uses
 {$IFDEF MSWINDOWS}
   WinProcs,
-  TlHelp32, ShellAPI,
+  TlHelp32,
+  ShellAPI,
   JclSysUtils,
   Forms,
-  graphics,
+  Graphics,
 {$ELSE}
-  LinuxUtils, Posix.Unistd, Posix.Stdio,
-{$ENDIF}
-  SysUtils, Classes,
-  IOUtils, Types;
+  LinuxUtils,
+  Posix.Unistd,
+  Posix.Stdio,
+{$ENDIF MSWINDOWS}
+  SysUtils,
+  Classes,
+  IOUtils,
+  Types;
 
 type
   TWordTriple = Array [0 .. 2] of Word;
+
 {$IFDEF MSWINDOWS}
 
   TExecuteCmdCallBack = class
@@ -29,14 +35,11 @@ type
     constructor Create;
     destructor Destroy; override;
   end;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
 
 function ExecuteFile(hWnd: Cardinal; filename: string; Parameters: string;
   ShowWindows: Integer): Boolean;
 procedure ResizeBitmap(Bitmap: TBitmap; const NewWidth, NewHeight: Integer);
-
-{$ENDIF}
+{$ENDIF MSWINDOWS}
 function WordToBool(Word: String): Boolean;
 function FormatByteSize(const bytes: Int64): string;
 function BoolToWord(Bool: Boolean): string;
@@ -64,7 +67,8 @@ function OccurrencesOfChar(const ContentString: string;
   const CharToCount: char): Integer;
 function ExecuteTerminalProcess(Acmd: String; AParam: string;
   var abortExe: Boolean; Return: TProc<String>): TStringList;
-function PosOfOccurrence(p_SubStr, p_Source: string; p_NthOccurrence: Integer): Integer;
+function PosOfOccurrence(p_SubStr, p_Source: string;
+  p_NthOccurrence: Integer): Integer;
 
 implementation
 
@@ -115,6 +119,7 @@ begin
     end;
   end;
 end;
+
 {$IFDEF MSWINDOWS}
 
 procedure ResizeBitmap(Bitmap: TBitmap; const NewWidth, NewHeight: Integer);
@@ -131,7 +136,7 @@ begin
     buffer.Free;
   end;
 end;
-{$ENDIF}
+{$ENDIF MSWINDOWS}
 
 function ListDir(path: string): TStringList;
 { var
@@ -349,9 +354,10 @@ begin
     result := -0;
 end;
 
-// ------------------------- FILE EXECUTATION -----------------------------------
+// ------------------------- FILE EXECUTION -----------------------------------
 function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
   Parameters: string; ShowWindows: Integer): Boolean;
+
 {$IFDEF MSWINDOWS}
 // Windows API
 var
@@ -398,25 +404,26 @@ var
 begin
 
   linuxUt := TLinuxUtils.Create;
-  try
 
+  try
 {$IFDEF DEBUG}
     writeln('DBG: ' + 'Linux execute file started');
-{$ENDIF}
+{$ENDIF DEBUG}
     linuxUt.RunCommandLine(filename + ' ' + Parameters, (
       procedure(rStr: String)
       begin
 {$IFDEF DEBUG}
         writeln('DBG: ' + rStr)
-{$ENDIF}
+{$ENDIF DEBUG}
       end));
   finally
     FreeAndNil(linuxUt);
   end;
   result := True;
+
 {$IFDEF DEBUG}
   writeln('DBG: ' + 'Linux execute file finshed');
-{$ENDIF}
+{$ENDIF DEBUG}
 end;
 {$ENDIF}
 
@@ -491,10 +498,11 @@ begin
     end;
   end;
 end;
-{$ENDIF}
+{$ENDIF MSWINDOWS}
 
 function ExecuteTerminalProcess(Acmd: String; AParam: string;
 var abortExe: Boolean; Return: TProc<String>): TStringList;
+
 {$IFDEF MSWINDOWS}
 // var
 // outlineCallBack: TExecuteCmdCallBack;
@@ -658,6 +666,7 @@ begin
 end;
 
 function ProcessExists(ProcessName: string): Boolean;
+
 {$IFDEF MSWINDOWS}
 var
   ContinueLoop: Bool;
@@ -688,6 +697,7 @@ begin
   CloseHandle(FSnapshotHandle);
 
 end;
+
 {$ELSE}
 
 var
@@ -711,10 +721,10 @@ begin
   exeResult := processText.Text;
   result := Pos(ProcessName, processText.Text) > 0;
 end;
+{$ENDIF MSWINDOWS}
 
-{$ENDIF}
-
-function PosOfOccurrence(p_SubStr, p_Source: string; p_NthOccurrence: Integer): Integer;
+function PosOfOccurrence(p_SubStr, p_Source: string;
+p_NthOccurrence: Integer): Integer;
 var
   Occurrences, SubStrPos, NumDeletedChars, SubStrLength: Integer;
 begin
@@ -736,9 +746,9 @@ begin
 end;
 
 Function KillProcessByName(ExeName: String): Boolean;
+
 {$IFDEF MSWINDOWS}
 var
-
   ContinueLoop: Bool;
   FSnapshotHandle: THandle;
   FProcessEntry32: TProcessEntry32;
@@ -780,10 +790,11 @@ begin
     FreeAndNil(resultCmd);
     result := True;
   end;
-  // options: killall /v exename ,kill $(pgrep irssi), kill `ps -ef | grep irssi | grep -v grep | awk ‘{print $2}’`
+  // options: killall /v exename ,kill $(pgrep irssi), kill `ps -ef | grep irssi | grep -v grep | awk â€˜{print $2}â€™`
 
 end;
-{$ENDIF}
+{$ENDIF MSWINDOWS}
 { TExecuteCmdCallBack }
 
 end.
+

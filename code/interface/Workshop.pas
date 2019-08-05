@@ -3,15 +3,25 @@ unit Workshop;
 interface
 
 uses
-  SysUtils, Variants, Classes, Controls, Forms, StdCtrls, ExtCtrls, OleCtrls,
-  SHDocVw, MSHTML, dialogs, System.StrUtils;
+  SysUtils,
+  Variants,
+  Classes,
+  Controls,
+  Forms,
+  StdCtrls,
+  ExtCtrls,
+  OleCtrls,
+  SHDocVw,
+  MSHTML,
+  dialogs,
+  System.StrUtils;
 
 type
   TWkspType = (WorkshopMap, WorkshopMod);
 
   TFormWorkshop = class(TForm)
-    wb1: TWebBrowser;
-    pnl2: TPanel;
+    wbWorkshop: TWebBrowser;
+    pnlTop: TPanel;
     btnForward: TButton;
     btnBack: TButton;
     btnAdd: TButton;
@@ -22,12 +32,12 @@ type
     procedure btnAddClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     function BrowserItem(BrowserType: TWkspType; SearchText: string): string;
-    procedure wbReplaceSubcribe;
-    procedure wb1DocumentComplete(ASender: TObject; const pDisp: IDispatch;
-      const URL: OleVariant);
-    procedure wb1BeforeNavigate2(ASender: TObject; const pDisp: IDispatch;
-      const URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
-      var Cancel: WordBool);
+    procedure wbReplaceSubscription;
+    procedure wbWorkshopDocumentComplete(ASender: TObject;
+      const pDisp: IDispatch; const URL: OleVariant);
+    procedure wbWorkshopBeforeNavigate2(ASender: TObject;
+      const pDisp: IDispatch; const URL, Flags, TargetFrameName, PostData,
+      Headers: OleVariant; var Cancel: WordBool);
   private
 
     { Private declarations }
@@ -51,12 +61,12 @@ uses
 
 procedure TFormWorkshop.btnForwardClick(Sender: TObject);
 begin
-  wb1.GoForward;
+  wbWorkshop.GoForward;
 end;
 
 procedure TFormWorkshop.btnBackClick(Sender: TObject);
 begin
-  wb1.GoBack;
+  wbWorkshop.GoBack;
   btnForward.Enabled := True;
 end;
 
@@ -103,8 +113,8 @@ end;
 
 procedure TFormWorkshop.NavigateBW(URL: string);
 begin
-  wb1.Silent := True;
-  wb1.Navigate(URL);
+  wbWorkshop.Silent := True;
+  wbWorkshop.Navigate(URL);
   btnBack.Enabled := True;
 
 end;
@@ -122,7 +132,7 @@ begin
   end;
 end;
 
-procedure TFormWorkshop.wb1BeforeNavigate2(ASender: TObject;
+procedure TFormWorkshop.wbWorkshopBeforeNavigate2(ASender: TObject;
   const pDisp: IDispatch; const URL, Flags, TargetFrameName, PostData,
   Headers: OleVariant; var Cancel: WordBool);
 var
@@ -150,7 +160,7 @@ begin
   end
 end;
 
-procedure TFormWorkshop.wb1DocumentComplete(ASender: TObject;
+procedure TFormWorkshop.wbWorkshopDocumentComplete(ASender: TObject;
   const pDisp: IDispatch; const URL: OleVariant);
 var
   itemID: string;
@@ -159,7 +169,7 @@ var
 begin
   if Pos('?id=', URL) > 0 then
   begin
-    wbReplaceSubcribe;
+    wbReplaceSubscription;
     URLTemp := Copy(URL, Pos('?id=', URL) + 4, length(URL) - Pos('?id=',
       URL) + 4);
     for I := 1 to length(URLTemp) do
@@ -189,20 +199,20 @@ begin
 
 end;
 
-procedure TFormWorkshop.wbReplaceSubcribe;
+procedure TFormWorkshop.wbReplaceSubscription;
 var
   TextElement: IHTMLElement;
   Element: IHTMLElement;
   outHTML: String;
 begin
   try
-    Element := (wb1.Document as IHTMLDocument3)
+    Element := (wbWorkshop.Document as IHTMLDocument3)
       .getElementById('SubscribeItemBtn') as IHTMLElement;
     outHTML := Element.OuterHTML;
     outHTML := ReplaceStr(outHTML, 'onclick="SubscribeItem();"',
-      'href="' + wb1.LocationURL + '/addToServer"');
+      'href="' + wbWorkshop.LocationURL + '/addToServer"');
     Element.OuterHTML := outHTML;
-    TextElement := ((wb1.Document as IHTMLDocument3)
+    TextElement := ((wbWorkshop.Document as IHTMLDocument3)
       .getElementById('SubscribeItemOptionAdd') as IHTMLElement);
     if Assigned(TextElement) then
       TextElement.innerText := 'Add to server';

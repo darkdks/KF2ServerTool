@@ -66,7 +66,7 @@ object frmQueue: TfrmQueue
     OnClick = lvQueueClick
     OnCustomDrawItem = lvQueueCustomDrawItem
   end
-  object pnl1: TPanel
+  object pnlBottom: TPanel
     Left = 0
     Top = 412
     Width = 591

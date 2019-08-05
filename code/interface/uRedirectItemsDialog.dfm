@@ -26,7 +26,7 @@ object frmRedirectItemsDialog: TfrmRedirectItemsDialog
     Columns = <
       item
         AutoSize = True
-        Caption = 'Nome'
+        Caption = 'Name'
       end>
     MultiSelect = True
     TabOrder = 0

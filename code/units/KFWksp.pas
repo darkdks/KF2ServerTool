@@ -4,11 +4,16 @@ interface
 
 uses
   Classes,
-  SysUtils, MiscFunc, System.StrUtils, KFTypes,
+  SysUtils,
+  MiscFunc,
+  System.StrUtils,
+  KFTypes,
 {$IFDEF MSWINDOWS}
   System.Net.HttpClientComponent,
   System.Net.HttpClient,
-  MSHTML, System.Net.URLClient, DownloaderTool,
+  MSHTML,
+  System.Net.URLClient,
+  DownloaderTool,
 {$ENDIF}
 {$IFDEF CONSOLE}
 {$ELSE}
@@ -219,7 +224,7 @@ begin
         // Get main kfm file
         for I := 0 to mapsFound.Count - 1 do
         begin
-          if Pos('KF-', UpperCase(mapsFound[i])) > 1 then
+          if Pos('KF-', UpperCase(mapsFound[I])) > 1 then
           begin
             if withExt then
               mainKFMFile := ExtractFileName(mapsFound.Strings[I])
@@ -304,7 +309,7 @@ var
   I: integer;
   ext: string;
 begin
-  Result := KFUnknowed;
+  Result := KFUnknown;
   try
     // test if is map
     ItemsFound := GetAllFilesSubDirectory(itemFolder, '*.*');
@@ -337,7 +342,7 @@ begin
     end;
   except
 
-    Result := KFUnknowed;
+    Result := KFUnknown;
   end;
 end;
 

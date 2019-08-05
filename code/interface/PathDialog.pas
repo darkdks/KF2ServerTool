@@ -3,8 +3,15 @@ unit PathDialog;
 interface
 
 uses
-  Windows, SysUtils, Classes, Controls, Forms,
-  StdCtrls, JvBrowseFolder, Dialogs, JvBaseDlg;
+  Windows,
+  SysUtils,
+  Classes,
+  Controls,
+  Forms,
+  StdCtrls,
+  JvBrowseFolder,
+  Dialogs,
+  JvBaseDlg;
 
 type
   TkfPathDialog = class(TForm)
@@ -49,18 +56,16 @@ begin
     InstallServerPath := dlgServerBrowser.Directory;
     Self.ModalResult := 101;
 
-    case Application.MessageBox
-      (PWideChar(FormMain._s
-      ('This will download and install the KF2 Server in ') + InstallServerPath
-      + '. ' + #13#10 + FormMain._s
-      ('this will take time depending on your internet connection.')),
-      FormMain._p('Install Killing Floor 2 Server'),
-      MB_OKCANCEL + MB_ICONQUESTION) of
-      IDOK:
-        begin
-          Self.ModalResult := 102;
-        end;
-    end;
+  case Application.MessageBox
+    (PWideChar(FormMain._s('This will download and install the KF2 Server in ')
+    + extractFilePath(Application.ExeName) + '. ' + #13#10 +
+    FormMain._s('this will take time depending on your internet connection.')),
+    FormMain._p('Install Killing Floor 2 Server'),
+    MB_OKCANCEL + MB_ICONQUESTION) of
+    IDOK:
+      begin
+        Self.ModalResult := 102;
+      end;
   end;
 
 end;

@@ -4,7 +4,10 @@ interface
 
 uses
   Classes,
-  SysUtils, MiscFunc, Character, KFTypes;
+  SysUtils,
+  MiscFunc,
+  Character,
+  KFTypes;
 
 type
 
@@ -33,7 +36,7 @@ type
   public
     Filename: String;
     FilePath: string;
-    Entrys: array of TKFEntry;
+    Entries: array of TKFEntry;
     constructor Create;
     destructor Destroy; override;
     function LoadFile(path: String): Boolean;
@@ -87,13 +90,14 @@ type
     function AddMapCycle(name: String; sortType: TKFCycleSort;
       separators: Boolean): Boolean;
     procedure SortMapCycle(sortType: TKFCycleSort; addSeparator: Boolean);
-    function RemoveMapCycle(name: String; removeAll: Boolean;sortType: TKFCycleSort; separators: Boolean): Boolean;
+    function RemoveMapCycle(name: String; removeAll: Boolean;
+      sortType: TKFCycleSort; separators: Boolean): Boolean;
     function GMCTextToStrings(GMCText: string): TStringList;
     function GMCStringsToText(GMCStrings: TStringList): string;
     function GetMapEntryIndex(name: String): Integer;
     function GetMapCycleIndex(name: String): Integer;
     function GetMapCycleList(): TStringList;
-    function GetMapEntrysList: TStringList;
+    function GetMapEntriesList: TStringList;
 
   end;
 
@@ -112,8 +116,8 @@ type
     function GetCustomRedirect: string;
     function GetWorkshopItemIndex(ID: string): Integer;
     function GetWorkshopStatus: Boolean;
-    function GetWorkshopSubcribeCount: Integer;
-    function GetWorkshopSubcribeID(itemIndex: Integer): String;
+    function GetWorkshopSubscribeCount: Integer;
+    function GetWorkshopSubscribeID(itemIndex: Integer): String;
 
   const
     CWORKSHOPSUBTITLE = 'OnlineSubsystemSteamworks.KFWorkshopSteamworks';
@@ -168,7 +172,7 @@ end;
 
 constructor TKFConfigFile.Create;
 begin
-  SetLength(Entrys, 0);
+  SetLength(Entries, 0);
 
 end;
 
@@ -176,8 +180,8 @@ destructor TKFConfigFile.Destroy;
 var
   i: Integer;
 begin
-  for i := 0 to Length(Entrys) - 1 do
-    FreeAndNil(Entrys[i]);
+  for i := 0 to Length(Entries) - 1 do
+    FreeAndNil(Entries[i]);
   inherited;
 end;
 
@@ -190,9 +194,9 @@ begin
   try
     configFile := TStringList.Create;
     try
-      for i := 0 to High(Entrys) do
-        Entrys[i].Free;
-      SetLength(Entrys, 0);
+      for i := 0 to High(Entries) do
+        Entries[i].Free;
+      SetLength(Entries, 0);
       currentEntry := 0;
       configFile.LoadFromFile(path);
       if configFile.Count > 1 then
@@ -203,14 +207,14 @@ begin
 
           if IsCategory(configFile.Strings[i]) then
           begin
-            SetLength(Entrys, Length(Entrys) + 1);
-            currentEntry := High(Entrys);
-            Entrys[currentEntry] := TKFEntry.Create;
-            Entrys[currentEntry].title := configFile.Strings[i];
+            SetLength(Entries, Length(Entries) + 1);
+            currentEntry := High(Entries);
+            Entries[currentEntry] := TKFEntry.Create;
+            Entries[currentEntry].title := configFile.Strings[i];
           end
           else
           begin
-            Entrys[currentEntry].items.Add(configFile.Strings[i]);
+            Entries[currentEntry].items.Add(configFile.Strings[i]);
           end;
 
         end;
@@ -224,7 +228,7 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied to load ' + path + ': ' + e.Message);
+      raise Exception.Create('Failed to load ' + path + ': ' + e.Message);
   end;
 end;
 
@@ -238,13 +242,13 @@ begin
     configFile := TStringList.Create;
     try
 
-      if High(Entrys) >= 1 then
+      if High(Entries) >= 1 then
       begin
 
-        for i := 0 to High(Entrys) do
+        for i := 0 to High(Entries) do
         begin
-          configFile.Add(Entrys[i].title);
-          configFile.AddStrings(Entrys[i].items);
+          configFile.Add(Entries[i].title);
+          configFile.AddStrings(Entries[i].items);
         end;
 
         configFile.SaveToFile(path);
@@ -256,7 +260,7 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied to save ' + path + ': ' + e.Message);
+      raise Exception.Create('Failed to save ' + path + ': ' + e.Message);
   end;
 end;
 
@@ -267,9 +271,9 @@ var
   currentCategory: string;
 begin
   Result := -1;
-  for i := 0 to High(Entrys) do
+  for i := 0 to High(Entries) do
   begin
-    currentCategory := GetCategoryName(Entrys[i].title);
+    currentCategory := GetCategoryName(Entries[i].title);
     if currentCategory = category then
     begin
       Result := i;
@@ -287,12 +291,12 @@ var
   line, param: string;
 begin
   Result := -1;
-  if (index > High(Entrys)) or (index < 0) then
+  if (index > High(Entries)) or (index < 0) then
     Exit;
 
-  for i := 0 to Entrys[index].items.Count - 1 do
+  for i := 0 to Entries[index].items.Count - 1 do
   begin
-    line := Entrys[index].items[i];
+    line := Entries[index].items[i];
     param := Copy(line, 0, Pos('=', line) - 1);
     if param = name then
     begin
@@ -307,7 +311,7 @@ var
   i: Integer;
 begin
   Result := -1;
-  for i := 0 to High(Entrys) do
+  for i := 0 to High(Entries) do
   begin
     // ShowMessage(Copy(Entrys[i].title, 2, Length(Entrys[i].title) - 2));
     if UpperCase(Copy(Entrys[i].title, 2, Length(Entrys[i].title) - 2))  = UpperCase(name) then
@@ -325,15 +329,15 @@ var
   line, param1, param2: string;
 begin
   Result := false;
-  if Pos('=', Entrys[EntryIndex].items[ItemIdex]) < 0 then
+  if Pos('=', Entries[EntryIndex].items[ItemIdex]) < 0 then
     Exit;
   try
     try
-      line := Entrys[EntryIndex].items[ItemIdex];
+      line := Entries[EntryIndex].items[ItemIdex];
 
       param1 := Copy(line, 0, Pos('=', line) - 1);
       param2 := newValue;
-      Entrys[EntryIndex].items[ItemIdex] := param1 + '=' + param2;
+      Entries[EntryIndex].items[ItemIdex] := param1 + '=' + param2;
       Result := true;
     finally
 
@@ -348,11 +352,11 @@ var
   line: string;
 begin
   Result := '';
-  if Pos('=', Entrys[EntryIndex].items[ItemIdex]) < 0 then
+  if Pos('=', Entries[EntryIndex].items[ItemIdex]) < 0 then
     Exit;
   try
     try
-      line := Entrys[EntryIndex].items[ItemIdex];
+      line := Entries[EntryIndex].items[ItemIdex];
       Result := Copy(line, Pos('=', line) + 1, Length(line) - Pos('=', line));
 
     finally
@@ -367,40 +371,40 @@ function TKFConfigFile.AddNewSectionAt(entry: TKFEntry; index: Integer)
   : Boolean;
 var
   i: Integer;
-  EntrysCopy: array of TKFEntry;
+  EntriesCopy: array of TKFEntry;
 begin
 
   try
     try
-      // Coping entrys
-      SetLength(EntrysCopy, Length(Entrys));
-      for i := 0 to High(Entrys) do
+      // Copying entries
+      SetLength(EntriesCopy, Length(Entries));
+      for i := 0 to High(Entries) do
       begin
-        EntrysCopy[i] := TKFEntry.Create;
-        EntrysCopy[i].title := Entrys[i].title;
-        EntrysCopy[i].items.text := Entrys[i].items.text;
+        EntriesCopy[i] := TKFEntry.Create;
+        EntriesCopy[i].title := Entries[i].title;
+        EntriesCopy[i].items.text := Entries[i].items.text;
       end;
       // Adding new entry
-      SetLength(Entrys, Length(Entrys) + 1);
-      Entrys[High(Entrys)] := TKFEntry.Create;
-      Entrys[index].title := entry.title;
-      Entrys[index].items.text := entry.items.text;
-      // Remounting Entrys
-      for i := index + 1 to High(Entrys) do
+      SetLength(Entries, Length(Entries) + 1);
+      Entries[High(Entries)] := TKFEntry.Create;
+      Entries[index].title := entry.title;
+      Entries[index].items.text := entry.items.text;
+      // Remounting entries
+      for i := index + 1 to High(Entries) do
       begin
-        Entrys[i].title := EntrysCopy[i - 1].title;
-        Entrys[i].items.text := EntrysCopy[i - 1].items.text;
+        Entries[i].title := EntriesCopy[i - 1].title;
+        Entries[i].items.text := EntriesCopy[i - 1].items.text;
       end;
       Result := true;
     finally
-      for i := 0 to High(EntrysCopy) do
-        EntrysCopy[i].Free;
-      SetLength(EntrysCopy, 0);
+      for i := 0 to High(EntriesCopy) do
+        EntriesCopy[i].Free;
+      SetLength(EntriesCopy, 0);
     end;
   except
     on e: Exception do
     begin
-      raise Exception.Create('Falied add map entry: ' + e.Message);
+      raise Exception.Create('Failed to add map entry: ' + e.Message);
     end;
   end;
 end;
@@ -413,25 +417,25 @@ var
 begin
   Result := false;
   try
-    // Coping entrys
+    // copying Entries
     StrListCopy := TStringList.Create;
     try
 
-      for i := 0 to Entrys[EntryIndex].items.Count - 1 do
+      for i := 0 to Entries[EntryIndex].items.Count - 1 do
       begin
-        StrListCopy.Add(Entrys[EntryIndex].items[i]);
+        StrListCopy.Add(Entries[EntryIndex].items[i]);
       end;
 
-      Entrys[EntryIndex].items.Clear;
+      Entries[EntryIndex].items.Clear;
 
       for i := 0 to StrListCopy.Count - 1 do
       begin
         if i = at then
         begin
-          Entrys[EntryIndex].items.Add(NewItem);
+          Entries[EntryIndex].items.Add(NewItem);
           Result := true;
         end;
-        Entrys[EntryIndex].items.Add(StrListCopy.Strings[i]);
+        Entries[EntryIndex].items.Add(StrListCopy.Strings[i]);
 
       end;
 
@@ -440,56 +444,56 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied to add new item: ' + e.Message);
+      raise Exception.Create('Failed to add new item: ' + e.Message);
   end;
 end;
 
 function TKFConfigFile.RemoveSectionAt(index: Integer): Boolean;
 var
   i: Integer;
-  EntrysCopy: array of TKFEntry;
+  EntriesCopy: array of TKFEntry;
 begin
 
   try
     try
-      // Coping entrys
-      SetLength(EntrysCopy, Length(Entrys));
-      for i := 0 to High(Entrys) do
+      // copying Entries
+      SetLength(EntriesCopy, Length(Entries));
+      for i := 0 to High(Entries) do
       begin
-        EntrysCopy[i] := TKFEntry.Create;
-        EntrysCopy[i].title := Entrys[i].title;
-        EntrysCopy[i].items.text := Entrys[i].items.text;
+        EntriesCopy[i] := TKFEntry.Create;
+        EntriesCopy[i].title := Entries[i].title;
+        EntriesCopy[i].items.text := Entries[i].items.text;
       end;
       // removing one item
-      Entrys[High(Entrys)].Free;
-      SetLength(Entrys, Length(Entrys) - 1);
-      // Remounting Entrys
-      for i := 0 to High(EntrysCopy) do
+      Entries[High(Entries)].Free;
+      SetLength(Entries, Length(Entries) - 1);
+      // Remounting Entries
+      for i := 0 to High(EntriesCopy) do
       begin
         if i < index then
         begin
-          Entrys[i].title := EntrysCopy[i].title;
-          Entrys[i].items.text := EntrysCopy[i].items.text;
+          Entries[i].title := EntriesCopy[i].title;
+          Entries[i].items.text := EntriesCopy[i].items.text;
         end
         else
         begin
           if i > index then
           begin
-            Entrys[i - 1].title := EntrysCopy[i].title;
-            Entrys[i - 1].items.text := EntrysCopy[i].items.text;
+            Entries[i - 1].title := EntriesCopy[i].title;
+            Entries[i - 1].items.text := EntriesCopy[i].items.text;
           end;
         end;
       end;
       Result := true;
     finally
-      for i := 0 to High(EntrysCopy) do
-        EntrysCopy[i].Free;
-      SetLength(EntrysCopy, 0);
+      for i := 0 to High(EntriesCopy) do
+        EntriesCopy[i].Free;
+      SetLength(EntriesCopy, 0);
     end;
   except
     on e: Exception do
     begin
-      raise Exception.Create('Falied to remove item: ' + e.Message);
+      raise Exception.Create('Failed to remove item: ' + e.Message);
 
     end;
   end;
@@ -499,16 +503,16 @@ end;
   begin
   Result := true;
   try
-  if (EntryIndex > High(Entrys)) or
-  (itemIndex > Entrys[EntryIndex].items.Count - 1) then
+  if (EntryIndex > High(Entries)) or
+  (itemIndex > Entries[EntryIndex].items.Count - 1) then
   raise Exception.Create('Invalid entry index or item index');
 
-  Entrys[EntryIndex].items.Delete(itemIndex);
+  Entries[EntryIndex].items.Delete(itemIndex);
 
   except
   on e: Exception do
   begin
-  raise Exception.Create('Falied to remove item: ' + e.Message);
+  raise Exception.Create('Failed to remove item: ' + e.Message);
   end;
   end;
 
@@ -532,7 +536,7 @@ var
   Titleline: string;
 begin
   Result := '';
-  Titleline := Entrys[index].title;
+  Titleline := Entries[index].title;
   if GetCategoryName(Titleline) = CMAPTYPE then
   begin
     Result := Copy(Titleline, Pos('[', Titleline) + 1, Pos(' ', Titleline) - 2);
@@ -584,7 +588,8 @@ begin
 
 end;
 
-function TKFGameIni.RemoveMapCycle(name: String; removeAll: Boolean;sortType: TKFCycleSort; separators: Boolean): Boolean;
+function TKFGameIni.RemoveMapCycle(name: String; removeAll: Boolean;
+  sortType: TKFCycleSort; separators: Boolean): Boolean;
 var
   i, GI_index, GMC_index: Integer;
   newMapCycle, oldMapCycle: string;
@@ -597,7 +602,7 @@ begin
     GMC_index := GetItemIndex(CGAMEMAPCYCLES, GI_index);
     if (GI_index < 0) or (GMC_index < 0) then
     begin
-      raise Exception.Create('Falied to remove. GameMapCycles not found.');
+      raise Exception.Create('Failed to remove. GameMapCycles not found.');
       Exit;
     end;
     oldMapCycle := GetValue(GI_index, GMC_index);
@@ -638,7 +643,7 @@ begin
   if (GI_index < 0) or (GMC_index < 0) then
   begin
     raise Exception.Create
-      ('Falied to get mapcycle array. GameMapCycles not found.');
+      ('Failed to get mapcycle array. GameMapCycles not found.');
     Exit;
   end;
   Result := GetValue(GI_index, GMC_index);
@@ -653,7 +658,7 @@ begin
   if (GI_index < 0) or (GMC_index < 0) then
   begin
     raise Exception.Create
-      ('Falied to get mapcycle array. GameMapCycles not found.');
+      ('Failed to get mapcycle array. GameMapCycles not found.');
     Exit;
   end;
   ModifyValue(textArray, GI_index, GMC_index);
@@ -688,12 +693,11 @@ begin
   except
     on e: Exception do
     begin
-      raise Exception.Create('Falied to edit: ' + e.Message);
+      raise Exception.Create('Failed to edit: ' + e.Message);
 
     end;
   end;
 end;
-
 
 function TKFGameIni.GetMapCycleList(): TStringList;
 var
@@ -709,7 +713,7 @@ begin
       if (GI_index < 0) or (GMC_index < 0) then
       begin
         raise Exception.Create
-          ('Falied get map cycle. GameMapCycles not found.');
+          ('Failed to get map cycle. GameMapCycles not found.');
         Exit;
       end;
       mapCycle := GetValue(GI_index, GMC_index);
@@ -719,7 +723,7 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied to get map cycle: ' + e.Message);
+      raise Exception.Create('Failed to get map cycle: ' + e.Message);
   end;
 
 end;
@@ -730,10 +734,10 @@ var
 begin
   Result := false;
   i := 0;
-  while i <= High(Entrys) do
+  while i <= High(Entries) do
   begin
-    if (GetCategoryName(Entrys[i].title) = CMAPTYPE) and (GetMapNameAt(i) = name)
-    then
+    if (GetCategoryName(Entries[i].title) = CMAPTYPE) and
+      (GetMapNameAt(i) = name) then
     begin
       Result := RemoveSectionAt(i);
       if removeAll = false then
@@ -761,7 +765,7 @@ begin
     end
     else
     begin
-      raise Exception.Create('Falied to find ' + CENGINEACESSCONTROL + ' / ' +
+      raise Exception.Create('Failed to find ' + CENGINEACESSCONTROL + ' / ' +
         CADMINPASSWORD + ' fields.');
 
     end;
@@ -786,7 +790,7 @@ begin
   mapCycle := GMCTextToStrings(cycleText);
   try
     if Assigned(mapCycle) = false then
-      raise Exception.Create('Falied to get map cycle list');
+      raise Exception.Create('Failed to get map cycle list');
     case sortType of
       KFCSortByType:
         begin
@@ -872,14 +876,14 @@ begin
   Result := GetSectionIndex(name + ' ' + CMAPTYPE, true);
 end;
 
-function TKFGameIni.GetMapEntrysList: TStringList;
+function TKFGameIni.GetMapEntriesList: TStringList;
 var
   i: Integer;
   mapName: String;
 begin
   Result := TStringList.Create;
   try
-    for i := 0 to High(Entrys) do
+    for i := 0 to High(Entries) do
     begin
       mapName := GetMapNameAt(i);
       if mapName <> '' then
@@ -908,7 +912,7 @@ begin
     end
     else
     begin
-      raise Exception.Create('Falied to find ' + CENGINEACESSCONTROL + ' / ' +
+      raise Exception.Create('Failed to find ' + CENGINEACESSCONTROL + ' / ' +
         CADMINPASSWORD + ' fields.');
 
     end;
@@ -943,7 +947,7 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied to get gameMapCycle: ' + e.Message);
+      raise Exception.Create('Failed to get gameMapCycle: ' + e.Message);
   end;
 
 end;
@@ -967,13 +971,13 @@ begin
     end
     else
     begin
-      raise Exception.Create('Falied to find section ' + CHTTPDOWNLOAD);
+      raise Exception.Create('Failed to find section ' + CHTTPDOWNLOAD);
 
     end;
 
   except
     on e: Exception do
-      raise Exception.Create('Falied add custom redirect: ' + e.Message);
+      raise Exception.Create('Failed to add custom redirect: ' + e.Message);
   end;
 end;
 
@@ -993,13 +997,13 @@ begin
     else
     begin
       raise Exception.Create
-        ('Falied to find redirect values. Option is not set.');
+        ('Failed to find redirect values. Option is not set.');
 
     end;
 
   except
     on e: Exception do
-      raise Exception.Create('Falied get custom redirect: ' + e.Message);
+      raise Exception.Create('Failed to get custom redirect: ' + e.Message);
   end;
 end;
 
@@ -1015,7 +1019,7 @@ begin
       if (WS_index <= 0) then
       begin
         raise Exception.Create
-          ('Falied to add workshop section. Item not added.');
+          ('Failed to add workshop section. Item not added.');
         Result := false;
         Exit;
       end;
@@ -1026,14 +1030,14 @@ begin
         RemoveWorkshopItem(ID, true);
       end;
       AddNewItemAt(CWORKSHOPSUBITEM + '=' + ID, WS_index,
-        Entrys[WS_index].items.Count - 1);
+        Entries[WS_index].items.Count - 1);
       Result := true;
     finally
 
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied to download: ' + e.Message);
+      raise Exception.Create('Failed to download: ' + e.Message);
 
   end;
 end;
@@ -1048,15 +1052,15 @@ begin
     WS_index := GetSectionIndex(CWORKSHOPSUBTITLE, false);
     if (WS_index < 0) then
     begin
-      raise Exception.Create('Falied to remove workshop item. Item not found.');
+      raise Exception.Create('Failed to remove workshop item. Item not found.');
       Exit;
     end;
     i := 0;
-    while i < Entrys[WS_index].items.Count do
+    while i < Entries[WS_index].items.Count do
     begin
-      if Entrys[WS_index].items.Strings[i] = CWORKSHOPSUBITEM + '=' + ID then
+      if Entries[WS_index].items.Strings[i] = CWORKSHOPSUBITEM + '=' + ID then
       begin
-        Entrys[WS_index].items.Delete(i);
+        Entries[WS_index].items.Delete(i);
         Result := true;
         if removeAll = false then
           Exit;
@@ -1069,7 +1073,7 @@ begin
 
   except
     on e: Exception do
-      raise Exception.Create('Falied to remove workshop item: ' + e.Message);
+      raise Exception.Create('Failed to remove workshop item: ' + e.Message);
   end;
 
 end;
@@ -1084,9 +1088,9 @@ begin
     if (WS_index >= 0) then
     begin
 
-      for i := 0 to Entrys[WS_index].items.Count - 1 do
+      for i := 0 to Entries[WS_index].items.Count - 1 do
       begin
-        if GetWorkshopSubcribeID(i) = ID then
+        if GetWorkshopSubscribeID(i) = ID then
         begin
           Result := i;
         end;
@@ -1097,11 +1101,11 @@ begin
 
   except
     on e: Exception do
-      raise Exception.Create('Falied to get workshop item: ' + e.Message);
+      raise Exception.Create('Failed to get workshop item: ' + e.Message);
   end;
 end;
 
-function TKFEngineIni.GetWorkshopSubcribeID(itemIndex: Integer): String;
+function TKFEngineIni.GetWorkshopSubscribeID(itemIndex: Integer): String;
 var
   WS_index: Integer;
   wks_value: string;
@@ -1113,7 +1117,7 @@ begin
     WS_index := GetSectionIndex(CWORKSHOPSUBTITLE, false);
     if (WS_index >= 0) then
     begin
-      if itemIndex <= Entrys[WS_index].items.Count - 1 then
+      if itemIndex <= Entries[WS_index].items.Count - 1 then
       begin
         wks_value := GetValue(WS_index, itemIndex);
         for i := 1 to Length(wks_value) do
@@ -1134,11 +1138,11 @@ begin
 
   except
     on e: Exception do
-      raise Exception.Create('Falied to get workshop item: ' + e.Message);
+      raise Exception.Create('Failed to get workshop item: ' + e.Message);
   end;
 end;
 
-function TKFEngineIni.GetWorkshopSubcribeCount(): Integer;
+function TKFEngineIni.GetWorkshopSubscribeCount(): Integer;
 var
   WS_index: Integer;
 begin
@@ -1148,12 +1152,12 @@ begin
     if (WS_index >= 0) then
     begin
 
-      Result := Entrys[WS_index].items.Count;
+      Result := Entries[WS_index].items.Count;
     end;
 
   except
     on e: Exception do
-      raise Exception.Create('Falied to get workshop item count: ' + e.Message);
+      raise Exception.Create('Failed to get workshop item count: ' + e.Message);
   end;
 end;
 
@@ -1166,7 +1170,7 @@ begin
     DM_index := GetItemIndex(CDOWNLOADMANAGERS, TND_index);
 
     if (TND_index < 0) or (DM_index < 0) then
-      raise Exception.Create('Falied to find ' + CTCPNETDRIVER + '/' +
+      raise Exception.Create('Failed to find ' + CTCPNETDRIVER + '/' +
         CDOWNLOADMANAGERS + ' entry.');
 
     Result := AddNewItemAt(CDOWNLOADMANAGERS + '=' + CDMWORKSHOP, TND_index,
@@ -1174,7 +1178,7 @@ begin
 
   except
     on e: Exception do
-      raise Exception.Create('Falied add workshop redirect: ' + e.Message);
+      raise Exception.Create('Failed to add workshop redirect: ' + e.Message);
 
   end;
 
@@ -1188,21 +1192,21 @@ begin
   try
     WS_index := GetSectionIndex(CTCPNETDRIVER, false);
     if (WS_index < 0) then
-      raise Exception.Create('Falied to remove workshop redirect, ' +
+      raise Exception.Create('Failed to remove workshop redirect, ' +
         CTCPNETDRIVER + ' section not found.');
-    for i := 0 to Entrys[WS_index].items.Count - 1 do
+    for i := 0 to Entries[WS_index].items.Count - 1 do
     begin
-      if StringReplace(Entrys[WS_index].items.Strings[i], ' ', '',
+      if StringReplace(Entries[WS_index].items.Strings[i], ' ', '',
         [rfReplaceAll]) = CDOWNLOADMANAGERS + '=' + CDMWORKSHOP then
       begin
-        Entrys[WS_index].items.Delete(i);
+        Entries[WS_index].items.Delete(i);
         Result := true;
         Break;
       end;
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied to remove workshop redirect: ' +
+      raise Exception.Create('Failed to remove workshop redirect: ' +
         e.Message);
   end;
 
@@ -1216,11 +1220,11 @@ begin
   try
     WS_index := GetSectionIndex(CTCPNETDRIVER, false);
     if (WS_index < 0) then
-      Exception.Create('Falied get workshop redirect, ' + CTCPNETDRIVER +
+      Exception.Create('Failed to get workshop redirect, ' + CTCPNETDRIVER +
         ' section not found.');
-    for i := 0 to Entrys[WS_index].items.Count - 1 do
+    for i := 0 to Entries[WS_index].items.Count - 1 do
     begin
-      if StringReplace(Entrys[WS_index].items.Strings[i], ' ', '',
+      if StringReplace(Entries[WS_index].items.Strings[i], ' ', '',
         [rfReplaceAll]) = CDOWNLOADMANAGERS + '=' + CDMWORKSHOP then
       begin
         Result := true;
@@ -1229,7 +1233,7 @@ begin
     end;
   except
     on e: Exception do
-      raise Exception.Create('Falied get workshop redirect status: ' +
+      raise Exception.Create('Failed to get workshop redirect status: ' +
         e.Message);
   end;
 
@@ -1245,7 +1249,7 @@ begin
       WorkshopSection := TKFEntry.Create;
       WorkshopSection.title := '[' + CWORKSHOPSUBTITLE + ']';
       WorkshopSection.items.Add('');
-      Result := AddNewSectionAt(WorkshopSection, High(Entrys));
+      Result := AddNewSectionAt(WorkshopSection, High(Entries));
     finally
 
     end;
@@ -1284,7 +1288,7 @@ var
   value: String;
 begin
   Result := 0;
-  if High(Entrys) > 0 then
+  if High(Entries) > 0 then
   begin
     try
       sectionIndex := GetSectionIndex(CCategoryWeb, false);
@@ -1304,7 +1308,7 @@ begin
       end;
     except
       on e: Exception do
-        raise Exception.Create('Falied to get web port number. ' + #13 +
+        raise Exception.Create('Failed to get web port number. ' + #13 +
           'File: ' + Filename + #13 + e.Message);
     end;
   end
@@ -1321,7 +1325,7 @@ var
   sectionIndex, ItemIdex: Integer;
   value: String;
 begin
-  if High(Entrys) > 0 then
+  if High(Entries) > 0 then
   begin
     try
       value := IntToStr(Port);
@@ -1346,7 +1350,7 @@ begin
       end;
     except
       on e: Exception do
-        raise Exception.Create('Falied get web status. ' + #13 + 'File: ' +
+        raise Exception.Create('Failed to get web status. ' + #13 + 'File: ' +
           Filename + #13 + e.Message);
     end;
   end
@@ -1365,7 +1369,7 @@ var
   value: String;
 begin
   Result := false;
-  if High(Entrys) > 0 then
+  if High(Entries) > 0 then
   begin
     try
       sectionIndex := GetSectionIndex(CCategoryWeb, false);
@@ -1385,7 +1389,7 @@ begin
       end;
     except
       on e: Exception do
-        raise Exception.Create('Falied to get web status. ' + #13 + 'File: ' +
+        raise Exception.Create('Failed to get web status. ' + #13 + 'File: ' +
           Filename + #13 + e.Message);
     end;
   end
@@ -1403,7 +1407,7 @@ var
   sectionIndex, ItemIdex: Integer;
   value: String;
 begin
-  if High(Entrys) > 0 then
+  if High(Entries) > 0 then
   begin
     try
       if Status then
@@ -1432,7 +1436,7 @@ begin
       end;
     except
       on e: Exception do
-        raise Exception.Create('Falied get web status. ' + #13 + 'File: ' +
+        raise Exception.Create('Failed to get web status. ' + #13 + 'File: ' +
           Filename + #13 + e.Message);
     end;
   end
@@ -1458,7 +1462,7 @@ begin
   begin
     newEntry := TKFEntry.Create;
     newEntry.title := ('[' + CCategoryWeb + ']');
-    AddNewSectionAt(newEntry, High(Entrys))
+    AddNewSectionAt(newEntry, High(Entries))
   end;
 
   if (statusTagIdx < 0) then
@@ -1467,7 +1471,7 @@ begin
     begin
       sectionIndex := GetSectionIndex(CCategoryWeb, false);
       if sectionIndex >= 0 then
-        Entrys[sectionIndex].items.Add(CWebStatusTag + '=true');
+        Entries[sectionIndex].items.Add(CWebStatusTag + '=true');
     end;
   end;
 
@@ -1477,7 +1481,7 @@ begin
     begin
       sectionIndex := GetSectionIndex(CCategoryWeb, false);
       if sectionIndex >= 0 then
-        Entrys[sectionIndex].items.Add(CWebPortTag + '=8080');
+        Entries[sectionIndex].items.Add(CWebPortTag + '=8080');
     end;
   end;
 

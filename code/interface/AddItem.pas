@@ -15,8 +15,8 @@ type
 
   TFormAdd = class(TForm)
     pnlWorkshopID: TPanel;
-    edtID: TJvEdit;
-    pnlClient: TPanel;
+    edtWorkshopID: TJvEdit;
+    pnlOptions: TPanel;
     chkDoForAll: TCheckBox;
     chkAddMapEntry: TCheckBox;
     chkAddMapCycle: TCheckBox;
@@ -25,20 +25,20 @@ type
     pnlBottom: TPanel;
     btnCancel: TButton;
     btnOk: TButton;
-    pnl3: TPanel;
+    pnlItemName: TPanel;
     edtItemName: TJvEdit;
     pnlRedirectURL: TPanel;
     edtRedirectURL: TJvEdit;
     btnFindMapRedirectNames: TButton;
-    jvlbl1: TLabel;
-    jvlbl4: TLabel;
-    lblPn3: TLabel;
-    jvlbl2: TLabel;
+    lblWorkshopID: TLabel;
+    lblRedirectURL: TLabel;
+    lblItemName: TLabel;
+    lblOptions: TLabel;
     lblItemNameNote: TLabel;
     procedure BrowseClick(Sender: TObject);
     procedure chkDownloadItemClick(Sender: TObject);
-    procedure edtIDExit(Sender: TObject);
-    procedure edtIDChange(Sender: TObject);
+    procedure edtWorkshopIDExit(Sender: TObject);
+    procedure edtWorkshopIDChange(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -77,7 +77,7 @@ begin
   try
     if frmwksp.BrowserItem(TWkspType.WorkshopMap, '') <> '' then
     begin
-      edtID.Text := frmwksp.ItemBrowserId;
+      edtWorkshopID.Text := frmwksp.ItemBrowserId;
 
     end;
 
@@ -190,7 +190,7 @@ begin
         end;
 
       end;
-      ItemID := edtID.Text;
+      ItemID := edtWorkshopID.Text;
 
     finally
       if (chkDoForAll.Visible) and (chkDoForAll.Checked) then
@@ -223,21 +223,21 @@ begin
   end;
 end;
 
-procedure TFormAdd.edtIDChange(Sender: TObject);
+procedure TFormAdd.edtWorkshopIDChange(Sender: TObject);
 begin
-  if Length(edtID.Text) > 3 then
+  if Length(edtWorkshopID.Text) > 3 then
     btnOk.Enabled := true
   else
     btnOk.Enabled := false;
 
 end;
 
-procedure TFormAdd.edtIDExit(Sender: TObject);
+procedure TFormAdd.edtWorkshopIDExit(Sender: TObject);
 begin
-  if Length(edtID.Text) < 12 then
-    edtID.Text := cleanInt(edtID.Text)
+  if Length(edtWorkshopID.Text) < 12 then
+    edtWorkshopID.Text := cleanInt(edtWorkshopID.Text)
   else
-    edtID.Text := WorkshopURLtoID(edtID.Text);
+    edtWorkshopID.Text := WorkshopURLtoID(edtWorkshopID.Text);
 end;
 
 procedure TFormAdd.FormCreate(Sender: TObject);
@@ -249,9 +249,9 @@ begin
     chkDownloadItem.Caption := _s(chkDownloadItem.Caption);
     chkAddWorkshopRedirect.Caption := _s(chkAddWorkshopRedirect.Caption);
     lblItemNameNote.Caption := _s(lblItemNameNote.Caption);
-    lblPn3.Caption := _s(lblPn3.Caption);
+    lblItemName.Caption := _s(lblItemName.Caption);
     btnCancel.Caption := _s(btnCancel.Caption);
-    jvlbl4.Caption := _s(jvlbl4.Caption);
+    lblRedirectURL.Caption := _s(lblRedirectURL.Caption);
 
     chkDoForAll.Visible := false;
   end;
@@ -269,7 +269,7 @@ begin
       begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := false;
+        pnlItemName.Visible := false;
         Self.Caption := FormMain._s('Add Map');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
@@ -282,7 +282,7 @@ begin
 
         chkAddMapCycle.Checked := true;
         chkAddMapCycle.Visible := true;
-        edtID.Enabled := false;
+        edtWorkshopID.Enabled := false;
 
         btnOk.Enabled := true;
       end;
@@ -291,7 +291,7 @@ begin
       begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := false;
+        pnlItemName.Visible := false;
         Self.Caption := FormMain._s('Add Mod');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
@@ -304,7 +304,7 @@ begin
 
         chkAddMapCycle.Checked := false;
         chkAddMapCycle.Visible := false;
-        edtID.Enabled := false;
+        edtWorkshopID.Enabled := false;
 
         btnOk.Enabled := true;
       end;
@@ -312,7 +312,7 @@ begin
       begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := false;
+        pnlItemName.Visible := false;
         Self.Caption := FormMain._s('Reinstall Map');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
@@ -325,7 +325,7 @@ begin
 
         chkAddMapCycle.Checked := true;
         chkAddMapCycle.Visible := true;
-        edtID.Enabled := false;
+        edtWorkshopID.Enabled := false;
 
         btnOk.Enabled := true;
       end;
@@ -334,7 +334,7 @@ begin
       begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := false;
+        pnlItemName.Visible := false;
         Self.Caption := FormMain._s('Reinstall Mod');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
@@ -348,7 +348,7 @@ begin
         chkAddMapCycle.Checked := false;
         chkAddMapCycle.Visible := false;
 
-        edtID.Enabled := false;
+        edtWorkshopID.Enabled := false;
 
         btnOk.Enabled := true;
       end;
@@ -357,8 +357,8 @@ begin
       begin
         pnlWorkshopID.Visible := true;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := false;
-        Self.Caption := FormMain._s('Reinstall Unknowed item');
+        pnlItemName.Visible := false;
+        Self.Caption := FormMain._s('Reinstall unknown item');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
 
@@ -370,7 +370,7 @@ begin
 
         chkAddMapCycle.Checked := true;
         chkAddMapCycle.Visible := true;
-        edtID.Enabled := false;
+        edtWorkshopID.Enabled := false;
 
         btnOk.Enabled := true;
         Exit;
@@ -379,7 +379,7 @@ begin
       begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := false;
+        pnlItemName.Visible := false;
         Self.Caption := FormMain._s('Reinstall Official');
         chkDownloadItem.Checked := false;
         chkDownloadItem.Visible := false;
@@ -392,18 +392,18 @@ begin
 
         chkAddMapCycle.Checked := true;
         chkAddMapCycle.Visible := true;
-        edtID.Enabled := false;
-        edtID.Visible := false;
+        edtWorkshopID.Enabled := false;
+        edtWorkshopID.Visible := false;
 
         btnOk.Enabled := true;
-        jvlbl1.Visible := false;
+        lblWorkshopID.Visible := false;
       end;
 
     LocalOrRedirectItem:
       begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := false;
+        pnlItemName.Visible := false;
         Self.Caption := FormMain._s('Reinstall Local or redirect');
         chkDownloadItem.Checked := false;
         chkDownloadItem.Visible := false;
@@ -416,23 +416,23 @@ begin
 
         chkAddMapCycle.Checked := true;
         chkAddMapCycle.Visible := true;
-        edtID.Enabled := false;
-        edtID.Visible := false;
+        edtWorkshopID.Enabled := false;
+        edtWorkshopID.Visible := false;
 
         btnOk.Enabled := true;
-        jvlbl1.Visible := false;
+        lblWorkshopID.Visible := false;
       end;
 
     LocalItem:
       begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := false;
-        pnl3.Visible := true;
+        pnlItemName.Visible := true;
         Self.Caption := FormMain._s('Local item');
         chkDownloadItem.Checked := false;
         chkDownloadItem.Visible := false;
 
-        lblPn3.Caption := FormMain._s('Map File:');
+        lblItemName.Caption := FormMain._s('Map File:');
         chkAddWorkshopRedirect.Checked := false;
         chkAddWorkshopRedirect.Visible := false;
 
@@ -441,18 +441,18 @@ begin
 
         chkAddMapCycle.Checked := true;
         chkAddMapCycle.Visible := true;
-        edtID.Enabled := false;
-        edtID.Visible := false;
+        edtWorkshopID.Enabled := false;
+        edtWorkshopID.Visible := false;
 
         btnOk.Enabled := true;
-        jvlbl1.Visible := false;
+        lblWorkshopID.Visible := false;
       end;
 
     RedirectMap:
       begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := true;
-        pnl3.Visible := true;
+        pnlItemName.Visible := true;
         Self.Caption := FormMain._s('Install from redirect');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
@@ -465,11 +465,11 @@ begin
 
         chkAddMapCycle.Checked := true;
         chkAddMapCycle.Visible := true;
-        edtID.Enabled := false;
-        edtID.Visible := false;
+        edtWorkshopID.Enabled := false;
+        edtWorkshopID.Visible := false;
 
         btnOk.Enabled := true;
-        jvlbl1.Visible := false;
+        lblWorkshopID.Visible := false;
 
       end;
 
@@ -477,7 +477,7 @@ begin
       begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := true;
-        pnl3.Visible := true;
+        pnlItemName.Visible := true;
         Self.Caption := FormMain._s('Install from redirect');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
@@ -491,19 +491,19 @@ begin
 
         chkAddMapCycle.Checked := false;
         chkAddMapCycle.Visible := false;
-        edtID.Enabled := false;
-        edtID.Visible := false;
+        edtWorkshopID.Enabled := false;
+        edtWorkshopID.Visible := false;
 
         btnOk.Enabled := true;
-        jvlbl1.Visible := false;
+        lblWorkshopID.Visible := false;
       end;
 
     backupWorkhopMap:
       begin
         pnlWorkshopID.Visible := false;
         pnlRedirectURL.Visible := true;
-        pnl3.Visible := true;
-        lblPn3.Caption := FormMain._s('Backup file');
+        pnlItemName.Visible := true;
+        lblItemName.Caption := FormMain._s('Backup file');
         Self.Caption := FormMain._s('Restore backup');
         chkDownloadItem.Checked := true;
         chkDownloadItem.Visible := true;
@@ -516,11 +516,11 @@ begin
 
         chkAddMapCycle.Checked := true;
         chkAddMapCycle.Visible := true;
-        edtID.Enabled := false;
-        edtID.Visible := false;
+        edtWorkshopID.Enabled := false;
+        edtWorkshopID.Visible := false;
 
         btnOk.Enabled := true;
-        jvlbl1.Visible := false;
+        lblWorkshopID.Visible := false;
 
       end;
 
@@ -554,15 +554,15 @@ begin
     if pnlRedirectURL.Visible then
       winHeight := winHeight + pnlRedirectURL.Height + panelMargin;
 
-    if pnl3.Visible then
-      winHeight := winHeight + pnl3.Height + panelMargin;
+    if pnlItemName.Visible then
+      winHeight := winHeight + pnlItemName.Height + panelMargin;
 
-    if pnlClient.Visible then
+    if pnlOptions.Visible then
     begin
       for i := 0 to Self.ComponentCount - 1 do
       begin
         if (Self.Components[i] is TControl) and
-          (Self.Components[i].GetParentComponent = pnlClient) then
+          (Self.Components[i].GetParentComponent = pnlOptions) then
         begin
           pnlComponent := (Self.Components[i] as TControl);
           if (pnlComponent.Visible) and (latestItemTop < pnlComponent.Top) then

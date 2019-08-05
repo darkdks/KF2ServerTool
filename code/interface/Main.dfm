@@ -43,7 +43,7 @@ object FormMain: TFormMain
     ExplicitLeft = 592
     ExplicitWidth = 90
   end
-  object pnl1: TPanel
+  object pnlBottom: TPanel
     Left = 0
     Top = 558
     Width = 684
@@ -108,7 +108,9 @@ object FormMain: TFormMain
       Top = 2
       Width = 130
       Height = 29
-      Hint = 'Reinstall an item, helpfull fix broken item or add some entrys'
+      Hint = 
+        'Reinstall an item, helpful to fix a broken item or add some entr' +
+        'ies'
       Margins.Left = 2
       Margins.Top = 4
       Margins.Right = 2
@@ -402,7 +404,7 @@ object FormMain: TFormMain
       OnClick = btnRemoveClick
     end
   end
-  object jvpgcntrl1: TJvPageControl
+  object pgcntrlTabs: TJvPageControl
     Left = 0
     Top = 17
     Width = 684
@@ -411,10 +413,10 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsServer
+    ActivePage = tsOptions
     Align = alClient
     TabOrder = 1
-    OnChange = jvpgcntrl1Change
+    OnChange = pgcntrlTabsChange
     ParentColor = False
     Color = clWhite
     object tsServer: TTabSheet
@@ -424,7 +426,7 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Server'
       ImageIndex = 2
-      object pb1: TPaintBox
+      object pboxServer: TPaintBox
         Left = 0
         Top = 0
         Width = 676
@@ -447,7 +449,7 @@ object FormMain: TFormMain
         Align = alClient
         Caption = 'Start server'
         TabOrder = 0
-        object pnl3: TPanel
+        object pnlStartTop: TPanel
           Left = 2
           Top = 19
           Width = 656
@@ -547,7 +549,7 @@ object FormMain: TFormMain
             OnChange = cbbProfileChange
           end
         end
-        object pnl4: TPanel
+        object pnlStartBottom: TPanel
           Left = 2
           Top = 266
           Width = 656
@@ -559,15 +561,15 @@ object FormMain: TFormMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
-          object lblHelpAdditionParam: TLabel
+          object lblHelpAddParam: TLabel
             Left = 12
             Top = 3
             Width = 493
             Height = 28
             Caption = 
               'Example: ?Mutator=KFMutator.KFMutator_MaxPlayersV2?MaxPlayers=15' +
-              '?MaxMonsters=64'#13#10'Example: ?Game=MyCustoGameMode.GameMode?Mutator' +
-              '=MyMutator.Mutator'
+              '?MaxMonsters=64'#13#10'Example: ?Game=MyCustomGameMode.GameMode?Mutato' +
+              'r=MyMutator.Mutator'
             Color = clBtnFace
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowFrame
@@ -599,8 +601,8 @@ object FormMain: TFormMain
             Width = 616
             Height = 44
             Hint = 
-              'Start the KF2 server with selected options.'#13#10'After some time a c' +
-              'onsole will open with the server running. '
+              'Start the KF2 server with the selected options.\nAfter some time' +
+              ' a console will open with the server running. '
             Margins.Left = 20
             Margins.Top = 2
             Margins.Right = 20
@@ -623,7 +625,7 @@ object FormMain: TFormMain
             Height = 17
             Hint = 
               'Activating this option will make the webadmin open inside the to' +
-              'ol itself '#13#10'as soon as the server goes online. '#13#10'Note that for t' +
+              'ol itself \nas soon as the server goes online. \nNote that for t' +
               'his option to work correctly you must enable WebAdmin in options' +
               ' tab.'
             Margins.Left = 20
@@ -651,7 +653,7 @@ object FormMain: TFormMain
             TabOrder = 2
             OnClick = chkGrouMapCycleClick
           end
-          object chkIncludeSepratorsMapCycle: TCheckBox
+          object chkSeparateMapTypes: TCheckBox
             Left = 12
             Top = 92
             Width = 429
@@ -665,10 +667,10 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 3
-            OnClick = chkIncludeSepratorsMapCycleClick
+            OnClick = chkSeparateMapTypesClick
           end
         end
-        object pnl5: TPanel
+        object pnlStartMiddle1: TPanel
           Left = 2
           Top = 92
           Width = 656
@@ -680,7 +682,7 @@ object FormMain: TFormMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 2
-          object pnlmap: TPanel
+          object pnlMap: TPanel
             Left = 0
             Top = 0
             Width = 298
@@ -732,7 +734,7 @@ object FormMain: TFormMain
               OnExit = lostFocusSave
             end
           end
-          object pnldifficulty: TPanel
+          object pnlDifficulty: TPanel
             Left = 481
             Top = 0
             Width = 175
@@ -766,7 +768,7 @@ object FormMain: TFormMain
               Top = 24
               Width = 161
               Height = 25
-              Hint = 'The default difficulty of the game'
+              Hint = 'The default difficulty for the game'
               Margins.Left = 6
               Margins.Top = 0
               Margins.Right = 8
@@ -787,7 +789,7 @@ object FormMain: TFormMain
                 'Hell on earth')
             end
           end
-          object pnlgamelenght: TPanel
+          object pnlGameLength: TPanel
             Left = 298
             Top = 0
             Width = 183
@@ -815,15 +817,15 @@ object FormMain: TFormMain
               ParentColor = False
               ExplicitWidth = 82
             end
-            object cbbLength: TComboBox
+            object cbbGameLength: TComboBox
               AlignWithMargins = True
               Left = 6
               Top = 24
               Width = 175
               Height = 25
               Hint = 
-                'Specify the duration of the game'#13#10'Short: 4 Waves'#13#10'Normal: 7 Wave' +
-                's'#13#10'Long: 10 Waves'
+                'Specify the duration of the game\nShort: 4 Waves\nNormal: 7 Wave' +
+                's\nLong: 10 Waves'
               Margins.Left = 6
               Margins.Top = 0
               Margins.Right = 2
@@ -835,7 +837,7 @@ object FormMain: TFormMain
               ParentShowHint = False
               ShowHint = True
               TabOrder = 0
-              OnChange = cbbLengthChange
+              OnChange = cbbGameLengthChange
               OnExit = lostFocusSave
               Items.Strings = (
                 'Short'
@@ -844,7 +846,7 @@ object FormMain: TFormMain
             end
           end
         end
-        object pnl6: TPanel
+        object pnlStartMiddle3: TPanel
           Left = 2
           Top = 214
           Width = 656
@@ -860,7 +862,7 @@ object FormMain: TFormMain
             AlignWithMargins = True
             Left = 6
             Top = 2
-            Width = 648
+            Width = 131
             Height = 17
             Margins.Left = 6
             Margins.Top = 2
@@ -870,18 +872,17 @@ object FormMain: TFormMain
             Caption = 'Additional parameters'
             Color = clBlack
             ParentColor = False
-            ExplicitWidth = 131
           end
-          object edtExtra: TEdit
+          object edtAddParam: TEdit
             AlignWithMargins = True
             Left = 6
             Top = 25
             Width = 648
             Height = 25
             Hint = 
-              'Specify here custom parameters that will be used to start the se' +
-              'rver.'#13#10'This is very useful if you want to start the server by de' +
-              'fault with a mod or a  game mode.'
+              'Specify custom parameters here that will be used to start the se' +
+              'rver.\nThis is very useful if you want to start the server with ' +
+              'a mod or game mode by default.'
             Margins.Left = 6
             Margins.Top = 2
             Margins.Right = 2
@@ -891,12 +892,12 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
-            OnChange = edtExtraChange
-            OnEnter = edtExtraEnter
+            OnChange = edtAddParamChange
+            OnEnter = edtAddParamEnter
             OnExit = lostFocusSave
           end
         end
-        object pnl10: TPanel
+        object pnlStartMiddle2: TPanel
           Left = 2
           Top = 143
           Width = 656
@@ -935,14 +936,14 @@ object FormMain: TFormMain
             Color = clBlack
             ParentColor = False
           end
-          object edtGmPass: TEdit
+          object edtGamePass: TEdit
             Left = 208
             Top = 30
             Width = 180
             Height = 25
             Hint = 
-              'The password that clients must enter to enter in the server.'#13#10'Le' +
-              'ave this field blank for no password.'
+              'The password clients must use to join the server.\nLeave this fi' +
+              'eld blank for no password.'
             Margins.Left = 2
             Margins.Top = 2
             Margins.Right = 2
@@ -950,7 +951,7 @@ object FormMain: TFormMain
             CustomHint = blhintHelp
             Color = clWhite
             TabOrder = 0
-            OnChange = edtGmPassChange
+            OnChange = edtGamePassChange
             OnExit = lostFocusSave
           end
           object cbbGameMode: TComboBox
@@ -959,9 +960,9 @@ object FormMain: TFormMain
             Width = 193
             Height = 25
             Hint = 
-              'Specifies the type of server game'#13#10'Endless: Endless waves mode'#13#10 +
-              'Survival: Standard and most played game mode'#13#10'VersusSurvival: Su' +
-              'rvival versus'#13#10'Weekly: Weekly mode, when available'#13#10'Custom: Use ' +
+              'Specifies the type of server game\nEndless: Endless waves mode\n' +
+              'Survival: Standard and most played game mode\nVersusSurvival: Su' +
+              'rvival versus\nWeekly: Weekly mode, when available\nCustom: Use ' +
               'command line to specify a mod'
             Margins.Left = 6
             Margins.Top = 0
@@ -989,13 +990,13 @@ object FormMain: TFormMain
     object tsMaps: TTabSheet
       Caption = 'Maps'
       ImageIndex = 8
-      object Image1: TImage
+      object imgMapsPlaceholder: TImage
         Left = 336
         Top = 296
         Width = 105
         Height = 105
       end
-      object pnl2: TPanel
+      object pnlTop: TPanel
         Left = 0
         Top = 0
         Width = 676
@@ -1007,7 +1008,7 @@ object FormMain: TFormMain
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        object lblSearch: TLabel
+        object lblFilter: TLabel
           AlignWithMargins = True
           Left = 2
           Top = 6
@@ -1022,7 +1023,7 @@ object FormMain: TFormMain
           Caption = 'Filter'
           ExplicitHeight = 17
         end
-        object lbl2: TLabel
+        object lblViewMode: TLabel
           AlignWithMargins = True
           Left = 428
           Top = 6
@@ -1037,7 +1038,7 @@ object FormMain: TFormMain
           Caption = 'View mode:'
           ExplicitHeight = 17
         end
-        object edtSearch: TEdit
+        object edtFilter: TEdit
           AlignWithMargins = True
           Left = 34
           Top = 2
@@ -1048,10 +1049,10 @@ object FormMain: TFormMain
           Margins.Right = 2
           Align = alLeft
           TabOrder = 0
-          OnChange = edtSearchChange
+          OnChange = edtFilterChange
           ExplicitHeight = 25
         end
-        object cbbListViewDisplayStyle: TJvComboBox
+        object cbbViewMode: TJvComboBox
           AlignWithMargins = True
           Left = 504
           Top = 3
@@ -1065,7 +1066,7 @@ object FormMain: TFormMain
           ShowHint = True
           TabOrder = 1
           Text = ''
-          OnChange = cbbListViewDisplayStyleChange
+          OnChange = cbbViewModeChange
           Items.Strings = (
             'Simple report List'
             'Thumbnail mode'
@@ -1179,6 +1180,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Mods'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvMods: TListView
         Left = 0
         Top = 0
@@ -1246,13 +1251,17 @@ object FormMain: TFormMain
         OnClick = lvClick
       end
     end
-    object tsUnknowed: TTabSheet
+    object tsUnknown: TTabSheet
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Unknown'
-      object lvUnknowed: TListView
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object lvUnknown: TListView
         Left = 0
         Top = 0
         Width = 676
@@ -1265,7 +1274,7 @@ object FormMain: TFormMain
         Columns = <
           item
             AutoSize = True
-            Caption = 'Item File'
+            Caption = 'Item'
           end
           item
             Alignment = taCenter
@@ -1331,7 +1340,7 @@ object FormMain: TFormMain
         OnCompare = lvCompare
       end
     end
-    object tsExtra: TTabSheet
+    object tsOptions: TTabSheet
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
@@ -1353,7 +1362,7 @@ object FormMain: TFormMain
         Color = clWhite
         ParentColor = False
         TabOrder = 0
-        object pnl7: TPanel
+        object pnlLeft: TPanel
           Left = 2
           Top = 19
           Width = 343
@@ -1361,7 +1370,7 @@ object FormMain: TFormMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          object lblDescWebPort: TLabel
+          object lblPort: TLabel
             Left = 24
             Top = 70
             Width = 64
@@ -1372,7 +1381,7 @@ object FormMain: TFormMain
             Margins.Bottom = 2
             Caption = 'Web Port:'
           end
-          object lblDescWebAdmin: TLabel
+          object lblWebInterface: TLabel
             Left = 24
             Top = 40
             Width = 76
@@ -1383,7 +1392,7 @@ object FormMain: TFormMain
             Margins.Bottom = 2
             Caption = 'Web Admin:'
           end
-          object lblWkspDownMan: TLabel
+          object lblDownloadManager: TLabel
             Left = 24
             Top = 10
             Width = 190
@@ -1394,7 +1403,7 @@ object FormMain: TFormMain
             Margins.Bottom = 2
             Caption = 'Workshop Download Manager:'
           end
-          object lblWebPass: TLabel
+          object lblAdminPass: TLabel
             Left = 24
             Top = 100
             Width = 106
@@ -1410,7 +1419,7 @@ object FormMain: TFormMain
             Top = 67
             Width = 89
             Height = 25
-            Hint = 'The default port to access the web admin, by default port 8080'
+            Hint = 'The port to access the web admin, by default the port is 8080'
             CustomHint = blhintHelp
             ParentShowHint = False
             ShowHint = True
@@ -1418,27 +1427,27 @@ object FormMain: TFormMain
             Text = ''
             OnExit = edtPortExit
           end
-          object cbStatusWeb: TJvComboBox
+          object cbbWebInterface: TJvComboBox
             Left = 105
             Top = 36
             Width = 101
             Height = 25
             Hint = 
-              'If enabled you can manage the additional server settings for a w' +
-              'eb page or'#13#10'through the tool itself as soon as the server comes ' +
-              'online.'
+              'If enabled you can manage additional server settings for a web p' +
+              'age or\nthrough the tool itself as soon as the server comes onli' +
+              'ne.'
             CustomHint = blhintHelp
             Style = csDropDownList
             ParentShowHint = False
             ShowHint = True
             TabOrder = 1
             Text = ''
-            OnChange = cbStatusWebChange
+            OnChange = cbbWebInterfaceChange
             Items.Strings = (
               'Disabled'
               'Enabled')
           end
-          object cbWorkshopDMStatus: TJvComboBox
+          object cbbDownloadManager: TJvComboBox
             Left = 219
             Top = 7
             Width = 89
@@ -1453,44 +1462,44 @@ object FormMain: TFormMain
             ShowHint = True
             TabOrder = 0
             Text = ''
-            OnChange = cbWorkshopDMStatusChange
+            OnChange = cbbDownloadManagerChange
             Items.Strings = (
               'Disabled'
               'Enabled')
           end
-          object edtWebPass: TJvEdit
+          object edtAdminPass: TJvEdit
             Left = 135
             Top = 98
             Width = 138
             Height = 25
-            Hint = 'Specify a password that will be used to login to webadmin'
+            Hint = 'Specify a password that will be used to log in to webadmin'
             CustomHint = blhintHelp
             ParentShowHint = False
             ShowHint = True
             TabOrder = 3
             Text = ''
-            OnExit = edtWebPassExit
+            OnExit = edtAdminPassExit
           end
-          object chkAutoLoginAdmin: TCheckBox
+          object chkAdminAutoLogin: TCheckBox
             Left = 24
             Top = 129
             Width = 429
             Height = 24
             Hint = 
               'Enabling this option will cause WebAdmin to automatically log in' +
-              ' using the Admin'#39's username and the specified password. '#13#10'This o' +
-              'ption only takes effect if the * Auto connect to webadmin * is e' +
-              'nabled on the server profile tab.'
+              ' using the Admin username and the specified password. \nThis opt' +
+              'ion only takes effect if the * Auto connect to webadmin * is ena' +
+              'bled on the server profile tab.'
             CustomHint = blhintHelp
             Align = alCustom
-            Caption = 'Auto web admin login using specified pass'
+            Caption = 'Auto login web admin using specified pass'
             ParentShowHint = False
             ShowHint = True
             TabOrder = 4
-            OnClick = chkAutoLoginAdminClick
+            OnClick = chkAdminAutoLoginClick
           end
         end
-        object Panel1: TPanel
+        object pnlRight: TPanel
           Left = 345
           Top = 19
           Width = 293
@@ -1538,28 +1547,28 @@ object FormMain: TFormMain
             Text = ''
             OnExit = edtRedirectURLExit
           end
-          object cbbRedirectEnabled: TJvComboBox
+          object cbbCustomRedirect: TJvComboBox
             Left = 113
             Top = 7
             Width = 88
             Height = 25
             Hint = 
-              'Enable this option to setup a custom URL for redirect clients to' +
-              ' download items from the specified Redirect URL '
+              'Enable this option to set up a custom URL clients will be redire' +
+              'cted to when downloading items from the server '
             CustomHint = blhintHelp
             Style = csDropDownList
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
             Text = ''
-            OnCloseUp = cbbRedirectEnabledCloseUp
+            OnCloseUp = cbbCustomRedirectCloseUp
             Items.Strings = (
               'Disabled'
               'Enabled')
           end
         end
       end
-      object grpapplication: TGroupBox
+      object grpApplication: TGroupBox
         AlignWithMargins = True
         Left = 8
         Top = 334
@@ -1637,24 +1646,24 @@ object FormMain: TFormMain
           Text = ''
           OnChange = cbbLanguageChange
         end
-        object chkOnlyFromConfigItems: TCheckBox
+        object chkOnlyItemsFromConfig: TCheckBox
           Left = 26
           Top = 89
           Width = 429
           Height = 28
           Hint = 
             'Enable this option to only see items that are in PCServer-KFGame' +
-            ' and PCServer-KFEngine.'#13#10'Cache and local maps folder will be ign' +
-            'ored.'#13#10'This is useful when you have multiple servers with multip' +
-            'le settings'#13#10' and you dont wanna see maps from another server in' +
-            'to the tool.'
+            ' and PCServer-KFEngine.\nCache and local maps folder will be ign' +
+            'ored.\nThis is useful when you have multiple servers with multip' +
+            'le settings\n and you dont want to see maps from another server ' +
+            'in the tool.'
           CustomHint = blhintHelp
           Align = alCustom
-          Caption = 'Only display items that are into the current configuration file'
+          Caption = 'Only display items that are in the current configuration file'
           ParentShowHint = False
           ShowHint = True
           TabOrder = 2
-          OnClick = chkOnlyFromConfigItemsClick
+          OnClick = chkOnlyItemsFromConfigClick
         end
         object cbbTheme: TJvComboBox
           Left = 402
@@ -1667,13 +1676,13 @@ object FormMain: TFormMain
           Text = ''
           OnChange = cbbThemeChange
         end
-        object chkAutoCheckForUpdates: TCheckBox
+        object chkAutoUpdates: TCheckBox
           Left = 350
           Top = 55
           Width = 287
           Height = 28
           Hint = 
-            'Automatically check if updates are available for'#13#10'the tool in th' +
+            'Automatically check if updates are available for\nthe tool in th' +
             'e official KF2ServerTool repository.'
           CustomHint = blhintHelp
           Align = alCustom
@@ -1681,10 +1690,10 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 4
-          OnClick = chkAutoCheckForUpdatesClick
+          OnClick = chkAutoUpdatesClick
         end
       end
-      object grpmaintenance: TGroupBox
+      object grpMaintenance: TGroupBox
         AlignWithMargins = True
         Left = 8
         Top = 195
@@ -1722,7 +1731,7 @@ object FormMain: TFormMain
           Margins.Bottom = 2
           Caption = 'Workshop'
         end
-        object lblVerifyServInt: TLabel
+        object lblServerVerify: TLabel
           Left = 221
           Top = 24
           Width = 130
@@ -1733,7 +1742,7 @@ object FormMain: TFormMain
           Margins.Bottom = 2
           Caption = 'Verify server integrity'
         end
-        object btnCheckForUpdate: TButton
+        object btnUpdateCurrent: TButton
           Left = 19
           Top = 46
           Width = 175
@@ -1746,7 +1755,7 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
-          OnClick = btnCheckForUpdateClick
+          OnClick = btnUpdateCurrentClick
         end
         object btnCleanDownloadCache: TButton
           Left = 421
@@ -1761,7 +1770,7 @@ object FormMain: TFormMain
           TabOrder = 4
           OnClick = btnCleanDownloadCacheClick
         end
-        object btnCheckForPreview: TButton
+        object btnUpdateBeta: TButton
           Left = 19
           Top = 77
           Width = 175
@@ -1772,7 +1781,7 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
-          OnClick = btnCheckForUpdateClick
+          OnClick = btnUpdateCurrentClick
         end
         object btnCleanWorkshopData: TButton
           Left = 421
@@ -1781,7 +1790,7 @@ object FormMain: TFormMain
           Height = 25
           Hint = 
             'This will clean workshop data (Binaries\Win64\steamapps\workshop' +
-            '\content\232090)'#13#10'This is helpful to force update in all maps an' +
+            '\content\232090)\nThis is helpful to force update in all maps an' +
             'd auto repair some broken items.'
           CustomHint = blhintHelp
           Caption = 'Clean workshop data '
@@ -1790,7 +1799,7 @@ object FormMain: TFormMain
           TabOrder = 5
           OnClick = btnCleanWorkshopDataClick
         end
-        object btnSvIntegrityCurrent: TButton
+        object btnVerifyCurrent: TButton
           Left = 221
           Top = 46
           Width = 175
@@ -1801,9 +1810,9 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 2
-          OnClick = btnCheckForUpdateClick
+          OnClick = btnUpdateCurrentClick
         end
-        object btnSvIntegrityBeta: TButton
+        object btnVerifyBeta: TButton
           Left = 221
           Top = 77
           Width = 175
@@ -1814,21 +1823,25 @@ object FormMain: TFormMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 3
-          OnClick = btnCheckForUpdateClick
+          OnClick = btnUpdateCurrentClick
         end
       end
     end
-    object tswebadmin: TTabSheet
+    object tsWebAdmin: TTabSheet
       Caption = 'WebAdmin'
       ImageIndex = 6
-      object wb1: TWebBrowser
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object wbWebAdmin: TWebBrowser
         Left = 0
         Top = 0
         Width = 676
         Height = 509
         Align = alClient
         TabOrder = 0
-        OnDocumentComplete = wb1DocumentComplete
+        OnDocumentComplete = wbWebAdminDocumentComplete
         ExplicitWidth = 661
         ExplicitHeight = 439
         ControlData = {
@@ -1842,11 +1855,15 @@ object FormMain: TFormMain
     object tsNotes: TTabSheet
       Caption = 'Notes'
       ImageIndex = 5
-      object lbl1: TLabel
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object lblNotepad: TLabel
         AlignWithMargins = True
         Left = 8
         Top = 8
-        Width = 666
+        Width = 52
         Height = 17
         Margins.Left = 8
         Margins.Top = 8
@@ -1854,13 +1871,12 @@ object FormMain: TFormMain
         Margins.Bottom = 0
         Align = alTop
         Caption = 'Notepad'
-        ExplicitWidth = 52
       end
-      object lblAllChangesWillbe: TLabel
+      object lblAutosaveChanges: TLabel
         AlignWithMargins = True
-        Left = 3
+        Left = 430
         Top = 492
-        Width = 664
+        Width = 237
         Height = 14
         Margins.Right = 9
         Align = alBottom
@@ -1873,8 +1889,6 @@ object FormMain: TFormMain
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitLeft = 430
-        ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
         AlignWithMargins = True
@@ -1895,6 +1909,10 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object btnGenerateCurrentStrings: TButton
         Left = 24
         Top = 40
@@ -1920,7 +1938,7 @@ object FormMain: TFormMain
     Left = 480
     Top = 16
     object Removeall1: TMenuItem
-      Caption = 'Remove full item'
+      Caption = 'Fully remove item'
       OnClick = Removeall1Click
     end
     object RemoveGameSteamCache1: TMenuItem
@@ -1935,9 +1953,9 @@ object FormMain: TFormMain
       Caption = 'Map cycle'
       OnClick = RemovefromCycle1Click
     end
-    object RemoveServerSubcribe1: TMenuItem
-      Caption = 'Workshop Subcription'
-      OnClick = RemoveServerSubcribe1Click
+    object RemoveServerSubscription1: TMenuItem
+      Caption = 'Workshop Subscription'
+      OnClick = RemoveServerSubscription1Click
     end
   end
   object ilSmallIcons: TImageList
@@ -1945,7 +1963,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800780010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2223,11 +2241,11 @@ object FormMain: TFormMain
     object add1: TMenuItem
       Caption = 'Add'
       object Browserworkshop1: TMenuItem
-        Caption = 'From workshop browser'
+        Caption = 'From Workshop browser'
         OnClick = AddWorkshopClick
       end
       object AddbyID1: TMenuItem
-        Caption = 'From workshop by ID or URL'
+        Caption = 'From Workshop by ID or URL'
         OnClick = AddWorkshopClick
       end
       object Redirect1: TMenuItem
@@ -2260,9 +2278,9 @@ object FormMain: TFormMain
         Caption = 'Map Cycle'
         OnClick = RemovefromCycle1Click
       end
-      object Subcribe1: TMenuItem
-        Caption = 'Workshop Subcription'
-        OnClick = RemoveServerSubcribe1Click
+      object Subscribe1: TMenuItem
+        Caption = 'Workshop Subscription'
+        OnClick = RemoveServerSubscription1Click
       end
     end
     object N1: TMenuItem
@@ -2285,11 +2303,11 @@ object FormMain: TFormMain
       Caption = '-'
     end
     object mniShowitempage1: TMenuItem
-      Caption = 'Browser item page'
+      Caption = 'Browse item page'
       OnClick = mniShowitempage1Click
     end
     object Explorerlocalfolder1: TMenuItem
-      Caption = 'Browser item folder'
+      Caption = 'Browse item folder'
       OnClick = Explorerlocalfolder1Click
     end
     object mniCopyID1: TMenuItem
@@ -2314,8 +2332,8 @@ object FormMain: TFormMain
     object AddWorkshopMap: TMenuItem
       Caption = 'From Workshop Browser'
       Hint = 
-        'Will open a workshop webbrowser that you can search a map or mod' +
-        ' to add'
+        'Will open a workshop webbrowser that you can use to add maps or ' +
+        'mods'
       OnClick = AddWorkshopClick
     end
     object AddWorkshopIDorURL: TMenuItem
@@ -2355,7 +2373,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C010102000800C400DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008000400DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

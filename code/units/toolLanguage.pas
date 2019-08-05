@@ -3,7 +3,9 @@ unit toolLanguage;
 interface
 
 uses
-  Classes, SysUtils, System.StrUtils, MiscFunc;
+  Classes,
+  SysUtils,
+  System.StrUtils;
 
 type
 
@@ -26,7 +28,7 @@ type
     srcFile: TStringList;
     missingStrings: TStringList;
     workingPath: string;
-    appLaguages: TKFLanguages;
+    appLanguages: TKFLanguages;
     function indexOfLanguageByInitial(initial: String): Integer;
     function indexOfLanguageByName(name: String): Integer;
 
@@ -50,6 +52,9 @@ procedure KFL_GetHeaderSetting(src: String; var text1: string;
 
 implementation
 
+uses
+  MiscFunc;
+
 { TKFTranslation }
 
 constructor TKFTranslation.Create(workingDir: String);
@@ -65,12 +70,12 @@ var
 begin
   FreeAndNil(srcFile);
   FreeAndNil(missingStrings);
-  for i := 0 to High(appLaguages) do
-    if Assigned(appLaguages[i]) then
+  for i := 0 to High(appLanguages) do
+    if Assigned(appLanguages[i]) then
     begin
-      FreeAndNil(appLaguages[i]);
+      FreeAndNil(appLanguages[i]);
     end;
-  SetLength(appLaguages, 0);
+  SetLength(appLanguages, 0);
 
   inherited;
 end;
@@ -87,7 +92,7 @@ var
 begin
   lgIndex := indexOfLanguageByInitial(initial);
   if lgIndex <> -1 then
-    Result := appLaguages[lgIndex]
+    Result := appLanguages[lgIndex]
   else
     raise Exception.Create('Failed to set language. Language with initial "' +
       initial + '" not found.');
@@ -99,7 +104,7 @@ var
 begin
   lgIndex := indexOfLanguageByName(name);
   if lgIndex <> -1 then
-    Result := appLaguages[lgIndex]
+    Result := appLanguages[lgIndex]
   else
     raise Exception.Create('Failed to get language. Language with name "' + name
       + '" not found.');
@@ -107,7 +112,7 @@ end;
 
 function TKFTranslation.getLanguages: TKFLanguages;
 begin
-  Result := appLaguages;
+  Result := appLanguages;
 end;
 
 function TKFTranslation.indexOfLanguageByName(name: String): Integer;
@@ -115,8 +120,8 @@ var
   i: Integer;
 begin
   Result := -1;
-  for i := 0 to High(appLaguages) do
-    if appLaguages[i].name = name then
+  for i := 0 to High(appLanguages) do
+    if appLanguages[i].name = name then
       Result := i;
 end;
 
@@ -125,8 +130,8 @@ var
   i: Integer;
 begin
   Result := -1;
-  for i := 0 to High(appLaguages) do
-    if appLaguages[i].initial = initial then
+  for i := 0 to High(appLanguages) do
+    if appLanguages[i].initial = initial then
       Result := i;
 end;
 
@@ -160,7 +165,7 @@ begin
           aLanguage := TKFCustomLanguage.Create;
           aLanguage.name := LName;
           aLanguage.initial := LInitial;
-          SetLength(appLaguages, length(appLaguages) + 1);
+          SetLength(appLanguages, length(appLanguages) + 1);
           for y := i + 1 to srcFile.Count - 1 do
           begin
             tlLine := srcFile.Strings[y];
@@ -175,7 +180,7 @@ begin
               break
             end;
           end;
-          appLaguages[High(appLaguages)] := aLanguage;
+          appLanguages[High(appLanguages)] := aLanguage;
         end;
       end;
       i := i + 1;
@@ -183,8 +188,8 @@ begin
   end
   else
   begin
-    raise Exception.Create('Failed to open localization file '+ filename + '.'+
-      #10#13 + 'Download the files again and put the ' + filename +
+    raise Exception.Create('Failed to open localization file ' + filename + '.'
+      + #10#13 + 'Download the files again and put the ' + filename +
       ' in the same folder of the tool executable');
   end;
 end;
@@ -196,7 +201,7 @@ var
 begin
   lgIndex := indexOfLanguageByInitial(initial);
   if lgIndex <> -1 then
-    currentLanguage := appLaguages[lgIndex]
+    currentLanguage := appLanguages[lgIndex]
   else
     raise Exception.Create('Failed to set language. Language with initial "' +
       initial + '" not found.');
@@ -213,9 +218,10 @@ begin
     srcKey := StringReplace(StringReplace(text, #10, '', [rfReplaceAll]), #13,
       '\n', [rfReplaceAll]);
     srcKey := '"' + srcKey + '"';
-        if Assigned(currentLanguage) then
 
-    Result := currentLanguage.tlsource.Values[srcKey];
+    if Assigned(currentLanguage) then
+      Result := currentLanguage.tlsource.Values[srcKey];
+
     Result := StringReplace(Result, '"', '', [rfReplaceAll]);
     Result := StringReplace(Result, '\n', #10 + #13, [rfReplaceAll]);
     if Result = '' then

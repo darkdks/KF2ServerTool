@@ -3,14 +3,16 @@ unit KFTypes;
 interface
 
 uses
-  SysUtils, MiscFunc, Classes, IOutils;
+  SysUtils,
+  MiscFunc,
+  Classes,
+  IOutils;
 
 type
 
-  TKFSource = (KFSteamWorkshop, KFOfficial, KFRedirectOrLocal,
-    KFUnknowedSource);
+  TKFSource = (KFSteamWorkshop, KFOfficial, KFRedirectOrLocal, KFUnknownSource);
   TKFAppLanguage = (KFL_ENGLISH, KFL_PORTUGUESE);
-  TKFItemType = (KFMap, KFmod, KFUnknowed);
+  TKFItemType = (KFMap, KFmod, KFUnknown);
   TKFRedirectItemType = (KFRmod, KFRmap, KFRAny);
   TKFCycleSort = (KFCSortByName, KFCSortByType, KFCKeepSame);
 function IsOfficialMap(mapName: String): Boolean;
@@ -28,8 +30,6 @@ const
     ('KF-Prison.kfm', '16'), ('KF-TheDescent.kfm', '17'), ('KF-TragicKingdom.kfm',
     '18'), ('KF-VolterManor.kfm', '19'), ('KF-ZedLanding.kfm', '20'), ('KF-Lockdown.kfm', '21'), ('KF-MonsterBall.kfm', '22'));
   }
-  ARRAYTEST: array [0 .. 2, 0 .. 1] of string = (('teste', '0'),
-    ('teste1', '1'), ('teste2', '2'));
   KF_IGNOREDBREWEDPCFILES: array [0 .. 44] of string = ('AkAudio.u',
     'AkResources.upk', 'BaseAI.u', 'Core.u', 'EditorLandscapeResources.upk',
     'EditorMaterials.upk', 'EditorMeshes.upk', 'EditorResources.upk',
@@ -46,7 +46,7 @@ const
     'RefShaderCache-PC-D3D-SM5.upk', 'SubstanceAir.u', 'SubstanceAirEd.u',
     'UnrealEd.u', 'WebAdmin.u', 'WinDrv.u');
   // KF2 File types prefix
-  KF_IGNOREMAPSENTRYS: array [1 .. 2] of string = ('KF-DebugItem',
+  KF_IGNOREMAPSENTRIES: array [1 .. 2] of string = ('KF-DebugItem',
     'KF-Default');
   KF_MAPPREFIX = '.KFM';
   KF_MODPREFIX: array [0 .. 3] of string = ('.U', '.UPX', '.UC', '.UPK');
@@ -61,6 +61,7 @@ const
   STEAMAPPCACHEFOLDER = 'Binaries/Win64';
   SERVERCACHEFOLDER = 'KFGame/Cache/';
   WORKSHOPSUBITEM = 'steamapps/workshop/content/232090';
+  IMGCACHEFOLDER = 'imgs/';
   IMGWEBFOLDER = 'KFGame/Web/images/maps/';
 {$ELSE}
   WKP_ACFFILEFOLDER = 'Binaries\Win64\steamapps\workshop\';

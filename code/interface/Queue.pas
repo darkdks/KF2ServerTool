@@ -3,13 +3,26 @@ unit Queue;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, JvExControls, JvSpeedButton, ExtCtrls, ComCtrls, Menus, AddItem;
+  Windows,
+  Messages,
+  SysUtils,
+  Variants,
+  Classes,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  JvExControls,
+  JvSpeedButton,
+  ExtCtrls,
+  ComCtrls,
+  Menus,
+  AddItem;
 
 type
   TfrmQueue = class(TForm)
     lvQueue: TListView;
-    pnl1: TPanel;
+    pnlBottom: TPanel;
     btnRemove: TJvSpeedButton;
     btnAddNew: TJvSpeedButton;
     btnProced: TJvSpeedButton;
@@ -56,7 +69,8 @@ var
 begin
   frmAdd := TFormAdd.Create(Self);
   try
-    if InputQuery(FormMain._s('Add Workshop item'), FormMain._s('Workshop ID or URL:'), inputText) then
+    if InputQuery(FormMain._s('Add Workshop item'),
+      FormMain._s('Workshop ID or URL:'), inputText) then
     begin
       if Length(inputText) <= 11 then
       begin
@@ -69,7 +83,7 @@ begin
 
       if Length(itemID) > 4 then
       begin
-        frmAdd.edtID.Text := itemID;
+        frmAdd.edtWorkshopID.Text := itemID;
         frmAdd.SetAddType(addType);
 
         mdResult := frmAdd.ShowModal;
@@ -93,8 +107,8 @@ begin
 
           Item.SubItems.Add(BoolToWord(frmAdd.downloadNow));
 
-            Item.SubItems.Add(FormMain._s('Pending'));
-            btnProced.Enabled := True;
+          Item.SubItems.Add(FormMain._s('Pending'));
+          btnProced.Enabled := True;
         end;
       end
       else
@@ -113,18 +127,18 @@ procedure TfrmQueue.btnProcedClick(Sender: TObject);
 var
   ItemName: string;
   itemID: string;
-   i: Integer;
+  i: Integer;
   addWkspRedirect, downloadNow, addMapCycle, addMapENtry: Boolean;
 begin
 
   if lvQueue.Items.Count < 0 then
   begin
-    ShowMessage(formMain._s('You need add some items to install'));
+    ShowMessage(FormMain._s('You need to add some items to install'));
     Exit;
   end
   else
   begin
-     btnProced.Enabled := false;
+    btnProced.Enabled := False;
     try
 
       for i := 0 to lvQueue.Items.Count - 1 do
@@ -137,25 +151,26 @@ begin
         addMapCycle := UpperCase(lvQueue.Items[i].SubItems[2]) = 'TRUE';
         downloadNow := UpperCase(lvQueue.Items[i].SubItems[3]) = 'TRUE';
 
-        lvQueue.Items[i].SubItems[4] := formMain._s('Working');
+        lvQueue.Items[i].SubItems[4] := FormMain._s('Working');
         try
           if FormMain.serverTool.InstallWorkshopItem(itemID, ItemName,
-            addWkspRedirect, downloadNow, downloadNow{dlImg}, addMapCycle, addMapENtry) then
+            addWkspRedirect, downloadNow, downloadNow { dlImg } , addMapCycle,
+            addMapENtry) then
           begin
 
-            lvQueue.Items[i].SubItems[4] := formMain._s('Sucess');
+            lvQueue.Items[i].SubItems[4] := FormMain._s('Success');
           end
           else
           begin
-            lvQueue.Items[i].SubItems[4] := formMain._s('Failed');
+            lvQueue.Items[i].SubItems[4] := FormMain._s('Failed');
           end;
         except
-          lvQueue.Items[i].SubItems[4] := formMain._s('Failed');
+          lvQueue.Items[i].SubItems[4] := FormMain._s('Failed');
 
         end;
 
       end;
-      ShowMessage(formMain._s('All items finished'));
+      ShowMessage(FormMain._s('All items finished'));
     except
       on E: Exception do
         ShowMessage(E.Message);
@@ -171,7 +186,7 @@ begin
 
   if lvQueue.Selected = nil then
   begin
-    ShowMessage(FormMain._s('Select na item first.'));
+    ShowMessage(FormMain._s('Select an item first.'));
     Exit;
   end
   else
@@ -193,15 +208,15 @@ begin
   btnRemove.Enabled := False;
   btnProced.Enabled := False;
 
-    btnRemove.Caption := FormMain._s(btnRemove.Caption);
-    btnAddNew.Caption := FormMain._s(btnAddNew.Caption);
-    btnProced.Caption := FormMain._s(btnProced.Caption);
-    lvQueue.Columns[1].Caption := FormMain._s(lvQueue.Columns[1].Caption);
-    lvQueue.Columns[2].Caption := FormMain._s(lvQueue.Columns[2].Caption);
-    lvQueue.Columns[3].Caption := FormMain._s(lvQueue.Columns[3].Caption);
-    lvQueue.Columns[4].Caption := FormMain._s(lvQueue.Columns[4].Caption);
-    MenuItem1.Caption := FormMain._s(MenuItem1.Caption);
-    MenuItem2.Caption := FormMain._s(MenuItem2.Caption);
+  btnRemove.Caption := FormMain._s(btnRemove.Caption);
+  btnAddNew.Caption := FormMain._s(btnAddNew.Caption);
+  btnProced.Caption := FormMain._s(btnProced.Caption);
+  lvQueue.Columns[1].Caption := FormMain._s(lvQueue.Columns[1].Caption);
+  lvQueue.Columns[2].Caption := FormMain._s(lvQueue.Columns[2].Caption);
+  lvQueue.Columns[3].Caption := FormMain._s(lvQueue.Columns[3].Caption);
+  lvQueue.Columns[4].Caption := FormMain._s(lvQueue.Columns[4].Caption);
+  MenuItem1.Caption := FormMain._s(MenuItem1.Caption);
+  MenuItem2.Caption := FormMain._s(MenuItem2.Caption);
 
 end;
 
@@ -264,7 +279,8 @@ var
 
 begin
 
-  if InputQuery(FormMain._s('Find an item in workshop'), FormMain._s('Search for'), textToFind) then
+  if InputQuery(FormMain._s('Find an item in the workshop'),
+    FormMain._s('Search for'), textToFind) then
   begin
 
     frmWksp := TFormWorkshop.Create(Self);
@@ -304,7 +320,7 @@ begin
       begin
         frmAdd.SetAddType(TKFItemType.WorkshopMap);
       end;
-      frmAdd.edtID.Text := itemID;
+      frmAdd.edtWorkshopID.Text := itemID;
       mdResult := frmAdd.ShowModal;
       if mdResult = mrOk then
       begin
@@ -322,11 +338,11 @@ begin
           Item.SubItems.Add(BoolToWord(frmAdd.addMapCycle));
         end;
         Item.SubItems.Add(BoolToWord(frmAdd.downloadNow));
-          Item.SubItems.Add(FormMain._s('Pending'));
-          Application.MessageBox(formMain._p('Sucess, item added to queue.'), formMain._p('Sucess') ,
-            MB_OK + MB_ICONINFORMATION);
+        Item.SubItems.Add(FormMain._s('Pending'));
+        Application.MessageBox(FormMain._p('Success, item added to queue.'),
+          FormMain._p('Success'), MB_OK + MB_ICONINFORMATION);
 
-         btnProced.Enabled := True;
+        btnProced.Enabled := True;
       end;
 
     finally

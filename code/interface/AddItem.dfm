@@ -25,7 +25,7 @@ object FormAdd: TFormAdd
     Height = 65
     Align = alTop
     TabOrder = 0
-    object jvlbl1: TLabel
+    object lblWorkshopID: TLabel
       Left = 17
       Top = 8
       Width = 80
@@ -42,7 +42,7 @@ object FormAdd: TFormAdd
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object edtID: TJvEdit
+    object edtWorkshopID: TJvEdit
       Left = 17
       Top = 26
       Width = 128
@@ -59,11 +59,11 @@ object FormAdd: TFormAdd
       ParentFont = False
       TabOrder = 0
       Text = ''
-      OnChange = edtIDChange
-      OnExit = edtIDExit
+      OnChange = edtWorkshopIDChange
+      OnExit = edtWorkshopIDExit
     end
   end
-  object pnlClient: TPanel
+  object pnlOptions: TPanel
     Left = 0
     Top = 209
     Width = 318
@@ -74,11 +74,11 @@ object FormAdd: TFormAdd
     Margins.Bottom = 2
     Align = alClient
     TabOrder = 1
-    object jvlbl2: TLabel
+    object lblOptions: TLabel
       AlignWithMargins = True
       Left = 17
       Top = 5
-      Width = 298
+      Width = 48
       Height = 14
       Margins.Left = 16
       Margins.Top = 4
@@ -92,7 +92,6 @@ object FormAdd: TFormAdd
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitWidth = 48
     end
     object chkDoForAll: TCheckBox
       AlignWithMargins = True
@@ -169,7 +168,7 @@ object FormAdd: TFormAdd
       Margins.Right = 2
       Margins.Bottom = 0
       Align = alTop
-      Caption = 'Subcribe the server'
+      Caption = 'Subscribe with server'
       TabOrder = 4
     end
   end
@@ -212,14 +211,14 @@ object FormAdd: TFormAdd
       OnClick = btnOkClick
     end
   end
-  object pnl3: TPanel
+  object pnlItemName: TPanel
     Left = 0
     Top = 128
     Width = 318
     Height = 81
     Align = alTop
     TabOrder = 3
-    object lblPn3: TLabel
+    object lblItemName: TLabel
       Left = 18
       Top = 8
       Width = 82
@@ -263,7 +262,7 @@ object FormAdd: TFormAdd
       ReadOnly = True
       TabOrder = 0
       Text = ''
-      OnExit = edtIDExit
+      OnExit = edtWorkshopIDExit
     end
     object btnFindMapRedirectNames: TButton
       Left = 270
@@ -282,7 +281,7 @@ object FormAdd: TFormAdd
     Height = 63
     Align = alTop
     TabOrder = 4
-    object jvlbl4: TLabel
+    object lblRedirectURL: TLabel
       Left = 18
       Top = 8
       Width = 79
@@ -316,7 +315,7 @@ object FormAdd: TFormAdd
       ParentFont = False
       TabOrder = 0
       Text = ''
-      OnExit = edtIDExit
+      OnExit = edtWorkshopIDExit
     end
   end
 end

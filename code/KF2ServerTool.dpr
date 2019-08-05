@@ -2,18 +2,19 @@ program KF2ServerTool;
 
 uses
   Forms,
-  Main in 'interface\Main.pas' {FormMain},
-  AddItem in 'interface\AddItem.pas' {FormAdd},
-  Workshop in 'interface\Workshop.pas' {FormWorkshop},
+  Main in 'interface\Main.pas' {FormMain} ,
+  AddItem in 'interface\AddItem.pas' {FormAdd} ,
+  Workshop in 'interface\Workshop.pas' {FormWorkshop} ,
   KFFile in 'units\KFFile.pas',
   KFRedirect in 'units\KFRedirect.pas',
   MiscFunc in 'units\MiscFunc.pas',
   KFServerTool in 'units\KFServerTool.pas',
-  ItemProgress in 'interface\ItemProgress.pas' {formPB},
-  frmDnt in 'interface\frmDnt.pas' {frmDonate},
-  PathDialog in 'interface\PathDialog.pas' {kfPathDialog},
-  Queue in 'interface\Queue.pas' {frmQueue},
-  uRedirectItemsDialog in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog},
+  ItemProgress in 'interface\ItemProgress.pas' {formPB} ,
+  frmDnt in 'interface\frmDnt.pas' {frmDonate} ,
+  PathDialog in 'interface\PathDialog.pas' {kfPathDialog} ,
+  Queue in 'interface\Queue.pas' {frmQueue} ,
+  uRedirectItemsDialog
+    in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog} ,
   KFWksp in 'units\KFWksp.pas',
   Vcl.Themes,
   Vcl.Styles,
@@ -29,7 +30,7 @@ uses
 
 const
   UPDATEPARAM = '-installupdate';
-  LOCALIZATIONFILE ='KF2ServerTool.lc';
+  LOCALIZATIONFILE = 'KF2ServerTool.lc';
 {$R *.res}
 {$R 'Manifest.res' 'Manifest.rc'}
 
@@ -38,7 +39,7 @@ var
   ExeName: String;
   exePath: String;
   fSource: TStringList;
- // i: Integer;
+  // i: Integer;
   upd: TGitAutoUpdate;
 begin
   Result := False;
@@ -68,15 +69,18 @@ begin
             Sleep(500);
 
             fSource.Add(exePath);
-            fSource.Add(ExtractFilePath(exePath) + LOCALIZATIONFILE);  //Delete old localization file
+            fSource.Add(ExtractFilePath(exePath) + LOCALIZATIONFILE);
+            // Delete old localization file
             FileOperation(fSource, '', 3); // deleteOldExe
             Sleep(100);
             fSource.Clear;
             fSource.Add(Application.ExeName);
             FileOperation(fSource, exePath, 2); // copyNewExe
             fSource.Clear;
-            fSource.Add( ExtractFilePath(Application.ExeName)+LOCALIZATIONFILE);
-            FileOperation(fSource,ExtractFilePath(exePath) +LOCALIZATIONFILE, 2); // copyLocalizationFile
+            fSource.Add(ExtractFilePath(Application.ExeName) +
+              LOCALIZATIONFILE);
+            FileOperation(fSource, ExtractFilePath(exePath) + LOCALIZATIONFILE,
+              2); // copyLocalizationFile
             Sleep(100);
             ExecuteFile(0, exePath, '', 1);
             Result := True;
@@ -86,7 +90,7 @@ begin
         end;
       except
         on E: Exception do
-          ShowMessage('Falied to install Update : ' + E.Message);
+          ShowMessage('Failed to install Update : ' + E.Message);
       end;
     end;
 
@@ -107,7 +111,7 @@ end;
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  {$IFDEF DEBUG}
+{$IFDEF DEBUG}
   ReportMemoryLeaksOnShutdown := True;
 {$ENDIF}
   Application.Title := 'KF2 Server Tool';

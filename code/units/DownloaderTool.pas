@@ -3,22 +3,17 @@ unit DownloaderTool;
 interface
 
 uses
-  classes,
-
+  Classes,
   System.Net.URLClient,
-
 {$IFDEF MSWINDOWS}
   System.Net.HttpClientComponent,
   System.Net.HttpClient,
-
-{$ENDIF}
+{$ENDIF MSWINDOWS}
   System.SysUtils;
 
 type
-
   TDownloadManager = class(TObject)
   private
-
     FileDSize: Int64;
     FileDPostion: Int64;
 
@@ -42,8 +37,9 @@ type
       AContentLength, AReadCount: Int64; var Abort: Boolean);
     procedure HTTPClientRequestCompleted(const Sender: TObject;
       const AResponse: IHTTPResponse);
-{$ENDIF}
-      var
+{$ENDIF MSWINDOWS}
+
+  var
     DLSize: Int64;
     DLPostion: Int64;
   public
@@ -69,13 +65,14 @@ begin
 
   inherited;
 end;
+
 {$IFDEF MSWINDOWS}
 
 procedure TDownloaderTool.HTTPClientReceiveData(const Sender: TObject;
   AContentLength, AReadCount: Int64; var Abort: Boolean);
 begin
-DLSize := AContentLength;
-DLPostion := AReadCount;
+  DLSize := AContentLength;
+  DLPostion := AReadCount;
   if Assigned(downloadManager) then
   begin
     if Assigned(downloadManager.FileDAbort) then
@@ -95,16 +92,17 @@ end;
 procedure TDownloaderTool.HTTPClientRequestCompleted(const Sender: TObject;
   const AResponse: IHTTPResponse);
 begin
-  if Assigned(downloadManager) then begin
-  if Assigned(downloadManager.OnFinished) then
-    downloadManager.OnFinished();
+  if Assigned(downloadManager) then
+  begin
+    if Assigned(downloadManager.OnFinished) then
+      downloadManager.OnFinished();
   end;
 end;
-
-{$ENDIF}
+{$ENDIF MSWINDOWS}
 
 function TDownloaderTool.downloadFile(URL: String; Destination: string;
   var dlManager: TDownloadManager): Boolean;
+
 {$IFDEF MSWINDOWS}
 var
   httpRq: TNetHTTPClient;
@@ -132,10 +130,10 @@ begin
       end
       else
       begin
-        Result := False;
+        Result := false;
       end;
     except
-      Result := False;
+      Result := false;
     end;
   finally
     FreeAndNil(Stream);
@@ -146,10 +144,9 @@ end;
 
 begin
   raise Exception.Create('No implemented');
-  Result := False;
+  Result := false;
 end;
-
-{$ENDIF}
+{$ENDIF MSWINDOWS}
 
 constructor TDownloadManager.Create;
 begin

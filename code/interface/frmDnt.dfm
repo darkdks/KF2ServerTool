@@ -17,7 +17,7 @@ object frmDonate: TfrmDonate
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
-  object img1: TImage
+  object imgPagSeguro: TImage
     Left = 20
     Top = 223
     Width = 199
@@ -474,9 +474,9 @@ object frmDonate: TfrmDonate
       96EFCC667B8E5937DA3F8DBCE19A5BBF3199EE3964DF68FE36F386696EFCC667
       B8E5937DA3F8DBCE19A5BBF3199EE7FFD9}
     Proportional = True
-    OnClick = img1Click
+    OnClick = imgPagSeguroClick
   end
-  object img2: TImage
+  object imgPayPal: TImage
     Left = 14
     Top = 129
     Width = 205
@@ -909,18 +909,18 @@ object frmDonate: TfrmDonate
       C3D09DA7A4EDBD2765E93B2F4806857141B2775EB3BAF59DD7ACEEBD6775EB3B
       AF58B94AFF00E4BFFFD9}
     Proportional = True
-    OnClick = img2Click
+    OnClick = imgPayPalClick
   end
-  object lbl1: TLabel
+  object lblPayPal: TLabel
     Left = 20
     Top = 109
-    Width = 126
+    Width = 134
     Height = 14
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    Caption = 'Iternational - Paypal'
+    Caption = 'International - Paypal'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -928,7 +928,7 @@ object frmDonate: TfrmDonate
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object lbl2: TLabel
+  object lblPagSeguro: TLabel
     Left = 20
     Top = 203
     Width = 130
@@ -948,8 +948,8 @@ object frmDonate: TfrmDonate
   object lblTextDonate: TLabel
     Left = 8
     Top = 8
-    Width = 210
-    Height = 96
+    Width = 207
+    Height = 64
     Caption = 
       'Help this amazing tool continue in development with updates and ' +
       'new features. Your help can make all the difference!'

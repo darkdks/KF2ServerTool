@@ -73,9 +73,6 @@ Coordinates=982,1012,52,36
 [pnl10]
 Coordinates=583,478,49,58
 
-[RemoveServerSubcribe1]
-Coordinates=1257,1,158,36
-
 [btnCheckForUpdate]
 Coordinates=822,546,129,58
 
@@ -196,9 +193,6 @@ Coordinates=1257,441,108,36
 
 [wb1]
 Coordinates=170,682,40,36
-
-[Subcribe1]
-Coordinates=1257,551,72,36
 
 [lblAllChangesWillbe]
 Coordinates=1123,10,129,58
@@ -385,4 +379,10 @@ Coordinates=521,410,49,58
 
 [lblWorkshop]
 Coordinates=218,546,49,58
+
+[RemoveServerSubscription1]
+Coordinates=1257,1,158,36
+
+[Subscribe1]
+Coordinates=1257,551,72,36
 
