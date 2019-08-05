@@ -70,6 +70,7 @@ begin
 
 end;
 
+end;
 procedure TkfPathDialog.FormCreate(Sender: TObject);
 begin
   lblDescriptionHelp.Caption :=

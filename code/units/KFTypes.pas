@@ -19,17 +19,6 @@ function IsOfficialMap(mapName: String): Boolean;
 procedure LoadOfficialMapList(serverPath: string);
 
 const
-  { KF_OFFICIALMAPS:
-    array [0 .. 22, 0 .. 1]{filename/ImgIdx }{ of string = (('KF-Airship.kfm','0'), ('KF-BioticsLab.kfm', '1'),
-    ('KF-BlackForest.kfm', '2'), ('KF-BurningParis.kfm', '3'),
-    ('KF-Catacombs.kfm', '4'), ('KF-ContainmentStation.kfm','5'), ('KF-DieSector.kfm','6'),
-    ('KF-EvacuationPoint.kfm','7'), ('KF-Farmhouse.kfm', '8'),
-    ('KF-HostileGrounds.kfm', '9'), ('KF-InfernalRealm.kfm', '10'),
-    ('KF-KrampusLair.kfm','11'), ('KF-Nightmare.kfm','12'), ('KF-Nuked.kfm',
-    '13'), ('KF-Outpost.kfm', '14'), ('KF-PowerCore_Holdout.kfm', '15'),
-    ('KF-Prison.kfm', '16'), ('KF-TheDescent.kfm', '17'), ('KF-TragicKingdom.kfm',
-    '18'), ('KF-VolterManor.kfm', '19'), ('KF-ZedLanding.kfm', '20'), ('KF-Lockdown.kfm', '21'), ('KF-MonsterBall.kfm', '22'));
-  }
   KF_IGNOREDBREWEDPCFILES: array [0 .. 44] of string = ('AkAudio.u',
     'AkResources.upk', 'BaseAI.u', 'Core.u', 'EditorLandscapeResources.upk',
     'EditorMaterials.upk', 'EditorMeshes.upk', 'EditorResources.upk',

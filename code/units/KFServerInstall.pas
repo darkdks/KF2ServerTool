@@ -67,9 +67,9 @@ function TKFServerInstall.InstallServer(Path: String; Handle: Cardinal)
   : Boolean;
 var
   cmdToolArgs: string;
-  abortP: Boolean;
+//  abortP: Boolean;
 begin
-abortP := False;
+//abortP := False;
   if steamCmdPath = '' then
     raise Exception.Create('Steam cmd path not set');
   cmdToolArgs := '+login anonymous +force_install_dir "' + Path +
