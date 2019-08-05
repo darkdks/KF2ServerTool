@@ -310,7 +310,7 @@ begin
   for i := 0 to High(Entrys) do
   begin
     // ShowMessage(Copy(Entrys[i].title, 2, Length(Entrys[i].title) - 2));
-    if Copy(Entrys[i].title, 2, Length(Entrys[i].title) - 2) = name then
+    if UpperCase(Copy(Entrys[i].title, 2, Length(Entrys[i].title) - 2))  = UpperCase(name) then
     begin
       Result := i;
       if getLast = false then

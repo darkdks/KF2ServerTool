@@ -52,7 +52,9 @@ function WorkshopURLtoID(URL: string): string;
 function TextForXchar(Text: String; numberOfChars: Integer): string;
 function CreateNewFolderInto(path, FolderName: String): String;
 function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
-  Parameters: string; ShowWindows: Integer): Boolean;
+  Parameters: string; ShowWindows: Integer): Boolean;   overload ;
+  function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
+  Parameters: string; ShowWindows: Integer; TimeOut: Integer): Boolean;  overload ;
 function FileOperation(Source: TStringList; Destination: String;
   Operation: Cardinal): Boolean;
 function ProcessExists(ProcessName: string): Boolean;
@@ -417,6 +419,62 @@ begin
 {$ENDIF}
 end;
 {$ENDIF}
+
+
+
+function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
+  Parameters: string; ShowWindows: Integer; TimeOut: Integer): Boolean;
+{$IFDEF MSWINDOWS}
+// Windows API
+var
+  sei: TShellExecuteInfo;
+  ExitCode: DWORD;
+  tCount: Integer;
+begin
+  tCount := 0;
+  result := False;
+  try
+    try
+      ZeroMemory(@sei, SizeOf(sei));
+      sei.cbSize := SizeOf(TShellExecuteInfo);
+      sei.Wnd := hWnd;
+      sei.fMask := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI or
+        SEE_MASK_NOCLOSEPROCESS;
+      sei.lpVerb := PChar('runas');
+      sei.lpFile := PChar(filename); // PAnsiChar;
+      if Parameters <> '' then
+        sei.lpParameters := PChar(Parameters); // PAnsiChar;
+      sei.nShow := ShowWindows; // Integer;
+
+      Application.ProcessMessages;
+      if ShellExecuteEx(@sei) then
+      begin
+        repeat
+          Sleep(1000);
+          tCount := tCount +1;
+          Application.ProcessMessages;
+          GetExitCodeProcess(sei.hProcess, ExitCode);
+        until (ExitCode <> STILL_ACTIVE) or (Application.Terminated)or ( tCount >= TimeOut);
+      end;
+    finally
+    end;
+    result := True;
+  except
+
+  end;
+end;
+
+{$ELSE}
+
+// Linux
+var
+begin
+ raise Exception.Create('Not implemented yet');
+
+end;
+{$ENDIF}
+
+
 {$IFDEF MSWINDOWS}
 
 function ExecuteFile(hWnd: Cardinal; filename: string; Parameters: string;
@@ -548,8 +606,8 @@ begin
         begin
           if FileExists(Source[i]) then
           begin
+            if FileExists(Destination) then DeleteFile(Destination);
             IOUtils.TFile.Copy(Source[i], Destination);
-            Sleep(500);
             result := FileExists(Destination);
           end
           else

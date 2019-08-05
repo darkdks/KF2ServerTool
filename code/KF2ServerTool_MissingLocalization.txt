@@ -1,2 +1,2 @@
-"Local item"="Local item"
-"Map File:"="Map File:"
+"Server downloaded successful. The tool now will start the server to generate default config files. Please wait. "="Server downloaded successful. The tool now will start the server to generate default config files. Please wait. "
+"Server installed. "="Server installed. "

@@ -18,6 +18,7 @@ type
   private
     { Private declarations }
   public
+    InstallServerPath: String;
     { Public declarations }
   end;
 
@@ -43,26 +44,34 @@ end;
 
 procedure TkfPathDialog.btnInstallServerClick(Sender: TObject);
 begin
+  if dlgServerBrowser.Execute then
+  begin
+    InstallServerPath := dlgServerBrowser.Directory;
+    Self.ModalResult := 101;
 
-  case Application.MessageBox
-    (PWideChar(FormMain._s('This will download and install the KF2 Server in ')
-      + extractFilePath(Application.ExeName)
-      + '. ' + #13#10 + FormMain._s('this will take time depending on your internet connection.')),
-    FormMain._p('Install Killing Floor 2 Server'), MB_OKCANCEL + MB_ICONQUESTION) of
-    IDOK:
-      begin
+    case Application.MessageBox
+      (PWideChar(FormMain._s
+      ('This will download and install the KF2 Server in ') + InstallServerPath
+      + '. ' + #13#10 + FormMain._s
+      ('this will take time depending on your internet connection.')),
+      FormMain._p('Install Killing Floor 2 Server'),
+      MB_OKCANCEL + MB_ICONQUESTION) of
+      IDOK:
+        begin
           Self.ModalResult := 102;
-      end;
+        end;
+    end;
   end;
-
 
 end;
 
 procedure TkfPathDialog.FormCreate(Sender: TObject);
 begin
-lblDescriptionHelp.Caption := FormMain._s('To use this tool you need to select the path of your existing server or install a new one. \nWhat do you want to do?');
-btnConfigurePath.Caption := FormMain._s('Configure the path');
-btnInstallServer.Caption := FormMain._s('Install a new server');
+  lblDescriptionHelp.Caption :=
+    FormMain._s
+    ('To use this tool you need to select the path of your existing server or install a new one. \nWhat do you want to do?');
+  btnConfigurePath.Caption := FormMain._s('Configure the path');
+  btnInstallServer.Caption := FormMain._s('Install a new server');
 end;
 
 end.

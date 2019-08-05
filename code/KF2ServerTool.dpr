@@ -23,7 +23,9 @@ uses
   GitAutoUpdate in 'units\GitAutoUpdate.pas',
   DownloaderTool in 'units\DownloaderTool.pas',
   KFTypes in 'units\KFTypes.pas',
-  toolLanguage in 'units\toolLanguage.pas';
+  toolLanguage in 'units\toolLanguage.pas',
+  languagePrompt in 'interface\languagePrompt.pas' {FormSetLanguage},
+  KFServerInstall in 'units\KFServerInstall.pas';
 
 const
   UPDATEPARAM = '-installupdate';
@@ -112,6 +114,7 @@ begin
   if VerifyToInstallUpdate then
     exit;
   Application.CreateForm(TFormMain, FormMain);
+  Application.CreateForm(TFormSetLanguage, FormSetLanguage);
   Application.Run;
 
 end.

@@ -3,9 +3,9 @@ object kfPathDialog: TkfPathDialog
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Killing Floor Server'
-  ClientHeight = 105
-  ClientWidth = 282
-  Color = clBtnFace
+  ClientHeight = 114
+  ClientWidth = 509
+  Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -10
@@ -17,10 +17,10 @@ object kfPathDialog: TkfPathDialog
   PixelsPerInch = 96
   TextHeight = 12
   object lblDescriptionHelp: TLabel
-    Left = 6
-    Top = 18
-    Width = 233
-    Height = 36
+    Left = 7
+    Top = 17
+    Width = 490
+    Height = 28
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
@@ -28,13 +28,19 @@ object kfPathDialog: TkfPathDialog
     Caption = 
       'To use this tool you need to select the path of your existing se' +
       'rver or install a new one. '#13#10'What do you want to do?'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     WordWrap = True
   end
   object btnConfigurePath: TButton
-    Left = 77
-    Top = 78
-    Width = 99
-    Height = 19
+    Left = 235
+    Top = 77
+    Width = 129
+    Height = 27
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
@@ -44,10 +50,10 @@ object kfPathDialog: TkfPathDialog
     OnClick = btnConfigurePathClick
   end
   object btnInstallServer: TButton
-    Left = 180
-    Top = 78
-    Width = 93
-    Height = 19
+    Left = 368
+    Top = 76
+    Width = 129
+    Height = 28
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2

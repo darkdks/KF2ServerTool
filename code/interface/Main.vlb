@@ -314,9 +314,6 @@ Coordinates=831,342,91,58
 [mniCopyID1]
 Coordinates=426,1086,85,36
 
-[lblCredits]
-Coordinates=1078,546,69,58
-
 [Browserworkshop1]
 Coordinates=297,1086,124,36
 
@@ -378,7 +375,7 @@ Coordinates=1453,221,71,36
 Coordinates=944,10,57,58
 
 []
-Coordinates=352,614,49,58
+Coordinates=1078,546,69,58
 
 [ilSmallIcons]
 Coordinates=1257,826,40,36

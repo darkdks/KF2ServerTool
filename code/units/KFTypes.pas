@@ -70,6 +70,7 @@ const
   WORKSHOPSUBITEM = 'steamapps\workshop\content\232090';
   IMGCACHEFOLDER = 'imgs\';
   IMGWEBFOLDER = 'KFGame\Web\images\maps\';
+  STARTSERVERBIN = 'Binaries\win64\kfserver.exe';
 
 {$ENDIF}
   KF_LOCALMAPSSUBFOLDER = 'KFGame' + PathDelim + 'BrewedPC' + PathDelim + 'Maps'
