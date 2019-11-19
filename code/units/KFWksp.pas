@@ -14,10 +14,11 @@ uses
   MSHTML,
   System.Net.URLClient,
   DownloaderTool,
+    forms,
 {$ENDIF}
 {$IFDEF CONSOLE}
 {$ELSE}
-  forms,
+
 {$ENDIF}
   IOUtils;
 
@@ -29,15 +30,18 @@ type
   var
     svPath: string;
     FsteamCmdTool: string;
+    {$IFDEF MSWINDOWS}
     function GetWorkshopItemImageURL(ID: string): String;
+    {$ENDIF}
   public
   var
 
     constructor Create(serverPath: string);
     destructor Destroy; override;
-
+    {$IFDEF MSWINDOWS}
     function DownloadWorkshopImage(ID: String;
       dlManager: TDownloadManager): boolean;
+      {$ENDIF}
     function DownloadWorkshopItem(ID: string; VerboseCmd: boolean): boolean;
     function CopyItemToCache(ID: string): boolean;
     function RemoveServeItemCache(ID: string): boolean;
@@ -120,7 +124,7 @@ begin
     Result := True;
 
 end;
-
+{$IFDEF MSWINDOWS}
 function TKFWorkshop.DownloadWorkshopImage(ID: String;
   dlManager: TDownloadManager): boolean;
 var
@@ -143,7 +147,7 @@ begin
   end;
 
 end;
-
+ {$ENDIF}
 function TKFWorkshop.DownloadWorkshopItem(ID: string;
   VerboseCmd: boolean): boolean;
 var
@@ -249,7 +253,7 @@ begin
     Result := '';
   end;
 end;
-
+{$IFDEF MSWINDOWS}
 function TKFWorkshop.GetWorkshopItemImageURL(ID: string): String;
 var
   httpRq: TNetHTTPClient;
@@ -302,7 +306,7 @@ begin
 
   end;
 end;
-
+ {$ENDIF}
 function TKFWorkshop.GetItemType(itemFolder: string): TKFItemType;
 var
   ItemsFound: TStringList;

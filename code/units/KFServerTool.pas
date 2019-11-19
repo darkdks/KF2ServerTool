@@ -70,7 +70,9 @@ type
     function GetModName(files: TStringList): string;
     function IsIgnoredMap(mapName: String): Boolean;
     function IsIgnoredFile(FileName: String): Boolean;
+    {$IFDEF MSWINDOWS}
     function DownloadWorkshopItemImage(ID: String): Boolean;
+    {$ENDIF}
 
   public
   var
@@ -415,7 +417,7 @@ begin
     wksp.Free
   end;
 end;
-
+  {$IFDEF MSWINDOWS}
 function TKFServerTool.DownloadWorkshopItemImage(ID: String): Boolean;
 var
   wksp: TKFWorkshop;
@@ -427,6 +429,7 @@ begin
     wksp.Free
   end;
 end;
+{$ENDIF}
 
 function TKFServerTool.ExportItemsList(itemsList: array of TKFItem;
   outputPath: String): Integer;
@@ -640,6 +643,7 @@ begin
             LogEvent('Install workshop item',
               'Item ' + ID + ' downloaded with name ' + Name);
           end;
+          {$IFDEF MSWINDOWS}
           ItemImgDownloaded := DownloadWorkshopItemImage(ID);
           try
             if ItemImgDownloaded then
@@ -657,6 +661,7 @@ begin
                 E.Message);
 
           end;
+          {$ENDIF}
         end;
 
         // MapCycle and Map Entry
@@ -1182,8 +1187,10 @@ begin
       LogEvent('Force update', 'Copying the files to server cache...');
       result := wksp.CopyItemToCache(itemID);
       LogEvent('Force update', 'Downloading item image...');
+      {$IFDEF MSWINDOWS}
       wksp.DownloadWorkshopImage(itemID, nil);
       LogEvent('Force update', 'Finished');
+      {$ENDIF}
     finally
       wksp.Free;
     end;
