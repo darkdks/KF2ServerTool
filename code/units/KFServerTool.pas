@@ -137,9 +137,18 @@ type
 
   const
 
-    SERVERTOOLVERSION = '1.3.4';
+    SERVERTOOLVERSION = '1.3.5';
 
     {
+     CHANGE LOG VERSION 1.3.5
+      - Updated English (Lots of grammar correction and spelling mistakes)
+      - Localization system improvements
+      - Deutsch Language added (By wookiefriseur)
+      - Bug fixes in automatic detection of official maps and minor improvements
+      - Localization file improved
+
+      * Special thanks for wookiefriseur in this update
+
       CHANGE LOG VERSION 1.3.4
       - Added manual item installation (Local kfm files)
       - Spanish language updated

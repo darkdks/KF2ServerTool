@@ -31,7 +31,7 @@ var
   ApplicationPath: string;
 
 const
-  KF2CMDTOOLVERSION = '1.0.7';
+  KF2CMDTOOLVERSION = '1.3.0';
 
 function loadConfig: Boolean;
 var
@@ -50,8 +50,8 @@ begin
     begin
       writeln('Ini file not found, writing default config file in: ' + iniPath);
 {$IFDEF DEBUG}
-      WriteBool('PATHS', 'UseCustomServerPath', True);
-      WriteString('PATHS', 'CustomServerPath', '/home/darkdks/KF2Server');
+      WriteBool('PATHS', 'UseCustomServerPath', False);
+      WriteString('PATHS', 'CustomServerPath', 'CHANGE_ME_FOR_CUSTOM_PATH');
       WriteString('PATHS', 'SteamCmdTool',
         '/home/darkdks/KF2Server/steamcmd/steamcmd.sh');
 {$ELSE}
@@ -86,6 +86,7 @@ begin
       useCustomServerPath := ReadBool('PATHS', 'UseCustomServerPath', False);
       customServerPath := ReadString('PATHS', 'CustomServerPath',
         'CHANGE_ME_FOR_CUSTOM_PATH');
+      customServerPath := IncludeTrailingPathDelimiter(customServerPath);
 {$IFDEF LINUX64}
       pathCmdTool := ReadString('PATHS', 'SteamCmdTool', 'steamcmd');
       pathServerEXE := ReadString('PATHS', 'ServerEXE',
@@ -130,7 +131,8 @@ begin
 
       raise Exception.Create('Killing Floor 2 server not found.' + #13#10 +
         'Check if the app is in server folder or the ' + configName +
-        ' is configured correctly.');
+        ' is configured correctly.' + #10#13 + 'Searching for: ' +
+        customServerPath + pathServerEXE);
     end;
   end
   else
@@ -144,7 +146,8 @@ begin
     begin
       raise Exception.Create('Killing Floor 2 server not found.' + #13#10 +
         'Check if the app is in server folder or the ' + configName +
-        ' is configured correctly.');
+        ' is configured correctly.' + #10#13 + 'Searching for: ' +
+        ExtractFilePath(ApplicationPath) + pathServerEXE);
     end;
   end;
 
@@ -735,8 +738,10 @@ begin
   actions := TStringList.Create;
   ignoreServerRunning := False;
   enableVerbose := False;
-  for I := 1 to ParamCount do
-  begin // Discart set options and do actions list
+  I := 1;
+  while I <= ParamCount do
+  begin
+    // Discart set options and do actions list
     case AnsiIndexStr(LowerCase(ParamStr(I)), ['-v', '-config', '-ig']) of
       0: { -v }
         begin
@@ -750,6 +755,7 @@ begin
             configName := ParamStr(I + 1);
             writeln('Option: Custom ini is set to ' + configName);
             ignoreCacheFolder := True;
+            I := I + 1;
           end;
         end;
       3: { -ig }
@@ -761,8 +767,9 @@ begin
       begin
         actions.Add(LowerCase(Trim(ParamStr(I)))); // add action param
       end;
-    end;
 
+    end;
+      I := I + 1;
   end;
 
   try
