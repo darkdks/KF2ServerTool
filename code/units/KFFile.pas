@@ -250,8 +250,11 @@ begin
           configFile.Add(Entries[i].title);
           configFile.AddStrings(Entries[i].items);
         end;
-
+{$IFDEF LINUX64}
+        configFile.SaveToFile(path, TEncoding.ASCII);
+{$ELSE}
         configFile.SaveToFile(path);
+{$ENDIF }
         Result := true;
       end;
 
@@ -314,7 +317,8 @@ begin
   for i := 0 to High(Entries) do
   begin
     // ShowMessage(Copy(Entrys[i].title, 2, Length(Entrys[i].title) - 2));
-    if UpperCase(Copy(Entries[i].title, 2, Length(Entries[i].title) - 2))  = UpperCase(name) then
+    if UpperCase(Copy(Entries[i].title, 2, Length(Entries[i].title) - 2))
+      = UpperCase(name) then
     begin
       Result := i;
       if getLast = false then

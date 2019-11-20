@@ -14,11 +14,7 @@ uses
   MSHTML,
   System.Net.URLClient,
   DownloaderTool,
-    forms,
-{$ENDIF}
-{$IFDEF CONSOLE}
-{$ELSE}
-
+  forms,
 {$ENDIF}
   IOUtils;
 
@@ -30,18 +26,18 @@ type
   var
     svPath: string;
     FsteamCmdTool: string;
-    {$IFDEF MSWINDOWS}
+{$IFDEF MSWINDOWS}
     function GetWorkshopItemImageURL(ID: string): String;
-    {$ENDIF}
+{$ENDIF}
   public
   var
 
     constructor Create(serverPath: string);
     destructor Destroy; override;
-    {$IFDEF MSWINDOWS}
+{$IFDEF MSWINDOWS}
     function DownloadWorkshopImage(ID: String;
       dlManager: TDownloadManager): boolean;
-      {$ENDIF}
+{$ENDIF}
     function DownloadWorkshopItem(ID: string; VerboseCmd: boolean): boolean;
     function CopyItemToCache(ID: string): boolean;
     function RemoveServeItemCache(ID: string): boolean;
@@ -116,7 +112,13 @@ begin
   try
     if DirectoryExists(svPath + WKP_ACFFILEFOLDER) = False then
       ForceDirectories(PWideChar(svPath + WKP_ACFFILEFOLDER));
+
+{$IFDEF LINUX64}
+    wkspacf.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME,
+      TEncoding.ASCII);
+{$ELSE}
     wkspacf.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
+{$ENDIF }
   finally
     wkspacf.Free;
   end;
@@ -125,6 +127,7 @@ begin
 
 end;
 {$IFDEF MSWINDOWS}
+
 function TKFWorkshop.DownloadWorkshopImage(ID: String;
   dlManager: TDownloadManager): boolean;
 var
@@ -147,7 +150,8 @@ begin
   end;
 
 end;
- {$ENDIF}
+{$ENDIF}
+
 function TKFWorkshop.DownloadWorkshopItem(ID: string;
   VerboseCmd: boolean): boolean;
 var
@@ -254,6 +258,7 @@ begin
   end;
 end;
 {$IFDEF MSWINDOWS}
+
 function TKFWorkshop.GetWorkshopItemImageURL(ID: string): String;
 var
   httpRq: TNetHTTPClient;
@@ -306,7 +311,8 @@ begin
 
   end;
 end;
- {$ENDIF}
+{$ENDIF}
+
 function TKFWorkshop.GetItemType(itemFolder: string): TKFItemType;
 var
   ItemsFound: TStringList;
@@ -393,7 +399,12 @@ begin
           I := I + 1;
         end;
       end;
+{$IFDEF LINUX64}
+      acfFile.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME,
+        TEncoding.ASCII);
+{$ELSE}
       acfFile.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
+{$ENDIF }
     end
     else
     begin

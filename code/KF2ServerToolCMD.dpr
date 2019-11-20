@@ -21,23 +21,24 @@ type
   TDisplayInfoType = (DIT_all, DIT_path, DIT_web, DIT_redirect, DIT_items);
 
 var
-  useCustomServerPath: Boolean;
+  useCustomServerPath, includeSeparators: Boolean;
   ignoreCacheFolder: Boolean = False;
   customServerPath, pathKFGameIni, pathKFEngineIni, pathKFWebIni, pathCmdTool,
     pathServerEXE: string;
   serverTool: TKFServerTool;
+  cycleSortType: string;
   serverPath: string;
   configName: String = 'KFServerToolCMD.ini';
   ApplicationPath: string;
 
 const
-  KF2CMDTOOLVERSION = '1.3.0';
+  KF2CMDTOOLVERSION = '1.3.5';
 
 function loadConfig: Boolean;
 var
   IniConfig: TIniFile;
   iniPath: string;
-
+  docArea: String;
 begin
 
   iniPath := ExtractFilePath(ApplicationPath) + configName;
@@ -49,16 +50,9 @@ begin
     with IniConfig do
     begin
       writeln('Ini file not found, writing default config file in: ' + iniPath);
-{$IFDEF DEBUG}
+
       WriteBool('PATHS', 'UseCustomServerPath', False);
       WriteString('PATHS', 'CustomServerPath', 'CHANGE_ME_FOR_CUSTOM_PATH');
-      WriteString('PATHS', 'SteamCmdTool',
-        '/home/darkdks/KF2Server/steamcmd/steamcmd.sh');
-{$ELSE}
-      WriteBool('PATHS', 'UseCustomServerPath', False);
-      WriteString('PATHS', 'CustomServerPath', 'CHANGE_ME_FOR_CUSTOM_PATH');
-      WriteString('PATHS', 'SteamCmdTool', 'steamcmd');
-{$ENDIF}
 {$IFDEF LINUX64}
       WriteString('PATHS', 'ServerEXE',
         '/Binaries/Win64/KFGameSteamServer.bin.x86_64');
@@ -67,6 +61,7 @@ begin
       WriteString('PATHS', 'KFEngineIni',
         'KFGame/Config/LinuxServer-KFEngine.ini');
       WriteString('PATHS', 'KFWebIni', 'KFGame/Config/KFWeb.ini');
+      WriteString('PATHS', 'SteamCmdTool', '/usr/games/steamcmd');
 {$ELSE}
       WriteString('PATHS', 'KFGameIni', 'KFGame\Config\PCServer-KFGame.ini');
       WriteString('PATHS', 'KFWebIni', 'KFGame\Config\KFWeb.ini');
@@ -74,7 +69,18 @@ begin
         'KFGame\Config\PCServer-KFEngine.ini');
       WriteString('PATHS', 'ServerEXE', 'Binaries\win64\kfserver.exe');
       WriteString('PATHS', 'SteamCmdTool', 'STEAMCMD\SteamCmd.exe');
+
 {$ENDIF}
+      docArea := #13#10+ ';--------- CYCLE SORT OPTIONS --------'+#13#10 +
+        ';  cycleSortType : How the tool will sort game cycle' +#13#10+
+        ';         keepsame: will not modify the current order' +  #13#10 +
+        ';         byname: will sort by name' +  #13#10 +
+        ';         bytype: will by type (offical, custom)' +  #13#10 +
+        ';  includeSeparators : include separators when sort byname or bytype is set';
+
+      WriteBool('CYCLEOPTIONS', 'includeSeparators', False);
+      WriteString('CYCLEOPTIONS', 'cycleSortType',
+        'keepsame' + #13#10 + docArea);
     end;
 
   end;
@@ -88,7 +94,7 @@ begin
         'CHANGE_ME_FOR_CUSTOM_PATH');
       customServerPath := IncludeTrailingPathDelimiter(customServerPath);
 {$IFDEF LINUX64}
-      pathCmdTool := ReadString('PATHS', 'SteamCmdTool', 'steamcmd');
+      pathCmdTool := ReadString('PATHS', 'SteamCmdTool', '/usr/games/steamcmd');
       pathServerEXE := ReadString('PATHS', 'ServerEXE',
         '/Binaries/Win64/KFGameSteamServer.bin.x86_64');
       pathKFGameIni := ReadString('PATHS', 'KFGameIni',
@@ -108,13 +114,22 @@ begin
         'KFGame' + PathDelim + 'Config' + PathDelim + 'PCServer-KFEngine.ini');
       pathKFWebIni := ReadString('PATHS', 'KFWebIni',
         'KFGame\Config\KFWeb.ini');
+
 {$ENDIF}
+      cycleSortType := ReadString('CYCLEOPTIONS', 'cycleSortType', 'keepsame');
+      includeSeparators := ReadBool('CYCLEOPTIONS', 'includeSeparators', False);
     end;
     Result := True;
   finally
+
     IniConfig.Free;
   end;
-
+{$IFDEF LINUX64}
+{$IFDEF DEBUG}
+  useCustomServerPath := True;
+  customServerPath := '/home/darkdks/kf2server/'
+{$ENDIF}
+{$ENDIF}
 end;
 
 procedure CheckServerPath;
@@ -226,6 +241,9 @@ begin
   writeln('-workshop on : enable workshop redirect');
   writeln('');
   writeln('-workshop off : disable workshop redirect');
+  writeln('');
+  writeln('-installserver <PATH>: install a new server the follwing path');
+  writeln('    (if a path is not specified the program will use the current directory)');
   writeln('');
 
 end;
@@ -446,6 +464,58 @@ begin
   writeln('Done');
 end;
 
+procedure installserver(serverDestPath: String);
+var
+  cmdToolArgs: string;
+  exResult: TStringList;
+  aborEx: Boolean;
+  inpRes: String;
+begin
+
+  writeln('Install server');
+  writeln('--- InstallPath: ' + serverDestPath);
+  writeln('Proceed with the installation? [Y/N]');
+  Readln(inpRes);
+  if UpperCase(inpRes) <> 'Y' then
+    Exit;
+  cmdToolArgs := '+login anonymous +force_install_dir ' + serverDestPath +
+    ' +app_update 232130 +exit';
+  writeln('--- SteamCMDPath: ' + pathCmdTool);
+  writeln('--- Args: ' + cmdToolArgs);
+  writeln('     ');
+
+  try
+    exResult := ExecuteTerminalProcess('command', '-v ' + pathCmdTool,
+      aborEx, nil);
+    if exResult.Text = '' then
+    begin
+      writeln('     ');
+      writeln('     ');
+      writeln('Steam CMD is not installed or configured. Check the "SteamCmdTool" in the .ini options and try again.');
+
+    end;
+  finally
+    if assigned(exResult) then
+      FreeAndNil(exResult);
+  end;
+
+  try
+    exResult := ExecuteTerminalProcess(pathCmdTool, cmdToolArgs, aborEx,
+      procedure(Text: String)
+      begin
+        writeln(Text);
+
+      end);
+
+  finally
+    if assigned(exResult) then
+      FreeAndNil(exResult);
+  end;
+
+  writeln('Done');
+  writeln('If the server installed successfully you must then start the server once to create the default files before using this tool.');
+end;
+
 procedure DisplayInfo(displayType: TDisplayInfoType);
 var
   I, wkspMapsCount, localMapsCount, oficialMapsCount, wkspModsCount,
@@ -621,8 +691,18 @@ end;
 procedure ValidateWorkshopItems();
 var
   I: Integer;
+  wkpItemCount: Integer;
+  curWkpItem: Integer;
 begin
+  wkpItemCount := 0;
+  curWkpItem := 0;
+
   serverTool.LoadItems;
+
+  for I := 0 to High(serverTool.Items) do
+    if serverTool.Items[I].SourceFrom = KFSteamWorkshop then
+      wkpItemCount := wkpItemCount + 1;
+
   for I := 0 to High(serverTool.Items) do
   begin
 
@@ -636,8 +716,9 @@ begin
         with serverTool.Items[I] do
         begin
           writeln('');
-          writeln('Validating item ' + IntToStr(I + 1) + ' of ' +
-            IntToStr(High(serverTool.Items) + 1));
+          curWkpItem := curWkpItem + 1;
+          writeln('Validating item ' + IntToStr(curWkpItem) + ' of ' +
+            IntToStr(wkpItemCount));
           writeln('Name:            ' + FileName);
           writeln('ID:              ' + ID);
           writeln('Subscribed:      ' + BoolToWord(ServerSubscribe));
@@ -738,11 +819,15 @@ begin
   actions := TStringList.Create;
   ignoreServerRunning := False;
   enableVerbose := False;
+
+  for I := 0 to ParamCount do
+    writeln(ParamStr(I));
   I := 1;
   while I <= ParamCount do
   begin
     // Discart set options and do actions list
-    case AnsiIndexStr(LowerCase(ParamStr(I)), ['-v', '-config', '-ig']) of
+    case AnsiIndexStr(LowerCase(ParamStr(I)), ['-v', '-config', '-ig',
+      '-installserver']) of
       0: { -v }
         begin
           enableVerbose := True;
@@ -755,21 +840,38 @@ begin
             configName := ParamStr(I + 1);
             writeln('Option: Custom ini is set to ' + configName);
             ignoreCacheFolder := True;
+            loadConfig;
             I := I + 1;
           end;
         end;
-      3: { -ig }
+      2: { -ig }
         begin
           ignoreServerRunning := True;
           writeln('Option: Server running check is set to off');
         end;
+      3: { -installserver }
+        begin
+          loadConfig;
+          if (I + 1) <= ParamCount then
+          begin
+            argument := ParamStr(I + 1);
+          end
+          else
+          begin
+            argument := ApplicationPath;
+            writeln('Using the current path');
+          end;
+
+          installserver(argument);
+          Exit;
+        end
     else
       begin
         actions.Add(LowerCase(Trim(ParamStr(I)))); // add action param
       end;
 
     end;
-      I := I + 1;
+    I := I + 1;
   end;
 
   try
@@ -790,7 +892,8 @@ begin
         serverTool.SetKFGameIniSubPath(pathKFGameIni);
         serverTool.SetKFServerPathEXE(pathServerEXE);
         serverTool.SetSteamCmdPath(pathCmdTool);
-
+        serverTool.SetCycleSortType(cycleSortType);
+        serverTool.SetIncludeSeparators(includeSeparators);
         option := actions[0];
         if actions.Count > 1 then
           argument := actions[1];
@@ -983,8 +1086,6 @@ begin
             raise Exception.Create('update: Invalid ID');
           updateItem(itemID);
           Exit;
-
-          Exit;
         end;
 
         // ------------------------------------------------------------------ -test
@@ -994,11 +1095,13 @@ begin
           end;
         }
         raise Exception.Create('Invalid arguments');
-
+{$IFDEF DEBUG}
+        Readln(argValue);
+{$ENDIF}
       finally
 {$IFDEF DEBUG}
-        writeln('  Press ENTER to close the application ...');
-        Readln(option);
+        // writeln('  Press ENTER to close the application ...');
+        // Readln(option);
 {$ENDIF}
         serverTool.Free;
       end;
