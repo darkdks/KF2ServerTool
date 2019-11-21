@@ -70,8 +70,11 @@ type
     function GetModName(files: TStringList): string;
     function IsIgnoredMap(mapName: String): Boolean;
     function IsIgnoredFile(FileName: String): Boolean;
-    function DownloadWorkshopItemImage(ID: String): Boolean;
 
+
+{$IFDEF MSWINDOWS}
+    function DownloadWorkshopItemImage(ID: String): Boolean;
+{$ENDIF}
   public
   var
     Items: array of TKFItem;
@@ -117,16 +120,16 @@ type
       ItemSource: TKFSource; ItemType: TKFItemType): Boolean;
     function RemoveWorkshopManager: Boolean;
     function SetCustomRedirect(URL: String): Boolean;
-    procedure SetKFApplicationPath(path: string);
-    procedure SetKFGameIniSubPath(path: string);
-    procedure SetKFServerPathEXE(path: string);
-    procedure SetSteamCmdPath(path: String);
-    procedure SetKFWebIniSubPath(path: string);
+    procedure SetKFApplicationPath(Path: string);
+    procedure SetKFGameIniSubPath(Path: string);
+    procedure SetKFServerPathEXE(Path: string);
+    procedure SetSteamCmdPath(Path: String);
+    procedure SetKFWebIniSubPath(Path: string);
     procedure SetWebPort(Port: Integer);
     procedure SetWebStatus(Status: Boolean);
     procedure SetMapCycleOptions(groupMapsByType: Boolean;
       includeSeparators: Boolean);
-    procedure SetKFngineIniSubPath(path: string);
+    procedure SetKFngineIniSubPath(Path: string);
     procedure SetKFAppLanguage(language: TKFAppLanguage);
     function GetKFAppLanguage(): TKFAppLanguage;
     procedure KillKFServer();
@@ -134,12 +137,30 @@ type
     function IsServerRunning: Boolean;
     property verbose: Boolean read FverboseMod write FverboseMod;
     procedure ResortMapCycle;
-
+    procedure SetCycleSortType(CSType: String);
+        procedure SetIncludeSeparators(aValue: Boolean);
   const
 
-    SERVERTOOLVERSION = '1.3.4';
+    SERVERTOOLVERSION = '1.3.5';
 
     {
+
+      CHANGE LOG VERSION 1.3.5
+      - Updated English (Lots of grammar correction and spelling mistakes)
+      - Localization system improvements
+      - Deutsch Language added (thanks for wookiefriseur)
+      - Bug fixes in automatic detection of official maps and minor improvements
+      - Localization file improved
+
+      * Special thanks for wookiefriseur in this update
+
+      CMD VERSION
+      - CMD Versions (linux/Windows) using KFserverTool module in version 1.3.5
+      - Bugs fixes with cmd version
+      - Added server install to cmd version
+
+
+
       CHANGE LOG VERSION 1.3.4
       - Added manual item installation (Local kfm files)
       - Spanish language updated
@@ -406,6 +427,7 @@ begin
     wksp.Free
   end;
 end;
+{$IFDEF MSWINDOWS}
 
 function TKFServerTool.DownloadWorkshopItemImage(ID: String): Boolean;
 var
@@ -418,6 +440,7 @@ begin
     wksp.Free
   end;
 end;
+{$ENDIF}
 
 function TKFServerTool.ExportItemsList(itemsList: array of TKFItem;
   outputPath: String): Integer;
@@ -631,6 +654,7 @@ begin
             LogEvent('Install workshop item',
               'Item ' + ID + ' downloaded with name ' + Name);
           end;
+{$IFDEF MSWINDOWS}
           ItemImgDownloaded := DownloadWorkshopItemImage(ID);
           try
             if ItemImgDownloaded then
@@ -648,6 +672,7 @@ begin
                 E.Message);
 
           end;
+{$ENDIF}
         end;
 
         // MapCycle and Map Entry
@@ -953,7 +978,7 @@ begin
         result := true;
       end;
     finally
-      if Assigned(cycleList) then
+      if assigned(cycleList) then
         FreeAndNil(cycleList);
     end;
 
@@ -983,7 +1008,7 @@ begin
         result := true;
       end;
     finally
-      if Assigned(mapEntriesList) then
+      if assigned(mapEntriesList) then
         FreeAndNil(mapEntriesList);
     end;
 
@@ -1173,8 +1198,10 @@ begin
       LogEvent('Force update', 'Copying the files to server cache...');
       result := wksp.CopyItemToCache(itemID);
       LogEvent('Force update', 'Downloading item image...');
+{$IFDEF MSWINDOWS}
       wksp.DownloadWorkshopImage(itemID, nil);
       LogEvent('Force update', 'Finished');
+{$ENDIF}
     finally
       wksp.Free;
     end;
@@ -1494,10 +1521,10 @@ begin
   appLanguage := language;
 end;
 
-procedure TKFServerTool.SetKFApplicationPath(path: string);
+procedure TKFServerTool.SetKFApplicationPath(Path: string);
 begin
-  kfApplicationPath := path;
-  LogEvent('KFApplicationPath', path);
+  kfApplicationPath := Path;
+  LogEvent('KFApplicationPath', Path);
 end;
 
 function TKFServerTool.GetKFAppLanguage: TKFAppLanguage;
@@ -1520,39 +1547,39 @@ begin
   result := kfGameIniSubPath;
 end;
 
-procedure TKFServerTool.SetKFGameIniSubPath(path: string);
+procedure TKFServerTool.SetKFGameIniSubPath(Path: string);
 begin
-  if FileExists(kfApplicationPath + path) then
+  if FileExists(kfApplicationPath + Path) then
   begin
-    kfGameIniSubPath := path;
-    LogEvent('KFGameIniSubPath', path);
+    kfGameIniSubPath := Path;
+    LogEvent('KFGameIniSubPath', Path);
   end
   else
   begin
-    raise Exception.Create('Invalid KFGame path: ' + kfApplicationPath + path +
-      #13 + 'Make sure you configured the path correcly.' + #13 +
-      'If it''s a new server, before use the tool you need' + #13 +
+    raise Exception.Create('Invalid KFGame path: ' + kfApplicationPath + Path +
+      #10#13 + 'Make sure you configured the path correcly.' + #10#13 +
+      'If it''s a new server, before use the tool you need' + #10#13 +
       'to start the server one time to create the configs files.');
-    LogEvent('KFGameIniSubPath', 'Exception : ' + kfApplicationPath + path +
+    LogEvent('KFGameIniSubPath', 'Exception : ' + kfApplicationPath + Path +
       ' not found');
   end;
 
 end;
 
-procedure TKFServerTool.SetKFngineIniSubPath(path: string);
+procedure TKFServerTool.SetKFngineIniSubPath(Path: string);
 begin
-  if FileExists(kfApplicationPath + path) then
+  if FileExists(kfApplicationPath + Path) then
   begin
-    kfEngineIniSubPath := path;
-    LogEvent('KFEngineIniSubPath', path);
+    kfEngineIniSubPath := Path;
+    LogEvent('KFEngineIniSubPath', Path);
   end
   else
   begin
-    raise Exception.Create('Invalid KFEngine path: ' + kfApplicationPath + path
-      + #13 + 'Make sure you configured the path correcly.' + #13 +
-      'If it''s a new server, before use the tool you need' + #13 +
+    raise Exception.Create('Invalid KFEngine path: ' + kfApplicationPath + Path
+      + #10#13 + 'Make sure you configured the path correcly.' + #10#13 +
+      'If it''s a new server, before use the tool you need' + #10#13 +
       'to start the server one time to create the configs files.');
-    LogEvent('KFEngineIniSubPath', 'Exception : ' + kfApplicationPath + path +
+    LogEvent('KFEngineIniSubPath', 'Exception : ' + kfApplicationPath + Path +
       ' not found');
   end;
 
@@ -1629,27 +1656,27 @@ begin
 
 end;
 
-procedure TKFServerTool.SetKFServerPathEXE(path: string);
+procedure TKFServerTool.SetKFServerPathEXE(Path: string);
 begin
-  if FileExists(kfApplicationPath + path) then
+  if FileExists(kfApplicationPath + Path) then
   begin
-    KFServerPathEXE := path;
-    LogEvent('SetKFServerPathEXE', path);
+    KFServerPathEXE := Path;
+    LogEvent('SetKFServerPathEXE', Path);
   end
   else
   begin
     raise Exception.Create('Invalid server exe path: ' + kfApplicationPath +
-      path + #13 +
+      Path + #13 +
       'Make sure you installed the tool correctly in the server folder or' + #13
       + 'Configured the path correcly.');
-    LogEvent('SetKFServerPathEXE', 'Exception : ' + kfApplicationPath + path +
+    LogEvent('SetKFServerPathEXE', 'Exception : ' + kfApplicationPath + Path +
       ' not found');
   end;
 end;
 
-procedure TKFServerTool.SetKFWebIniSubPath(path: string);
+procedure TKFServerTool.SetKFWebIniSubPath(Path: string);
 begin
-  kfWebIniSubPath := path;
+  kfWebIniSubPath := Path;
 end;
 
 procedure TKFServerTool.SetMapCycleOptions(groupMapsByType, includeSeparators
@@ -1662,19 +1689,37 @@ begin
   CycleSortSeparators := includeSeparators;
 end;
 
-procedure TKFServerTool.SetSteamCmdPath(path: String);
+procedure TKFServerTool.SetCycleSortType(CSType: String);
 begin
-  if FileExists(path) then
+  if LowerCase(CSType) = 'bytype' then
+    CycleSortType := KFCSortByType
+  else if LowerCase(CSType) = 'byname' then
+    CycleSortType := KFCSortByName
+  else
+    CycleSortType := KFCKeepSame;
+
+end;
+
+procedure TKFServerTool.SetIncludeSeparators(aValue: Boolean);
+begin
+ CycleSortSeparators :=  aValue;
+
+end;
+
+procedure TKFServerTool.SetSteamCmdPath(Path: String);
+begin
+
+  if FileExists(Path) then
   begin
-    SteamCmdPath := path;
-    LogEvent('SteamCmdPath', path);
+    SteamCmdPath := Path;
+    LogEvent('SteamCmdPath', Path);
   end
   else
   begin
-    raise Exception.Create('Invalid steamcmd path: ' + path + #13 +
+    raise Exception.Create('Invalid steamcmd path: ' + Path + #13 +
       'Make sure you installed the tool correctly with steamcmd tool. ' + #13 +
       'You are unable to download from steam without steamcmd tool.');
-    LogEvent('SteamCmdPath', 'Exception : ' + path + ' not found');
+    LogEvent('SteamCmdPath', 'Exception : ' + Path + ' not found');
   end;
 
 end;

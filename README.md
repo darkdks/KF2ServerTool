@@ -50,7 +50,7 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2Serv
 
 - Just put the KF2ServerToolCMD inside the server folder and launch it from terminal with -list, a new file called KF2ServerToolCMD.ini will be created. You can adit inside this file the paths of KFEngine and KFGame if you dont use the default.
 - install steamcmd if you have not (see the install steamcmd section)
-- Configure the KF2ServerToolCMD.ini to specify it (for linux is the steamcmd.sh and for windows is the steamcmd.exe).
+- Configure the KF2ServerToolCMD.ini to specify it (for linux is the steamcmd.sh(or de absolute path) and for windows is the steamcmd.exe).
 - K2ServerToolCMD -help to see all available commands
 
 # Install steamcmd
@@ -62,8 +62,8 @@ Go to <a href="https://github.com/darkdks/KF2ServerTool/blob/master/code/KF2Serv
 (very useful if you run multiple instances of servers in the same folder and have several different files for each server.)
 
 - Use the param -config to specify a different configuration file. 
-Example: KF2ServerTool -config KFServerTool_sv2.ini 
-Example: KF2ServerToolCMD -config KFServerTool_sv2.ini 
+Example: KF2ServerTool -config KFServerTool_sv2.ini
+Example: KF2ServerToolCMD -config KFServerTool_sv2.ini -info
 
 - The application will create a new config file and you should edit it to specify the custom paths of your configs (PCServer-Game, PCServer-Engine, etc) files
 

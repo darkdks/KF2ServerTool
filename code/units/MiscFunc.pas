@@ -474,7 +474,6 @@ end;
 {$ELSE}
 
 // Linux
-var
 begin
  raise Exception.Create('Not implemented yet');
 
@@ -555,6 +554,7 @@ begin
   finally
     FreeAndNil(linuxUt);
   end;
+
 end;
 {$ENDIF}
 {$IFDEF MSWINDOWS}
