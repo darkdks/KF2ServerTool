@@ -55,7 +55,7 @@ begin
       WriteString('PATHS', 'CustomServerPath', 'CHANGE_ME_FOR_CUSTOM_PATH');
 {$IFDEF LINUX64}
       WriteString('PATHS', 'ServerEXE',
-        '/Binaries/Win64/KFGameSteamServer.bin.x86_64');
+        'Binaries/Win64/KFGameSteamServer.bin.x86_64');
 
       WriteString('PATHS', 'KFGameIni', 'KFGame/Config/LinuxServer-KFGame.ini');
       WriteString('PATHS', 'KFEngineIni',
@@ -96,7 +96,7 @@ begin
 {$IFDEF LINUX64}
       pathCmdTool := ReadString('PATHS', 'SteamCmdTool', '/usr/games/steamcmd');
       pathServerEXE := ReadString('PATHS', 'ServerEXE',
-        '/Binaries/Win64/KFGameSteamServer.bin.x86_64');
+        'Binaries/Win64/KFGameSteamServer.bin.x86_64');
       pathKFGameIni := ReadString('PATHS', 'KFGameIni',
         'KFGame/Config/LinuxServer-KFGame.ini');
       pathKFEngineIni := ReadString('PATHS', 'KFEngineIni',
@@ -124,12 +124,8 @@ begin
 
     IniConfig.Free;
   end;
-{$IFDEF LINUX64}
-{$IFDEF DEBUG}
-  useCustomServerPath := True;
-  customServerPath := '/home/darkdks/kf2server/'
-{$ENDIF}
-{$ENDIF}
+//  useCustomServerPath := True;
+//  customServerPath := '/home/darkdks/kf2server/'
 end;
 
 procedure CheckServerPath;
