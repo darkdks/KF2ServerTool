@@ -14,7 +14,7 @@ object FormMain: TFormMain
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poScreenCenter
   OnCanResize = FormCanResize
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -32,7 +32,7 @@ object FormMain: TFormMain
     Margins.Bottom = 2
     Align = alTop
     Alignment = taRightJustify
-    Caption = 'darkdks @ 2018'
+    Caption = 'darkdks @ 2019'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
     Font.Height = -11
@@ -413,7 +413,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsMaps
+    ActivePage = tsServer
     Align = alClient
     TabOrder = 1
     OnChange = pgcntrlTabsChange
@@ -615,6 +615,7 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
+            Visible = False
             OnClick = btnStartServerClick
           end
           object chkAutoConnectWeb: TCheckBox
@@ -862,7 +863,7 @@ object FormMain: TFormMain
             AlignWithMargins = True
             Left = 6
             Top = 2
-            Width = 131
+            Width = 648
             Height = 17
             Margins.Left = 6
             Margins.Top = 2
@@ -872,6 +873,7 @@ object FormMain: TFormMain
             Caption = 'Additional parameters'
             Color = clBlack
             ParentColor = False
+            ExplicitWidth = 131
           end
           object edtAddParam: TEdit
             AlignWithMargins = True
@@ -990,6 +992,10 @@ object FormMain: TFormMain
     object tsMaps: TTabSheet
       Caption = 'Maps'
       ImageIndex = 8
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object imgMapsPlaceholder: TImage
         Left = 336
         Top = 296
@@ -1057,7 +1063,7 @@ object FormMain: TFormMain
           Left = 504
           Top = 3
           Width = 162
-          Height = 25
+          Height = 26
           Hint = 'Change view mode'
           Margins.Right = 10
           Align = alRight
@@ -1347,6 +1353,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Options'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1963,7 +1973,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800080010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800100010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2373,7 +2383,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C0101020008000800DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008001000DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -150,6 +150,7 @@ type
       - Localization system improvements
       - Deutsch Language added (thanks for wookiefriseur)
       - Bug fixes in automatic detection of official maps and minor improvements
+      - Dual-screen-setup fix
       - Localization file improved
 
       * Special thanks for wookiefriseur in this update
