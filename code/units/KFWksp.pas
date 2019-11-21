@@ -115,7 +115,7 @@ begin
 
 {$IFDEF LINUX64}
     wkspacf.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME,
-      TEncoding.ASCII);
+      TEncoding.ANSI);
 {$ELSE}
     wkspacf.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
 {$ENDIF }
@@ -401,7 +401,7 @@ begin
       end;
 {$IFDEF LINUX64}
       acfFile.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME,
-        TEncoding.ASCII);
+        TEncoding.ANSI);
 {$ELSE}
       acfFile.SaveToFile(svPath + WKP_ACFFILEFOLDER + WKP_ACFFILENAME);
 {$ENDIF }

@@ -198,7 +198,11 @@ begin
         Entries[i].Free;
       SetLength(Entries, 0);
       currentEntry := 0;
+{$IFDEF LINUX64}
+      configFile.LoadFromFile(path, TEncoding.ANSI);
+{$ELSE}
       configFile.LoadFromFile(path);
+{$ENDIF }
       if configFile.Count > 1 then
       begin
 
@@ -251,7 +255,7 @@ begin
           configFile.AddStrings(Entries[i].items);
         end;
 {$IFDEF LINUX64}
-        configFile.SaveToFile(path, TEncoding.ASCII);
+        configFile.SaveToFile(path, TEncoding.ANSI);
 {$ELSE}
         configFile.SaveToFile(path);
 {$ENDIF }
