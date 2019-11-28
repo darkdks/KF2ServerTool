@@ -141,9 +141,11 @@ type
         procedure SetIncludeSeparators(aValue: Boolean);
   const
 
-    SERVERTOOLVERSION = '1.3.5';
+    SERVERTOOLVERSION = '1.3.6';
 
     {
+    CHANGE LOG VERSION 1.3.6
+      - Fixed missing Start server button, caused in the last update
 
       CHANGE LOG VERSION 1.3.5
       - Updated English (Lots of grammar correction and spelling mistakes)

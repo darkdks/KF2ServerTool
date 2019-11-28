@@ -615,7 +615,6 @@ object FormMain: TFormMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
-            Visible = False
             OnClick = btnStartServerClick
           end
           object chkAutoConnectWeb: TCheckBox
@@ -992,10 +991,6 @@ object FormMain: TFormMain
     object tsMaps: TTabSheet
       Caption = 'Maps'
       ImageIndex = 8
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object imgMapsPlaceholder: TImage
         Left = 336
         Top = 296
@@ -1063,7 +1058,7 @@ object FormMain: TFormMain
           Left = 504
           Top = 3
           Width = 162
-          Height = 26
+          Height = 25
           Hint = 'Change view mode'
           Margins.Right = 10
           Align = alRight
@@ -1186,10 +1181,6 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Mods'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lvMods: TListView
         Left = 0
         Top = 0
@@ -1263,10 +1254,6 @@ object FormMain: TFormMain
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Unknown'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lvUnknown: TListView
         Left = 0
         Top = 0
@@ -1353,10 +1340,6 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Options'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1840,10 +1823,6 @@ object FormMain: TFormMain
     object tsWebAdmin: TTabSheet
       Caption = 'WebAdmin'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object wbWebAdmin: TWebBrowser
         Left = 0
         Top = 0
@@ -1865,15 +1844,11 @@ object FormMain: TFormMain
     object tsNotes: TTabSheet
       Caption = 'Notes'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lblNotepad: TLabel
         AlignWithMargins = True
         Left = 8
         Top = 8
-        Width = 52
+        Width = 666
         Height = 17
         Margins.Left = 8
         Margins.Top = 8
@@ -1881,12 +1856,13 @@ object FormMain: TFormMain
         Margins.Bottom = 0
         Align = alTop
         Caption = 'Notepad'
+        ExplicitWidth = 52
       end
       object lblAutosaveChanges: TLabel
         AlignWithMargins = True
-        Left = 430
+        Left = 3
         Top = 492
-        Width = 237
+        Width = 664
         Height = 14
         Margins.Right = 9
         Align = alBottom
@@ -1899,6 +1875,8 @@ object FormMain: TFormMain
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitLeft = 430
+        ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
         AlignWithMargins = True
@@ -1919,10 +1897,6 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object btnGenerateCurrentStrings: TButton
         Left = 24
         Top = 40
@@ -1973,7 +1947,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800100010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800140010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2383,7 +2357,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C0101020008001000DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008001400DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
