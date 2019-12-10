@@ -64,7 +64,6 @@ type
     cbbViewMode: TJvComboBox;
     cbbWebInterface: TJvComboBox;
     chkAdminAutoLogin: TCheckBox;
-    chkAutoConnectWeb: TCheckBox;
     chkAutoUpdates: TCheckBox;
     chkGrouMapCycle: TCheckBox;
     chkOnlyItemsFromConfig: TCheckBox;
@@ -168,6 +167,10 @@ type
     tsUnknown: TTabSheet;
     tsWebAdmin: TTabSheet;
     wbWebAdmin: TWebBrowser;
+    TimerAutoStartServer: TTimer;
+    pnlBottomSvStartOptions: TPanel;
+    cbAutoRestartServer: TCheckBox;
+    chkAutoConnectWeb: TCheckBox;
 
     // Strings and translation
     function _h(text: String): String;
@@ -275,6 +278,8 @@ type
     procedure tmrWebAdminTimer(Sender: TObject);
     procedure wbWebAdminDocumentComplete(ASender: TObject;
       const pDisp: IDispatch; const URL: OleVariant);
+    procedure TimerAutoStartServerTimer(Sender: TObject);
+    procedure cbAutoRestartServerClick(Sender: TObject);
 
   private
 
@@ -283,6 +288,7 @@ type
     Descending: Boolean;
     SortedColumn: Integer;
     frmProgress: TformPB;
+    procedure StartServer;
 
   const
 
@@ -295,7 +301,7 @@ type
     pathKFGameIni, pathKFEngineIni, pathKFWebIni, pathCmdTool, customServerPath,
       pathServerEXE: string;
     useCustomServerPath, AutoConnectWeb, appMaximized, GroupMapCycle,
-      GroupMapCycleSeparators: Boolean;
+      GroupMapCycleSeparators, AutoRestartServer: Boolean;
     onlyFromConfigItems: Boolean;
     appWidth: Integer;
     appHeight: Integer;
@@ -533,18 +539,15 @@ begin
 end;
 
 procedure TFormMain.btnStartServerClick(Sender: TObject);
-var
-  svPath: string;
-  argCmd: string;
+
 begin
   saveconfig;
 
   if ProcessExists(ExtractFileName(pathServerEXE)) then
   begin
-
     case Application.MessageBox
-      (_p('An instance of the server is already running.\nDo you want to kill this process first?'),
-      'Server', MB_YESNOCANCEL + MB_ICONINFORMATION) of
+      (_p('Are you sure you want to close the server?'), 'Server',
+      MB_YESNOCANCEL + MB_ICONINFORMATION) of
       IDCANCEL:
         begin
           Exit;
@@ -553,65 +556,76 @@ begin
         begin
           KillProcessByName(ExtractFileName(pathServerEXE));
           Sleep(1000);
+          btnStartServer.Caption := _s('Start server');
+          TimerAutoStartServer.Enabled := false;
         end;
     end;
-
   end
   else
   begin
 
-  end;
-
-  if cbbMap.text <> '' then
-  begin
-
-    if useCustomServerPath then
-    begin
-      svPath := IncludeTrailingPathDelimiter(customServerPath);
-    end
-    else
-    begin
-      svPath := ExtractFilePath(Application.ExeName);
+    try
+      StartServer();
+    except
+      on E: Exception do
+        ShowMessage(E.Message);
     end;
-    argCmd := cbbMap.text;
-    argCmd := argCmd + '?Difficulty=' + IntToStr(cbbDifficulty.ItemIndex);
-    argCmd := argCmd + '?GameLength=' + IntToStr(cbbGameLength.ItemIndex);
-    if edtGamePass.text <> '' then
-      argCmd := argCmd + '?GamePassword=' + edtGamePass.text;
-    if edtAddParam.text <> '' then
-      argCmd := argCmd + edtAddParam.text;
-    case cbbGameMode.ItemIndex of
-      0:
-        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Endless';
-      1:
-        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Survival';
-      2:
-        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_VersusSurvival';
-      3:
-        argCmd := argCmd + '?game=KFGameContent.KFGameInfo_WeeklySurvival';
-      4:
-        begin
-          if (Pos('GAME=', UpperCase(edtAddParam.text)) <= 0) then
-            Application.MessageBox
-              (_p('You have set the game mode to custom but you did not \nspecify the custom game in additional parameters'),
-              _p('Invalid custom game mod'), MB_OK + MB_ICONWARNING);
-
-        end;
-    end;
-
-    // ShowMessage(argCmd);
-    ShellExecute(handle, 'open', Pchar(pathServerEXE), Pchar(argCmd),
-      Pchar(svPath), SW_SHOWNORMAL);
 
     if (chkAutoConnectWeb.Checked) and (cbbWebInterface.ItemIndex = 1) then
       tmrWebAdmin.Enabled := True;
+
+    TimerAutoStartServer.Enabled := True;
+    btnStartServer.Caption := _s('Stop server');
+
+  end;
+end;
+
+procedure TFormMain.StartServer();
+var
+  svPath: string;
+  argCmd: string;
+begin
+
+  if cbbMap.text = '' then
+    raise Exception.Create(_s('Select a map before starting the server'));
+
+  if useCustomServerPath then
+  begin
+    svPath := IncludeTrailingPathDelimiter(customServerPath);
   end
   else
   begin
-    Application.MessageBox(_p('Select a map before starting the server'), 'Map',
-      MB_OK + MB_ICONINFORMATION);
+    svPath := ExtractFilePath(Application.ExeName);
+  end;
+  argCmd := cbbMap.text;
+  argCmd := argCmd + '?Difficulty=' + IntToStr(cbbDifficulty.ItemIndex);
+  argCmd := argCmd + '?GameLength=' + IntToStr(cbbGameLength.ItemIndex);
+  if edtGamePass.text <> '' then
+    argCmd := argCmd + '?GamePassword=' + edtGamePass.text;
+  if edtAddParam.text <> '' then
+    argCmd := argCmd + edtAddParam.text;
+
+  case cbbGameMode.ItemIndex of
+    0:
+      argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Endless';
+    1:
+      argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Survival';
+    2:
+      argCmd := argCmd + '?game=KFGameContent.KFGameInfo_VersusSurvival';
+    3:
+      argCmd := argCmd + '?game=KFGameContent.KFGameInfo_WeeklySurvival';
+    4:
+      argCmd := argCmd + '?game=KFGameContent.KFGameInfo_Objective';
+    5:
+      if (Pos('GAME=', UpperCase(edtAddParam.text)) <= 0) then
+        raise Exception.Create
+          (_s('You have set the game mode to custom but you did not \nspecify the custom game in additional parameters')
+          );
 
   end;
+
+  ShellExecute(handle, 'open', Pchar(pathServerEXE), Pchar(argCmd),
+    Pchar(svPath), SW_SHOWNORMAL);
 
 end;
 
@@ -1479,7 +1493,7 @@ end;
 procedure TFormMain.cbbGameModeChange(Sender: TObject);
 begin
   kfprofiles[defaultProfile].DefaultGameMode := cbbGameMode.ItemIndex;
-  if (cbbGameMode.ItemIndex = 4) then
+  if (cbbGameMode.ItemIndex = 5) then
   begin
     if (Pos('?GAME=', UpperCase(edtAddParam.text)) <= 0) then
     begin
@@ -1545,6 +1559,14 @@ begin
   defaultProfile := cbbProfile.ItemIndex;
   LoadServerProfile();
   saveconfig();
+end;
+
+procedure TFormMain.cbAutoRestartServerClick(Sender: TObject);
+begin
+  AutoRestartServer := cbAutoRestartServer.Checked;
+  if cbAutoRestartServer.Checked = false then
+    TimerAutoStartServer.Enabled := false;
+
 end;
 
 procedure TFormMain.cbbCustomRedirectCloseUp(Sender: TObject);
@@ -1642,6 +1664,31 @@ begin
   serverTool.SetMapCycleOptions(GroupMapCycle, GroupMapCycleSeparators);
   serverTool.ResortMapCycle();
   LoadItemsToLv(edtFilter.text);
+end;
+
+procedure TFormMain.TimerAutoStartServerTimer(Sender: TObject);
+begin
+  if ProcessExists(ExtractFileName(pathServerEXE)) then
+  begin
+    btnStartServer.Caption := _s('Stop server');
+  end
+  else
+  begin
+    btnStartServer.Caption := _s('Start server');
+    if AutoRestartServer then
+    begin
+
+      try
+        StartServer();
+      except
+        on E: Exception do
+        begin
+          TimerAutoStartServer.Enabled := false;
+          ShowMessage(E.Message);
+        end;
+      end;
+    end;
+  end;
 end;
 
 procedure TFormMain.cbbWebInterfaceChange(Sender: TObject);
@@ -2760,6 +2807,9 @@ begin
   // ---- Auto check for update system
   if AutoCheckForUpdates then
     checkForUpdates(Self);
+  if ProcessExists(ExtractFileName(pathServerEXE)) then
+    btnStartServer.Caption := _s('Stop server');
+
 end;
 
 procedure TFormMain.LoadUIConfig;
@@ -2805,6 +2855,7 @@ begin
   btnUpdate.Enabled := false;
   chkOnlyItemsFromConfig.Checked := onlyFromConfigItems;
   customRedirect := serverTool.GetCustomRedirect;
+    cbAutoRestartServer.Checked := AutoRestartServer;
   // ShowMessage(configName);
 {$IFDEF DEBUG}
   tsDebug.TabVisible := True;
@@ -3871,6 +3922,7 @@ begin
             GroupMapCycle := ReadBool(section, 'GroupMapCycle', True);
             GroupMapCycleSeparators :=
               ReadBool(section, 'GroupMapCycleSeparators', false);
+            AutoRestartServer := ReadBool(section, 'AutoRestartServer', false);
           end;
         end;
 
@@ -3944,6 +3996,8 @@ begin
             WriteBool(section, 'GroupMapCycle', GroupMapCycle);
             WriteBool(section, 'GroupMapCycleSeparators',
               GroupMapCycleSeparators);
+            WriteBool(section, 'AutoRestartServer', AutoRestartServer);
+
           end;
           WriteBool('GENERAL', 'OnlyShowItemsFromConfig', onlyFromConfigItems);
           WriteString('GENERAL', 'Language', languageInitial);

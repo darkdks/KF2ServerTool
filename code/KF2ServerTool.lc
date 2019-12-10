@@ -328,6 +328,12 @@
 "WebAdmin"="WebAdmin"
 "Will open a workshop webbrowser that you can use to add maps or mods"="Will open a workshop webbrowser that you can use to add maps or mods"
 "Workshop Download Manager:"="Workshop Download Manager:"
+## ADDED IN 1.3.7
+"Auto restart server"="Auto restart server"
+"This will restart the server process if it unexpectedly shuts down outside the tool."="This will restart the server process if it unexpectedly shuts down outside the tool."
+"Stop server"="Stop server"
+"Are you sure you want to close the server?"="Are you sure you want to close the server?"
+ 
 
 ["Português-BR", "BR"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" como um modo de jogo fará com que o servidor ignore\no jogo personalizado que você especificou na caixa Parâmetros adicionais."
@@ -615,13 +621,18 @@
 "Normal"=""
 "Notepad"=""
 "Redownload Thumbnail"=""
-"Unknown"=""
 "Update"=""
 "View mode:"=""
 "Web Admin:"=""
 "WebAdmin"=""
 "Will open a workshop webbrowser that you can use to add maps or mods"=""
 "Workshop Download Manager:"=""
+## ADDED IN 1.3.7
+"Auto restart server"="Auto reiniciar servidor"
+"This will restart the server process if it unexpectedly shuts down outside the tool."="Isso reiniciará o processo do servidor se ele for encerrado inesperadamente fora da ferramenta."
+"Will open a workshop webbrowser that you can use to add maps or mods"="Irá abrir um navegador da workshop que você pode usar para adicionar mapas ou mods"
+"Stop server"="Parar servidor"
+"Are you sure you want to close the server?"="Você tem certeza que deseja encerrar o servidor?"
 
 ["Español", "ES"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" como un modo de juego hará que el servidor ignore \n el juego personalizado que especificó en el cuadro Parámetros adicionales."
@@ -916,6 +927,12 @@
 "WebAdmin"=""
 "Will open a workshop webbrowser that you can use to add maps or mods"=""
 "Workshop Download Manager:"=""
+## ADDED IN 1.3.7
+"Auto restart server"="Servidor de reinicio automático"
+"This will restart the server process if it unexpectedly shuts down outside the tool."="Esto reiniciará el proceso del servidor si se cierra inesperadamente fuera de la herramienta"
+"Stop server"="Detener servidor"
+"Are you sure you want to close the server?"="¿Está seguro de que desea cerrar el servidor?"
+
 
 ["Deutsch", "DE"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" als Spielmodus. Dadurch ignoriert der Server\ndas benutzerdefinierte Spiel, das du in *zusätzliche Parameter* festgelegt hast."
@@ -1210,3 +1227,8 @@
 "WebAdmin"="Web-Admin"
 "Will open a workshop webbrowser that you can use to add maps or mods"="Öffnet den Workshop im Browser zum direkten Hinzufügen von Maps oder Mods"
 "Workshop Download Manager:"="Workshop-Downloadmanager:"
+## ADDED IN 1.3.7
+"Auto restart server"="Server automatisch neu starten"
+"This will restart the server process if it unexpectedly shuts down outside the tool."="Dadurch wird der Serverprozess neu gestartet, wenn er außerhalb des Tools unerwartet heruntergefahren wird."
+"Stop server"="Server anhalten"
+"Are you sure you want to close the server?"="Möchten Sie den Server wirklich schließen?"

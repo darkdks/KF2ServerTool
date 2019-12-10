@@ -296,9 +296,6 @@ Coordinates=1118,410,98,58
 [tsDebug]
 Coordinates=916,614,62,36
 
-[chkAutoConnectWeb]
-Coordinates=973,410,135,58
-
 [RemoveGameSteamCache1]
 Coordinates=1453,56,178,36
 
@@ -369,7 +366,7 @@ Coordinates=1453,221,71,36
 Coordinates=944,10,57,58
 
 []
-Coordinates=1078,546,69,58
+Coordinates=973,410,135,58
 
 [ilSmallIcons]
 Coordinates=1257,826,40,36

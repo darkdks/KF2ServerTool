@@ -597,7 +597,7 @@ object FormMain: TFormMain
           object btnStartServer: TButton
             AlignWithMargins = True
             Left = 20
-            Top = 161
+            Top = 143
             Width = 616
             Height = 44
             Hint = 
@@ -606,36 +606,16 @@ object FormMain: TFormMain
             Margins.Left = 20
             Margins.Top = 2
             Margins.Right = 20
-            Margins.Bottom = 20
             CustomHint = blhintHelp
             Align = alBottom
             BiDiMode = bdLeftToRight
             Caption = 'Start server'
             ParentBiDiMode = False
             ParentShowHint = False
-            ShowHint = True
+            ShowHint = False
             TabOrder = 0
             OnClick = btnStartServerClick
-          end
-          object chkAutoConnectWeb: TCheckBox
-            AlignWithMargins = True
-            Left = 20
-            Top = 139
-            Width = 633
-            Height = 17
-            Hint = 
-              'Activating this option will make the webadmin open inside the to' +
-              'ol itself \nas soon as the server goes online. \nNote that for t' +
-              'his option to work correctly you must enable WebAdmin in options' +
-              ' tab.'
-            Margins.Left = 20
-            CustomHint = blhintHelp
-            Align = alBottom
-            Caption = 'Auto connect to web admin'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 1
-            OnClick = chkAutoConnectWebClick
+            ExplicitTop = 178
           end
           object chkGrouMapCycle: TCheckBox
             Left = 12
@@ -650,7 +630,7 @@ object FormMain: TFormMain
             Caption = 'Group and sort map cycle list by type (Official/Custom)'
             ParentShowHint = False
             ShowHint = True
-            TabOrder = 2
+            TabOrder = 1
             OnClick = chkGrouMapCycleClick
           end
           object chkSeparateMapTypes: TCheckBox
@@ -666,8 +646,66 @@ object FormMain: TFormMain
             Caption = 'Add type separator'
             ParentShowHint = False
             ShowHint = True
-            TabOrder = 3
+            TabOrder = 2
             OnClick = chkSeparateMapTypesClick
+          end
+          object pnlBottomSvStartOptions: TPanel
+            AlignWithMargins = True
+            Left = 0
+            Top = 190
+            Width = 656
+            Height = 25
+            Margins.Left = 0
+            Margins.Top = 0
+            Margins.Right = 0
+            Margins.Bottom = 10
+            Align = alBottom
+            BevelOuter = bvNone
+            TabOrder = 3
+            ExplicitTop = 184
+            object cbAutoRestartServer: TCheckBox
+              AlignWithMargins = True
+              Left = 20
+              Top = 3
+              Width = 252
+              Height = 19
+              Hint = 
+                'This will restart the server process if it unexpectedly shuts do' +
+                'wn outside the tool.'
+              Margins.Left = 20
+              CustomHint = blhintHelp
+              Align = alLeft
+              Caption = 'Auto restart server'
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 0
+              OnClick = cbAutoRestartServerClick
+              ExplicitLeft = 21
+              ExplicitTop = 4
+              ExplicitHeight = 33
+            end
+            object chkAutoConnectWeb: TCheckBox
+              AlignWithMargins = True
+              Left = 433
+              Top = 3
+              Width = 220
+              Height = 19
+              Hint = 
+                'Activating this option will make the webadmin open inside the to' +
+                'ol itself \nas soon as the server goes online. \nNote that for t' +
+                'his option to work correctly you must enable WebAdmin in options' +
+                ' tab.'
+              Margins.Left = 20
+              CustomHint = blhintHelp
+              Align = alRight
+              Caption = 'Auto connect to web admin'
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 1
+              OnClick = chkAutoConnectWebClick
+              ExplicitLeft = 429
+              ExplicitHeight = 33
+            end
           end
         end
         object pnlStartMiddle1: TPanel
@@ -983,6 +1021,7 @@ object FormMain: TFormMain
               'Survival'
               'VersusSurvival'
               'Weekly'
+              'Objective'
               'Custom')
           end
         end
@@ -1947,7 +1986,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800140010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101060008001C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2357,7 +2396,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C0101020008001400DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008001C00DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -16903,5 +16942,12 @@ object FormMain: TFormMain
     Delay = 300
     Left = 632
     Top = 320
+  end
+  object TimerAutoStartServer: TTimer
+    Enabled = False
+    Interval = 2000
+    OnTimer = TimerAutoStartServerTimer
+    Left = 622
+    Top = 415
   end
 end
