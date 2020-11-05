@@ -32,7 +32,7 @@ object FormMain: TFormMain
     Margins.Bottom = 2
     Align = alTop
     Alignment = taRightJustify
-    Caption = 'darkdks @ 2019'
+    Caption = 'darkdks @ 2020'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
     Font.Height = -11
@@ -615,7 +615,6 @@ object FormMain: TFormMain
             ShowHint = False
             TabOrder = 0
             OnClick = btnStartServerClick
-            ExplicitTop = 178
           end
           object chkGrouMapCycle: TCheckBox
             Left = 12
@@ -662,7 +661,6 @@ object FormMain: TFormMain
             Align = alBottom
             BevelOuter = bvNone
             TabOrder = 3
-            ExplicitTop = 184
             object cbAutoRestartServer: TCheckBox
               AlignWithMargins = True
               Left = 20
@@ -680,9 +678,6 @@ object FormMain: TFormMain
               ShowHint = True
               TabOrder = 0
               OnClick = cbAutoRestartServerClick
-              ExplicitLeft = 21
-              ExplicitTop = 4
-              ExplicitHeight = 33
             end
             object chkAutoConnectWeb: TCheckBox
               AlignWithMargins = True
@@ -703,8 +698,6 @@ object FormMain: TFormMain
               ShowHint = True
               TabOrder = 1
               OnClick = chkAutoConnectWebClick
-              ExplicitLeft = 429
-              ExplicitHeight = 33
             end
           end
         end
@@ -1986,7 +1979,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C0101060008001C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800200010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2396,7 +2389,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C0101020008001C00DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008002000DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

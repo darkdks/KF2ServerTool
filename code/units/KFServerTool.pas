@@ -141,9 +141,12 @@ type
         procedure SetIncludeSeparators(aValue: Boolean);
   const
 
-    SERVERTOOLVERSION = '1.3.7';
+    SERVERTOOLVERSION = '1.3.8';
 
     {
+    CHANGE LOG VERSION 1.3.8
+      - Server install fix
+
     CHANGE LOG VERSION 1.3.7
       - Added Objective mode to server launcher
       - Added auto restart server option to server launcher

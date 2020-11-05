@@ -1093,6 +1093,7 @@ begin
   cmdToolFullPath := ExtractFilePath(Application.ExeName) + pathCmdTool;
   cmdToolArgs := '+login anonymous +force_install_dir ' + Path +
     ' +app_update 232130 +exit';
+  //ShowMessage('install server, args: ' + cmdToolFullPath + cmdToolArgs);
   ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
 end;
 
@@ -2763,15 +2764,16 @@ begin
           101: // Path set
             begin
               useCustomServerPath := True;
-              serverpath := IncludeTrailingPathDelimiter(customServerPath)
+              serverpath := IncludeTrailingPathDelimiter(kfPathDialog.CustomServerPath);
+              customServerPath := serverpath;
             end;
           102:
             // Install Server
             begin
-              useCustomServerPath := false;
-              customServerPath := '';
-              serverpath := ExtractFilePath(Application.ExeName);
-              InstallServer(ExtractFilePath(Application.ExeName));
+              useCustomServerPath := True;
+              serverpath := IncludeTrailingPathDelimiter(kfPathDialog.InstallServerPath);
+              customServerPath := serverpath;
+              InstallServer(serverpath);
             end;
         end;
 
