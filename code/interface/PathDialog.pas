@@ -58,7 +58,7 @@ begin
     if pos(' ', InstallServerPath) > 0 then begin
       Application.MessageBox
         (PWideChar(FormMain._s
-        ('Please choose a  destination that the full path does not contain spaces. \nExample: C:\KF2SERVER\')
+        ('Please choose a destination that the full path does not contain spaces. \nExample: C:\KF2SERVER\')
         ), FormMain._p('Invalid Folder'), MB_OK + MB_ICONERROR);
       Exit;
     end;

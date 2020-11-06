@@ -12,7 +12,7 @@
 # Do not change the first string, it's a key that the application will search for find a translation ,
 # Example: "This is a key and do not change anything here"="This is the translated text, you can change it"
 # Do not put space between the '=' separator or before the beginning of each line.
-# When you found the marking '\n' do not remove it, this is a line break mark and can make a difference in how text is shown.
+# When you found the marking '\n' try to keep it in the context, this is a line break mark and can make a difference in how text is shown.
 # Some strings have a space before or after the text, it is part of a context in which space is needed. keep how the original is.
 # Avoid using double quotes. If you use single quotes don't forget to escape them for Delphi: it''s, don''t and so on
 #
@@ -333,7 +333,11 @@
 "This will restart the server process if it unexpectedly shuts down outside the tool."="This will restart the server process if it unexpectedly shuts down outside the tool."
 "Stop server"="Stop server"
 "Are you sure you want to close the server?"="Are you sure you want to close the server?"
- 
+# ADDED UB 1.3.8
+"Please choose a destination that the full path does not contain spaces. \nExample: C:\KF2SERVER\"="Please choose a destination that the full path does not contain spaces. \nExample: C:\KF2SERVER\"
+"Invalid Folder"="Invalid Folder"
+"The tool will start the server to generate the default settings. \nThis will take about 2 minutes, please wait."="The tool will start the server to generate the default settings. \nThis will take about 2 minutes, please wait."
+"Download complete"="Download complete"
 
 ["Português-BR", "BR"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" como um modo de jogo fará com que o servidor ignore\no jogo personalizado que você especificou na caixa Parâmetros adicionais."
@@ -633,6 +637,11 @@
 "Will open a workshop webbrowser that you can use to add maps or mods"="Irá abrir um navegador da workshop que você pode usar para adicionar mapas ou mods"
 "Stop server"="Parar servidor"
 "Are you sure you want to close the server?"="Você tem certeza que deseja encerrar o servidor?"
+# ADDED UB 1.3.8
+"Please choose a destination that the full path does not contain spaces. \nExample: C:\KF2SERVER\"="Por favor escolha um destino em que o caminho completo não contenha espaços. \nExemplo: C:\KF2SERVER\"
+"Invalid Folder"="Pasta inválida"
+"Download complete"="Download completo"
+"The tool will start the server to generate the default settings. \nThis will take about 2 minutes, please wait."="A ferramenta iniciará o servidor para gerar as configurações padrão. Isso levará cerca de 2 minutos, aguarde."
 
 ["Español", "ES"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" como un modo de juego hará que el servidor ignore \n el juego personalizado que especificó en el cuadro Parámetros adicionales."
@@ -932,7 +941,11 @@
 "This will restart the server process if it unexpectedly shuts down outside the tool."="Esto reiniciará el proceso del servidor si se cierra inesperadamente fuera de la herramienta"
 "Stop server"="Detener servidor"
 "Are you sure you want to close the server?"="¿Está seguro de que desea cerrar el servidor?"
-
+# ADDED UB 1.3.8
+"Please choose a destination that the full path does not contain spaces. \nExample: C:\KF2SERVER\"="Elija un destino en el que la ruta completa no contenga espacios. \nEjemplo: C:\KF2SERVER\"
+"Invalid Folder"="Carpeta inválida"
+"Download complete"="Descarga completa"
+"The tool will start the server to generate the default settings. \nThis will take about 2 minutes, please wait."="La herramienta iniciará el servidor para generar la configuración predeterminada. Esto tardará unos 2 minutos, espere."
 
 ["Deutsch", "DE"]
 " as a game mode will cause the server to ignore\nthe custom game that you specified in Additional parameters box."=" als Spielmodus. Dadurch ignoriert der Server\ndas benutzerdefinierte Spiel, das du in *zusätzliche Parameter* festgelegt hast."
@@ -1232,3 +1245,8 @@
 "This will restart the server process if it unexpectedly shuts down outside the tool."="Dadurch wird der Serverprozess neu gestartet, wenn er außerhalb des Tools unerwartet heruntergefahren wird."
 "Stop server"="Server anhalten"
 "Are you sure you want to close the server?"="Möchten Sie den Server wirklich schließen?"
+# ADDED UB 1.3.8
+"Please choose a destination that the full path does not contain spaces. \nExample: C:\KF2SERVER\"="Bitte wählen Sie ein Ziel, bei dem der vollständige Pfad keine Leerzeichen enthält. \nBeispiel: C:\KF2SERVER\"
+"Invalid Folder"="Ungültiger Ordner"
+"Download complete"="Download abgeschlossen"
+"The tool will start the server to generate the default settings. \nThis will take about 2 minutes, please wait."="Das Tool startet den Server, um die Standardeinstellungen zu generieren. Dies dauert ca. 2 Minuten, bitte warten."
