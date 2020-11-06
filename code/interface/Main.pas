@@ -327,7 +327,7 @@ var
 implementation
 
 uses
-  AddItem, PathDialog, Queue;
+  AddItem, PathDialog, Queue, languagePrompt;
 {$R *.dfm}
 
 procedure TFormMain.AddManualEntryClick(Sender: TObject);
@@ -922,7 +922,7 @@ begin
 
   if i = IDOK then
   begin
-    cmdToolFullPath := serverpath + pathCmdTool;
+    cmdToolFullPath := serverTool.GetSteamCmdPath;
     ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
     Application.MessageBox(_p('Finished'), PWideChar(dlgType),
       MB_OK + MB_ICONINFORMATION);
@@ -1093,8 +1093,17 @@ begin
   cmdToolFullPath := ExtractFilePath(Application.ExeName) + pathCmdTool;
   cmdToolArgs := '+login anonymous +force_install_dir ' + Path +
     ' +app_update 232130 +exit';
-  //ShowMessage('install server, args: ' + cmdToolFullPath + cmdToolArgs);
+  // ShowMessage('install server, args: ' + cmdToolFullPath + cmdToolArgs);
   ExecuteFileAndWait(Self.handle, cmdToolFullPath, cmdToolArgs, SW_NORMAL);
+  Application.MessageBox
+    (_p('The tool will start the server to generate the default settings.' +
+    ' \nThis will take about 2 minutes, please wait.'), _p('Download complete'),
+    MB_OK + MB_ICONINFORMATION);
+  ExecuteFile(0, Path + 'Binaries\win64\kfserver.exe',
+    'kf-bioticslab?adminpassword=123', SW_NORMAL);
+  Sleep(120000); //120 seconds
+  KillProcessByName('kfserver.exe');
+
 end;
 
 procedure TFormMain.btnNewProfileClick(Sender: TObject);
@@ -2686,6 +2695,7 @@ var
 
   serverpath: string;
   kfPathDialog: TkfPathDialog;
+  kfLangDialog: TFormSetLanguage;
   pathDialogResult: Integer;
   ExeName: String;
   i: Integer;
@@ -2751,6 +2761,14 @@ begin
 
     if FileExists(serverpath + pathServerEXE) = false then
     begin
+      KFlangDialog := TFormSetLanguage.Create(Self);
+
+      try
+      tlTool.setLanguage(kfLangDialog.AskLang(tlTool));
+      finally
+        FreeAndNil(kfLangDialog);
+      end;
+
       kfPathDialog := TkfPathDialog.Create(Self);
       try
         pathDialogResult := kfPathDialog.ShowModal;
@@ -2764,14 +2782,16 @@ begin
           101: // Path set
             begin
               useCustomServerPath := True;
-              serverpath := IncludeTrailingPathDelimiter(kfPathDialog.CustomServerPath);
+              serverpath := IncludeTrailingPathDelimiter
+                (kfPathDialog.customServerPath);
               customServerPath := serverpath;
             end;
           102:
             // Install Server
             begin
               useCustomServerPath := True;
-              serverpath := IncludeTrailingPathDelimiter(kfPathDialog.InstallServerPath);
+              serverpath := IncludeTrailingPathDelimiter
+                (kfPathDialog.InstallServerPath);
               customServerPath := serverpath;
               InstallServer(serverpath);
             end;
@@ -2791,7 +2811,8 @@ begin
     serverTool.SetKFGameIniSubPath(pathKFGameIni);
     serverTool.SetKFServerPathEXE(pathServerEXE);
     serverTool.SetKFWebIniSubPath(pathKFWebIni);
-    serverTool.SetSteamCmdPath(serverpath + pathCmdTool);
+    serverTool.SetSteamCmdPath(ExtractFilePath(Application.ExeName) +
+      pathCmdTool);
     serverTool.SetMapCycleOptions(GroupMapCycle, GroupMapCycleSeparators);
   except
     on E: Exception do
@@ -2857,7 +2878,7 @@ begin
   btnUpdate.Enabled := false;
   chkOnlyItemsFromConfig.Checked := onlyFromConfigItems;
   customRedirect := serverTool.GetCustomRedirect;
-    cbAutoRestartServer.Checked := AutoRestartServer;
+  cbAutoRestartServer.Checked := AutoRestartServer;
   // ShowMessage(configName);
 {$IFDEF DEBUG}
   tsDebug.TabVisible := True;

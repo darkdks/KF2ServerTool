@@ -37,10 +37,10 @@ object kfPathDialog: TkfPathDialog
     WordWrap = True
   end
   object btnConfigurePath: TButton
-    Left = 235
-    Top = 77
-    Width = 129
-    Height = 27
+    Left = 184
+    Top = 76
+    Width = 156
+    Height = 28
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
@@ -50,9 +50,9 @@ object kfPathDialog: TkfPathDialog
     OnClick = btnConfigurePathClick
   end
   object btnInstallServer: TButton
-    Left = 368
+    Left = 344
     Top = 76
-    Width = 129
+    Width = 153
     Height = 28
     Margins.Left = 2
     Margins.Top = 2

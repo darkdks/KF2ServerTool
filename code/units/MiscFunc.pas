@@ -489,6 +489,7 @@ begin
   try
     result := ShellExecute(hWnd, 'runas', PWideChar(filename),
       PWideChar(Parameters), nil, ShowWindows) > 32;
+
   except
     on E: Exception do
     begin

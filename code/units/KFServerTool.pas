@@ -146,6 +146,8 @@ type
     {
     CHANGE LOG VERSION 1.3.8
       - Server install fix
+      - Improved server installation steps
+      - Language dialog in first time launch
 
     CHANGE LOG VERSION 1.3.7
       - Added Objective mode to server launcher
