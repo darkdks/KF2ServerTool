@@ -9,6 +9,9 @@ With this tool you can easily install and configure your Killing Floor 2 dedicat
 ## How easy is that?
 You will just browse the workshop inside the app or paste a URL of an workshop item and click on a button. The application will do everything for you (download the map, add the server subscription, add the map entry, add the map to the cycle of maps and add the server redirect if needed). For update an outdated workshop item just right click on the item and choose update.
 
+
+
+
 KF2ServerTool
 <p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img1.jpg"/></p>
 
@@ -18,6 +21,7 @@ The app includes some extra features too, like a server launcher, web admin conf
 
 KF2ServerToolCMD
 <p align="center"><img src="https://github.com/darkdks/KF2ServerTool/raw/master/imgs/img3.jpg"/></p>
+
 
 # Download
 ### GUI Version to Windows (KF2ServerTool):
@@ -69,6 +73,8 @@ Example: KF2ServerToolCMD -config KFServerTool_sv2.ini -info
 
 Optional for windows gui only
 - Go to the section GENERAL in the config file and set the flag "OnlyShowItemsFromConfig" to true. This will filtrate maps and mods from another servers.
+
+## [See KF2ServerTool wiki for more help!](https://github.com/darkdks/KF2ServerTool/wiki) 
 
 # How to contribute
 See [CONTRIBUTING.md](https://github.com/darkdks/KF2ServerTool/blob/master/CONTRIBUTING.md)
