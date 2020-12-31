@@ -1738,7 +1738,7 @@ procedure TFormMain.edtAddParamChange(Sender: TObject);
 begin
   kfprofiles[defaultProfile].AdditionalParam := edtAddParam.text;
   if Pos('GAME=', UpperCase(edtAddParam.text)) > 0 then
-    cbbGameMode.ItemIndex := 4;
+    cbbGameMode.ItemIndex := 5;
 
 end;
 
