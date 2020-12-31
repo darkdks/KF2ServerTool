@@ -141,9 +141,12 @@ type
         procedure SetIncludeSeparators(aValue: Boolean);
   const
 
-    SERVERTOOLVERSION = '1.3.8';
+    SERVERTOOLVERSION = '1.3.9';
 
     {
+    CHANGE LOG VERSION 1.3.9
+      - Custom game mode/mutator param fix
+
     CHANGE LOG VERSION 1.3.8
       - Server install fix
       - Improved server installation steps
