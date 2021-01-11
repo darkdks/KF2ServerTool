@@ -52,7 +52,8 @@ type
     CGAMEMAPCYCLES = 'GameMapCycles';
     CENGINEACESSCONTROL = 'Engine.AccessControl';
     CADMINPASSWORD = 'AdminPassword';
-
+    CGAMEREPLICATIONINFO = 'Engine.GameReplicationInfo';
+    CSERVERNAME = 'ServerName';
   end;
 
   TKFWebIni = class(TKFConfigFile)
@@ -85,6 +86,10 @@ type
     function GetMapNameAt(index: Integer): string;
     function GetAdminPass(): String;
     function SetAdminPass(password: String): Boolean;
+    function GetServerName(): String;
+    function SetServerName(serverName: String): Boolean;
+
+
     function AddMapEntry(name: String): Boolean;
     function RemoveMapEntry(name: String; removeAll: Boolean): Boolean;
     function AddMapCycle(name: String; sortType: TKFCycleSort;
@@ -114,6 +119,8 @@ type
     function RemoveWorkshopRedirect(): Boolean;
     function SetCustomRedirect(URL: String): Boolean;
     function GetCustomRedirect: string;
+    function SetServerPort(Port: String): Boolean;
+    function GetServerPort: string;
     function GetWorkshopItemIndex(ID: string): Integer;
     function GetWorkshopStatus: Boolean;
     function GetWorkshopSubscribeCount: Integer;
@@ -127,6 +134,8 @@ type
     CDMWORKSHOP = 'OnlineSubsystemSteamworks.SteamWorkshopDownload';
     CURLREDIRECT = 'RedirectToURL';
     CHTTPDOWNLOAD = 'IpDrv.HTTPDownload';
+    CURL = 'URL';
+    CPORT = 'Port';
 
   end;
 
@@ -551,6 +560,32 @@ begin
   end;
 end;
 
+function TKFGameIni.GetServerName: String;
+var
+  TND_index, DM_index: Integer;
+begin
+  Result := '';
+  try
+    TND_index := GetSectionIndex(CGAMEREPLICATIONINFO, false);
+    DM_index := GetItemIndex(CSERVERNAME, TND_index);
+
+    if (TND_index >= 0) and (DM_index >= 0) then
+    begin
+      Result := GetValue(TND_index, DM_index);
+    end
+    else
+    begin
+      raise Exception.Create('Failed to find ' + CSERVERNAME + ' field.');
+
+    end;
+
+  except
+    on e: Exception do
+      raise Exception.Create('Error getting server name: ' + e.Message);
+  end;
+
+end;
+
 function TKFGameIni.GMCTextToStrings(GMCText: string): TStringList;
 var
   chrInx: Integer;
@@ -670,6 +705,31 @@ begin
     Exit;
   end;
   ModifyValue(textArray, GI_index, GMC_index);
+end;
+
+function TKFGameIni.SetServerName(serverName: String): Boolean;
+var
+  TND_index, DM_index: Integer;
+begin
+  try
+    TND_index := GetSectionIndex(CGAMEREPLICATIONINFO, false);
+    DM_index := GetItemIndex(CSERVERNAME, TND_index);
+
+    if (TND_index >= 0) and (DM_index >= 0) then
+    begin
+      Result := ModifyValue(serverName, TND_index, DM_index);
+    end
+    else
+    begin
+      raise Exception.Create('Failed to find ' + CGAMEREPLICATIONINFO + ' / ' +
+        CSERVERNAME + ' fields.');
+
+    end;
+
+  except
+    on e: Exception do
+      raise Exception.Create('Error setting server name: ' + e.Message);
+  end;
 end;
 
 function TKFGameIni.AddMapCycle(name: String; sortType: TKFCycleSort;
@@ -989,6 +1049,31 @@ begin
   end;
 end;
 
+function TKFEngineIni.SetServerPort(Port: String): Boolean;
+var
+  TND_index, DM_index: Integer;
+begin
+  try
+    TND_index := GetSectionIndex(CURL, false);
+    DM_index := GetItemIndex(CPORT, TND_index);
+
+    if (TND_index >= 0) and (DM_index >= 0) then
+    begin
+      Result := ModifyValue(Port, TND_index, DM_index);
+    end
+    else
+    begin
+      raise Exception.Create('Failed to find ' + CURL + ' / ' +
+        CPORT + ' fields.');
+
+    end;
+
+  except
+    on e: Exception do
+      raise Exception.Create('Error setting server port: ' + e.Message);
+  end;
+end;
+
 function TKFEngineIni.GetCustomRedirect(): string;
 var
   TND_index, DM_index: Integer;
@@ -1013,6 +1098,33 @@ begin
     on e: Exception do
       raise Exception.Create('Failed to get custom redirect: ' + e.Message);
   end;
+end;
+
+function TKFEngineIni.GetServerPort: string;
+var
+  TND_index, DM_index: Integer;
+begin
+  Result := '';
+  try
+    TND_index := GetSectionIndex(CURL, false);
+    DM_index := GetItemIndex(CPORT, TND_index);
+
+    if (TND_index >= 0) and (DM_index >= 0) then
+    begin
+      Result := GetValue(TND_index, DM_index);
+    end
+    else
+    begin
+      raise Exception.Create
+        ('Failed to find server port.');
+
+    end;
+
+  except
+    on e: Exception do
+      raise Exception.Create('Failed to get server port: ' + e.Message);
+  end;
+
 end;
 
 function TKFEngineIni.AddWorkshopItem(ID: string): Boolean;

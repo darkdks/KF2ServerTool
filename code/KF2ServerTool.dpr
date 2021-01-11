@@ -2,19 +2,18 @@ program KF2ServerTool;
 
 uses
   Forms,
-  Main in 'interface\Main.pas' {FormMain} ,
-  AddItem in 'interface\AddItem.pas' {FormAdd} ,
-  Workshop in 'interface\Workshop.pas' {FormWorkshop} ,
+  Main in 'interface\Main.pas' {FormMain},
+  AddItem in 'interface\AddItem.pas' {FormAdd},
+  Workshop in 'interface\Workshop.pas' {FormWorkshop},
   KFFile in 'units\KFFile.pas',
   KFRedirect in 'units\KFRedirect.pas',
   MiscFunc in 'units\MiscFunc.pas',
   KFServerTool in 'units\KFServerTool.pas',
-  ItemProgress in 'interface\ItemProgress.pas' {formPB} ,
-  frmDnt in 'interface\frmDnt.pas' {frmDonate} ,
-  PathDialog in 'interface\PathDialog.pas' {kfPathDialog} ,
-  Queue in 'interface\Queue.pas' {frmQueue} ,
-  uRedirectItemsDialog
-    in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog} ,
+  ItemProgress in 'interface\ItemProgress.pas' {formPB},
+  frmDnt in 'interface\frmDnt.pas' {frmDonate},
+  PathDialog in 'interface\PathDialog.pas' {kfPathDialog},
+  Queue in 'interface\Queue.pas' {frmQueue},
+  uRedirectItemsDialog in 'interface\uRedirectItemsDialog.pas' {frmRedirectItemsDialog},
   KFWksp in 'units\KFWksp.pas',
   Vcl.Themes,
   Vcl.Styles,
@@ -26,7 +25,8 @@ uses
   KFTypes in 'units\KFTypes.pas',
   toolLanguage in 'units\toolLanguage.pas',
   languagePrompt in 'interface\languagePrompt.pas' {FormSetLanguage},
-  KFServerInstall in 'units\KFServerInstall.pas';
+  KFServerInstall in 'units\KFServerInstall.pas',
+  uNewConfig in 'interface\uNewConfig.pas' {formNewConfig};
 
 const
   UPDATEPARAM = '-installupdate';
@@ -119,6 +119,7 @@ begin
     exit;
   Application.CreateForm(TFormMain, FormMain);
   Application.CreateForm(TFormSetLanguage, FormSetLanguage);
+  Application.CreateForm(TformNewConfig, formNewConfig);
   Application.Run;
 
 end.

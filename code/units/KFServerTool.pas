@@ -71,9 +71,9 @@ type
     function IsIgnoredMap(mapName: String): Boolean;
     function IsIgnoredFile(FileName: String): Boolean;
 
-
 {$IFDEF MSWINDOWS}
     function DownloadWorkshopItemImage(ID: String): Boolean;
+
 {$ENDIF}
   public
   var
@@ -138,25 +138,30 @@ type
     property verbose: Boolean read FverboseMod write FverboseMod;
     procedure ResortMapCycle;
     procedure SetCycleSortType(CSType: String);
-        procedure SetIncludeSeparators(aValue: Boolean);
+    procedure SetIncludeSeparators(aValue: Boolean);
+    function GetServerName: string;
+    function GetServerPort: string;
+    function SetServerName(serverName: String): Boolean;
+    function SetServerPort(Port: String): Boolean;
+
   const
 
     SERVERTOOLVERSION = '1.3.9';
 
     {
-    CHANGE LOG VERSION 1.3.9
+      CHANGE LOG VERSION 1.3.9
       - Custom game mode/mutator param fix
 
-    CHANGE LOG VERSION 1.3.8
+      CHANGE LOG VERSION 1.3.8
       - Server install fix
       - Improved server installation steps
       - Language dialog in first time launch
 
-    CHANGE LOG VERSION 1.3.7
+      CHANGE LOG VERSION 1.3.7
       - Added Objective mode to server launcher
       - Added auto restart server option to server launcher
 
-    CHANGE LOG VERSION 1.3.6
+      CHANGE LOG VERSION 1.3.6
       - Fixed missing Start server button, caused in the last update
 
       CHANGE LOG VERSION 1.3.5
@@ -1108,6 +1113,105 @@ begin
 
 end;
 
+function TKFServerTool.GetServerPort: string;
+var
+  KFEngineIni: TKFEngineIni;
+begin
+  if FileExists(kfApplicationPath + kfEngineIniSubPath) then
+  begin
+
+    KFEngineIni := TKFEngineIni.Create;
+    try
+      KFEngineIni.LoadFile(kfApplicationPath + kfEngineIniSubPath);
+      result := KFEngineIni.GetServerPort();
+    finally
+      KFEngineIni.Free;
+    end;
+
+  end
+  else
+  begin
+    raise Exception.Create('Invalid KFEngineIni Path (Not found in ' +
+      kfApplicationPath + kfEngineIniSubPath + ')');
+  end;
+
+end;
+
+function TKFServerTool.GetServerName: string;
+var
+  KFGameIni: TKFGameIni;
+begin
+  if FileExists(kfApplicationPath + kfGameIniSubPath) then
+  begin
+
+    KFGameIni := TKFGameIni.Create;
+    try
+      KFGameIni.LoadFile(kfApplicationPath + kfGameIniSubPath);
+      result := KFGameIni.GetServerName();
+    finally
+      KFGameIni.Free;
+    end;
+
+  end
+  else
+  begin
+    raise Exception.Create('Invalid KFGameIni Path (Not found in ' +
+      kfApplicationPath + kfGameIniSubPath + ')');
+  end;
+
+end;
+
+function TKFServerTool.SetServerPort(Port: String): Boolean;
+var
+  KFEngineIni: TKFEngineIni;
+begin
+  if FileExists(kfApplicationPath + kfEngineIniSubPath) then
+  begin
+
+    KFEngineIni := TKFEngineIni.Create;
+    try
+      KFEngineIni.LoadFile(kfApplicationPath + kfEngineIniSubPath);
+      KFEngineIni.SetServerPort(Port);
+      result := KFEngineIni.SaveFile(kfApplicationPath + kfEngineIniSubPath);
+    finally
+      KFEngineIni.Free;
+    end;
+
+  end
+  else
+  begin
+    raise Exception.Create('Invalid KFEngineIni Path (Not found in ' +
+      kfApplicationPath + kfEngineIniSubPath + ')');
+  end;
+
+end;
+
+function TKFServerTool.SetServerName(serverName: String): Boolean;
+var
+  KFGameIni: TKFGameIni;
+begin
+  if FileExists(kfApplicationPath + kfGameIniSubPath) then
+  begin
+
+    KFGameIni := TKFGameIni.Create;
+    try
+      KFGameIni.LoadFile(kfApplicationPath + kfGameIniSubPath);
+      KFGameIni.SetServerName(serverName);
+      result := KFGameIni.SaveFile(kfApplicationPath + kfGameIniSubPath);
+
+    finally
+      KFGameIni.Free;
+    end;
+
+  end
+  else
+  begin
+    raise Exception.Create('Invalid KFGameIni Path (Not found in ' +
+      kfApplicationPath + kfGameIniSubPath + ')');
+  end;
+
+end;
+
 function TKFServerTool.GetWebPort: Integer;
 var
   KFWeb: TKFWebIni;
@@ -1717,7 +1821,7 @@ end;
 
 procedure TKFServerTool.SetIncludeSeparators(aValue: Boolean);
 begin
- CycleSortSeparators :=  aValue;
+  CycleSortSeparators := aValue;
 
 end;
 

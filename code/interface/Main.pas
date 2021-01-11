@@ -36,8 +36,6 @@ type
     blhintHelp: TBalloonHint;
     Browserworkshop1: TMenuItem;
     btnAddNew: TBitBtn;
-    btnCleanDownloadCache: TButton;
-    btnCleanWorkshopData: TButton;
     btnDeleteProfile: TButton;
     btnGenerateCurrentStrings: TButton;
     btnGenerateNewTranslation: TButton;
@@ -47,33 +45,18 @@ type
     btnRenameProfile: TButton;
     btnStartServer: TButton;
     btnUpdate: TBitBtn;
-    btnUpdateBeta: TButton;
-    btnUpdateCurrent: TButton;
-    btnVerifyBeta: TButton;
-    btnVerifyCurrent: TButton;
     cache1: TMenuItem;
-    cbbCustomRedirect: TJvComboBox;
     cbbDifficulty: TComboBox;
-    cbbDownloadManager: TJvComboBox;
     cbbGameLength: TComboBox;
     cbbGameMode: TComboBox;
-    cbbLanguage: TJvComboBox;
     cbbMap: TComboBox;
     cbbProfile: TComboBox;
-    cbbTheme: TJvComboBox;
     cbbViewMode: TJvComboBox;
-    cbbWebInterface: TJvComboBox;
-    chkAdminAutoLogin: TCheckBox;
-    chkAutoUpdates: TCheckBox;
     chkGrouMapCycle: TCheckBox;
-    chkOnlyItemsFromConfig: TCheckBox;
     chkSeparateMapTypes: TCheckBox;
     edtAddParam: TEdit;
-    edtAdminPass: TJvEdit;
     edtFilter: TEdit;
     edtGamePass: TEdit;
-    edtPort: TJvEdit;
-    edtRedirectURL: TJvEdit;
     Explorerlocalfolder1: TMenuItem;
     Export1: TMenuItem;
     Forceupdate1: TMenuItem;
@@ -81,7 +64,6 @@ type
     FromRedirect1: TMenuItem;
     grpApplication: TGroupBox;
     grpEnableDisable: TGroupBox;
-    grpMaintenance: TGroupBox;
     grpStartServer: TGroupBox;
     ilLVGroups: TImageList;
     ilMiscImgs: TImageList;
@@ -89,32 +71,20 @@ type
     imgListItems: TImageList;
     imgMapsPlaceholder: TImage;
     lblAddParam: TLabel;
-    lblAdminPass: TLabel;
     lblAutosaveChanges: TLabel;
     lblCredits: TLabel;
-    lblCustomRedirect: TLabel;
     lblDifficulty: TLabel;
     lblDonate: TLabel;
-    lblDownloadManager: TLabel;
     lblFilter: TLabel;
-    lblFontSize: TLabel;
     lblGameLength: TLabel;
     lblGameMode: TLabel;
     lblGamePass: TLabel;
     lblHelpAddParam: TLabel;
-    lblLanguage: TLabel;
     lblMap: TLabel;
     lblMapCycleOptions: TLabel;
-    lblPort: TLabel;
     lblProfile: TLabel;
-    lblRedirectURL: TLabel;
-    lblServerUpdate: TLabel;
-    lblServerVerify: TLabel;
-    lblTheme: TLabel;
     lblUpdate: TLabel;
     lblViewMode: TLabel;
-    lblWebInterface: TLabel;
-    lblWorkshop: TLabel;
     lvMaps: TListView;
     lvMods: TListView;
     lvUnknown: TListView;
@@ -138,9 +108,7 @@ type
     pnlBottom: TPanel;
     pnlDifficulty: TPanel;
     pnlGameLength: TPanel;
-    pnlLeft: TPanel;
     pnlMap: TPanel;
-    pnlRight: TPanel;
     pnlStartBottom: TPanel;
     pnlStartMiddle1: TPanel;
     pnlStartMiddle2: TPanel;
@@ -157,7 +125,6 @@ type
     RemoveServerSubscription1: TMenuItem;
     Subscribe1: TMenuItem;
     tmrWebAdmin: TTimer;
-    trckbrFontSize: TTrackBar;
     tsDebug: TTabSheet;
     tsMaps: TTabSheet;
     tsMods: TTabSheet;
@@ -171,6 +138,47 @@ type
     pnlBottomSvStartOptions: TPanel;
     cbAutoRestartServer: TCheckBox;
     chkAutoConnectWeb: TCheckBox;
+    tsMaintenance: TTabSheet;
+    grpMaintenance: TGroupBox;
+    lblServerUpdate: TLabel;
+    lblWorkshop: TLabel;
+    lblServerVerify: TLabel;
+    btnUpdateCurrent: TButton;
+    btnCleanDownloadCache: TButton;
+    btnUpdateBeta: TButton;
+    btnCleanWorkshopData: TButton;
+    btnVerifyCurrent: TButton;
+    btnVerifyBeta: TButton;
+    GroupBox1: TGroupBox;
+    lblFontSize: TLabel;
+    lblLanguage: TLabel;
+    lblTheme: TLabel;
+    trckbrFontSize: TTrackBar;
+    cbbLanguage: TJvComboBox;
+    chkOnlyItemsFromConfig: TCheckBox;
+    cbbTheme: TJvComboBox;
+    chkAutoUpdates: TCheckBox;
+    lblWebInterface: TLabel;
+    cbbWebInterface: TJvComboBox;
+    lblPort: TLabel;
+    edtWebPort: TJvEdit;
+    lblAdminPass: TLabel;
+    edtAdminPass: TJvEdit;
+    chkAdminAutoLogin: TCheckBox;
+    gbServer: TGroupBox;
+    lblServerName: TLabel;
+    edtServerName: TJvEdit;
+    edtRedirectURL: TJvEdit;
+    lblRedirectURL: TLabel;
+    lblCustomRedirect: TLabel;
+    cbbCustomRedirect: TJvComboBox;
+    cbbDownloadManager: TJvComboBox;
+    lblDownloadManager: TLabel;
+    pnlServerPort: TPanel;
+    lblServerPort: TLabel;
+    edtServerPort: TJvEdit;
+    cbServers: TComboBox;
+    Label1: TLabel;
 
     // Strings and translation
     function _h(text: String): String;
@@ -228,7 +236,7 @@ type
     procedure edtAdminPassExit(Sender: TObject);
     procedure edtFilterChange(Sender: TObject);
     procedure edtGamePassChange(Sender: TObject);
-    procedure edtPortExit(Sender: TObject);
+    procedure edtWebPortExit(Sender: TObject);
     procedure edtRedirectURLExit(Sender: TObject);
     procedure Explorerlocalfolder1Click(Sender: TObject);
     procedure Export1Click(Sender: TObject);
@@ -280,6 +288,9 @@ type
       const pDisp: IDispatch; const URL: OleVariant);
     procedure TimerAutoStartServerTimer(Sender: TObject);
     procedure cbAutoRestartServerClick(Sender: TObject);
+    procedure edtServerPortExit(Sender: TObject);
+    procedure edtServerNameExit(Sender: TObject);
+    procedure cbServersChange(Sender: TObject);
 
   private
 
@@ -319,6 +330,7 @@ type
     UILoaded: Boolean;
     tlTool: TKFTranslation;
     languageInitial: String;
+    newSvConfigText: String;
   end;
 
 var
@@ -327,7 +339,7 @@ var
 implementation
 
 uses
-  AddItem, PathDialog, Queue, languagePrompt;
+  AddItem, PathDialog, Queue, languagePrompt, uNewConfig;
 {$R *.dfm}
 
 procedure TFormMain.AddManualEntryClick(Sender: TObject);
@@ -1101,7 +1113,7 @@ begin
     MB_OK + MB_ICONINFORMATION);
   ExecuteFile(0, Path + 'Binaries\win64\kfserver.exe',
     'kf-bioticslab?adminpassword=123', SW_NORMAL);
-  Sleep(120000); //120 seconds
+  Sleep(120000); // 120 seconds
   KillProcessByName('kfserver.exe');
 
 end;
@@ -1705,17 +1717,63 @@ procedure TFormMain.cbbWebInterfaceChange(Sender: TObject);
 
 begin
   try
-    if CheckForServerRunningAndClose = false then
-    begin
-      if cbbWebInterface.ItemIndex = 0 then
-        serverTool.SetWebStatus(false)
-      else
-        serverTool.SetWebStatus(True);
+    CheckForServerRunningAndClose;
 
-    end;
+    if cbbWebInterface.ItemIndex = 0 then
+      serverTool.SetWebStatus(false)
+    else
+      serverTool.SetWebStatus(True);
+
   except
     on E: Exception do
       ShowMessage(E.Message);
+  end;
+end;
+
+procedure TFormMain.cbServersChange(Sender: TObject);
+var
+  formNewConfig: TformNewConfig;
+  serverpath: string;
+begin
+  if cbServers.ItemIndex = cbServers.Items.Count - 1 then
+  begin
+
+    ShellExecute(0, 'open', PWideChar(Application.ExeName),
+      PWideChar('-config ' + cbServers.text),
+      PWideChar(ExtractFilePath(Application.ExeName)), SW_NORMAL);
+    Application.Terminate;
+  end
+  else
+  begin
+    formNewConfig := TformNewConfig.Create(Self);
+    if useCustomServerPath then
+      serverpath := IncludeTrailingPathDelimiter(customServerPath)
+    else
+      serverpath := ExtractFilePath(Application.ExeName);
+
+    formNewConfig.SetDirInitialPath
+      (ExtractFilePath(serverpath + pathKFEngineIni));
+    formNewConfig.edtConfigName.text := 'SERVER2';
+    if formNewConfig.ShowModal = mrOk then
+    begin
+      with formNewConfig do
+      begin
+
+        configName := 'KF2ServerTool_' + edtConfigName.text + '.ini';
+        pathKFGameIni := StringReplace(String(inputKFGamePath.filename), serverpath, '', [rfIgnoreCase]);
+        pathKFEngineIni := StringReplace(inputKFEnginePath.filename, serverpath, '', [rfIgnoreCase]);
+        onlyFromConfigItems := formNewConfig.chkOnlyItemsFromConfig.Enabled;
+        
+        saveconfig();
+        
+        ShellExecute(0, 'open', PWideChar(Application.ExeName),
+          PWideChar('-config ' + configName),
+          PWideChar(ExtractFilePath(Application.ExeName)), SW_NORMAL);
+        Application.Terminate;
+
+      end;
+    end;
+    FreeAndNil(formNewConfig);
   end;
 end;
 
@@ -1758,29 +1816,28 @@ begin
   saveconfig();
 end;
 
-procedure TFormMain.edtPortExit(Sender: TObject);
+procedure TFormMain.edtWebPortExit(Sender: TObject);
 var
   Port: Integer;
 begin
-  if CheckForServerRunningAndClose = false then
-  begin
-    try
-      edtPort.text := cleanInt(edtPort.text);
-      Port := StrToInt(edtPort.text);
+  CheckForServerRunningAndClose;
 
-    except
-      ShowMessage(_s('Invalid port number'));
-      edtPort.text := '8080';
-      Exit;
-    end;
-    try
-      serverTool.SetWebPort(Port);
-    except
-      on E: Exception do
-        ShowMessage(E.Message);
-    end;
+  try
+    edtWebPort.text := cleanInt(edtWebPort.text);
+    Port := StrToInt(edtWebPort.text);
 
+  except
+    ShowMessage(_s('Invalid port number'));
+    edtWebPort.text := '8080';
+    Exit;
   end;
+  try
+    serverTool.SetWebPort(Port);
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
+  end;
+
 end;
 
 procedure TFormMain.edtRedirectURLExit(Sender: TObject);
@@ -1791,6 +1848,40 @@ begin
     on E: Exception do
       ShowMessage(E.Message);
   end;
+end;
+
+procedure TFormMain.edtServerNameExit(Sender: TObject);
+begin
+  try
+    serverTool.SetServerName(edtServerName.text);
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
+  end;
+end;
+
+procedure TFormMain.edtServerPortExit(Sender: TObject);
+var
+  Port: Integer;
+begin
+  CheckForServerRunningAndClose;
+
+  try
+    edtServerPort.text := cleanInt(edtServerPort.text);
+    Port := StrToInt(edtServerPort.text);
+
+  except
+    ShowMessage(_s('Invalid port number'));
+    edtWebPort.text := '7777';
+    Exit;
+  end;
+  try
+    serverTool.SetServerPort(IntToStr(Port));
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
+  end;
+
 end;
 
 procedure TFormMain.edtFilterChange(Sender: TObject);
@@ -2673,7 +2764,10 @@ procedure TFormMain.FormCanResize(Sender: TObject;
   var NewWidth, NewHeight: Integer; var Resize: Boolean);
 begin
   try
-    edtRedirectURL.Width := pnlRight.Width - 15;
+    edtRedirectURL.Width := grpEnableDisable.Width - edtRedirectURL.Left - 30;
+
+    edtServerName.Width := gbServer.Width - pnlServerPort.Width -
+      lblServerName.Width - 40;
     if NewWidth > 950 then
     begin
       pnlGameLength.Align := alLeft;
@@ -2699,6 +2793,8 @@ var
   pathDialogResult: Integer;
   ExeName: String;
   i: Integer;
+  Item: string;
+  IniFilesDir: TStringList;
 
 begin
   UILoaded := false;
@@ -2761,10 +2857,10 @@ begin
 
     if FileExists(serverpath + pathServerEXE) = false then
     begin
-      KFlangDialog := TFormSetLanguage.Create(Self);
+      kfLangDialog := TFormSetLanguage.Create(Self);
 
       try
-      tlTool.setLanguage(kfLangDialog.AskLang(tlTool));
+        tlTool.setLanguage(kfLangDialog.AskLang(tlTool));
       finally
         FreeAndNil(kfLangDialog);
       end;
@@ -2832,6 +2928,21 @@ begin
     checkForUpdates(Self);
   if ProcessExists(ExtractFileName(pathServerEXE)) then
     btnStartServer.Caption := _s('Stop server');
+
+  IniFilesDir := GetAllFilesInsideDirectory
+    (ExtractFilePath(Application.ExeName), 'KF2ServerTool*.ini');
+
+  // CbServer
+
+  newSvConfigText := _s('New server...');
+  cbServers.Clear;
+  cbServers.Items.Add(newSvConfigText);
+  for Item in IniFilesDir do
+    cbServers.Items.Add(TPath.GetFileName(Item));
+  if Assigned(IniFilesDir) then
+    FreeAndNil(IniFilesDir);
+  if cbServers.Items.Count > 0 then
+    cbServers.ItemIndex := cbServers.Items.IndexOf(configName);
 
 end;
 
@@ -2929,7 +3040,7 @@ begin
       ShowMessage(E.Message);
     end;
   end;
-  edtPort.text := webPort;
+  edtWebPort.text := webPort;
   // Web Status
   try
     if serverTool.GetWebStatus then
@@ -2957,6 +3068,20 @@ begin
   except
     on E: Exception do
       ShowMessage('Failed to get webPass ' + E.Message);
+  end;
+  // Server port
+  try
+    edtServerPort.text := serverTool.GetServerPort;
+  except
+    on E: Exception do
+      ShowMessage('Failed to get server port ' + E.Message);
+  end;
+  // Server name
+  try
+    edtServerName.text := serverTool.GetServerName;
+  except
+    on E: Exception do
+      ShowMessage('Failed to get server name ' + E.Message);
   end;
 
   chkAdminAutoLogin.Checked := autoLoginWebAdmin;
@@ -3411,7 +3536,7 @@ begin
     if ProcessExists(ExtractFileName(pathServerEXE)) then
     begin
 
-      wbWebAdmin.Navigate('http://127.0.0.1:' + edtPort.text);
+      wbWebAdmin.Navigate('http://127.0.0.1:' + edtWebPort.text);
     end
     else
     begin
@@ -4072,13 +4197,13 @@ begin
   try
     try
       tcpResponse.Host := '127.0.0.1';
-      tcpResponse.Port := StrToInt(edtPort.text);
+      tcpResponse.Port := StrToInt(edtWebPort.text);
       tcpResponse.ConnectTimeout := 200;
       tcpResponse.Connect;
       if tcpResponse.Connected then
       begin
 
-        wbWebAdmin.Navigate('http://127.0.0.1:' + edtPort.text);
+        wbWebAdmin.Navigate('http://127.0.0.1:' + edtWebPort.text);
         pgcntrlTabs.ActivePage := tsWebAdmin;
         tmrWebAdmin.Enabled := false;
         // autoLoginWb;
@@ -4235,9 +4360,13 @@ begin
   alignControlAtoControlB(trckbrFontSize, lblFontSize);
   alignControlAtoControlB(cbbLanguage, lblLanguage);
   alignControlAtoControlB(cbbWebInterface, lblWebInterface);
-  alignControlAtoControlB(edtPort, lblPort);
+  alignControlAtoControlB(edtWebPort, lblPort);
   alignControlAtoControlB(edtAdminPass, lblAdminPass);
   alignControlAtoControlB(cbbTheme, lblTheme);
+  alignControlAtoControlB(edtServerName, lblServerName);
+  alignControlAtoControlB(edtServerPort, lblServerPort);
+  alignControlAtoControlB(edtRedirectURL, lblRedirectURL);
+  alignControlAtoControlB(chkAdminAutoLogin, edtAdminPass);
 
 end;
 
@@ -4247,7 +4376,7 @@ begin
   if autoLoginWebAdmin then
   begin
 
-    if URL = 'http://127.0.0.1:' + edtPort.text + '/ServerAdmin/' then
+    if URL = 'http://127.0.0.1:' + edtWebPort.text + '/ServerAdmin/' then
       autoLoginWb;
 
   end;

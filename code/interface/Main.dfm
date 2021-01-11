@@ -2,10 +2,10 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Killing Floor 2 Server Tool'
-  ClientHeight = 591
+  ClientHeight = 621
   ClientWidth = 684
   Color = clGray
-  Constraints.MinHeight = 630
+  Constraints.MinHeight = 660
   Constraints.MinWidth = 700
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -45,7 +45,7 @@ object FormMain: TFormMain
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 558
+    Top = 588
     Width = 684
     Height = 33
     Margins.Left = 2
@@ -408,12 +408,12 @@ object FormMain: TFormMain
     Left = 0
     Top = 17
     Width = 684
-    Height = 541
+    Height = 571
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsServer
+    ActivePage = tsDebug
     Align = alClient
     TabOrder = 1
     OnChange = pgcntrlTabsChange
@@ -430,7 +430,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 676
-        Height = 509
+        Height = 539
         Align = alClient
         ExplicitLeft = 47
         ExplicitWidth = 637
@@ -441,7 +441,7 @@ object FormMain: TFormMain
         Left = 8
         Top = 8
         Width = 660
-        Height = 493
+        Height = 523
         Margins.Left = 8
         Margins.Top = 8
         Margins.Right = 8
@@ -553,7 +553,7 @@ object FormMain: TFormMain
           Left = 2
           Top = 266
           Width = 656
-          Height = 225
+          Height = 255
           Margins.Left = 2
           Margins.Top = 2
           Margins.Right = 2
@@ -597,7 +597,7 @@ object FormMain: TFormMain
           object btnStartServer: TButton
             AlignWithMargins = True
             Left = 20
-            Top = 143
+            Top = 173
             Width = 616
             Height = 44
             Hint = 
@@ -651,7 +651,7 @@ object FormMain: TFormMain
           object pnlBottomSvStartOptions: TPanel
             AlignWithMargins = True
             Left = 0
-            Top = 190
+            Top = 220
             Width = 656
             Height = 25
             Margins.Left = 0
@@ -1110,7 +1110,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 32
         Width = 676
-        Height = 477
+        Height = 507
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1217,7 +1217,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 676
-        Height = 509
+        Height = 539
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1290,7 +1290,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 676
-        Height = 509
+        Height = 539
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1375,230 +1375,229 @@ object FormMain: TFormMain
       object grpEnableDisable: TGroupBox
         AlignWithMargins = True
         Left = 8
-        Top = 8
+        Top = 83
         Width = 640
-        Height = 177
+        Height = 158
         Margins.Left = 8
         Margins.Top = 8
         Margins.Right = 28
         Margins.Bottom = 2
         Align = alTop
-        Caption = 'Enable / Disable'
+        Caption = 'Workshop and redirect '
         Color = clWhite
         ParentColor = False
         TabOrder = 0
-        object pnlLeft: TPanel
-          Left = 2
-          Top = 19
-          Width = 343
-          Height = 156
-          Align = alLeft
-          BevelOuter = bvNone
-          TabOrder = 0
-          object lblPort: TLabel
-            Left = 24
-            Top = 70
-            Width = 64
-            Height = 17
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            Caption = 'Web Port:'
-          end
-          object lblWebInterface: TLabel
-            Left = 24
-            Top = 40
-            Width = 76
-            Height = 17
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            Caption = 'Web Admin:'
-          end
-          object lblDownloadManager: TLabel
-            Left = 24
-            Top = 10
-            Width = 190
-            Height = 17
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            Caption = 'Workshop Download Manager:'
-          end
-          object lblAdminPass: TLabel
-            Left = 24
-            Top = 100
-            Width = 106
-            Height = 17
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            Caption = 'Web admin pass:'
-          end
-          object edtPort: TJvEdit
-            Left = 93
-            Top = 67
-            Width = 89
-            Height = 25
-            Hint = 'The port to access the web admin, by default the port is 8080'
-            CustomHint = blhintHelp
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 2
-            Text = ''
-            OnExit = edtPortExit
-          end
-          object cbbWebInterface: TJvComboBox
-            Left = 105
-            Top = 36
-            Width = 101
-            Height = 25
-            Hint = 
-              'If enabled you can manage additional server settings for a web p' +
-              'age or\nthrough the tool itself as soon as the server comes onli' +
-              'ne.'
-            CustomHint = blhintHelp
-            Style = csDropDownList
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 1
-            Text = ''
-            OnChange = cbbWebInterfaceChange
-            Items.Strings = (
-              'Disabled'
-              'Enabled')
-          end
-          object cbbDownloadManager: TJvComboBox
-            Left = 219
-            Top = 7
-            Width = 89
-            Height = 25
-            Hint = 
-              'This will enable redirect clients to download items from Worksho' +
-              'p. You must enable this option if you install maps and mods from' +
-              ' steam workshop.'
-            CustomHint = blhintHelp
-            Style = csDropDownList
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
-            Text = ''
-            OnChange = cbbDownloadManagerChange
-            Items.Strings = (
-              'Disabled'
-              'Enabled')
-          end
-          object edtAdminPass: TJvEdit
-            Left = 135
-            Top = 98
-            Width = 138
-            Height = 25
-            Hint = 'Specify a password that will be used to log in to webadmin'
-            CustomHint = blhintHelp
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 3
-            Text = ''
-            OnExit = edtAdminPassExit
-          end
-          object chkAdminAutoLogin: TCheckBox
-            Left = 24
-            Top = 129
-            Width = 429
-            Height = 24
-            Hint = 
-              'Enabling this option will cause WebAdmin to automatically log in' +
-              ' using the Admin username and the specified password. \nThis opt' +
-              'ion only takes effect if the * Auto connect to webadmin * is ena' +
-              'bled on the server profile tab.'
-            CustomHint = blhintHelp
-            Align = alCustom
-            Caption = 'Auto login web admin using specified pass'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 4
-            OnClick = chkAdminAutoLoginClick
-          end
+        object lblRedirectURL: TLabel
+          Left = 17
+          Top = 111
+          Width = 84
+          Height = 17
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          Caption = 'Redirect URL:'
         end
-        object pnlRight: TPanel
-          Left = 345
-          Top = 19
-          Width = 293
-          Height = 156
-          Align = alClient
-          BevelOuter = bvNone
+        object lblCustomRedirect: TLabel
+          Left = 17
+          Top = 73
+          Width = 103
+          Height = 17
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          Caption = 'Custom redirect:'
+        end
+        object lblDownloadManager: TLabel
+          Left = 16
+          Top = 34
+          Width = 190
+          Height = 17
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          Caption = 'Workshop Download Manager:'
+        end
+        object edtRedirectURL: TJvEdit
+          Left = 108
+          Top = 109
+          Width = 510
+          Height = 25
+          Hint = 'The redirect URL used for clients to download files'
+          Margins.Left = 5
+          Margins.Right = 10
+          Margins.Bottom = 20
+          CustomHint = blhintHelp
+          Align = alCustom
+          Constraints.MaxWidth = 700
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          Text = ''
+          OnExit = edtRedirectURLExit
+        end
+        object cbbCustomRedirect: TJvComboBox
+          Left = 125
+          Top = 70
+          Width = 88
+          Height = 25
+          Hint = 
+            'Enable this option to set up a custom URL clients will be redire' +
+            'cted to when downloading items from the server '
+          CustomHint = blhintHelp
+          Style = csDropDownList
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 1
-          object lblRedirectURL: TLabel
-            Left = 5
-            Top = 39
-            Width = 79
-            Height = 17
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            Caption = 'Redirect URL'
-          end
-          object lblCustomRedirect: TLabel
-            Left = 5
-            Top = 10
-            Width = 103
-            Height = 17
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            Caption = 'Custom redirect:'
-          end
-          object edtRedirectURL: TJvEdit
-            Left = 5
-            Top = 61
-            Width = 260
-            Height = 25
-            Hint = 'The redirect URL used for clients to download files'
-            Margins.Left = 5
-            Margins.Right = 10
-            Margins.Bottom = 20
-            CustomHint = blhintHelp
-            Align = alCustom
-            Constraints.MaxWidth = 700
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 1
-            Text = ''
-            OnExit = edtRedirectURLExit
-          end
-          object cbbCustomRedirect: TJvComboBox
-            Left = 113
-            Top = 7
-            Width = 88
-            Height = 25
-            Hint = 
-              'Enable this option to set up a custom URL clients will be redire' +
-              'cted to when downloading items from the server '
-            CustomHint = blhintHelp
-            Style = csDropDownList
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
-            Text = ''
-            OnCloseUp = cbbCustomRedirectCloseUp
-            Items.Strings = (
-              'Disabled'
-              'Enabled')
-          end
+          Text = ''
+          OnCloseUp = cbbCustomRedirectCloseUp
+          Items.Strings = (
+            'Disabled'
+            'Enabled')
+        end
+        object cbbDownloadManager: TJvComboBox
+          Left = 211
+          Top = 31
+          Width = 89
+          Height = 25
+          Hint = 
+            'This will enable redirect clients to download items from Worksho' +
+            'p. You must enable this option if you install maps and mods from' +
+            ' steam workshop.'
+          CustomHint = blhintHelp
+          Style = csDropDownList
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          Text = ''
+          OnChange = cbbDownloadManagerChange
+          Items.Strings = (
+            'Disabled'
+            'Enabled')
         end
       end
       object grpApplication: TGroupBox
         AlignWithMargins = True
         Left = 8
-        Top = 334
+        Top = 251
         Width = 640
-        Height = 134
+        Height = 115
+        Margins.Left = 8
+        Margins.Top = 8
+        Margins.Right = 28
+        Margins.Bottom = 2
+        Align = alTop
+        Caption = 'Web admin'
+        Color = clWhite
+        ParentBackground = False
+        ParentColor = False
+        TabOrder = 1
+        object lblWebInterface: TLabel
+          Left = 17
+          Top = 32
+          Width = 76
+          Height = 17
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          Caption = 'Web Admin:'
+        end
+        object lblPort: TLabel
+          Left = 314
+          Top = 30
+          Width = 64
+          Height = 17
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          Caption = 'Web Port:'
+        end
+        object lblAdminPass: TLabel
+          Left = 17
+          Top = 76
+          Width = 106
+          Height = 17
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          Caption = 'Web admin pass:'
+        end
+        object cbbWebInterface: TJvComboBox
+          Left = 98
+          Top = 28
+          Width = 101
+          Height = 25
+          Hint = 
+            'If enabled you can manage additional server settings for a web p' +
+            'age or\nthrough the tool itself as soon as the server comes onli' +
+            'ne.'
+          CustomHint = blhintHelp
+          Style = csDropDownList
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          Text = ''
+          OnChange = cbbWebInterfaceChange
+          Items.Strings = (
+            'Disabled'
+            'Enabled')
+        end
+        object edtWebPort: TJvEdit
+          Left = 383
+          Top = 27
+          Width = 89
+          Height = 25
+          Hint = 'The port to access the web admin, by default the port is 8080'
+          CustomHint = blhintHelp
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+          Text = ''
+          OnExit = edtWebPortExit
+        end
+        object edtAdminPass: TJvEdit
+          Left = 128
+          Top = 74
+          Width = 138
+          Height = 25
+          Hint = 'Specify a password that will be used to log in to webadmin'
+          CustomHint = blhintHelp
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          Text = ''
+          OnExit = edtAdminPassExit
+        end
+        object chkAdminAutoLogin: TCheckBox
+          Left = 280
+          Top = 75
+          Width = 429
+          Height = 24
+          Hint = 
+            'Enabling this option will cause WebAdmin to automatically log in' +
+            ' using the Admin username and the specified password. \nThis opt' +
+            'ion only takes effect if the * Auto connect to webadmin * is ena' +
+            'bled on the server profile tab.'
+          CustomHint = blhintHelp
+          Align = alCustom
+          Caption = 'Auto login web admin using specified pass'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnClick = chkAdminAutoLoginClick
+        end
+      end
+      object GroupBox1: TGroupBox
+        AlignWithMargins = True
+        Left = 8
+        Top = 376
+        Width = 640
+        Height = 153
         Margins.Left = 8
         Margins.Top = 8
         Margins.Right = 28
@@ -1608,10 +1607,10 @@ object FormMain: TFormMain
         Color = clWhite
         ParentBackground = False
         ParentColor = False
-        TabOrder = 1
+        TabOrder = 2
         object lblFontSize: TLabel
-          Left = 26
-          Top = 26
+          Left = 17
+          Top = 34
           Width = 60
           Height = 17
           Margins.Left = 2
@@ -1621,8 +1620,8 @@ object FormMain: TFormMain
           Caption = 'Font Size:'
         end
         object lblLanguage: TLabel
-          Left = 26
-          Top = 56
+          Left = 17
+          Top = 70
           Width = 65
           Height = 17
           Margins.Left = 2
@@ -1632,8 +1631,8 @@ object FormMain: TFormMain
           Caption = 'Language:'
         end
         object lblTheme: TLabel
-          Left = 350
-          Top = 33
+          Left = 331
+          Top = 34
           Width = 47
           Height = 17
           Margins.Left = 2
@@ -1643,8 +1642,8 @@ object FormMain: TFormMain
           Caption = 'Theme:'
         end
         object trckbrFontSize: TTrackBar
-          Left = 85
-          Top = 20
+          Left = 81
+          Top = 30
           Width = 175
           Height = 24
           Margins.Left = 2
@@ -1661,8 +1660,8 @@ object FormMain: TFormMain
           OnChange = RealignUIItems
         end
         object cbbLanguage: TJvComboBox
-          Left = 96
-          Top = 53
+          Left = 87
+          Top = 67
           Width = 125
           Height = 25
           CustomHint = blhintHelp
@@ -1672,8 +1671,8 @@ object FormMain: TFormMain
           OnChange = cbbLanguageChange
         end
         object chkOnlyItemsFromConfig: TCheckBox
-          Left = 26
-          Top = 89
+          Left = 17
+          Top = 111
           Width = 429
           Height = 28
           Hint = 
@@ -1691,8 +1690,8 @@ object FormMain: TFormMain
           OnClick = chkOnlyItemsFromConfigClick
         end
         object cbbTheme: TJvComboBox
-          Left = 402
-          Top = 24
+          Left = 383
+          Top = 30
           Width = 173
           Height = 25
           CustomHint = blhintHelp
@@ -1702,8 +1701,8 @@ object FormMain: TFormMain
           OnChange = cbbThemeChange
         end
         object chkAutoUpdates: TCheckBox
-          Left = 350
-          Top = 55
+          Left = 331
+          Top = 66
           Width = 287
           Height = 28
           Hint = 
@@ -1718,10 +1717,92 @@ object FormMain: TFormMain
           OnClick = chkAutoUpdatesClick
         end
       end
+      object gbServer: TGroupBox
+        AlignWithMargins = True
+        Left = 8
+        Top = 8
+        Width = 640
+        Height = 65
+        Margins.Left = 8
+        Margins.Top = 8
+        Margins.Right = 28
+        Margins.Bottom = 2
+        Align = alTop
+        Caption = 'Server '
+        Color = clWhite
+        ParentBackground = False
+        ParentColor = False
+        TabOrder = 3
+        object lblServerName: TLabel
+          Left = 17
+          Top = 28
+          Width = 83
+          Height = 17
+          Margins.Left = 13
+          Margins.Top = 10
+          Margins.Right = 10
+          Margins.Bottom = 2
+          Caption = 'Server name:'
+        end
+        object edtServerName: TJvEdit
+          Left = 105
+          Top = 26
+          Width = 328
+          Height = 25
+          Hint = 'Name of the server that is displayed to other players.'
+          Margins.Top = 10
+          Margins.Bottom = 10
+          CustomHint = blhintHelp
+          Constraints.MaxWidth = 700
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          Text = ''
+          OnExit = edtServerNameExit
+        end
+        object pnlServerPort: TPanel
+          Left = 453
+          Top = 19
+          Width = 185
+          Height = 44
+          Align = alRight
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 1
+          object lblServerPort: TLabel
+            Left = 17
+            Top = 10
+            Width = 75
+            Height = 17
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Caption = 'Server port:'
+          end
+          object edtServerPort: TJvEdit
+            Left = 97
+            Top = 6
+            Width = 71
+            Height = 25
+            Hint = 'The port to run the server. (Default is 7777)'
+            CustomHint = blhintHelp
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
+            Text = ''
+            OnExit = edtServerPortExit
+          end
+        end
+      end
+    end
+    object tsMaintenance: TTabSheet
+      Caption = 'Maintenance'
+      ImageIndex = 8
       object grpMaintenance: TGroupBox
         AlignWithMargins = True
         Left = 8
-        Top = 195
+        Top = 8
         Width = 640
         Height = 129
         Margins.Left = 8
@@ -1733,7 +1814,7 @@ object FormMain: TFormMain
         Color = clWhite
         ParentBackground = False
         ParentColor = False
-        TabOrder = 2
+        TabOrder = 0
         object lblServerUpdate: TLabel
           Left = 17
           Top = 24
@@ -1859,14 +1940,13 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 676
-        Height = 509
+        Height = 539
         Align = alClient
         TabOrder = 0
         OnDocumentComplete = wbWebAdminDocumentComplete
-        ExplicitWidth = 661
-        ExplicitHeight = 439
+        ExplicitHeight = 537
         ControlData = {
-          4C000000DE4500009B3400000000000000000000000000000000000000000000
+          4C000000DE450000B53700000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
@@ -1893,7 +1973,7 @@ object FormMain: TFormMain
       object lblAutosaveChanges: TLabel
         AlignWithMargins = True
         Left = 3
-        Top = 492
+        Top = 522
         Width = 664
         Height = 14
         Margins.Right = 9
@@ -1908,6 +1988,7 @@ object FormMain: TFormMain
         Font.Style = [fsBold]
         ParentFont = False
         ExplicitLeft = 430
+        ExplicitTop = 520
         ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
@@ -1915,7 +1996,7 @@ object FormMain: TFormMain
         Left = 8
         Top = 33
         Width = 660
-        Height = 456
+        Height = 486
         Margins.Left = 8
         Margins.Top = 8
         Margins.Right = 8
@@ -1929,6 +2010,13 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
+      object Label1: TLabel
+        Left = 24
+        Top = 120
+        Width = 39
+        Height = 17
+        Caption = 'Config'
+      end
       object btnGenerateCurrentStrings: TButton
         Left = 24
         Top = 40
@@ -1947,12 +2035,21 @@ object FormMain: TFormMain
         TabOrder = 1
         OnClick = btnGenerateNewTranslationClick
       end
+      object cbServers: TComboBox
+        Left = 69
+        Top = 117
+        Width = 297
+        Height = 25
+        Style = csDropDownList
+        TabOrder = 2
+        OnChange = cbServersChange
+      end
     end
   end
   object pmRemove: TPopupMenu
     OnPopup = pmRemovePopup
-    Left = 480
-    Top = 16
+    Left = 496
+    Top = 200
     object Removeall1: TMenuItem
       Caption = 'Fully remove item'
       OnClick = Removeall1Click
@@ -1979,7 +2076,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800200010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800340010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2252,8 +2349,8 @@ object FormMain: TFormMain
   end
   object pmLV: TPopupMenu
     OnPopup = pmLVPopup
-    Left = 512
-    Top = 16
+    Left = 568
+    Top = 232
     object add1: TMenuItem
       Caption = 'Add'
       object Browserworkshop1: TMenuItem
@@ -2343,8 +2440,8 @@ object FormMain: TFormMain
     Top = 16
   end
   object pmAdd: TPopupMenu
-    Left = 544
-    Top = 16
+    Left = 576
+    Top = 160
     object AddWorkshopMap: TMenuItem
       Caption = 'From Workshop Browser'
       Hint = 
@@ -2389,7 +2486,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C0101020008002000DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008003400DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
