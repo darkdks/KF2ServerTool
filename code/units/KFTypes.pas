@@ -57,6 +57,7 @@ const
   WKP_CACHEFOLDER = 'Binaries\Win64\steamapps\workshop\content\232090';
   STEAMAPPCACHEFOLDER = 'Binaries\Win64';
   SERVERCACHEFOLDER = 'KFGame\Cache\';
+  KFGAMECONFIGSUBFOLDER = 'KFGame\Config\';
   WORKSHOPSUBITEM = 'steamapps\workshop\content\232090';
   IMGCACHEFOLDER = 'imgs\';
   IMGWEBFOLDER = 'KFGame\Web\images\maps\';

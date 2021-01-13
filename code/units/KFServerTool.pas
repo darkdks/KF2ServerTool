@@ -149,6 +149,12 @@ type
     SERVERTOOLVERSION = '1.3.9';
 
     {
+      CHANGE LOG VERSION 1.4.0
+      - Multiple servers feature added
+      - Server name change inside the tool
+      - Server port change inside the tool
+      - The options have been reorganized
+
       CHANGE LOG VERSION 1.3.9
       - Custom game mode/mutator param fix
 

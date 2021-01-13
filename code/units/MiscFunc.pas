@@ -69,7 +69,7 @@ function ExecuteTerminalProcess(Acmd: String; AParam: string;
   var abortExe: Boolean; Return: TProc<String>): TStringList;
 function PosOfOccurrence(p_SubStr, p_Source: string;
   p_NthOccurrence: Integer): Integer;
-
+function PIDExists(PID: Cardinal): Boolean;
 implementation
 
 function OccurrencesOfChar(const ContentString: string;
@@ -666,6 +666,37 @@ begin
 
 end;
 
+
+function PIDExists(PID: Cardinal): Boolean;
+
+var
+  ContinueLoop: Bool;
+  FSnapshotHandle: THandle;
+  FProcessEntry32: TProcessEntry32;
+  LC: Integer;
+begin
+  LC := 0;
+  FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
+  ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
+  result := False;
+  while (Integer(ContinueLoop) <> 0) and (LC <= 1000) do
+  begin
+
+    if FProcessEntry32.th32ProcessID = PID then
+    begin
+      result := True;
+      ContinueLoop := False;
+    end
+    else
+    begin
+      ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+    end;
+    Inc(LC);
+  end;
+  CloseHandle(FSnapshotHandle);
+
+end;
 function ProcessExists(ProcessName: string): Boolean;
 
 {$IFDEF MSWINDOWS}
@@ -682,6 +713,7 @@ begin
   result := False;
   while (Integer(ContinueLoop) <> 0) and (LC <= 1000) do
   begin
+
     if ((UpperCase(ExtractFileName(FProcessEntry32.szExeFile))
       = UpperCase(ProcessName)) or (UpperCase(FProcessEntry32.szExeFile)
       = UpperCase(ProcessName))) then

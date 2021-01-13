@@ -26,7 +26,8 @@ uses
   toolLanguage in 'units\toolLanguage.pas',
   languagePrompt in 'interface\languagePrompt.pas' {FormSetLanguage},
   KFServerInstall in 'units\KFServerInstall.pas',
-  uNewConfig in 'interface\uNewConfig.pas' {formNewConfig};
+  uNewConfig in 'interface\uNewConfig.pas' {formNewConfig},
+  uNewServerFirstConfig in 'interface\uNewServerFirstConfig.pas' {formNewServerFirstConfig};
 
 const
   UPDATEPARAM = '-installupdate';
@@ -119,7 +120,7 @@ begin
     exit;
   Application.CreateForm(TFormMain, FormMain);
   Application.CreateForm(TFormSetLanguage, FormSetLanguage);
-  Application.CreateForm(TformNewConfig, formNewConfig);
+
   Application.Run;
 
 end.

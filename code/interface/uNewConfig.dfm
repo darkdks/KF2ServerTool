@@ -3,8 +3,8 @@ object formNewConfig: TformNewConfig
   Top = 0
   BorderStyle = bsSizeToolWin
   Caption = 'New Server config'
-  ClientHeight = 357
-  ClientWidth = 513
+  ClientHeight = 319
+  ClientWidth = 553
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,16 +12,17 @@ object formNewConfig: TformNewConfig
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Position = poMainFormCenter
+  Position = poDesktopCenter
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object lblPCGAMEPATH: TLabel
+  object lblNewServerCopy: TLabel
     Left = 17
-    Top = 77
-    Width = 132
+    Top = 13
+    Width = 93
     Height = 13
-    Caption = 'PCServer-KFGame path'
+    Caption = 'New server copy'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -29,171 +30,191 @@ object formNewConfig: TformNewConfig
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object lblPCENGINEPATH: TLabel
-    Left = 17
-    Top = 133
-    Width = 136
-    Height = 13
-    Caption = 'PCServer-KFEngine path'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
-    ParentFont = False
-  end
-  object Label1: TLabel
+  object lblTip1: TLabel
     Left = 24
-    Top = 256
-    Width = 401
-    Height = 25
+    Top = 32
+    Width = 521
+    Height = 54
+    AutoSize = False
     Caption = 
-      'To create a new server, specify a new KFGame and KF Engine confi' +
-      'guration file.'
+      'The KF2 server will create new configuration files for this serv' +
+      'er in the destination of the Config folder subpath. These files ' +
+      'will be copies of the current ones. You must remove maps and cha' +
+      'nge settings for this new server. This will not affect the origi' +
+      'nal server.'
     WordWrap = True
   end
-  object Label2: TLabel
-    Left = 24
-    Top = 276
-    Width = 347
-    Height = 13
-    Caption = 
-      'If you don'#39't already have it, you can create a copy of the exist' +
-      'ing ones.'
-    WordWrap = True
-  end
-  object Label3: TLabel
-    Left = 24
-    Top = 237
-    Width = 20
-    Height = 13
-    Caption = 'Tip:'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
-    ParentFont = False
-  end
-  object Label4: TLabel
-    Left = 17
-    Top = 23
-    Width = 147
-    Height = 13
-    Caption = 'KFServerTool config name'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
-    ParentFont = False
-  end
-  object Label5: TLabel
-    Left = 24
-    Top = 47
-    Width = 84
-    Height = 16
-    Caption = 'KFServerTool_'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
-  end
-  object Label6: TLabel
-    Left = 250
-    Top = 47
-    Width = 17
-    Height = 16
-    Caption = '.ini'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
-  end
-  object Label7: TLabel
-    Left = 387
-    Top = 118
-    Width = 54
-    Height = 13
-    Caption = 'Must exists'
-  end
-  object Label8: TLabel
-    Left = 387
-    Top = 172
-    Width = 54
-    Height = 13
-    Caption = 'Must exists'
-  end
-  object chkOnlyItemsFromConfig: TCheckBox
-    Left = 24
-    Top = 191
-    Width = 429
-    Height = 28
-    Hint = 
-      'Enable this option to only see items that are in PCServer-KFGame' +
-      ' and PCServer-KFEngine.\nCache and local maps folder will be ign' +
-      'ored.\nThis is useful when you have multiple servers with multip' +
-      'le settings\n and you dont want to see maps from another server ' +
-      'in the tool.'
-    Align = alCustom
-    Caption = 'Only display items that are in the current configuration file'
-    ParentShowHint = False
-    ShowHint = True
+  object pnlBottom: TPanel
+    Left = 0
+    Top = 278
+    Width = 553
+    Height = 41
+    Align = alBottom
     TabOrder = 0
+    ExplicitLeft = 462
+    ExplicitTop = 0
+    ExplicitWidth = 371
+    object btnCancel: TButton
+      AlignWithMargins = True
+      Left = 387
+      Top = 6
+      Width = 75
+      Height = 29
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
+      Align = alRight
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 0
+      ExplicitLeft = 333
+      ExplicitTop = 8
+      ExplicitHeight = 25
+    end
+    object btnOk: TButton
+      AlignWithMargins = True
+      Left = 472
+      Top = 6
+      Width = 75
+      Height = 29
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
+      Align = alRight
+      Caption = 'Ok'
+      ModalResult = 1
+      TabOrder = 1
+      OnClick = btnOkClick
+      ExplicitLeft = 414
+      ExplicitTop = 8
+      ExplicitHeight = 25
+    end
   end
-  object inputKFEnginePath: TJvFilenameEdit
-    Left = 24
-    Top = 152
-    Width = 417
-    Height = 21
-    Filter = 'PCServer-KFEngine Config File (*.ini)|*.ini'
-    DialogOptions = [ofHideReadOnly, ofFileMustExist]
-    DialogTitle = 'PCServer-KFEngine Config File'
+  object GroupBox1: TGroupBox
+    Left = 8
+    Top = 80
+    Width = 537
+    Height = 192
+    Caption = 'Settings'
     TabOrder = 1
-    Text = ''
-    OnChange = checkForEnableOK
-  end
-  object inputKFGamePath: TJvFilenameEdit
-    Left = 24
-    Top = 96
-    Width = 417
-    Height = 21
-    Filter = 'PCServer-KFGame Config File (*.ini)|*.ini'
-    DialogOptions = [ofHideReadOnly, ofFileMustExist]
-    DialogTitle = 'PCServer-KFGame Config File'
-    TabOrder = 2
-    Text = ''
-    OnChange = checkForEnableOK
-  end
-  object btnCancel: TButton
-    Left = 350
-    Top = 324
-    Width = 75
-    Height = 25
-    Caption = 'Cancel'
-    ModalResult = 2
-    TabOrder = 3
-  end
-  object btnOk: TButton
-    Left = 431
-    Top = 325
-    Width = 75
-    Height = 25
-    Caption = 'Ok'
-    ModalResult = 1
-    TabOrder = 4
-    OnClick = btnOkClick
-  end
-  object edtConfigName: TEdit
-    Left = 109
-    Top = 42
-    Width = 137
-    Height = 21
-    TabOrder = 5
-    OnChange = checkForEnableOK
+    object lblConfigName: TLabel
+      Left = 17
+      Top = 20
+      Width = 147
+      Height = 13
+      Caption = 'KFServerTool config name'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object lblKF2ServerTool: TLabel
+      Left = 24
+      Top = 42
+      Width = 79
+      Height = 14
+      Caption = 'KFServerTool_'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lblIni: TLabel
+      Left = 246
+      Top = 42
+      Width = 17
+      Height = 16
+      Caption = '.ini'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lblConfigFolferSubPath: TLabel
+      Left = 17
+      Top = 79
+      Width = 120
+      Height = 13
+      Caption = 'Config folder subpath'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object lblKFGameConfig: TLabel
+      Left = 24
+      Top = 109
+      Width = 88
+      Height = 14
+      Caption = 'KFGame\Config\'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object edtConfigName: TEdit
+      Left = 107
+      Top = 39
+      Width = 137
+      Height = 21
+      TabOrder = 0
+      Text = 'new'
+      OnChange = checkForEnableOK
+      OnKeyPress = filterEdit
+    end
+    object edtConfigFolder: TEdit
+      Left = 118
+      Top = 105
+      Width = 140
+      Height = 21
+      TabOrder = 1
+      Text = 'new'
+      OnKeyPress = filterEdit
+    end
+    object chkGenerateNewConfig: TCheckBox
+      Left = 24
+      Top = 132
+      Width = 481
+      Height = 28
+      Hint = 
+        'Enable this option to run the server to generate new configurati' +
+        'on files (required if the configuration folder is new). Leave un' +
+        'checked if you already have configuration files for the specifie' +
+        'd subpath.'
+      Align = alCustom
+      Caption = 'Generate new setting files '
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+    end
+    object chkOnlyItemsFromConfig: TCheckBox
+      Left = 24
+      Top = 156
+      Width = 489
+      Height = 28
+      Hint = 
+        'Enable this option to only see items that are in PCServer-KFGame' +
+        ' and PCServer-KFEngine.\nCache and local maps folder will be ign' +
+        'ored.\nThis is useful when you have multiple servers with multip' +
+        'le settings\n and you dont want to see maps from another server ' +
+        'in the tool.'
+      Align = alCustom
+      Caption = 'Only display items that are in the current configuration file'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+    end
   end
 end

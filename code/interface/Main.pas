@@ -72,7 +72,6 @@ type
     imgMapsPlaceholder: TImage;
     lblAddParam: TLabel;
     lblAutosaveChanges: TLabel;
-    lblCredits: TLabel;
     lblDifficulty: TLabel;
     lblDonate: TLabel;
     lblFilter: TLabel;
@@ -177,8 +176,10 @@ type
     pnlServerPort: TPanel;
     lblServerPort: TLabel;
     edtServerPort: TJvEdit;
+    pnlMainTop: TPanel;
+    lblCredits: TLabel;
     cbServers: TComboBox;
-    Label1: TLabel;
+    lblServerConfig: TLabel;
 
     // Strings and translation
     function _h(text: String): String;
@@ -291,6 +292,7 @@ type
     procedure edtServerPortExit(Sender: TObject);
     procedure edtServerNameExit(Sender: TObject);
     procedure cbServersChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
 
   private
 
@@ -300,6 +302,11 @@ type
     SortedColumn: Integer;
     frmProgress: TformPB;
     procedure StartServer;
+    procedure NewIniConfigDialog;
+    procedure GenerateNewConfigSubDir(subDir: String);
+    function ExtractFolderFromPath(Path: String): String;
+    procedure ShowNewServerConfigDialog;
+    procedure translateUIFormElements(aForm: TForm);
 
   const
 
@@ -331,6 +338,8 @@ type
     tlTool: TKFTranslation;
     languageInitial: String;
     newSvConfigText: String;
+    SvPID: Cardinal;
+    showNewServerPopup: Boolean;
   end;
 
 var
@@ -339,7 +348,7 @@ var
 implementation
 
 uses
-  AddItem, PathDialog, Queue, languagePrompt, uNewConfig;
+  AddItem, PathDialog, Queue, languagePrompt, uNewConfig, UnewServerFirstConfig;
 {$R *.dfm}
 
 procedure TFormMain.AddManualEntryClick(Sender: TObject);
@@ -555,7 +564,7 @@ procedure TFormMain.btnStartServerClick(Sender: TObject);
 begin
   saveconfig;
 
-  if ProcessExists(ExtractFileName(pathServerEXE)) then
+  if (SvPID > 0) and PIDExists(SvPID) then
   begin
     case Application.MessageBox
       (_p('Are you sure you want to close the server?'), 'Server',
@@ -596,6 +605,9 @@ procedure TFormMain.StartServer();
 var
   svPath: string;
   argCmd: string;
+  StartupInfo: TStartupInfo;
+  ProcessInfo: TProcessInformation;
+
 begin
 
   if cbbMap.text = '' then
@@ -635,10 +647,30 @@ begin
           );
 
   end;
+  if ParamCount > 0 then
+    argCmd := argCmd + ' -ConfigSubDir=' + ExtractFolderFromPath
+      (serverTool.GetKFApplicationPath + pathKFGameIni);
+  ZeroMemory(@StartupInfo, SizeOf(StartupInfo));
+  StartupInfo.cb := SizeOf(StartupInfo);
+  StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
+  StartupInfo.wShowWindow := SW_SHOWMINIMIZED;
+  CreateProcess(nil, Pchar('"' + svPath + pathServerEXE + '" ' + argCmd), nil,
+    nil, false, 0, nil,
+    Pchar(ExcludeTrailingPathDelimiter(ExtractFilePath(svPath + pathServerEXE))
+    ), StartupInfo, ProcessInfo);
 
-  ShellExecute(handle, 'open', Pchar(pathServerEXE), Pchar(argCmd),
-    Pchar(svPath), SW_SHOWNORMAL);
+  SvPID := ProcessInfo.dwProcessId
 
+
+  // ShellExecute(handle, 'open', Pchar(pathServerEXE), Pchar(argCmd),
+  // Pchar(svPath), SW_SHOWNORMAL);
+
+end;
+
+function TFormMain.ExtractFolderFromPath(Path: String): String;
+begin
+
+  Result := ExtractFileName(ExtractFileDir(Path))
 end;
 
 procedure TFormMain.GenerateGroupTitleImages(Sender: TObject);
@@ -875,7 +907,7 @@ begin
   try
     with (Sender as TBitBtn).ClientToScreen
       (point(0, (Sender as TBitBtn).Height)) do
-      pmAdd.Popup(X, Y);
+      pmAdd.Popup(X, y);
   except
 
   end;
@@ -1118,6 +1150,24 @@ begin
 
 end;
 
+procedure TFormMain.GenerateNewConfigSubDir(subDir: String);
+var
+  svPath, cmdToolFullPath, cmdToolArgs: string;
+begin
+  if useCustomServerPath then
+    svPath := IncludeTrailingPathDelimiter(customServerPath)
+  else
+    svPath := ExtractFilePath(Application.ExeName);
+  Application.MessageBox
+    (_p('The tool will start the server to generate the default settings.' +
+    ' \nThis will take about 30 seconds, please wait.'), _p('Generate configs'),
+    MB_OK + MB_ICONINFORMATION);
+  ExecuteFile(0, svPath + pathServerEXE,
+    'kf-bioticslab?adminpassword=123 -ConfigSubDir=' + subDir, SW_NORMAL);
+  Sleep(30000); // 30 seconds
+  KillProcessByName('kfserver.exe');
+end;
+
 procedure TFormMain.btnNewProfileClick(Sender: TObject);
 var
   newName: String;
@@ -1355,7 +1405,7 @@ begin
   try
     with (Sender as TBitBtn).ClientToScreen
       (point(0, (Sender as TBitBtn).Height)) do
-      pmRemove.Popup(X, Y);
+      pmRemove.Popup(X, y);
   except
 
   end;
@@ -1690,7 +1740,8 @@ end;
 
 procedure TFormMain.TimerAutoStartServerTimer(Sender: TObject);
 begin
-  if ProcessExists(ExtractFileName(pathServerEXE)) then
+
+  if (SvPID > 0) and PIDExists(SvPID) then
   begin
     btnStartServer.Caption := _s('Stop server');
   end
@@ -1731,50 +1782,70 @@ begin
 end;
 
 procedure TFormMain.cbServersChange(Sender: TObject);
-var
-  formNewConfig: TformNewConfig;
-  serverpath: string;
+
 begin
   if cbServers.ItemIndex = cbServers.Items.Count - 1 then
   begin
-
-    ShellExecute(0, 'open', PWideChar(Application.ExeName),
-      PWideChar('-config ' + cbServers.text),
-      PWideChar(ExtractFilePath(Application.ExeName)), SW_NORMAL);
-    Application.Terminate;
+    NewIniConfigDialog()
   end
   else
   begin
-    formNewConfig := TformNewConfig.Create(Self);
-    if useCustomServerPath then
-      serverpath := IncludeTrailingPathDelimiter(customServerPath)
-    else
-      serverpath := ExtractFilePath(Application.ExeName);
+    saveconfig;
+    ShellExecute(0, 'open', PWideChar(Application.ExeName),
+      PWideChar('-config ' + cbServers.text),
+      PWideChar(ExtractFilePath(Application.ExeName)), SW_NORMAL);
 
-    formNewConfig.SetDirInitialPath
-      (ExtractFilePath(serverpath + pathKFEngineIni));
-    formNewConfig.edtConfigName.text := 'SERVER2';
-    if formNewConfig.ShowModal = mrOk then
-    begin
-      with formNewConfig do
-      begin
-
-        configName := 'KF2ServerTool_' + edtConfigName.text + '.ini';
-        pathKFGameIni := StringReplace(String(inputKFGamePath.filename), serverpath, '', [rfIgnoreCase]);
-        pathKFEngineIni := StringReplace(inputKFEnginePath.filename, serverpath, '', [rfIgnoreCase]);
-        onlyFromConfigItems := formNewConfig.chkOnlyItemsFromConfig.Enabled;
-        
-        saveconfig();
-        
-        ShellExecute(0, 'open', PWideChar(Application.ExeName),
-          PWideChar('-config ' + configName),
-          PWideChar(ExtractFilePath(Application.ExeName)), SW_NORMAL);
-        Application.Terminate;
-
-      end;
-    end;
-    FreeAndNil(formNewConfig);
+    Application.Terminate;
   end;
+end;
+
+procedure TFormMain.NewIniConfigDialog();
+var
+  formNewConfig: TformNewConfig;
+  serverpath: string;
+  configFolderSubPath: string;
+begin
+  formNewConfig := TformNewConfig.Create(Self);
+  translateUIFormElements(formNewConfig);
+  if useCustomServerPath then
+    serverpath := IncludeTrailingPathDelimiter(customServerPath)
+  else
+    serverpath := ExtractFilePath(Application.ExeName);
+
+  formNewConfig.ConfigFolderFullPath := IncludeTrailingPathDelimiter
+    ((ExtractFilePath(serverpath + pathKFEngineIni)));
+  formNewConfig.edtConfigName.text := '';
+  if formNewConfig.ShowModal = mrOk then
+  begin
+    with formNewConfig do
+    begin
+      try
+        configName := 'KF2ServerTool_' + edtConfigName.text + '.ini';
+        configFolderSubPath := KFGAMECONFIGSUBFOLDER +
+          edtConfigFolder.text + '\';
+        pathKFWebIni := configFolderSubPath + 'KFWeb.ini';
+        pathKFGameIni := configFolderSubPath + 'PCServer-KFGame.ini';
+        pathKFEngineIni := configFolderSubPath + 'PCServer-KFEngine.ini';
+        onlyFromConfigItems := formNewConfig.chkOnlyItemsFromConfig.Enabled;
+        if chkGenerateNewConfig.Checked then
+          GenerateNewConfigSubDir(edtConfigFolder.text);
+
+        saveconfig();
+        ShowMessage
+          (_s('Finished. The application will start with the new configuration')
+          );
+      finally
+        FreeAndNil(formNewConfig);
+      end;
+
+      ShellExecute(0, 'open', PWideChar(Application.ExeName),
+        PWideChar('-config ' + configName + ' -newserver'),
+        PWideChar(ExtractFilePath(Application.ExeName)), SW_NORMAL);
+      Application.Terminate;
+
+    end;
+  end;
+
 end;
 
 procedure TFormMain.cbbDownloadManagerChange(Sender: TObject);
@@ -2080,8 +2151,16 @@ begin
         (Pos(Filter, ItemIDF) > 0) then
       begin
         // Ignore cache files if the server is not subscribed
-        if (onlyFromConfigItems) and (serverTool.Items[i].ServerCache) and
+        if (serverTool.Items[i].SourceFrom = KFSteamWorkshop) and
+          (onlyFromConfigItems) and (serverTool.Items[i].ServerCache) and
           (serverTool.Items[i].ServerSubscribe = false) then
+        begin
+          Continue;
+        end;
+
+        if (serverTool.Items[i].SourceFrom = KFRedirectOrLocal) and
+          (onlyFromConfigItems) and (serverTool.Items[i].MapEntry = false) and
+          (serverTool.Items[i].MapCycleEntry = false) then
         begin
           Continue;
         end;
@@ -2168,21 +2247,6 @@ begin
                   except
                     Item.ImageIndex := -1;
                   end;
-
-                  { try
-                    with lblTest do
-                    begin
-                    Parent := lvMaps;
-                    lblRect := Item.DisplayRect(drBounds);
-
-                    BoundsRect := lblRect;
-                    Caption := 'test';//serverTool.Items[i].filename;
-                    Font.Size := 14;
-                    end;
-                    except
-
-                    end;
-                  }
                 end
                 else
                 begin
@@ -2376,7 +2440,7 @@ procedure TFormMain.lvMapsDblClick(Sender: TObject);
 begin
   try
 
-    pmLV.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+    pmLV.Popup(Mouse.CursorPos.X, Mouse.CursorPos.y);
 
   except
 
@@ -2798,9 +2862,9 @@ var
 
 begin
   UILoaded := false;
-
+  SvPID := 0;
   tlTool := TKFTranslation.Create(ExtractFilePath(Application.ExeName));
-
+  showNewServerPopup := false;
   // ---- Configname path
   ExeName := ExtractFileName(Application.ExeName);
   configName := Copy(ExeName, 0, Length(ExeName) - 4) + '.ini';
@@ -2819,7 +2883,13 @@ begin
           ShowMessage(_s('Config is not valid'));
         break;
       end;
+
     end;
+
+    for i := 0 to ParamCount do
+      if LowerCase(ParamStr(i)) = '-newserver' then
+        showNewServerPopup := True;
+
   end;
 
   // ---- Config load
@@ -2926,23 +2996,25 @@ begin
   // ---- Auto check for update system
   if AutoCheckForUpdates then
     checkForUpdates(Self);
-  if ProcessExists(ExtractFileName(pathServerEXE)) then
-    btnStartServer.Caption := _s('Stop server');
+
+  // if ProcessExists(ExtractFileName(pathServerEXE)) then
+  // btnStartServer.Caption := _s('Stop server');
 
   IniFilesDir := GetAllFilesInsideDirectory
     (ExtractFilePath(Application.ExeName), 'KF2ServerTool*.ini');
 
   // CbServer
 
-  newSvConfigText := _s('New server...');
   cbServers.Clear;
-  cbServers.Items.Add(newSvConfigText);
+
   for Item in IniFilesDir do
     cbServers.Items.Add(TPath.GetFileName(Item));
   if Assigned(IniFilesDir) then
     FreeAndNil(IniFilesDir);
   if cbServers.Items.Count > 0 then
     cbServers.ItemIndex := cbServers.Items.IndexOf(configName);
+  newSvConfigText := _s('New server...');
+  cbServers.Items.Add(newSvConfigText);
 
 end;
 
@@ -3162,6 +3234,58 @@ begin
 
   except
 
+  end;
+
+end;
+
+procedure TFormMain.FormShow(Sender: TObject);
+begin
+  if showNewServerPopup then
+    ShowNewServerConfigDialog();
+end;
+
+procedure TFormMain.ShowNewServerConfigDialog;
+var
+  formNewSvConfig: TformNewServerFirstConfig;
+  i: Integer;
+begin
+
+  formNewSvConfig := TformNewServerFirstConfig.Create(Self);
+  try
+  translateUIFormElements(formNewSvConfig);
+    if formNewSvConfig.ShowModal = mrOk then
+    begin
+
+      serverTool.SetServerName(formNewSvConfig.edtNCServerName.text);
+      serverTool.SetWebPort(StrToInt(formNewSvConfig.edtNCWebPort.text));
+      serverTool.SetServerPort(formNewSvConfig.edtNCServerPort.text);
+
+      if formNewSvConfig.cbClearMapEntries.Checked then
+      begin
+        for i := 0 to High(serverTool.Items) do
+          with serverTool.Items[i] do
+          begin
+            if (SourceFrom = KFSteamWorkshop) and (ID <> '') then
+              serverTool.RemoveItem(filename, ID, True, True, True, false,
+                SourceFrom, itemType);
+            if (SourceFrom = KFRedirectOrLocal) then
+              serverTool.RemoveItem(filename, ID, True, True, false, false,
+                SourceFrom, itemType);
+          end;
+      end;
+
+      saveconfig;
+
+    end
+    else
+    begin
+      ShowMessage
+        (_s('You canceled the wizard, don''t forget to review the options tab.')
+        );
+    end;
+
+  finally
+    FreeAndNil(formNewSvConfig);
   end;
 
 end;
@@ -4349,6 +4473,35 @@ begin
   cbbViewMode.Items[1] := _s(cbbViewMode.Items[1]);
   cbbViewMode.Items[2] := _s(cbbViewMode.Items[2]);
 
+end;
+
+procedure TFormMain.translateUIFormElements(aForm: TForm);
+var
+  Comp: TComponent;
+  i: Integer;
+  propTxt: string;
+  TPropArray: TArray<String>;
+
+begin
+  for i := 0 to (aForm.ComponentCount - 1) do
+  begin
+    Comp := aForm.Components[i];
+    TPropArray := ['Caption', 'Description', 'Hint', 'Text', 'Header'];
+
+    for propTxt in TPropArray do
+    begin
+      if (GetPropInfo(Comp.ClassInfo, propTxt) <> nil) And
+        (GetPropValue(Comp, propTxt) <> '') And
+        (GetPropValue(Comp, propTxt) <> '-') then
+      begin
+        if propTxt = 'Hint' then
+          SetPropValue(Comp, propTxt, formMain._h(GetPropValue(Comp, propTxt)))
+        else
+          SetPropValue(Comp, propTxt, formMain._s(GetPropValue(Comp, propTxt)));
+
+      end;
+    end;
+  end;
 end;
 
 procedure TFormMain.RealignUIItems(Sender: TObject);

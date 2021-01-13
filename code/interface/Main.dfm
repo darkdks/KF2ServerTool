@@ -18,31 +18,9 @@ object FormMain: TFormMain
   OnCanResize = FormCanResize
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 17
-  object lblCredits: TLabel
-    AlignWithMargins = True
-    Left = 2
-    Top = 2
-    Width = 680
-    Height = 13
-    Margins.Left = 2
-    Margins.Top = 2
-    Margins.Right = 2
-    Margins.Bottom = 2
-    Align = alTop
-    Alignment = taRightJustify
-    Caption = 'darkdks @ 2020'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWhite
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
-    ParentFont = False
-    OnClick = lblDonateClick
-    ExplicitLeft = 592
-    ExplicitWidth = 90
-  end
   object pnlBottom: TPanel
     Left = 0
     Top = 588
@@ -406,14 +384,14 @@ object FormMain: TFormMain
   end
   object pgcntrlTabs: TJvPageControl
     Left = 0
-    Top = 17
+    Top = 36
     Width = 684
-    Height = 571
+    Height = 552
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsDebug
+    ActivePage = tsOptions
     Align = alClient
     TabOrder = 1
     OnChange = pgcntrlTabsChange
@@ -430,7 +408,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 676
-        Height = 539
+        Height = 520
         Align = alClient
         ExplicitLeft = 47
         ExplicitWidth = 637
@@ -441,7 +419,7 @@ object FormMain: TFormMain
         Left = 8
         Top = 8
         Width = 660
-        Height = 523
+        Height = 504
         Margins.Left = 8
         Margins.Top = 8
         Margins.Right = 8
@@ -553,7 +531,7 @@ object FormMain: TFormMain
           Left = 2
           Top = 266
           Width = 656
-          Height = 255
+          Height = 236
           Margins.Left = 2
           Margins.Top = 2
           Margins.Right = 2
@@ -597,7 +575,7 @@ object FormMain: TFormMain
           object btnStartServer: TButton
             AlignWithMargins = True
             Left = 20
-            Top = 173
+            Top = 154
             Width = 616
             Height = 44
             Hint = 
@@ -651,7 +629,7 @@ object FormMain: TFormMain
           object pnlBottomSvStartOptions: TPanel
             AlignWithMargins = True
             Left = 0
-            Top = 220
+            Top = 201
             Width = 656
             Height = 25
             Margins.Left = 0
@@ -1110,7 +1088,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 32
         Width = 676
-        Height = 507
+        Height = 488
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1217,7 +1195,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 676
-        Height = 539
+        Height = 520
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1290,7 +1268,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 676
-        Height = 539
+        Height = 520
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
@@ -1385,7 +1363,13 @@ object FormMain: TFormMain
         Align = alTop
         Caption = 'Workshop and redirect '
         Color = clWhite
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -14
+        Font.Name = 'Tahoma'
+        Font.Style = []
         ParentColor = False
+        ParentFont = False
         TabOrder = 0
         object lblRedirectURL: TLabel
           Left = 17
@@ -1767,7 +1751,8 @@ object FormMain: TFormMain
           Height = 44
           Align = alRight
           BevelOuter = bvNone
-          ParentColor = True
+          Color = clWhite
+          ParentBackground = False
           TabOrder = 1
           object lblServerPort: TLabel
             Left = 17
@@ -1940,13 +1925,13 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 676
-        Height = 539
+        Height = 520
         Align = alClient
         TabOrder = 0
         OnDocumentComplete = wbWebAdminDocumentComplete
         ExplicitHeight = 537
         ControlData = {
-          4C000000DE450000B53700000000000000000000000000000000000000000000
+          4C000000DE450000BE3500000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
@@ -1973,7 +1958,7 @@ object FormMain: TFormMain
       object lblAutosaveChanges: TLabel
         AlignWithMargins = True
         Left = 3
-        Top = 522
+        Top = 503
         Width = 664
         Height = 14
         Margins.Right = 9
@@ -1988,7 +1973,6 @@ object FormMain: TFormMain
         Font.Style = [fsBold]
         ParentFont = False
         ExplicitLeft = 430
-        ExplicitTop = 520
         ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
@@ -1996,7 +1980,7 @@ object FormMain: TFormMain
         Left = 8
         Top = 33
         Width = 660
-        Height = 486
+        Height = 467
         Margins.Left = 8
         Margins.Top = 8
         Margins.Right = 8
@@ -2010,13 +1994,6 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
-      object Label1: TLabel
-        Left = 24
-        Top = 120
-        Width = 39
-        Height = 17
-        Caption = 'Config'
-      end
       object btnGenerateCurrentStrings: TButton
         Left = 24
         Top = 40
@@ -2035,15 +2012,59 @@ object FormMain: TFormMain
         TabOrder = 1
         OnClick = btnGenerateNewTranslationClick
       end
-      object cbServers: TComboBox
-        Left = 69
-        Top = 117
-        Width = 297
-        Height = 25
-        Style = csDropDownList
-        TabOrder = 2
-        OnChange = cbServersChange
-      end
+    end
+  end
+  object pnlMainTop: TPanel
+    Left = 0
+    Top = 0
+    Width = 684
+    Height = 36
+    Align = alTop
+    TabOrder = 2
+    object lblCredits: TLabel
+      AlignWithMargins = True
+      Left = 591
+      Top = 3
+      Width = 90
+      Height = 30
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Align = alRight
+      Alignment = taRightJustify
+      Caption = 'darkdks @ 2020'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = lblDonateClick
+      ExplicitHeight = 13
+    end
+    object lblServerConfig: TLabel
+      Left = 4
+      Top = 10
+      Width = 88
+      Height = 17
+      Caption = 'Server Config:'
+    end
+    object cbServers: TComboBox
+      Left = 98
+      Top = 6
+      Width = 297
+      Height = 25
+      Hint = 
+        'Tool and server configuration file. This is useful when you want' +
+        ' to have multiple servings with different configurations (maps, ' +
+        'mods, name, instance, etc).'
+      CustomHint = blhintHelp
+      Style = csDropDownList
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      OnChange = cbServersChange
     end
   end
   object pmRemove: TPopupMenu
@@ -2076,7 +2097,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800340010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800400010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2486,7 +2507,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C0101020008003400DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008004000DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
