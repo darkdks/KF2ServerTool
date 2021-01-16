@@ -544,7 +544,7 @@ var
   panelMargin: Integer;
 begin
   winHeight := 0;
-  WinMargin := 40;
+  WinMargin := 70;
   latestItemTop := 0;
   panelMargin := 1;
   try

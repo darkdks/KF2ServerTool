@@ -3,7 +3,7 @@
         <ProjectGuid>{9B3AECDB-8B01-414C-B11B-E80D00D1C83B}</ProjectGuid>
         <ProjectVersion>18.3</ProjectVersion>
         <MainSource>KF2ServerTool.dpr</MainSource>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
@@ -72,7 +72,7 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
         <Manifest_File>(None)</Manifest_File>
-        <Debugger_RunParams>-config KF2ServerTool_panela.ini -newserver</Debugger_RunParams>
+        <Debugger_RunParams>-config KF2ServerTool_blank.ini -newserver</Debugger_RunParams>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

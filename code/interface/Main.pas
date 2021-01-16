@@ -180,6 +180,8 @@ type
     lblCredits: TLabel;
     cbServers: TComboBox;
     lblServerConfig: TLabel;
+    Panel1: TPanel;
+    pnlLoading: TPanel;
 
     // Strings and translation
     function _h(text: String): String;
@@ -292,7 +294,7 @@ type
     procedure edtServerPortExit(Sender: TObject);
     procedure edtServerNameExit(Sender: TObject);
     procedure cbServersChange(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
 
   private
 
@@ -307,6 +309,9 @@ type
     function ExtractFolderFromPath(Path: String): String;
     procedure ShowNewServerConfigDialog;
     procedure translateUIFormElements(aForm: TForm);
+    procedure ToggleLoading(State: Boolean; textDesc: String);
+    function CreateProcessWithPID(exePath: String; exeParams: String;
+      winState: Cardinal): Cardinal;
 
   const
 
@@ -575,7 +580,7 @@ begin
         end;
       IDYES:
         begin
-          KillProcessByName(ExtractFileName(pathServerEXE));
+          KillProcessByPID(SvPID);
           Sleep(1000);
           btnStartServer.Caption := _s('Start server');
           TimerAutoStartServer.Enabled := false;
@@ -605,8 +610,6 @@ procedure TFormMain.StartServer();
 var
   svPath: string;
   argCmd: string;
-  StartupInfo: TStartupInfo;
-  ProcessInfo: TProcessInformation;
 
 begin
 
@@ -650,16 +653,10 @@ begin
   if ParamCount > 0 then
     argCmd := argCmd + ' -ConfigSubDir=' + ExtractFolderFromPath
       (serverTool.GetKFApplicationPath + pathKFGameIni);
-  ZeroMemory(@StartupInfo, SizeOf(StartupInfo));
-  StartupInfo.cb := SizeOf(StartupInfo);
-  StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
-  StartupInfo.wShowWindow := SW_SHOWMINIMIZED;
-  CreateProcess(nil, Pchar('"' + svPath + pathServerEXE + '" ' + argCmd), nil,
-    nil, false, 0, nil,
-    Pchar(ExcludeTrailingPathDelimiter(ExtractFilePath(svPath + pathServerEXE))
-    ), StartupInfo, ProcessInfo);
 
-  SvPID := ProcessInfo.dwProcessId
+  SvPID := CreateProcessWithPID(svPath + pathServerEXE, argCmd,
+    SW_SHOWMINIMIZED);
+
 
 
   // ShellExecute(handle, 'open', Pchar(pathServerEXE), Pchar(argCmd),
@@ -667,10 +664,27 @@ begin
 
 end;
 
+function TFormMain.CreateProcessWithPID(exePath: String; exeParams: String;
+  winState: Cardinal): Cardinal;
+var
+  StartupInfo: TStartupInfo;
+  ProcessInfo: TProcessInformation;
+begin
+  ZeroMemory(@StartupInfo, SizeOf(StartupInfo));
+  StartupInfo.cb := SizeOf(StartupInfo);
+  StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
+  StartupInfo.wShowWindow := winState;
+  CreateProcess(nil, Pchar('"' + exePath + '" ' + exeParams), nil, nil, false,
+    0, nil, Pchar(ExcludeTrailingPathDelimiter(ExtractFilePath(exePath))),
+    StartupInfo, ProcessInfo);
+
+  result := ProcessInfo.dwProcessId
+end;
+
 function TFormMain.ExtractFolderFromPath(Path: String): String;
 begin
 
-  Result := ExtractFileName(ExtractFileDir(Path))
+  result := ExtractFileName(ExtractFileDir(Path))
 end;
 
 procedure TFormMain.GenerateGroupTitleImages(Sender: TObject);
@@ -1153,19 +1167,27 @@ end;
 procedure TFormMain.GenerateNewConfigSubDir(subDir: String);
 var
   svPath, cmdToolFullPath, cmdToolArgs: string;
+  ConfigSvPid: Cardinal;
 begin
-  if useCustomServerPath then
-    svPath := IncludeTrailingPathDelimiter(customServerPath)
-  else
-    svPath := ExtractFilePath(Application.ExeName);
-  Application.MessageBox
-    (_p('The tool will start the server to generate the default settings.' +
-    ' \nThis will take about 30 seconds, please wait.'), _p('Generate configs'),
-    MB_OK + MB_ICONINFORMATION);
-  ExecuteFile(0, svPath + pathServerEXE,
-    'kf-bioticslab?adminpassword=123 -ConfigSubDir=' + subDir, SW_NORMAL);
-  Sleep(30000); // 30 seconds
-  KillProcessByName('kfserver.exe');
+  try
+    ToggleLoading(True, _s('Running server. Please wait 45 seconds.'));
+
+    if useCustomServerPath then
+      svPath := IncludeTrailingPathDelimiter(customServerPath)
+    else
+      svPath := ExtractFilePath(Application.ExeName);
+    Application.MessageBox
+      (_p('The tool will start the server to generate the default settings.' +
+      ' \nThis will take about 45 seconds, please wait.'),
+      _p('Generate configs'), MB_OK + MB_ICONINFORMATION);
+
+    ConfigSvPid := CreateProcessWithPID(svPath + pathServerEXE,
+      'kf-bioticslab?adminpassword=123 -ConfigSubDir=' + subDir, SW_NORMAL);
+    Sleep(45000); // 45 seconds
+    KillProcessByPID(ConfigSvPid);
+  finally
+    ToggleLoading(false, '');
+  end;
 end;
 
 procedure TFormMain.btnNewProfileClick(Sender: TObject);
@@ -1441,22 +1463,22 @@ var
   i: Integer;
 begin
   try
-    SetLength(Result, 0);
+    SetLength(result, 0);
     try
       for i := 0 to ListView.Items.Count - 1 do
       begin
         if ListView.Items[i].Selected then
         begin
 
-          SetLength(Result, Length(Result) + 1);
-          Result[High(Result)] := ListView.Items[i];
+          SetLength(result, Length(result) + 1);
+          result[High(result)] := ListView.Items[i];
         end;
       end;
     finally
 
     end;
   except
-    SetLength(Result, 0);
+    SetLength(result, 0);
     raise Exception.Create('Failed to generate Seletec itens array');
   end;
 end;
@@ -1465,14 +1487,14 @@ function TFormMain.IsDiffCategory(lvitems: TLvSelectedItems): Boolean;
 var
   i: Integer;
 begin
-  Result := false;
+  result := false;
   try
     try
       for i := 0 to High(lvitems) - 1 do
       begin
         if lvitems[i].GroupID <> lvitems[i + 1].GroupID then
         begin
-          Result := True;
+          result := True;
           Exit;
 
         end;
@@ -1677,23 +1699,23 @@ end;
 
 function TFormMain.CheckForServerRunningAndClose: Boolean;
 begin
-  Result := false;
+  result := false;
   if ProcessExists(ExtractFileName(pathServerEXE)) then
   begin
-    Result := True;
+    result := True;
     case Application.MessageBox
       (_p('An instance of the server is running, you need close it to make this kind of change.\nDo you want to close the server now?'),
       'Server', MB_YESNOCANCEL + MB_ICONINFORMATION) of
       IDCANCEL:
         begin
-          Result := True;
+          result := True;
           Exit;
         end;
       IDYES:
         begin
           KillProcessByName(ExtractFileName(pathServerEXE));
           Sleep(1000);
-          Result := false;
+          result := false;
         end;
     end;
 
@@ -1819,7 +1841,9 @@ begin
   begin
     with formNewConfig do
     begin
+
       try
+
         configName := 'KF2ServerTool_' + edtConfigName.text + '.ini';
         configFolderSubPath := KFGAMECONFIGSUBFOLDER +
           edtConfigFolder.text + '\';
@@ -2824,6 +2848,15 @@ begin
   end;
 end;
 
+procedure TFormMain.FormActivate(Sender: TObject);
+begin
+  if cbServers.Tag = 1 then
+  begin
+    lblDonateClick(Sender);
+    cbServers.Tag := 0;
+  end;
+end;
+
 procedure TFormMain.FormCanResize(Sender: TObject;
   var NewWidth, NewHeight: Integer; var Resize: Boolean);
 begin
@@ -2990,15 +3023,20 @@ begin
     end;
   end;
 
+  LoadOfficialMapList(serverTool.GetKFApplicationPath);
+
+  if showNewServerPopup then
+  begin
+    serverTool.LoadItems;
+    ShowNewServerConfigDialog();
+    LoadItemsToLv(''); // Reload lv itens, may change
+  end;
+
   // ---- Load UI Config
   LoadUIConfig;
-
   // ---- Auto check for update system
   if AutoCheckForUpdates then
     checkForUpdates(Self);
-
-  // if ProcessExists(ExtractFileName(pathServerEXE)) then
-  // btnStartServer.Caption := _s('Stop server');
 
   IniFilesDir := GetAllFilesInsideDirectory
     (ExtractFilePath(Application.ExeName), 'KF2ServerTool*.ini');
@@ -3041,7 +3079,6 @@ begin
   lvMods.Groups[2].TitleImage := 3;
   lvMods.Groups[3].TitleImage := 5;
 
-  LoadOfficialMapList(serverTool.GetKFApplicationPath);
   LoadItemsToLv('');
 
   translateUIElements;
@@ -3238,12 +3275,6 @@ begin
 
 end;
 
-procedure TFormMain.FormShow(Sender: TObject);
-begin
-  if showNewServerPopup then
-    ShowNewServerConfigDialog();
-end;
-
 procedure TFormMain.ShowNewServerConfigDialog;
 var
   formNewSvConfig: TformNewServerFirstConfig;
@@ -3252,10 +3283,9 @@ begin
 
   formNewSvConfig := TformNewServerFirstConfig.Create(Self);
   try
-  translateUIFormElements(formNewSvConfig);
+    translateUIFormElements(formNewSvConfig);
     if formNewSvConfig.ShowModal = mrOk then
     begin
-
       serverTool.SetServerName(formNewSvConfig.edtNCServerName.text);
       serverTool.SetWebPort(StrToInt(formNewSvConfig.edtNCWebPort.text));
       serverTool.SetServerPort(formNewSvConfig.edtNCServerPort.text);
@@ -3275,7 +3305,7 @@ begin
       end;
 
       saveconfig;
-
+      cbServers.Tag := 1;
     end
     else
     begin
@@ -3676,10 +3706,10 @@ function TFormMain.getSelectedCount(ListView: TListView): Integer;
 var
   i: Integer;
 begin
-  Result := 0;
+  result := 0;
   for i := 0 to ActiveLV.Items.Count - 1 do
     if ActiveLV.Items[i].Selected then
-      Result := Result + 1;
+      result := result + 1;
 end;
 
 procedure TFormMain.Removeall1Click(Sender: TObject);
@@ -4151,7 +4181,7 @@ var
   section: String;
 begin
   SetLength(kfprofiles, 0);
-  Result := false;
+  result := false;
   try
 
     IniConfig := TIniFile.Create(ExtractFilePath(Application.ExeName) +
@@ -4233,7 +4263,7 @@ var
   i: Integer;
   section: String;
 begin
-  Result := false;
+  result := false;
 
   try
 
@@ -4303,7 +4333,7 @@ begin
           DeleteFile(ExtractFilePath(Application.ExeName) + MEMONAME)
       end;
 
-      Result := True;
+      result := True;
     finally
       IniConfig.Free;
     end;
@@ -4495,9 +4525,9 @@ begin
         (GetPropValue(Comp, propTxt) <> '-') then
       begin
         if propTxt = 'Hint' then
-          SetPropValue(Comp, propTxt, formMain._h(GetPropValue(Comp, propTxt)))
+          SetPropValue(Comp, propTxt, FormMain._h(GetPropValue(Comp, propTxt)))
         else
-          SetPropValue(Comp, propTxt, formMain._s(GetPropValue(Comp, propTxt)));
+          SetPropValue(Comp, propTxt, FormMain._s(GetPropValue(Comp, propTxt)));
 
       end;
     end;
@@ -4520,6 +4550,23 @@ begin
   alignControlAtoControlB(edtServerPort, lblServerPort);
   alignControlAtoControlB(edtRedirectURL, lblRedirectURL);
   alignControlAtoControlB(chkAdminAutoLogin, edtAdminPass);
+  alignControlAtoControlB(cbServers, lblServerConfig);
+
+end;
+
+procedure TFormMain.ToggleLoading(State: Boolean; textDesc: String);
+begin
+
+  pnlMainTop.Visible := State = false;
+  pgcntrlTabs.Visible := State = false;
+  pnlBottom.Visible := State = false;
+  pnlLoading.Visible := State = True;
+  if State then
+    pnlLoading.Align := alClient
+  else
+    pnlLoading.Align := alNone;
+  pnlLoading.Caption := textDesc;
+  Application.ProcessMessages;
 
 end;
 
@@ -4539,11 +4586,11 @@ end;
 function TFormMain._p(text: String): PWideChar;
 begin
   try
-    Result := PWideChar(tlTool.tlStr(text))
+    result := PWideChar(tlTool.tlStr(text))
   except
     on E: Exception do
     begin
-      Result := PWideChar(text);
+      result := PWideChar(text);
       serverTool.LogEvent('Error: ', E.Message);
     end;
   end;
@@ -4552,11 +4599,11 @@ end;
 function TFormMain._h(text: String): String;
 begin
   try
-    Result := (tlTool.tlStr(text))
+    result := (tlTool.tlStr(text))
   except
     on E: Exception do
     begin
-      Result := PWideChar(text);
+      result := PWideChar(text);
       serverTool.LogEvent('Error: ', E.Message);
     end;
   end;
@@ -4565,11 +4612,11 @@ end;
 function TFormMain._s(text: String): String;
 begin
   try
-    Result := tlTool.tlStr(text)
+    result := tlTool.tlStr(text)
   except
     on E: Exception do
     begin
-      Result := text;
+      result := text;
       serverTool.LogEvent('Error: ', E.Message);
     end;
   end;

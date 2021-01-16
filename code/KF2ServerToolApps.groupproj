@@ -9,6 +9,9 @@
         <Projects Include="KF2ServerToolCMD.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="TranslatorTool.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="KF2ServerToolCMD:Make">
         <MSBuild Projects="KF2ServerToolCMD.dproj" Targets="Make"/>
     </Target>
+    <Target Name="TranslatorTool">
+        <MSBuild Projects="TranslatorTool.dproj"/>
+    </Target>
+    <Target Name="TranslatorTool:Clean">
+        <MSBuild Projects="TranslatorTool.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TranslatorTool:Make">
+        <MSBuild Projects="TranslatorTool.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="KF2ServerTool;KF2ServerToolCMD"/>
+        <CallTarget Targets="KF2ServerTool;KF2ServerToolCMD;TranslatorTool"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="KF2ServerTool:Clean;KF2ServerToolCMD:Clean"/>
+        <CallTarget Targets="KF2ServerTool:Clean;KF2ServerToolCMD:Clean;TranslatorTool:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="KF2ServerTool:Make;KF2ServerToolCMD:Make"/>
+        <CallTarget Targets="KF2ServerTool:Make;KF2ServerToolCMD:Make;TranslatorTool:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

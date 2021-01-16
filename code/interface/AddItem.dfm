@@ -78,7 +78,7 @@ object FormAdd: TFormAdd
       AlignWithMargins = True
       Left = 17
       Top = 5
-      Width = 48
+      Width = 298
       Height = 14
       Margins.Left = 16
       Margins.Top = 4
@@ -92,6 +92,7 @@ object FormAdd: TFormAdd
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+      ExplicitWidth = 48
     end
     object chkDoForAll: TCheckBox
       AlignWithMargins = True

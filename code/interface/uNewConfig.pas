@@ -102,7 +102,6 @@ begin
   btnOk.Enabled := false;
   formMain.alignControlAtoControlB(edtConfigName, lblKF2ServerTool);
   formMain.alignControlAtoControlB(lblIni, edtConfigName);
-
   formMain.alignControlAtoControlB(edtConfigFolder, lblKFGameConfig);
 end;
 

@@ -146,14 +146,18 @@ type
 
   const
 
-    SERVERTOOLVERSION = '1.3.9';
+    SERVERTOOLVERSION = '1.4.0';
 
     {
       CHANGE LOG VERSION 1.4.0
-      - Multiple servers feature added
+      - Multiple servers setup feature added (Beta)
+      - Multiple server management (Beta)
+      - Improved server execution and shutdown(
+      means that the tool will not close a server that was started otherwise)
       - Server name change inside the tool
       - Server port change inside the tool
       - The options have been reorganized
+      - Several bug fixes
 
       CHANGE LOG VERSION 1.3.9
       - Custom game mode/mutator param fix

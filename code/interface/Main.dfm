@@ -15,10 +15,10 @@ object FormMain: TFormMain
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
   OnCanResize = FormCanResize
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 17
   object pnlBottom: TPanel
@@ -381,6 +381,14 @@ object FormMain: TFormMain
       TabOrder = 3
       OnClick = btnRemoveClick
     end
+    object Panel1: TPanel
+      Left = 632
+      Top = 24
+      Width = 185
+      Height = 41
+      Caption = 'Panel1'
+      TabOrder = 4
+    end
   end
   object pgcntrlTabs: TJvPageControl
     Left = 0
@@ -391,7 +399,7 @@ object FormMain: TFormMain
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = tsOptions
+    ActivePage = tsMaps
     Align = alClient
     TabOrder = 1
     OnChange = pgcntrlTabsChange
@@ -871,7 +879,7 @@ object FormMain: TFormMain
             AlignWithMargins = True
             Left = 6
             Top = 2
-            Width = 648
+            Width = 131
             Height = 17
             Margins.Left = 6
             Margins.Top = 2
@@ -881,7 +889,6 @@ object FormMain: TFormMain
             Caption = 'Additional parameters'
             Color = clBlack
             ParentColor = False
-            ExplicitWidth = 131
           end
           object edtAddParam: TEdit
             AlignWithMargins = True
@@ -1191,6 +1198,10 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Caption = 'Mods'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvMods: TListView
         Left = 0
         Top = 0
@@ -1264,6 +1275,10 @@ object FormMain: TFormMain
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Unknown'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lvUnknown: TListView
         Left = 0
         Top = 0
@@ -1784,6 +1799,10 @@ object FormMain: TFormMain
     object tsMaintenance: TTabSheet
       Caption = 'Maintenance'
       ImageIndex = 8
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpMaintenance: TGroupBox
         AlignWithMargins = True
         Left = 8
@@ -1921,6 +1940,10 @@ object FormMain: TFormMain
     object tsWebAdmin: TTabSheet
       Caption = 'WebAdmin'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object wbWebAdmin: TWebBrowser
         Left = 0
         Top = 0
@@ -1941,11 +1964,15 @@ object FormMain: TFormMain
     object tsNotes: TTabSheet
       Caption = 'Notes'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblNotepad: TLabel
         AlignWithMargins = True
         Left = 8
         Top = 8
-        Width = 666
+        Width = 52
         Height = 17
         Margins.Left = 8
         Margins.Top = 8
@@ -1953,13 +1980,12 @@ object FormMain: TFormMain
         Margins.Bottom = 0
         Align = alTop
         Caption = 'Notepad'
-        ExplicitWidth = 52
       end
       object lblAutosaveChanges: TLabel
         AlignWithMargins = True
-        Left = 3
+        Left = 430
         Top = 503
-        Width = 664
+        Width = 237
         Height = 14
         Margins.Right = 9
         Align = alBottom
@@ -1972,8 +1998,6 @@ object FormMain: TFormMain
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitLeft = 430
-        ExplicitWidth = 237
       end
       object mmoNotepad: TMemo
         AlignWithMargins = True
@@ -1994,6 +2018,10 @@ object FormMain: TFormMain
     object tsDebug: TTabSheet
       Caption = 'Debug'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object btnGenerateCurrentStrings: TButton
         Left = 24
         Top = 40
@@ -2033,7 +2061,7 @@ object FormMain: TFormMain
       Margins.Bottom = 2
       Align = alRight
       Alignment = taRightJustify
-      Caption = 'darkdks @ 2020'
+      Caption = 'darkdks @ 2021'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -11
@@ -2067,6 +2095,23 @@ object FormMain: TFormMain
       OnChange = cbServersChange
     end
   end
+  object pnlLoading: TPanel
+    Left = 0
+    Top = -7
+    Width = 17
+    Height = 16
+    Caption = 'Loading... Please wait...'
+    Color = clWhite
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -21
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentBackground = False
+    ParentFont = False
+    TabOrder = 3
+    Visible = False
+  end
   object pmRemove: TPopupMenu
     OnPopup = pmRemovePopup
     Left = 496
@@ -2097,7 +2142,7 @@ object FormMain: TFormMain
     Left = 632
     Top = 168
     Bitmap = {
-      494C010106000800400010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101060008004C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000070707302A2A2A962D2D30D8212023F9201F22F82E2D30D6282829920606
@@ -2507,7 +2552,7 @@ object FormMain: TFormMain
     Left = 636
     Top = 221
     Bitmap = {
-      494C0101020008004000DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008004C00DC008000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007003000080000000010020000000000000E0
       0600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -55,9 +55,10 @@ function WorkshopURLtoID(URL: string): string;
 function TextForXchar(Text: String; numberOfChars: Integer): string;
 function CreateNewFolderInto(path, FolderName: String): String;
 function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
-  Parameters: string; ShowWindows: Integer): Boolean;   overload ;
-  function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
-  Parameters: string; ShowWindows: Integer; TimeOut: Integer): Boolean;  overload ;
+  Parameters: string; ShowWindows: Integer): Boolean; overload;
+function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
+  Parameters: string; ShowWindows: Integer; TimeOut: Integer): Boolean;
+  overload;
 function FileOperation(Source: TStringList; Destination: String;
   Operation: Cardinal): Boolean;
 function ProcessExists(ProcessName: string): Boolean;
@@ -69,7 +70,9 @@ function ExecuteTerminalProcess(Acmd: String; AParam: string;
   var abortExe: Boolean; Return: TProc<String>): TStringList;
 function PosOfOccurrence(p_SubStr, p_Source: string;
   p_NthOccurrence: Integer): Integer;
+Function KillProcessByPID(PID: Cardinal): Boolean;
 function PIDExists(PID: Cardinal): Boolean;
+
 implementation
 
 function OccurrencesOfChar(const ContentString: string;
@@ -427,10 +430,8 @@ begin
 end;
 {$ENDIF}
 
-
-
 function ExecuteFileAndWait(hWnd: Cardinal; filename: string;
-  Parameters: string; ShowWindows: Integer; TimeOut: Integer): Boolean;
+Parameters: string; ShowWindows: Integer; TimeOut: Integer): Boolean;
 {$IFDEF MSWINDOWS}
 // Windows API
 var
@@ -458,10 +459,11 @@ begin
       begin
         repeat
           Sleep(1000);
-          tCount := tCount +1;
+          tCount := tCount + 1;
           Application.ProcessMessages;
           GetExitCodeProcess(sei.hProcess, ExitCode);
-        until (ExitCode <> STILL_ACTIVE) or (Application.Terminated)or ( tCount >= TimeOut);
+        until (ExitCode <> STILL_ACTIVE) or (Application.Terminated) or
+          (tCount >= TimeOut);
       end;
     finally
     end;
@@ -475,12 +477,10 @@ end;
 
 // Linux
 begin
- raise Exception.Create('Not implemented yet');
+  raise Exception.Create('Not implemented yet');
 
 end;
 {$ENDIF}
-
-
 {$IFDEF MSWINDOWS}
 
 function ExecuteFile(hWnd: Cardinal; filename: string; Parameters: string;
@@ -615,7 +615,8 @@ begin
         begin
           if FileExists(Source[i]) then
           begin
-            if FileExists(Destination) then DeleteFile(Destination);
+            if FileExists(Destination) then
+              DeleteFile(Destination);
             IOUtils.TFile.Copy(Source[i], Destination);
             result := FileExists(Destination);
           end
@@ -666,9 +667,7 @@ begin
 
 end;
 
-
 function PIDExists(PID: Cardinal): Boolean;
-
 var
   ContinueLoop: Bool;
   FSnapshotHandle: THandle;
@@ -697,6 +696,7 @@ begin
   CloseHandle(FSnapshotHandle);
 
 end;
+
 function ProcessExists(ProcessName: string): Boolean;
 
 {$IFDEF MSWINDOWS}
@@ -778,6 +778,33 @@ begin
   result := (NumDeletedChars - SubStrLength) + 1;
 end;
 
+Function KillProcessByPID(PID: Cardinal): Boolean;
+
+var
+  ContinueLoop: Bool;
+  FSnapshotHandle: THandle;
+  FProcessEntry32: TProcessEntry32;
+  LC: Integer;
+begin
+  LC := 0;
+  FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
+  ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
+  while (Integer(ContinueLoop) <> 0) and (LC <= 1000) do
+  begin
+     if FProcessEntry32.th32ProcessID = PID then
+    begin
+        TerminateProcess(OpenProcess(PROCESS_TERMINATE, Bool(0),
+        FProcessEntry32.th32ProcessID), 0);
+    end;
+    ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+    Inc(LC);
+  end;
+  CloseHandle(FSnapshotHandle);
+  result := PIDExists(PID) = False;
+
+end;
+
 Function KillProcessByName(ExeName: String): Boolean;
 
 {$IFDEF MSWINDOWS}
@@ -830,4 +857,3 @@ end;
 { TExecuteCmdCallBack }
 
 end.
-
