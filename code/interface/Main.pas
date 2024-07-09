@@ -182,6 +182,8 @@ type
     lblServerConfig: TLabel;
     Panel1: TPanel;
     pnlLoading: TPanel;
+    Label1: TLabel;
+    cbMapSort: TJvComboBox;
 
     // Strings and translation
     function _h(text: String): String;
@@ -295,6 +297,7 @@ type
     procedure edtServerNameExit(Sender: TObject);
     procedure cbServersChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure cbMapSortChange(Sender: TObject);
 
   private
 
@@ -388,7 +391,8 @@ begin
                   MB_OK + MB_ICONEXCLAMATION);
             end;
             progressForm.Close;
-            ShowMessage(_s('Finished!'));
+            Application.BringToFront;
+            MessageDlg(_s('Finished!'), mtInformation, [mbOK], 0);
           finally
             FreeAndNil(progressForm);
           end;
@@ -1166,7 +1170,7 @@ end;
 
 procedure TFormMain.GenerateNewConfigSubDir(subDir: String);
 var
-  svPath, cmdToolFullPath, cmdToolArgs: string;
+  svPath: string;
   ConfigSvPid: Cardinal;
 begin
   try
@@ -1561,7 +1565,8 @@ begin
         finally
           progressForm.Free;
         end;
-        ShowMessage(_s('Finished!'));
+        Application.BringToFront;
+        MessageDlg(_s('Finished!'), mtInformation, [mbOK], 0);
         LoadItemsToLv('');
       end;
 
@@ -1801,6 +1806,16 @@ begin
     on E: Exception do
       ShowMessage(E.Message);
   end;
+end;
+
+procedure TFormMain.cbMapSortChange(Sender: TObject);
+begin
+  case cbMapSort.ItemIndex of
+     0: serverTool.SetCycleSortType('byname');
+     1: serverTool.SetCycleSortType('bytype');
+     2: serverTool.SetCycleSortType('keepthesame');
+  end;
+  saveconfig();
 end;
 
 procedure TFormMain.cbServersChange(Sender: TObject);
@@ -3248,6 +3263,7 @@ begin
         DefaultLength := cbbGameLength.ItemIndex;
         DefaultPass := edtGamePass.text;
         AdditionalParam := edtAddParam.text;
+        DefaultMapSortIndex := cbMapSort.ItemIndex;
         if (cbbMap.text <> KF_CYCLE_CUSTOM_SEPARATOR) and
           (cbbMap.text <> KF_CYCLE_OFFICIAL_SEPARATOR) then
           DefaultMap := cbbMap.text
@@ -3624,6 +3640,8 @@ begin
     cbbGameLength.ItemIndex := DefaultLength;
     edtGamePass.text := DefaultPass;
     edtAddParam.text := AdditionalParam;
+    cbMapSort.ItemIndex := DefaultMapSortIndex;
+    cbMapSortChange(self);
     if (cbbMap.Items.IndexOf(DefaultMap) > 0) and
       (DefaultMap <> KF_CYCLE_CUSTOM_SEPARATOR) and
       (DefaultMap <> KF_CYCLE_OFFICIAL_SEPARATOR) then
@@ -4225,6 +4243,7 @@ begin
             GroupMapCycleSeparators :=
               ReadBool(section, 'GroupMapCycleSeparators', false);
             AutoRestartServer := ReadBool(section, 'AutoRestartServer', false);
+            DefaultMapSortIndex := ReadInteger(section, 'DefaultMapSortIndex', 0);
           end;
         end;
 
@@ -4299,6 +4318,7 @@ begin
             WriteBool(section, 'GroupMapCycleSeparators',
               GroupMapCycleSeparators);
             WriteBool(section, 'AutoRestartServer', AutoRestartServer);
+            WriteInteger(section, 'DefaultMapSortIndex', DefaultMapSortIndex);
 
           end;
           WriteBool('GENERAL', 'OnlyShowItemsFromConfig', onlyFromConfigItems);
