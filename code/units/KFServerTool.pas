@@ -23,6 +23,7 @@ type
   var
     DefaultDifficulty: Integer;
     DefaultLength: Integer;
+    DefaultMapSortIndex: integer;
     DefaultGameMode: Integer;
     DefaultPass: string;
     AdditionalParam: string;
@@ -146,9 +147,18 @@ type
 
   const
 
-    SERVERTOOLVERSION = '1.4.0';
+    SERVERTOOLVERSION = '1.5.0';
 
     {
+
+
+      CHANGE LOG VERSION 1.5.0
+        - Chinese translation added (thanks for leslie cheung)
+        - Russian translation added (thanks for pat4005)
+        - Added map order cycle option (by name, by type, dont sort)
+        - SteamCmd updated
+        - Some fixes
+
       CHANGE LOG VERSION 1.4.0
       - Multiple servers setup feature added (Beta)
       - Multiple server management (Beta)
